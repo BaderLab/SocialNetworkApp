@@ -13,7 +13,7 @@ import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
-public class NetworkTaskFactory extends AbstractTaskFactory {
+public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 		private CyNetworkFactory cyNetworkFactoryServiceRef;
 		private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
 		private CyNetworkViewManager cyNetworkViewManagerServiceRef;
@@ -24,7 +24,7 @@ public class NetworkTaskFactory extends AbstractTaskFactory {
 		private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
 		private VisualStyleFactory visualStyleFactoryServiceRef;
 	
-	public NetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
+	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
 			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef, 
 			VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingManager vmmServiceRef) {
 			this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
@@ -39,7 +39,7 @@ public class NetworkTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new NetworkTask(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
+		return new TaskIterator(new CreateNetworkTask(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
 				cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, 
 				visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, vmmServiceRef));
 	}

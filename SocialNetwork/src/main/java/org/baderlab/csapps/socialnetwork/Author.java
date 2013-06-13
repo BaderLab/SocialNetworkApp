@@ -163,39 +163,39 @@ public class Author extends AbstractNode {
 		return this.lastName;
 	}
 	
-//	/**
-//	 * Return true iff author is the same as other
-//	 * @param Object other
-//	 * @return boolean
-//	 */
-//	public boolean equals(Object other) {
-//		return this.lastName.equalsIgnoreCase(((Author)other).lastName) &&
-//			   this.firstInitial.equalsIgnoreCase(((Author)other).firstInitial);
-//	} 
+	/**
+	 * Return true iff author is the same as other
+	 * @param Object other
+	 * @return boolean
+	 */
+	public boolean equals(Object other) {
+		return this.lastName.equalsIgnoreCase(((Author)other).lastName) &&
+			   this.firstInitial.equalsIgnoreCase(((Author)other).firstInitial);
+	} 
 
-//	/**
-//	 * Return author hash code. Hash code uniquely identifies each specific
-//	 * last name - first initial combo. Thus, this system considers individuals 
-//	 * with matching last names and first initials to be one and the same.
-//	 * @param null
-//	 * @return int hashCode
-//	 */
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
+	/**
+	 * Return author hash code. Hash code uniquely identifies each specific
+	 * last name - first initial combo. Thus, this system considers individuals 
+	 * with matching last names and first initials to be one and the same.
+	 * @param null
+	 * @return int hashCode
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result += prime * result
+				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
 //		result = prime * result
-//				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
-////		result = prime * result
-////				+ ((institution == null) ? 0 : institution.hashCode());
+//				+ ((institution == null) ? 0 : institution.hashCode());
+		result += prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
 //		result = prime * result
-//				+ ((lastName == null) ? 0 : lastName.hashCode());
-////		result = prime * result
-////				+ ((location == null) ? 0 : location.hashCode());
-////		result = prime * result
-////				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
-////		result = prime * result + totalPubs;
-//		return result;
-//	}
+//				+ ((location == null) ? 0 : location.hashCode());
+//		result = prime * result
+//				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
+//		result = prime * result + totalPubs;
+		return result;
+	}
 
 	/**
 	 * Get author's node (in Cytoscape)
@@ -215,69 +215,77 @@ public class Author extends AbstractNode {
 		this.node = node;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
-		result = prime * result
-				+ ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result
-				+ ((institution == null) ? 0 : institution.hashCode());
-		result = prime * result
-				+ ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result
-				+ ((location == null) ? 0 : location.hashCode());
-		result = prime * result
-				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
-		result = prime * result + totalPubs;
-		return result;
-	}
+	/**
+	 * NOTE: As author identification becomes more refined it may be wise 
+	 * to use more parameters in hashCode(). 
+	 */
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result
+//				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
+//		result = prime * result
+//				+ ((firstName == null) ? 0 : firstName.hashCode());
+//		result = prime * result
+//				+ ((institution == null) ? 0 : institution.hashCode());
+//		result = prime * result
+//				+ ((lastName == null) ? 0 : lastName.hashCode());
+//		result = prime * result
+//				+ ((location == null) ? 0 : location.hashCode());
+//		result = prime * result
+//				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
+//		result = prime * result + totalPubs;
+//		return result;
+//	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Author other = (Author) obj;
-		if (firstInitial == null) {
-			if (other.firstInitial != null)
-				return false;
-		} else if (!firstInitial.equals(other.firstInitial))
-			return false;
-		if (firstName == null) {
-			if (other.firstName != null)
-				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (institution == null) {
-			if (other.institution != null)
-				return false;
-		} else if (!institution.equals(other.institution))
-			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
-				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
-		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		if (middleInitial == null) {
-			if (other.middleInitial != null)
-				return false;
-		} else if (!middleInitial.equals(other.middleInitial))
-			return false;
-		if (totalPubs != other.totalPubs)
-			return false;
-		return true;
-	}
+	/**
+	 * NOTE: As author identification becomes more refined it may be wise 
+	 * to use more parameters in equals(). 
+	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		Author other = (Author) obj;
+//		if (firstInitial == null) {
+//			if (other.firstInitial != null)
+//				return false;
+//		} else if (!firstInitial.equals(other.firstInitial))
+//			return false;
+//		if (firstName == null) {
+//			if (other.firstName != null)
+//				return false;
+//		} else if (!firstName.equals(other.firstName))
+//			return false;
+//		if (institution == null) {
+//			if (other.institution != null)
+//				return false;
+//		} else if (!institution.equals(other.institution))
+//			return false;
+//		if (lastName == null) {
+//			if (other.lastName != null)
+//				return false;
+//		} else if (!lastName.equals(other.lastName))
+//			return false;
+//		if (location == null) {
+//			if (other.location != null)
+//				return false;
+//		} else if (!location.equals(other.location))
+//			return false;
+//		if (middleInitial == null) {
+//			if (other.middleInitial != null)
+//				return false;
+//		} else if (!middleInitial.equals(other.middleInitial))
+//			return false;
+//		if (totalPubs != other.totalPubs)
+//			return false;
+//		return true;
+//	}
 	
 	/**
 	 * Construct attribute map
@@ -287,7 +295,7 @@ public class Author extends AbstractNode {
 	public void constructAttrMap() {
 		attrMap = new HashMap<String, String>();
 		attrMap.put("Last Name", this.lastName);
-		attrMap.put("First Initial", this.firstInitial);
+		attrMap.put("First Name", this.firstName);
 		attrMap.put("Institution", this.institution);
 	}
 	

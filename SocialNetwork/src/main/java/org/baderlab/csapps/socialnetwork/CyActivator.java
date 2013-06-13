@@ -1,6 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
-import main.java.org.baderlab.csapps.socialnetwork.tasks.NetworkTaskFactory;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetworkManager;
@@ -27,35 +27,35 @@ public class CyActivator extends AbstractCyActivator {
 
 	public void start(BundleContext bc) {
 		
-		//??
+		// ??
 		CyNetworkNaming cyNetworkNamingServiceRef = getService(bc,CyNetworkNaming.class);
 		
-		//??
+		// ??
 		CyNetworkFactory cyNetworkFactoryServiceRef = getService(bc,CyNetworkFactory.class);
 		
-		//??
+		// ??
 		CyNetworkManager cyNetworkManagerServiceRef = getService(bc,CyNetworkManager.class);
 		
-		//??
+		// ??
 		CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(bc,CyNetworkViewFactory.class);
 		
-		//??
+		// ??
 		CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(bc,CyNetworkViewManager.class);
 		
-		//??
+		// ??
 		CyLayoutAlgorithmManager cyLayoutManagerServiceRef = getService(bc, CyLayoutAlgorithmManager.class);
 		
-		//??
+		// ??
 		VisualStyleFactory visualStyleFactoryServiceRef = getService(bc,VisualStyleFactory.class);
 		
-		//??
+		// ??
 		VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService(bc,VisualMappingFunctionFactory.class,"(mapping.type=passthrough)");
 
-		//??
+		// ??
 		VisualMappingManager vmmServiceRef = getService(bc,VisualMappingManager.class);
 		
-		//??
-		TaskManager taskManager = getService(bc,TaskManager.class);
+		// ??
+		TaskManager<?, ?> taskManager = getService(bc,TaskManager.class);
 		
 		// Transfer a reference of task manager service to class Cytoscape
 		// FYI: Makes execution of tasks via form-field more flexible
@@ -66,13 +66,14 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,socialNetworkPanel,CytoPanelComponent.class, new Properties());
 		
 		// Initialize & register network task factory
-		NetworkTaskFactory networkTaskFactory = new NetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
+		CreateNetworkTaskFactory networkTaskFactory = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
 																		cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, 
 																		visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, vmmServiceRef);
 		registerService(bc,networkTaskFactory,TaskFactory.class, new Properties());
 		
 		// Transfer a reference of network task factory to class Cytoscape
+		// NOTE: Violates dependency injection
 		Cytoscape.setNetworkTaskFactory(networkTaskFactory);
+		
 	}
 }
-

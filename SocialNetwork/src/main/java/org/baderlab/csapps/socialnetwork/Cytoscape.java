@@ -10,8 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
-
-import main.java.org.baderlab.csapps.socialnetwork.tasks.NetworkTaskFactory;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 
 import org.cytoscape.work.TaskManager;
 import org.xml.sax.SAXException;
@@ -27,26 +26,24 @@ public class Cytoscape {
 	 * to form a network
 	 */
 	private static Map<Consortium, ArrayList<AbstractEdge>> map = null;
-	
 	/**
 	 * A reference to Cytoscape's Task Manager Service. Handy when executing
 	 * tasks
 	 */
 	private static TaskManager<?, ?> taskManagerServiceRef = null;
-	
 	/**
-	 * CoAuthorNetworkTaskFactory produces the required CoAuthorNetworkTask(s) slated
+	 * CreateNetworkTaskFactory produces the required CoAuthorNetworkTask(s) slated
 	 * for execution by the task manager
 	 */
-	private static NetworkTaskFactory networkTaskFactory = null;
+	private static CreateNetworkTaskFactory networkTaskFactory = null;
 	
 	/**
 	 * Set map
 	 * @param Map map
 	 * @return null
 	 */
-	public static void setMap(Map<Consortium, ArrayList<AbstractEdge>> map2) {
-		Cytoscape.map = map2;
+	public static void setMap(Map<Consortium, ArrayList<AbstractEdge>> map) {
+		Cytoscape.map = map;
 	}
 	
 	/**
@@ -69,10 +66,10 @@ public class Cytoscape {
 	
 	/**
 	 * Set network task factory
-	 * @param NetworkTaskFactory networkTaskFactory
+	 * @param CreateNetworkTaskFactory networkTaskFactory
 	 * @return null
 	 */
-	public static void setNetworkTaskFactory(NetworkTaskFactory networkTaskFactory) {
+	public static void setNetworkTaskFactory(CreateNetworkTaskFactory networkTaskFactory) {
 		Cytoscape.networkTaskFactory = networkTaskFactory;
 	}
 	
@@ -81,7 +78,7 @@ public class Cytoscape {
 	 * @param null
 	 * @return NetworkTaskFactory networkTaskFactory
 	 */
-	public static NetworkTaskFactory getNetworkTaskFactory() {
+	public static CreateNetworkTaskFactory getNetworkTaskFactory() {
 		return Cytoscape.networkTaskFactory;
 	}
 	
@@ -111,15 +108,19 @@ public class Cytoscape {
 	 * @throws IOException
 	 */	
 	public static void createNetwork(File networkFile) throws ParserConfigurationException, SAXException, IOException {
-		// Acquire map from network file
-		List<? extends AbstractEdge> pubList = Incites.getPublications(networkFile);
-		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList);
 		
-		// Transfer map to Cytoscape's map variable
+		// Parse for list of publications
+		List<? extends AbstractEdge> pubList = Incites.getPublications(networkFile);
+		
+		// Construct map
+		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
+		
+		// Store map
 		Cytoscape.setMap(map);
 		
 		// Create network using map
 		Cytoscape.createNetwork();
+		
 	}
 	
 	/**
@@ -138,7 +139,7 @@ public class Cytoscape {
 		List<? extends AbstractEdge> results = search.getResults();
 		
 		// Create new map using results
-		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results); 
+		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 		
 		// Transfer map to Cytoscape's map variable
 		Cytoscape.setMap(map);
@@ -159,8 +160,9 @@ public class Cytoscape {
 		// Execute network task. 
 		// NOTE: Relevant node & edge info is not directly coupled with task execution. It is
 		// acquired later on through Cytoscape.getMap()
-		// This method is a blackbox and should not be executed directly under ANY circumstances
+		// This method is a blackbox and should NOT be executed directly under ANY circumstances
 		Cytoscape.getTaskManager().execute(Cytoscape.getNetworkTaskFactory().createTaskIterator());
 		
 	}
+	
 }

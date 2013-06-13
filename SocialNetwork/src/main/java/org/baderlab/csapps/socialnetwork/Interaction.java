@@ -9,7 +9,7 @@ import java.util.Map;
  * Interaction 
  * @author Victor Kofia
  */
-public class Interaction {
+public class Interaction {	
 	
 	/**
 	 * Create new consortium & edgeList hash-map 
@@ -18,14 +18,14 @@ public class Interaction {
 	 * @return 
 	 * @return null
 	 */
-	private static Map<Consortium, ArrayList<AbstractEdge>> loadMap(List<? extends AbstractEdge> edgeList) {
+	private static Map<Consortium, ArrayList<AbstractEdge>> loadMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
 		Map<Consortium, ArrayList<AbstractEdge>> map = new HashMap<Consortium, ArrayList<AbstractEdge>>();
 		// Iterate through each publication
-		for (AbstractEdge edge : edgeList) {
+		for (AbstractEdge edge : abstractEdgeList) {
 			int i = 0, j = 0;
 			Consortium consortium = null;
-			ArrayList<AbstractEdge> nodeList = null;
+			ArrayList<AbstractEdge> edgeList = null;
 			AbstractNode node1 = null;
 			AbstractNode node2 = null;
 			// Link each node to a consortium consisting of all the other nodes
@@ -38,9 +38,9 @@ public class Interaction {
 					consortium = new Consortium(node1, node2);
 					// Check for consortium's existence before it's entered into map
 					if (! map.containsKey(consortium)) {
-						nodeList = new ArrayList<AbstractEdge>();
-						nodeList.add(edge);
-						map.put(consortium, nodeList);
+						edgeList = new ArrayList<AbstractEdge>();
+						edgeList.add(edge);
+						map.put(consortium, edgeList);
 					} else {
 						map.get(consortium).add(edge);
 					}
@@ -62,5 +62,5 @@ public class Interaction {
 	public static Map<Consortium, ArrayList<AbstractEdge>> getMap(List<? extends AbstractEdge> edgeList) {
 		return Interaction.loadMap(edgeList);
 	}
-
+	
 }

@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import org.xml.sax.SAXException;
  * Create a new network
  * @author Victor Kofia
  */
-public class NetworkTask extends AbstractTask {
+public class CreateNetworkTask extends AbstractTask {
 	private CyNetworkFactory cyNetworkFactoryServiceRef;
 	private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
 	private CyNetworkViewManager cyNetworkViewManagerServiceRef;
@@ -51,13 +52,17 @@ public class NetworkTask extends AbstractTask {
 	private VisualMappingManager vmmServiceRef;
 	private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
 	private VisualStyleFactory visualStyleFactoryServiceRef;
+	private int currentSteps = 0;
+	private int totalSteps = 0;
+	private double progress = 0.0;
+	private TaskMonitor monitor = null;
 
 	/**
 	 * Create a new network task
 	 * @param null
 	 * @return null
 	 */
-	public NetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
+	public CreateNetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
 			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef, 
 			VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingManager vmmServiceRef) {
 		this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
@@ -85,7 +90,7 @@ public class NetworkTask extends AbstractTask {
 		
 		return visualStyle;
 	}
-
+	
 	/**
 	 * Return a network containing author's co-authors and all corresponding publications
 	 * @param String authorName
@@ -117,7 +122,8 @@ public class NetworkTask extends AbstractTask {
 		// ????
  	    edgeTable = myNet.getDefaultEdgeTable();
  	    Object[] values = map.values().toArray();
- 	    ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
+ 	    @SuppressWarnings("unchecked")
+		ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
  	    AbstractEdge value = values2.get(0);
  	    for (String attr : value.getAttrMap().keySet()) {
  	    	edgeTable.createColumn(attr, String.class, false);
@@ -136,7 +142,7 @@ public class NetworkTask extends AbstractTask {
 		CyNode nodeRef = null;
 		
 		Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
-				
+		
 		// Get all of author's co-authors and publications
 		for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
 			consortium = entry.getKey();
@@ -172,8 +178,35 @@ public class NetworkTask extends AbstractTask {
 					edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), attr.getValue());
 				}
 			}
+			
+			// Set progress
+			updateProgress();
+			
 		}
 		return myNet;
+	}
+	
+	/**
+	 * Update progress monitor
+	 * @param int currentSteps
+	 * @return null
+	 */
+	private void updateProgress() {
+		this.currentSteps += 1;
+		this.progress = (double)this.currentSteps / this.totalSteps;
+		this.monitor.setStatusMessage("Complete: " + toPercent(this.progress));
+		this.monitor.setProgress(this.progress);
+	}
+	
+	/**
+	 * Return progress as a percentage
+	 * @param Double progress
+	 * @return String percentage
+	 */
+	private String toPercent(double progress) {
+		progress = progress * 100;
+		DecimalFormat df = new DecimalFormat("00");
+		return df.format(progress) + "%";
 	}
 	
 	/**
@@ -181,8 +214,8 @@ public class NetworkTask extends AbstractTask {
 	 * @param TaskMonitor taskMonitor
 	 * @return null
 	 */
-	public void run(TaskMonitor arg0) throws Exception {
-
+	public void run(TaskMonitor monitor) throws Exception {
+		// ??
 		CyNetworkManager networkManager = cyNetworkManagerServiceRef;
 		CyNetworkViewManager networkViewManager = cyNetworkViewManagerServiceRef;
 
@@ -190,8 +223,18 @@ public class NetworkTask extends AbstractTask {
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
 		
 		if (map == null) {
-			Cytoscape.notifyUser("edgeList has a value of null. Must be an issue w/ Cytoscape.getEdgeList() or the file or term you're trying to build your network out of is invalid.");
+			Cytoscape.notifyUser("Map has a value of null. Must be an issue w/ Cytoscape.getMap() or the file or term you're trying to build your network out of is invalid.");
 		} else {
+			
+			//Set monitor parameters
+			this.monitor = monitor;
+			this.monitor.setTitle("Loading Network");
+			this.monitor.setProgress(0.0);
+			
+			// Total amount of steps to completion has to be set for progress to be tracked
+			this.totalSteps = map.size() + 2;
+
+			// Load network
 			CyNetwork network = loadNetwork(map);
 
 			if (network == null)
@@ -208,8 +251,11 @@ public class NetworkTask extends AbstractTask {
 				networkView = cyNetworkViewFactoryServiceRef.createNetworkView(network);
 				networkViewManager.addNetworkView(networkView);
 			} else {
-				System.out.println("networkView already existed.");
+				Cytoscape.notifyUser("Network already present");
 			}
+			
+			// MAJOR STEP: Update progress
+			updateProgress();
 
 			// Set the variable destroyView to true, the following snippet of code
 			// will destroy a view
@@ -222,7 +268,10 @@ public class NetworkTask extends AbstractTask {
 			// create a new visual style
 			VisualStyle vs= visualStyleFactoryServiceRef.createVisualStyle("Social-Network-App Visual Style");
 
+			// ??
 			addNodeLabels(vs);
+			
+			updateProgress();
 
 			// Add the new visual style to manager
 			vmmServiceRef.setCurrentVisualStyle(vs);

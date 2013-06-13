@@ -34,7 +34,9 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class InputPanel extends JPanel implements CytoPanelComponent {
 	
+	
 	private static final long serialVersionUID = 8292806967891823933L;
+	
 	
 	/**
 	 * Create a new panel
@@ -66,7 +68,6 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 	 * @return JPanel searchPanel
 	 */
 	private static JPanel createSearchBox() {
-		
 		// Create new panel.
 		JPanel searchControls = new JPanel();
 		// Organize panel horizontally.
@@ -104,7 +105,6 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 				
 			}
 		});
-		
 		searchBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
@@ -119,12 +119,10 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 				}
 			}
 		});
-		
 		// Add JComboBox (search bar) to toolbar.
 		searchControls.add(searchBox);
 		// Return fully configured search box.
 		return searchControls;
-		
 	}
 
 	
@@ -139,7 +137,6 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 		ImageIcon iconLoad = new ImageIcon(iconURL);
 		// Use icon object to create a new load button. 
 		JButton loadButton = new JButton("Load", iconLoad);
-//		JButton loadButton = new JButton("Load");
 		// Add ToolTipText.
 		loadButton.setToolTipText("Load Incites data");
 		// Clicking of button results in the popping of a dialog box that implores the user
@@ -178,11 +175,12 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 		return this;
 	}
 
-
+	
 	public CytoPanelName getCytoPanelName() {
 		return CytoPanelName.WEST;
 	}
 
+	
 	/**
 	 * Return panel title
 	 * @param null
@@ -192,6 +190,7 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 		return "Co-Pub App";
 	}
 
+	
 	/**
 	 * Return panel icon
 	 * @param null
@@ -200,4 +199,5 @@ public class InputPanel extends JPanel implements CytoPanelComponent {
 	public Icon getIcon() {
 		return null;
 	}
+	
 }
