@@ -3,6 +3,8 @@ package main.java.org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 
+import main.java.org.baderlab.csapps.socialnetwork.pubmed.Incites;
+
 import org.cytoscape.model.CyNode;
 
 /**
@@ -11,14 +13,6 @@ import org.cytoscape.model.CyNode;
  *
  */
 public class Author extends AbstractNode {
-	/**
-	 * Identifies source rawAuthorText as being of pubmed.com origin
-	 */
-	final static public int PUBMED = 0;
-	/**
-	 * Identifies source rawAuthorText as being of Incites origin
-	 */
-	final static public int INCITES = 1;
 	/**
 	 * Author's first name
 	 */
@@ -72,7 +66,7 @@ public class Author extends AbstractNode {
 	 * @return null
 	 */
 	public Author(String rawAuthorText, int origin) {
-		if (origin == Author.PUBMED) {
+		if (origin == Search.PUBMED) {
 			String[] names = rawAuthorText.split("\\s");
 			if (names.length == 2) {
 				this.lastName = names[0];
@@ -87,7 +81,7 @@ public class Author extends AbstractNode {
 			} else if (names.length == 1) {
 				this.lastName = names[0];
 			}
-		} else if (origin == Author.INCITES){
+		} else if (origin == Search.INCITES){
 			this.firstName = Incites.parseFirstName(rawAuthorText);
 			this.middleInitial = Incites.parseMiddleInitial(rawAuthorText);
 			this.lastName = Incites.parseLastName(rawAuthorText);

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import main.java.org.baderlab.csapps.socialnetwork.Author;
+import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,8 +22,8 @@ public class TestAuthor {
 
 	@Before
 	public void setUp() {
-		this.author1 = new Author("somebody h", Author.PUBMED);
-		this.author2 = new Author("somebody hm", Author.PUBMED);
+		this.author1 = new Author("somebody h", Search.PUBMED);
+		this.author2 = new Author("somebody hm", Search.PUBMED);
 	}
 
 	@After
@@ -74,7 +75,7 @@ public class TestAuthor {
 	 * between the two is casing
 	 */
 	public void testAuthorUpperCaseEquality() {
-		Author authorUpperCase = new Author("sOMeBODy H", Author.PUBMED);
+		Author authorUpperCase = new Author("sOMeBODy H", Search.PUBMED);
 		assertTrue(authorUpperCase.equals(this.author2));
 	}
 	
@@ -84,7 +85,7 @@ public class TestAuthor {
 	 * between the two is casing
 	 */
 	public void testAuthorUpperCaseHashCode() {
-		Author authorUpperCase = new Author("sOMeBODy H", Author.PUBMED);
+		Author authorUpperCase = new Author("sOMeBODy H", Search.PUBMED);
 		System.out.println(authorUpperCase.hashCode());
 		System.out.println(author1.hashCode());
 		assertTrue(authorUpperCase.hashCode() == this.author1.hashCode());

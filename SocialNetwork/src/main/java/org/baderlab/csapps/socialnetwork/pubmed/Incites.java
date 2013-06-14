@@ -1,15 +1,39 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
+import main.java.org.baderlab.csapps.socialnetwork.Author;
+import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Publication;
+import main.java.org.baderlab.csapps.socialnetwork.Search;
+import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
+
 /**
- * A repository of all important methods needed to manipulate Incites data
+ * Methods needed to manipulate Incites data
  * @author Victor Kofia
  */
 public class Incites {
@@ -81,7 +105,7 @@ public class Incites {
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
 		for (String authorText : authors) {
-			author = new Author(authorText, Author.INCITES);
+			author = new Author(authorText, Search.INCITES);
 			if (! pubAuthorList.contains(author)) {
 				pubAuthorList.add(author);
 			}
@@ -146,6 +170,73 @@ public class Incites {
 			Cytoscape.notifyUser("Failed to load certain publication data due to inconsistent formatting.");
 		}
 		return pubList;
+	}
+
+	/**
+	 *Create load button. Load button loads data file onto Cytoscape for parsing
+	 *@param null
+	 *@return JButton load
+	 */
+	public static JButton createLoadButton() {
+		// Create new icon object.
+		URL iconURL = UserPanel.class.getClassLoader().getResource("new.png");
+		ImageIcon iconLoad = new ImageIcon(iconURL);
+		// Use icon object to create a new load button. 
+		JButton loadButton = new JButton("Load", iconLoad);
+		// Add ToolTipText.
+		loadButton.setToolTipText("Load Incites data");
+		// Clicking of button results in the popping of a dialog box that implores the user
+		// to select a new data file. 
+		// New data file is then loaded to Cytoscape.
+		loadButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				// Ask user to select the appropriate data file.
+				JFileChooser chooser = new JFileChooser();
+				// Initialize the chooser dialog box to desktop
+				File directory = new File("~/Desktop");
+				chooser.setCurrentDirectory(directory);
+				chooser.setDialogTitle("Data Selection");
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int check = chooser.showDialog(null, "OK");
+				// Only attempt to read data file if user clicks "OK"
+				if (check == JFileChooser.APPROVE_OPTION) {
+					File textFile = chooser.getSelectedFile();
+					try {
+						Cytoscape.createNetwork(textFile);
+					} catch (ParserConfigurationException e) {
+						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
+					} catch (SAXException e) {
+						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
+					} catch (IOException e) {
+						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
+					}
+				}
+			}
+		});
+		return loadButton;
+	}
+
+	/**
+	 * Return new incites panel for use in info panel.
+	 * Will allow user to load Incites derived text files
+	 * @param null
+	 * @return JPanel incitesPanel
+	 */
+	public static JPanel createIncitesPanel() {
+		// Create new Incites panel.
+		JPanel incitesPanel = new JPanel();
+		
+		// Set border
+        incitesPanel.setBorder(BorderFactory.createTitledBorder("Incites"));
+		
+		// Organize panel horizontally.
+		incitesPanel
+		.setLayout(new FlowLayout());
+						
+		// Add button to Incites panel
+		incitesPanel.add(Incites.createLoadButton());
+	
+		return incitesPanel;
 	}
 	
 }

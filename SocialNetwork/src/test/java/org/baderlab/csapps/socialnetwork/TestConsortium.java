@@ -8,6 +8,7 @@ import java.util.Map;
 
 import main.java.org.baderlab.csapps.socialnetwork.Author;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
+import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,8 +22,8 @@ public class TestConsortium {
 
 	@Before
 	public void setUp() throws Exception {
-		this.author1 = new Author("ntu P", Author.PUBMED);
-		this.author2 = new Author("homme G", Author.PUBMED);
+		this.author1 = new Author("ntu P", Search.PUBMED);
+		this.author2 = new Author("homme G", Search.PUBMED);
 		this.cons1 = new Consortium(this.author1, this.author2);
 		this.cons2 = new Consortium(this.author2, this.author1);
 	}

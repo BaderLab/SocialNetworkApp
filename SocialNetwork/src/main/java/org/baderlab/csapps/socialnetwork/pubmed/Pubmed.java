@@ -1,9 +1,11 @@
 package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
+import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -15,9 +17,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import main.java.org.baderlab.csapps.socialnetwork.Author;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.Publication;
+import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 /**
- * Methods & fields useful for manipulating PubMed data
+ * Methods & fields for manipulating PubMed data
  * @author Victor Kofia
  */
 public class Pubmed {
@@ -66,6 +69,15 @@ public class Pubmed {
  	 * A publication's journal
  	 */
  	private static String journal = null;
+ 	
+ 	/**
+ 	 * Return total # of publications yielded from search
+ 	 * @param null
+ 	 * @return int totalPubs
+ 	 */
+ 	public static int getTotalPubs() {
+ 		return Integer.parseInt(Pubmed.totalPubs);
+ 	}
  	
  	/**
  	 * Return a list of all the publications (& co-authors) found for the specified authorName, 
@@ -249,7 +261,7 @@ public class Pubmed {
 					isPubDate = false;
 				}
 				if (isAuthor) {
-					author = new Author(new String(ch, start, length), Author.PUBMED);
+					author = new Author(new String(ch, start, length), Search.PUBMED);
 					// add author to publication author list
 					if (! pubAuthorList.contains(author)) {						
 						pubAuthorList.add(author);
@@ -283,5 +295,24 @@ public class Pubmed {
 //			System.out.println(document);
 //		}
 //	}
+	
+	/**
+	 * Get Pubmed Information panel. In addition to Pubmed specific features, 
+	 * this panel will also enable the user to load Incites data.
+	 * @param null
+	 * @return 
+	 * @return JPanel pubmedInfoPanel
+	 */
+	public static JPanel getPubmedInfoPanel() {
+		JPanel pubmedInfoPanel = new JPanel();
+		pubmedInfoPanel.setName("PubMed");
+		// Set panel layout
+        GridBagLayout pubmedGridbag = new GridBagLayout();
+		pubmedInfoPanel.setLayout(pubmedGridbag);
+		
+		
+		pubmedInfoPanel.add(Incites.createIncitesPanel());
+		return pubmedInfoPanel;
+	}
 	
 }
