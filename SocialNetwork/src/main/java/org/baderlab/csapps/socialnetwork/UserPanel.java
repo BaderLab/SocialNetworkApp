@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 	
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -227,15 +228,18 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		UserPanel.getSearchBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				try {
-					// Tapping enter will result in the automatic creation of a network
-					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
-				} catch (ParserConfigurationException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-				} catch (SAXException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-				} catch (IOException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
+					Cytoscape.notifyUser("Please enter a search term");
+				} else {
+					try {
+						Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
+					} catch (ParserConfigurationException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					} catch (SAXException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					} catch (IOException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					}
 				}
 			}
 		});
@@ -265,19 +269,22 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		JButton searchButton = new JButton(iconSearch);
 		// Add ToolTipText.
 		searchButton.setToolTipText("Search");
-		// Remove border
-		searchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 3, 10));
+		// Set color
 		// Clicking of button results in the closing of current panel
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				try {
-					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
-				} catch (ParserConfigurationException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-				} catch (SAXException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-				} catch (IOException e) {
-					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
+					Cytoscape.notifyUser("Please enter a search term");
+				} else {
+					try {
+						Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
+					} catch (ParserConfigurationException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					} catch (SAXException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					} catch (IOException e) {
+						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+					}
 				}
 			}
 		});
