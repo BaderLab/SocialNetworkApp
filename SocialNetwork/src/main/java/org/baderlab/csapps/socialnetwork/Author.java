@@ -5,8 +5,6 @@ import java.util.Map;
 
 import main.java.org.baderlab.csapps.socialnetwork.pubmed.Incites;
 
-import org.cytoscape.model.CyNode;
-
 /**
  * The author of an article, journal review, or scientific paper
  * @author Victor Kofia
@@ -189,24 +187,6 @@ public class Author extends AbstractNode {
 //				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
 //		result = prime * result + totalPubs;
 		return result;
-	}
-
-	/**
-	 * Get author's node (in Cytoscape)
-	 * @param null
-	 * @return CyNode node
-	 */
-	public CyNode getNodeRef() {
-		return node;
-	}
-
-	/**
-	 * Set author's node
-	 * @param CyNode node
-	 * @return null
-	 */
-	public void setNodeRef(CyNode node) {
-		this.node = node;
 	}
 
 	/**

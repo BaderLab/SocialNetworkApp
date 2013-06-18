@@ -1,10 +1,11 @@
 package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -71,7 +72,9 @@ public class Pubmed {
  	private static String journal = null;
  	
  	/**
- 	 * Return total # of publications yielded from search
+ 	 * Return total # of publications yielded from search. Method has to be called right
+ 	 * after search has been commited. If called at any other time, there is no guarantee
+ 	 * that the value returned will be accurate and/or valid.
  	 * @param null
  	 * @return int totalPubs
  	 */
@@ -100,6 +103,7 @@ public class Pubmed {
 			SAXParser saxParser;
 			saxParser = factory.newSAXParser();
 			// Get Query Key & Web Env
+			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=" + query);
 			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
@@ -140,6 +144,7 @@ public class Pubmed {
 			else {
 				// Use newly discovered queryKey and webEnv to build a tag
 				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
+				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag );
 				// Load all publications at once
 				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
 			}
@@ -165,14 +170,17 @@ public class Pubmed {
 			
 			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 				// qName stores the element's actual designation
-				if (qName.equalsIgnoreCase("Count")) {
+				if (i == 0 && qName.equalsIgnoreCase("Count")) {
+					totalPubs = "";
 					isTotalPubs = true;
 					i += 1;
 				}
 				if (qName.equalsIgnoreCase("QueryKey")) {
+					queryKey = "";
 					isQueryKey = true;
 				}
 				if (qName.equalsIgnoreCase("WebEnv")) {
+					webEnv = "";
 					isWebEnv = true;
 				}
 			}
@@ -185,15 +193,15 @@ public class Pubmed {
 				// start and length give both the starting index and the length (respectively)
 				// of the chunk of characters inside the character array that are not elements
 				if (isTotalPubs) {
-					totalPubs = new String(ch, start, length);
+					totalPubs += new String(ch, start, length);
 					isTotalPubs = false;
 				}
 				if (isQueryKey) {
-					queryKey = new String(ch, start, length);
+					queryKey += new String(ch, start, length);
 					isQueryKey = false;
 				}
 				if (isWebEnv) {
-					webEnv = new String(ch, start, length);
+					webEnv += new String(ch, start, length);
 					isWebEnv = false;
 				}
 			}
@@ -248,7 +256,7 @@ public class Pubmed {
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				// qName stores the element's actual designation
 				if (qName.equalsIgnoreCase("DocSum")) {
-					pubList.add(new Publication(title, pubDate, journal, pubAuthorList));
+					pubList.add(new Publication(title, pubDate, journal, null, null, pubAuthorList));
 					pubAuthorList.clear();
 				}
 			}
@@ -306,12 +314,16 @@ public class Pubmed {
 	public static JPanel getPubmedInfoPanel() {
 		JPanel pubmedInfoPanel = new JPanel();
 		pubmedInfoPanel.setName("PubMed");
-		// Set panel layout
-        GridBagLayout pubmedGridbag = new GridBagLayout();
-		pubmedInfoPanel.setLayout(pubmedGridbag);
 		
+		// Set layout
+		pubmedInfoPanel
+		.setLayout(new BorderLayout());
 		
-		pubmedInfoPanel.add(Incites.createIncitesPanel());
+		// Set border
+        pubmedInfoPanel.setBorder(BorderFactory.createTitledBorder("PubMed"));
+        
+		pubmedInfoPanel.add(Incites.createIncitesPanel(), BorderLayout.LINE_START);
+		
 		return pubmedInfoPanel;
 	}
 	

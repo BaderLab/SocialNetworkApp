@@ -52,6 +52,7 @@ public class Search {
 				break;
 			case PUBMED: 
 				this.results = Pubmed.getListOfPublications(searchTerm);
+				this.hits = Pubmed.getTotalPubs();
 				break;
 		}
 	}
@@ -86,6 +87,15 @@ public class Search {
 	 */
 	public List<? extends AbstractEdge> getResults() {
 		return this.results;
+	}
+	
+	/**
+	 * Get total number of hits
+	 * @param null
+	 * @return in hits
+	 */
+	public int getHits() {
+		return this.hits;
 	}
 	
 }

@@ -42,11 +42,13 @@ public class Publication extends AbstractEdge {
 	 * @param title
 	 * @param coauthorList
 	 */
-	public Publication(String title, String pubDate, String journal, List<Author> coauthorList) {
+	public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
 		this.pubDate = pubDate;
 		this.title = title;
 		this.journal = journal;
 		this.authors.addAll(coauthorList);
+		this.timesCited = timesCited;
+		this.expectedCitations = expectedCitations;
 		constructAttrMap();
 	}
 
@@ -182,11 +184,11 @@ public class Publication extends AbstractEdge {
 	 */
 	public void constructAttrMap() {
 		attrMap = new HashMap<String, String>();
-		attrMap.put("Title", this.title);
 		attrMap.put("Times Cited", this.timesCited);
 		attrMap.put("Expected Citations", this.expectedCitations);
-		attrMap.put("Journal", this.journal);
 		attrMap.put("Pub Date", this.pubDate);
+		attrMap.put("Journal", this.journal);
+		attrMap.put("Title", this.title);
 	}
 	
 	/**

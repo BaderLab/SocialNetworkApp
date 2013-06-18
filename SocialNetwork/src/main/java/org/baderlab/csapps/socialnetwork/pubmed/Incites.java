@@ -1,7 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,13 +15,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -31,12 +28,16 @@ import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.Search;
 import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
+import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 
 /**
- * Methods needed to manipulate Incites data
+ * Methods for manipulating Incites data
  * @author Victor Kofia
  */
 public class Incites {
+	
+	private static List<Publication> pubList = null;
+
 	
 	/**
 	 * Parse author's lastname
@@ -100,8 +101,11 @@ public class Incites {
 	 * @param String rawAuthorText
 	 * @return ArrayList authorList
 	 */
-	public static ArrayList<Author> parseAuthors(String rawAuthorText) {
+	public static ArrayList<Author> parseAuthors(String rawAuthorText) throws UnableToParseAuthorException {
 		String[] authors = rawAuthorText.split(";");
+		if (authors.length == 0) {
+			throw new UnableToParseAuthorException();
+		}
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
 		for (String authorText : authors) {
@@ -111,6 +115,71 @@ public class Incites {
 			}
 		}
 		return pubAuthorList;
+	}
+	
+	/**
+	 * Return true iff the provided line comes from an Incites data file
+	 * @param String data
+	 * @return boolean
+	 */
+	public static boolean checkIfValid(String data) {
+		String[] contents = data.split("[\n\t]");
+		if (contents.length < 6) {
+			return false;
+		} else {
+			boolean hasTimesCited = false;
+			boolean hasExpectedCitations = false;
+			boolean hasPublicationYear = false;
+			boolean hasSubjectArea = false;
+			boolean hasAuthors = false;
+			boolean hasTitle = false;
+			
+			String year = null;
+			String subjectArea = null;
+			String authors = null;
+			String title = null;
+			String timesCited = null;
+			String expectedCitations = "0.00";
+			List<Author> coauthorList = null;
+			Publication pub;
+			
+			timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
+			hasTimesCited = timesCited.matches("\\d+?") ? true : false;
+			
+			expectedCitations = contents[1].trim().isEmpty() ? "0.00" : contents[1].trim();
+			hasExpectedCitations = expectedCitations.matches("(\\d+?)\\.?(\\d+?)") ? true : false;
+			
+			year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
+			hasPublicationYear = year.matches("\\d+?") ? true : false;
+			
+			subjectArea = contents[3];
+			hasSubjectArea = subjectArea.matches("[A-Z]+?") ? true : false;
+			
+			authors = contents[4];
+			try {
+				coauthorList = Incites.parseAuthors(authors);
+				hasAuthors = true;
+			} catch (UnableToParseAuthorException e) {
+				hasAuthors = false;
+			}
+			
+			// Difficult to identify an Incites specific title. Thus, true by default.
+			title = contents[5];
+			hasTitle = true;
+			
+			// Consolidate
+			boolean isValid = hasTimesCited && hasExpectedCitations && hasPublicationYear && hasSubjectArea
+					&& hasAuthors && hasTitle;
+			
+			if (isValid) {
+				pub = new Publication(title, year, subjectArea, timesCited, expectedCitations, coauthorList);
+				pubList.add(pub);
+				return isValid;
+			} else {
+				return ! isValid;
+			}
+
+		}
 	}
 
 	/**
@@ -122,10 +191,7 @@ public class Incites {
 	 * @throws FileNotFoundException 
 	 */
 	public static List<Publication> getPublications(File networkFile) throws FileNotFoundException {
-		
-		List<Publication> pubList = new ArrayList<Publication>();
-		List<Author> coauthorList = new ArrayList<Author>();
-		
+			
 		Scanner in = new Scanner(networkFile);
 		String line;
 		String[] contents;
@@ -136,40 +202,56 @@ public class Incites {
 		String timesCited = null;
 		String expectedCitations = "0.00";
 		Publication pub;
-		Boolean qualityCheck = true;
-		in.nextLine();
-		while (in.hasNext()) {
-			line = in.nextLine();
-			contents = line.split("[\t\n]");
-			if (contents.length == 6) {
-				
-				// Get publication info
-				timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
-				expectedCitations = contents[1].trim().isEmpty() ? "0.00" : contents[1].trim();
-				year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
-				subjectArea = contents[3];
-				authors = contents[4];
-				title = contents[5];
-				
-				// Get author list
-				coauthorList = parseAuthors(authors);
-				
-				// Set publication info
-				pub = new Publication(title, year, subjectArea, coauthorList);
-				pub.setTimesCited(timesCited);
-				pub.setExpectedCitations(expectedCitations);
-				
-				//Add publication to overall list
-				pubList.add(pub);
-				
-			} else {		
-				qualityCheck = false;
+		boolean isValid = false;
+
+		List<Author> coauthorList = null;
+		
+		Incites.pubList = new ArrayList<Publication>();
+
+		// Verify that file is in fact derived from Incites
+		if (! in.hasNext()) {
+			isValid = false;
+		} else {
+			line = in.nextLine().trim();
+			isValid = Incites.checkIfValid(line);
+		}
+
+		// Read Incites data file
+		if (isValid) {
+			while (in.hasNext()) {
+				line = in.nextLine().trim();
+				contents = line.split("[\t\n]");
+
+				if (contents.length == 6) {
+
+					// Get publication info
+					timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
+					expectedCitations = contents[1].trim().isEmpty() ? "0.00" : contents[1].trim();
+					year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
+					subjectArea = contents[3];
+					authors = contents[4];
+					title = contents[5];
+
+					// Get author list
+					try {
+						coauthorList = Incites.parseAuthors(authors);
+					} catch (UnableToParseAuthorException e) {
+						return null;
+					}
+
+					// Set publication info
+					pub = new Publication(title, year, subjectArea, timesCited, expectedCitations, coauthorList);
+
+					//Add publication to overall list
+					pubList.add(pub);
+
+				} 
 			}
+			
+			return pubList;
 		}
-		if (qualityCheck != true) {
-			Cytoscape.notifyUser("Failed to load certain publication data due to inconsistent formatting.");
-		}
-		return pubList;
+
+		return null;
 	}
 
 	/**
@@ -213,6 +295,7 @@ public class Incites {
 				}
 			}
 		});
+		
 		return loadButton;
 	}
 
@@ -225,17 +308,15 @@ public class Incites {
 	public static JPanel createIncitesPanel() {
 		// Create new Incites panel.
 		JPanel incitesPanel = new JPanel();
-		
+		// Set preferred size
+		incitesPanel.setPreferredSize(new Dimension(200,200));
 		// Set border
         incitesPanel.setBorder(BorderFactory.createTitledBorder("Incites"));
-		
 		// Organize panel horizontally.
 		incitesPanel
-		.setLayout(new FlowLayout());
-						
+		.setLayout(new FlowLayout());	
 		// Add button to Incites panel
 		incitesPanel.add(Incites.createLoadButton());
-	
 		return incitesPanel;
 	}
 	

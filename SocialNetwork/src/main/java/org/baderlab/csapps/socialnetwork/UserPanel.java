@@ -5,19 +5,19 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 
 import main.java.org.baderlab.csapps.socialnetwork.pubmed.Pubmed;
 
@@ -219,9 +219,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			}
 		});
 		
-		// Add ?? (search bar) to toolbar.
+		// Add ?? (search box) to toolbar.
 		searchControls.add(searchBox);
 		
+		// Add search button to toolbar
+		searchControls.add(UserPanel.createSearchButton());
 		// Add option selector to toolbar
 		searchControls.add(UserPanel.createOptionSelector());
 		
@@ -229,6 +231,29 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		return searchControls;
 		
 	}
+	
+	/**
+	 *Create search button. Search button allows user to commit search
+	 *@param null
+	 *@return JButton search
+	 */
+	private static JButton createSearchButton() {
+		URL iconURL = UserPanel.class.getClassLoader().getResource("search.png");
+		ImageIcon iconSearch = new ImageIcon(iconURL);
+		// Use icon object to create a new close button. 
+		JButton searchButton = new JButton(iconSearch);
+		// Add ToolTipText.
+		searchButton.setToolTipText("Search");
+		// Remove border
+		searchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+		// Clicking of button results in the closing of current panel
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+
+			}
+		});
+		return searchButton;
+	}	
 	
 	/**
 	 * Load default info panel
@@ -324,7 +349,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	public String getTitle() {
 		return "Social Network";
 	}
-
+	
 	
 	/**
 	 * Return panel icon
@@ -334,5 +359,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	public Icon getIcon() {
 		return null;
 	}
+	
 	
 }

@@ -148,14 +148,16 @@ public class Cytoscape {
 		// Parse for list of publications
 		List<? extends AbstractEdge> pubList = Incites.getPublications(networkFile);
 		
-		// Construct map
-		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
-		
-		// Store map
-		Cytoscape.setMap(map);
-		
-		// Create network using map
-		Cytoscape.createNetwork();
+		if (pubList == null) {
+			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
+		} else {
+			// Construct map
+			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
+			// Store map
+			Cytoscape.setMap(map);
+			// Create network using map
+			Cytoscape.createNetwork();
+		}
 		
 	}
 	
@@ -174,7 +176,9 @@ public class Cytoscape {
 			// may differ between different websites
 			List<? extends AbstractEdge> results = search.getResults();
 			
-			if (results != null) {
+			if (results == null) {
+				Cytoscape.notifyUser("Network could not be made");
+			} else {
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 				// Transfer map to Cytoscape's map variable
@@ -196,7 +200,7 @@ public class Cytoscape {
 		// Execute network task. 
 		// NOTE: Relevant node & edge info is not directly coupled with task execution. It is
 		// acquired later on through Cytoscape.getMap()
-		// This method is a blackbox and should NOT be executed directly under ANY circumstances
+		// This method is a blackbox and should NOT be directly executed under ANY circumstances
 		Cytoscape.getTaskManager().execute(Cytoscape.getNetworkTaskFactoryRef().createTaskIterator());
 		
 	}
