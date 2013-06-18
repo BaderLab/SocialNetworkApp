@@ -38,15 +38,35 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	private static int selectedWebsite = Search.DEFAULT;
 		
-	private JPanel searchBox = null;
+	private static JPanel searchPanel = null;
 		
-	private JPanel controlPanel = null;
+	private static JPanel controlPanel = null;
 	
-	private JPanel currentInfoPanel = null;
+	private static JPanel currentInfoPanel = null;
 	
 	private static UserPanel currentObjectRef = null;
+	
+	private static JTextField searchBox = null;
 		
 	private static final long serialVersionUID = 8292806967891823933L;
+	
+	/**
+	 * Set user panel searchbox
+	 * @param JTextField searchBox
+	 * @return null
+	 */
+	public static void setSearchBox(JTextField searchBox) {
+		UserPanel.searchBox = searchBox;
+	}
+	
+	/**
+	 * Get user panel searchboc
+	 * @param null
+	 * @return JTextField searchBox
+	 */
+	public static JTextField getSearchBox() {
+		return UserPanel.searchBox;
+	}
 	
 	/**
 	 * Create a new panel
@@ -62,16 +82,16 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.setPreferredSize(new Dimension(400,200));
 		
 		// Add search box
-		this.searchBox = UserPanel.createSearchBox();
-		this.add(this.searchBox, BorderLayout.NORTH);
+		UserPanel.searchPanel = UserPanel.createSearchPanel();
+		this.add(UserPanel.searchPanel, BorderLayout.NORTH);
 		
 		// Add default info panel
 		this.setCurrentInfoPanel(getDefaultInfoPanel());
 		this.add(currentInfoPanel, BorderLayout.CENTER);
 		
 		// Add control toolbar
-		this.controlPanel = UserPanel.createControlPanel();
-		this.add(this.controlPanel, BorderLayout.SOUTH);
+		UserPanel.controlPanel = UserPanel.createControlPanel();
+		this.add(UserPanel.controlPanel, BorderLayout.SOUTH);
 		
 		// Set UserPanel object reference to current object
 		UserPanel.setCurrentObjectRef(this);
@@ -84,7 +104,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return JPanel currentInfoPanel
 	 */
 	private JPanel getCurrentInfoPanel() {
-		return this.currentInfoPanel;
+		return UserPanel.currentInfoPanel;
 	}
 	
 	/**
@@ -93,7 +113,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	private void setCurrentInfoPanel(JPanel infoPanel) {
-		this.currentInfoPanel = infoPanel;
+		UserPanel.currentInfoPanel = infoPanel;
 	}
 	
 	/**
@@ -158,7 +178,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param null
 	 * @return JPanel searchPanel
 	 */
-	private static JPanel createSearchBox() {
+	private static JPanel createSearchPanel() {
 		
 		// Create new panel.
 		JPanel searchControls = new JPanel();
@@ -182,12 +202,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		// Create new text field. It will be used to search through library
 		// contents using some user-defined parameter.
-		final JTextField searchBox = new JTextField();
+		
+		UserPanel.setSearchBox(new JTextField());
 		
 		// Allow user to enter a query of their choosing
-		searchBox.setEditable(true);
+		UserPanel.getSearchBox().setEditable(true);
 		
-		searchBox.getDocument().addDocumentListener(new DocumentListener() {
+		UserPanel.getSearchBox().getDocument().addDocumentListener(new DocumentListener() {
 			// Update auto generated list as user changes attributes.
 			public void changedUpdate(DocumentEvent e) {
 				
@@ -204,11 +225,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			}
 		});
 		
-		searchBox.addActionListener(new ActionListener() {
+		UserPanel.getSearchBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
 					// Tapping enter will result in the automatic creation of a network
-					Cytoscape.createNetwork(searchBox.getText(), UserPanel.getSelectedWebsite());
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
 				} catch (ParserConfigurationException e) {
 					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
 				} catch (SAXException e) {
@@ -220,7 +241,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		});
 		
 		// Add ?? (search box) to toolbar.
-		searchControls.add(searchBox);
+		searchControls.add(UserPanel.getSearchBox());
 		
 		// Add search button to toolbar
 		searchControls.add(UserPanel.createSearchButton());
@@ -245,11 +266,19 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		// Add ToolTipText.
 		searchButton.setToolTipText("Search");
 		// Remove border
-		searchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+		searchButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 3, 10));
 		// Clicking of button results in the closing of current panel
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-
+				try {
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
+				} catch (ParserConfigurationException e) {
+					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+				} catch (SAXException e) {
+					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+				} catch (IOException e) {
+					Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
+				}
 			}
 		});
 		return searchButton;
