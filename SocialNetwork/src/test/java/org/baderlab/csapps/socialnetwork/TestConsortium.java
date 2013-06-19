@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.Author;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Search;
+import main.java.org.baderlab.csapps.socialnetwork.pubmed.Author;
 
 import org.junit.After;
 import org.junit.Before;

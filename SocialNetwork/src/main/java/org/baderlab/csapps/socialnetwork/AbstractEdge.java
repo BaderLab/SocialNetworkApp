@@ -12,7 +12,7 @@ public abstract class AbstractEdge {
 	/**
 	 * A map containing all of edge's attributes
 	 */
-	Map<String, String> attrMap;
+	protected Map<String, String> attrMap;
 	
 	/**
 	 * Return map containing all of edge's attributes

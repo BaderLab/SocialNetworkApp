@@ -1,9 +1,12 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 
 /**
  * A publication (article, review, scientific paper)

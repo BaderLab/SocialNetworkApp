@@ -15,9 +15,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import main.java.org.baderlab.csapps.socialnetwork.Author;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 /**
@@ -79,7 +77,11 @@ public class Pubmed {
  	 * @return int totalPubs
  	 */
  	public static int getTotalPubs() {
- 		return Integer.parseInt(Pubmed.totalPubs);
+ 		if (totalPubs == null) {
+ 			return -1;
+ 		} else {
+ 			return Integer.parseInt(Pubmed.totalPubs);
+ 		}
  	}
  	
  	/**
@@ -108,11 +110,11 @@ public class Pubmed {
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the getPubList method in Pubmed.java!!");
+			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! Parser Configuration Exception!!");
 		} catch (SAXException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the getPubList method in Pubmed.java!!");
+			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! SAX Exception!!");
 		} catch (IOException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the getPubList method in Pubmed.java!!");
+			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! IOException!!");
 		}
 		// Return all results
 		return pubList;
@@ -139,7 +141,7 @@ public class Pubmed {
 				// WIP (Work In Progress)
 				// On the event that a search yields 500+ publications, these publications will
 				// need to be accessed incrementally as pubmed places sanctions on people who 
-				// request XML files at industrial rates =(
+				// request XML files at rates greater than this =(
 			}
 			else {
 				// Use newly discovered queryKey and webEnv to build a tag
@@ -171,16 +173,13 @@ public class Pubmed {
 			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 				// qName stores the element's actual designation
 				if (i == 0 && qName.equalsIgnoreCase("Count")) {
-					totalPubs = "";
 					isTotalPubs = true;
 					i += 1;
 				}
 				if (qName.equalsIgnoreCase("QueryKey")) {
-					queryKey = "";
 					isQueryKey = true;
 				}
 				if (qName.equalsIgnoreCase("WebEnv")) {
-					webEnv = "";
 					isWebEnv = true;
 				}
 			}
@@ -193,15 +192,15 @@ public class Pubmed {
 				// start and length give both the starting index and the length (respectively)
 				// of the chunk of characters inside the character array that are not elements
 				if (isTotalPubs) {
-					totalPubs += new String(ch, start, length);
+					totalPubs = new String(ch, start, length);
 					isTotalPubs = false;
 				}
 				if (isQueryKey) {
-					queryKey += new String(ch, start, length);
+					queryKey = new String(ch, start, length);
 					isQueryKey = false;
 				}
 				if (isWebEnv) {
-					webEnv += new String(ch, start, length);
+					webEnv = new String(ch, start, length);
 					isWebEnv = false;
 				}
 			}
@@ -322,7 +321,7 @@ public class Pubmed {
 		// Set border
         pubmedInfoPanel.setBorder(BorderFactory.createTitledBorder("PubMed"));
         
-		pubmedInfoPanel.add(Incites.createIncitesPanel(), BorderLayout.LINE_START);
+		pubmedInfoPanel.add(Incites.createIncitesPanel(), BorderLayout.NORTH);
 		
 		return pubmedInfoPanel;
 	}

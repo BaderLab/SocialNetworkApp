@@ -1,7 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 	
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -10,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -167,6 +168,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		controlPanel
 		.setLayout(new FlowLayout());
 	
+		controlPanel.add(UserPanel.createResetButton());
 		controlPanel.add(UserPanel.createCloseButton());
 		
 		return controlPanel;
@@ -190,16 +192,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		// Set borders.
 		searchControls.setBorder(BorderFactory.createTitledBorder("Search"));
-
-		// Create new JLabel.
-		JLabel searchLabel = new JLabel("Search: ");
-		searchLabel.setBorder(BorderFactory.createEmptyBorder(0, 7, 10, 0));
-		
-		// Set font.
-		searchLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
-		
-		// Add 'Search' label to toolbar.
-		searchControls.add(searchLabel);
 		
 		// Create new text field. It will be used to search through library
 		// contents using some user-defined parameter.
@@ -229,7 +221,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		UserPanel.getSearchBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
-					Cytoscape.notifyUser("Please enter a search term");
+					Cytoscape.notifyUser("Please enter a search term into the search box");
+				} else if (UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
+					Cytoscape.notifyUser("Illegal characterrs present. Please enter a valid search term.");
 				} else {
 					try {
 						Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
@@ -255,6 +249,20 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		// Return fully configured search controls.
 		return searchControls;
 		
+	}
+	
+	/**
+	 * Return true iff input does not contain illegal characters i.e. (!@#$%^&*)
+	 * @param String input
+	 * @return boolean
+	 */
+	private static boolean isValidInput(String input) {
+		Pattern pattern = Pattern.compile("[!@#$%^&*~]+?");
+		Matcher matcher = pattern.matcher(input);
+		if (matcher.find()) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -365,6 +373,24 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		});
 		return closeButton;
 	}	
+	
+	/**
+	 * Create reset button. Reset button resets info panel. All form 
+	 * fills will be cleared and info panel will revert to its natural
+	 * undisturbed state
+	 * @param null
+	 * @return JButton resetButton
+	 */
+	private static JButton createResetButton() {
+		JButton resetButton = new JButton("Reset");
+		resetButton.setToolTipText("Reset info panel");
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				
+			}
+		});
+		return resetButton;
+	}
 	
 	
 	public Component getComponent() {

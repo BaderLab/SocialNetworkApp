@@ -1,9 +1,10 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 /**
  * The author of an article, journal review, or scientific paper

@@ -24,7 +24,7 @@ public class TestSearch {
 	 * to the total number of results returned by search
 	 */
 	public void testPubmedSearch() {
-		Search search = new Search("bader g", Search.PUBMED);
+		Search search = new Search("isserlin r", Search.PUBMED);
 		int hits = search.getHits();
 		int results = search.getResults().size();
 		assertTrue(hits == results);

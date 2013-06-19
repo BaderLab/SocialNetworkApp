@@ -1,33 +1,30 @@
 package main.java.org.baderlab.csapps.socialnetwork.pubmed;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import main.java.org.baderlab.csapps.socialnetwork.Author;
+import main.java.org.baderlab.csapps.socialnetwork.CollapsiblePanel;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.Search;
-import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 
 /**
@@ -37,6 +34,9 @@ import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAutho
 public class Incites {
 	
 	private static List<Publication> pubList = null;
+	private static JTextField browseTextField;
+	private static File selectedFile;
+	private static JTextField facultyTextField;
 
 	
 	/**
@@ -259,12 +259,8 @@ public class Incites {
 	 *@param null
 	 *@return JButton load
 	 */
-	public static JButton createLoadButton() {
-		// Create new icon object.
-		URL iconURL = UserPanel.class.getClassLoader().getResource("new.png");
-		ImageIcon iconLoad = new ImageIcon(iconURL);
-		// Use icon object to create a new load button. 
-		JButton loadButton = new JButton("Load", iconLoad);
+	private static JButton createLoadButton() {
+		JButton loadButton = new JButton("...");
 		// Add ToolTipText.
 		loadButton.setToolTipText("Load Incites data");
 		// Clicking of button results in the popping of a dialog box that implores the user
@@ -283,20 +279,161 @@ public class Incites {
 				// Only attempt to read data file if user clicks "OK"
 				if (check == JFileChooser.APPROVE_OPTION) {
 					File textFile = chooser.getSelectedFile();
-					try {
-						Cytoscape.createNetwork(textFile);
-					} catch (ParserConfigurationException e) {
-						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
-					} catch (SAXException e) {
-						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
-					} catch (IOException e) {
-						Cytoscape.notifyUser("Check createLoadButton() in UserPanel.java. An exception occurred there.");
-					}
+					Incites.setSelectedFile(textFile);
+					Incites.getBrowseTextField().setText(textFile.getAbsolutePath());
+				} else {
+					Incites.setSelectedFile(null);
+					Incites.getBrowseTextField().setText("");
 				}
 			}
 		});
 		
 		return loadButton;
+	}
+	
+	/**
+	 * Get selected Incites data file
+	 * @param null
+	 * @return File incitesData
+	 */
+	private static File getSelectedFile() {
+		return Incites.selectedFile;
+	}
+	
+	/**
+	 * Set selected Incites data file
+	 * @param File incitesData
+	 * @return null
+	 */
+	private static void setSelectedFile(File selectedFile) {
+		Incites.selectedFile = selectedFile;
+	}
+	
+	/**
+	 * Create create network button. Create network button reads the data file specified
+	 * by user and attempts to create a network out of it.
+	 * @param null
+	 * @return JButton createNetworkButton
+	 */
+	private static JButton createNetworkButton() {
+		JButton createNetworkButton = new JButton("Create Network");
+		createNetworkButton.setToolTipText("Create network");
+		createNetworkButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try {
+					if (Incites.getSelectedFile() == null) {
+						Cytoscape.notifyUser("Network could not be created. Please specify file path");
+					} else if (Incites.getFacultyTextField().getText().trim().isEmpty()) {
+						Cytoscape.notifyUser("Network could not be created. Please specify faculty");
+					} else {
+						Cytoscape.createNetwork(Incites.getSelectedFile());
+					}
+				} catch (ParserConfigurationException e) {
+					Cytoscape.notifyUser("A problem occured in Incites.createNetworkButton()! ParserConfigurationException!!");
+				} catch (SAXException e) {
+					Cytoscape.notifyUser("A problem occured in Incites.createNetworkButton()! SAXException!!");
+				} catch (IOException e) {
+					Cytoscape.notifyUser("A problem occured in Incites.createNetworkButton()! IOException!!");
+				}
+			}
+		});
+		return createNetworkButton;
+	}
+	
+	/**
+	 * Create new browse panel. Will allow user to specify the path
+	 * of the data file they wish to load.
+	 * @param null
+	 * @return JPanel browsePanel
+	 */
+	private static JPanel createBrowsePanel() {
+		CollapsiblePanel browsePanel = new CollapsiblePanel("Data File");
+		browsePanel.setCollapsed(true);
+		browsePanel.getContentPane().setLayout(new BoxLayout(browsePanel.getContentPane(), BoxLayout.X_AXIS));
+		Incites.setBrowseTextField(new JTextField());
+		Incites.getBrowseTextField().setEditable(true);
+		browsePanel.getContentPane().add(Incites.getBrowseTextField());
+		browsePanel.getContentPane().add(Incites.createLoadButton());
+		return browsePanel;
+	}
+	
+	/**
+	 * Set browse text field
+	 * @param JTextField browseTextField
+	 * @return null
+	 */
+	private static void setBrowseTextField(JTextField browseTextField) {
+		Incites.browseTextField = browseTextField;
+	}
+	
+	/**
+	 * Get browse text field
+	 * @param null
+	 * @return JTextField browseTextField
+	 */
+	private static JTextField getBrowseTextField() {
+		return Incites.browseTextField;
+	}
+	
+	/**
+	 * Set faculty text field
+	 * @param JTextField facultyTextField
+	 * @return null
+	 */
+	private static void setFacultyTextField(JTextField facultyTextField) {
+		Incites.facultyTextField = facultyTextField;
+	}
+	
+	/**
+	 * Get faculty text field
+	 * @param null
+	 * @return JTextField facultyTextField
+	 */
+	public static JTextField getFacultyTextField() {
+		return Incites.facultyTextField;
+	}
+	
+	/**Create choose faculty panel
+	 * @pararm null
+	 * @return JPanel facultyPanel
+	 */
+	private static JPanel createFacultyPanel() {
+		CollapsiblePanel facultyPanel = new CollapsiblePanel("Faculty");
+		facultyPanel.setCollapsed(true);
+		facultyPanel.getContentPane().setLayout(new BoxLayout(facultyPanel.getContentPane(), BoxLayout.X_AXIS));
+		Incites.setFacultyTextField(new JTextField());
+		Incites.getFacultyTextField().setEditable(true);
+		facultyPanel.getContentPane().add(Incites.getFacultyTextField());
+		facultyPanel.getContentPane().add(Incites.createConfirmButton());
+		return facultyPanel;
+	}
+	
+	/**
+	 * Create confirm button. Will be used to confirm
+	 * faculty name entries.
+	 * @param null
+	 * @return JButton confirmButton
+	 */
+	private static JButton createConfirmButton() {
+		final ImageIcon iconNotConfirmed = new ImageIcon(Incites.class.getClassLoader().getResource("new.png"));
+		final ImageIcon iconConfirmed = new ImageIcon(Incites.class.getClassLoader().getResource("tick.png"));
+		final JButton confirmButton = new JButton(iconNotConfirmed);
+		
+		confirmButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (Incites.getFacultyTextField().getText() == null || Incites.getFacultyTextField().getText().trim().isEmpty()) {
+					confirmButton.setIcon(iconNotConfirmed);
+					confirmButton.setName("not confirmed");
+				} else {
+					if (confirmButton.getName().equalsIgnoreCase("not confirmed")) {
+						confirmButton.setIcon(iconConfirmed);
+						confirmButton.setName("confirmed");
+					} 
+				} 
+			}	
+		});
+		
+		return confirmButton;
 	}
 
 	/**
@@ -307,16 +444,21 @@ public class Incites {
 	 */
 	public static JPanel createIncitesPanel() {
 		// Create new Incites panel.
-		JPanel incitesPanel = new JPanel();
-		// Set preferred size
-		incitesPanel.setPreferredSize(new Dimension(200,200));
-		// Set border
-        incitesPanel.setBorder(BorderFactory.createTitledBorder("Incites"));
-		// Organize panel horizontally.
+		CollapsiblePanel incitesPanel = new CollapsiblePanel("Incites");
+		incitesPanel.setCollapsed(true);
+			
 		incitesPanel
-		.setLayout(new FlowLayout());	
-		// Add button to Incites panel
-		incitesPanel.add(Incites.createLoadButton());
+		.getContentPane().setLayout(new BoxLayout(incitesPanel.getContentPane(), BoxLayout.Y_AXIS));	
+		
+		// Add browse panel to incites panel
+		incitesPanel.getContentPane().add(Incites.createBrowsePanel(), BorderLayout.NORTH);
+		
+		// Add faculty panel
+		incitesPanel.getContentPane().add(Incites.createFacultyPanel());
+		
+		// Add create network button to browse panel
+		incitesPanel.getContentPane().add(Incites.createNetworkButton());
+		
 		return incitesPanel;
 	}
 	

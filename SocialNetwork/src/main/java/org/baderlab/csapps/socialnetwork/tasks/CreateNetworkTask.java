@@ -92,6 +92,21 @@ public class CreateNetworkTask extends AbstractTask {
 	}
 	
 	/**
+	 * Add a label to each edge
+	 * @param VisualStyle visualStyle
+	 * @return  VisualStyle visualStyle
+	 */
+	public VisualStyle addEdgeLabels(VisualStyle visualStyle) {
+		// Set node color map to attribute ???
+		PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>)
+			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Title", Integer.class, BasicVisualLexicon.EDGE_LABEL);
+					
+		visualStyle.addVisualMappingFunction(mapping);	
+		
+		return visualStyle;
+	}
+	
+	/**
 	 * Return a network containing author's co-authors and all corresponding publications
 	 * @param String authorName
 	 * @return CyNetwork network
@@ -131,7 +146,7 @@ public class CreateNetworkTask extends AbstractTask {
 		
 		// Set network name
 		myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-		.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle("App test"));
+		.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle(Cytoscape.getNetworkName()));
 		
 		// Build network
 		Consortium consortium = null;
@@ -270,6 +285,7 @@ public class CreateNetworkTask extends AbstractTask {
 
 			// ??
 			addNodeLabels(vs);
+			addEdgeLabels(vs);
 			
 			updateProgress();
 

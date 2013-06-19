@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
+
 /**
  * Two nodes
  * @author Victor Kofia

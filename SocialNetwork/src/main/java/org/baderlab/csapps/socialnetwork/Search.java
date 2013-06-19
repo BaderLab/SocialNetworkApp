@@ -48,7 +48,7 @@ public class Search {
 	public Search(String searchTerm, int website) {
 		switch (website) {
 			case DEFAULT:
-				Cytoscape.notifyUser("Please select a website");
+				Cytoscape.notifyUser("Click --SELECT-- to select a website");
 				break;
 			case PUBMED: 
 				this.results = Pubmed.getListOfPublications(searchTerm);

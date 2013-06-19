@@ -54,6 +54,28 @@ public class Cytoscape {
 	 * express wish and convenience.
 	 */
 	private static CyServiceRegistrar cyServiceRegistrarRef = null;
+	/**
+	 * Network name
+	 */
+	private static String networkName = null;
+	
+	/**
+	 * Set network name
+	 * @param String networkName
+	 * @return null
+	 */
+	private static void setNetworkName(String networkName) {
+		Cytoscape.networkName = networkName;
+	}
+	
+	/**
+	 * Get network name
+	 * @param null
+	 * @return String networkName
+	 */
+	public static String getNetworkName() {
+		return Cytoscape.networkName;
+	}
 	
 	/**
 	 * Set user panel action
@@ -151,6 +173,8 @@ public class Cytoscape {
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
+			// Set network name
+			Cytoscape.setNetworkName(Incites.getFacultyTextField().getText().trim() + " Co-Publication Network");
 			// Construct map
 			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
 			// Store map
@@ -177,8 +201,10 @@ public class Cytoscape {
 			List<? extends AbstractEdge> results = search.getResults();
 			
 			if (results == null) {
-				Cytoscape.notifyUser("Network could not be made");
+				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
+				// Set network name
+				Cytoscape.setNetworkName(searchTerm + "\'s Co-Publication Network");
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 				// Transfer map to Cytoscape's map variable

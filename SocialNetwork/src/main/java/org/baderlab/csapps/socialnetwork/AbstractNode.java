@@ -13,7 +13,7 @@ public abstract class AbstractNode {
 	/**
 	 * A map containing all of node's attributes
 	 */
-	Map<String, String> attrMap;
+	protected Map<String, String> attrMap;
 	
 	/**
 	 * Return map containing all of node's attributes
