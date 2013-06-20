@@ -141,7 +141,7 @@ public class Pubmed {
 				// WIP (Work In Progress)
 				// On the event that a search yields 500+ publications, these publications will
 				// need to be accessed incrementally as pubmed places sanctions on people who 
-				// request XML files at rates greater than this =(
+				// request XML files that are too large
 			}
 			else {
 				// Use newly discovered queryKey and webEnv to build a tag
@@ -151,11 +151,11 @@ public class Pubmed {
 				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
 			}
 		} catch (ParserConfigurationException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the commitPubMedSearch() method in Pubmed.java!!");
+			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
 		} catch (SAXException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the commitPubMedSearch() method in Pubmed.java!!");
+			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
 		} catch (IOException e) {
-			Cytoscape.notifyUser("Parser ran up into some trouble! Check the commitPubMedSearch() method in Pubmed.java!!");
+			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
 		}
 	}
 	
@@ -289,19 +289,6 @@ public class Pubmed {
 		return publicationHandler;
 	}
 	
-//	/**
-//	 * Display summary of search
-//	 * @param null
-//	 * @return String summary
-//	 */
-//	public void displaySearchSummary() {
-//		System.out.println("- SEARCH SUMMARY -");
-//		System.out.println("Total matching records: " + queryKey);
-//		System.out.println("--------------------------\n\nResults: \n");
-//		for (AbstractEdge document: pubList) {
-//			System.out.println(document);
-//		}
-//	}
 	
 	/**
 	 * Get Pubmed Information panel. In addition to Pubmed specific features, 
@@ -314,11 +301,9 @@ public class Pubmed {
 		JPanel pubmedInfoPanel = new JPanel();
 		pubmedInfoPanel.setName("PubMed");
 		
-		// Set layout
 		pubmedInfoPanel
 		.setLayout(new BorderLayout());
 		
-		// Set border
         pubmedInfoPanel.setBorder(BorderFactory.createTitledBorder("PubMed"));
         
 		pubmedInfoPanel.add(Incites.createIncitesInfoPanel(), BorderLayout.NORTH);

@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,32 +23,78 @@ import main.java.org.baderlab.csapps.socialnetwork.pubmed.Pubmed;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.xml.sax.SAXException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.xml.parsers.ParserConfigurationException;
 	
 /**
  * Main panel for Social Network App
  * @author Victor Kofia
  */
 public class UserPanel extends JPanel implements CytoPanelComponent {
-	
+	/**
+	 * Website that user has selected
+	 */
 	private static int selectedWebsite = Search.DEFAULT;
-		
-	private static JPanel selectedInfoPanelRef = null;
-
+	/**
+	 * Reference to the currently displayed info panel
+	 */
+	private static JPanel infoPanelRef = null;
+	/**
+	 * Reference to search panel
+	 */
 	private static JPanel searchPanelRef = null;
-		
+	/**
+	 * Reference to control panel
+	 */
 	private static JPanel controlPanelRef = null;
-	
-	private static UserPanel currentObjectRef = null;
-	
+	/**
+	 * Reference to the actual panel object being manipulated
+	 */
+	private static UserPanel PanelObjectRef = null;
+	/**
+	 * Reference to the search box. Necessary for extracting queries.
+	 */
 	private static JTextField searchBoxRef = null;
 		
 	private static final long serialVersionUID = 8292806967891823933L;
 	
+	/**
+	 * Create a new panel
+	 * @param null
+	 * @return null
+	 */
+	public UserPanel() {
+		
+		this.setLayout(new BorderLayout());
+		this.setPreferredSize(new Dimension(400,200));
+		
+		// Add search box
+		UserPanel.searchPanelRef = UserPanel.createSearchPanel();
+		this.add(UserPanel.searchPanelRef, BorderLayout.NORTH);
+		
+		// Add default info panel
+		this.setSelectedInfoPanel(getDefaultInfoPanel());
+		this.add(infoPanelRef, BorderLayout.CENTER);
+		
+		// Add control toolbar
+		UserPanel.controlPanelRef = UserPanel.createControlPanel();
+		this.add(UserPanel.controlPanelRef, BorderLayout.SOUTH);
+		
+		// Save a reference to this panel object
+		UserPanel.setPanelObjectRef(this);
+		
+	}
+
+	/**
+	 * Get user panel searchboc
+	 * @param null
+	 * @return JTextField searchBox
+	 */
+	public static JTextField getSearchBox() {
+		return UserPanel.searchBoxRef;
+	}
+
 	/**
 	 * Set user panel searchbox
 	 * @param JTextField searchBox
@@ -60,52 +105,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Get user panel searchboc
-	 * @param null
-	 * @return JTextField searchBox
-	 */
-	public static JTextField getSearchBox() {
-		return UserPanel.searchBoxRef;
-	}
-
-
-	/**
-	 * Create a new panel
-	 * @param null
-	 * @return null
-	 */
-	public UserPanel() {
-		
-		// Set panel layout
-		this.setLayout(new BorderLayout());
-		
-		// Set preferred size
-		this.setPreferredSize(new Dimension(400,200));
-		
-		// Add search box
-		UserPanel.searchPanelRef = UserPanel.createSearchPanel();
-		this.add(UserPanel.searchPanelRef, BorderLayout.NORTH);
-		
-		// Add default info panel
-		this.setSelectedInfoPanel(getDefaultInfoPanel());
-		this.add(selectedInfoPanelRef, BorderLayout.CENTER);
-		
-		// Add control toolbar
-		UserPanel.controlPanelRef = UserPanel.createControlPanel();
-		this.add(UserPanel.controlPanelRef, BorderLayout.SOUTH);
-		
-		// Set UserPanel object reference to current object
-		UserPanel.setCurrentObjectRef(this);
-		
-	}
-
-	/**
 	 * Get current info panel
 	 * @param null
 	 * @return JPanel currentInfoPanel
 	 */
 	private JPanel getSelectedInfoPanel() {
-		return UserPanel.selectedInfoPanelRef;
+		return UserPanel.infoPanelRef;
 	}
 	
 	/**
@@ -114,25 +119,25 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	private void setSelectedInfoPanel(JPanel infoPanel) {
-		UserPanel.selectedInfoPanelRef = infoPanel;
+		UserPanel.infoPanelRef = infoPanel;
 	}
 	
 	/**
-	 * Get current object reference
+	 * Get panel object reference
 	 * @param null
-	 * @return UserPanel currentObject
+	 * @return UserPanel panelObject
 	 */
-	private static UserPanel getCurrentObjectRef() {
-		return UserPanel.currentObjectRef;
+	private static UserPanel getPanelObjectRef() {
+		return UserPanel.PanelObjectRef;
 	}
 	
 	/**
-	 * Set current object reference
-	 * @param UserPanel currentObjectRef
+	 * Set panel object reference
+	 * @param UserPanel panelObjectRef
 	 * @return null
 	 */
-	private static void setCurrentObjectRef(UserPanel currentObjectRef) {
-		UserPanel.currentObjectRef = currentObjectRef;
+	private static void setPanelObjectRef(UserPanel currentObjectRef) {
+		UserPanel.PanelObjectRef = currentObjectRef;
 	}
 	
 	/**
@@ -155,15 +160,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	/**
 	 * Return new control panel for use in main app panel.
-	 * Will allow user to reset or close panel at their convenience.
+	 * Will allow users to reset or close the main app panel at their convenience.
 	 * @param null
 	 * @return JPanel control panel
 	 */
 	private static JPanel createControlPanel() {
-		// Create new toolbar.
 		JPanel controlPanel = new JPanel();
 			
-		// Organize panel as a grid
 		controlPanel
 		.setLayout(new FlowLayout());
 	
@@ -182,41 +185,30 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static JPanel createSearchPanel() {
 		
-		// Create new panel.
-		JPanel searchControls = new JPanel();
+		JPanel searchPanel = new JPanel();
 		
 		// Organize panel horizontally.
-		searchControls
-		.setLayout(new BoxLayout(searchControls, BoxLayout.X_AXIS));
+		searchPanel
+		.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 		
-		// Set borders.
-		searchControls.setBorder(BorderFactory.createTitledBorder("Search"));
+		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
 		
-		// Create new text field. It will be used to search through library
-		// contents using some user-defined parameter.
-		
+		// Create searchbox. Save a reference to it, and add
 		UserPanel.setSearchBox(new JTextField());
-		
-		// Allow user to enter a query of their choosing
 		UserPanel.getSearchBox().setEditable(true);
-		
 		UserPanel.getSearchBox().getDocument().addDocumentListener(new DocumentListener() {
 			// Update auto generated list as user changes attributes.
 			public void changedUpdate(DocumentEvent e) {
-				
 			}
-
 			// Update auto generated list as user inputs data.
 			public void insertUpdate(DocumentEvent e) {
-				
 			}
-
 			// Update auto generated list once user erases previously written data.
 			public void removeUpdate(DocumentEvent e) {
-				
 			}
 		});
 		
+		// Tapping enter results in the automatic generation of a network
 		UserPanel.getSearchBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
@@ -229,16 +221,16 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			}
 		});
 		
-		// Add ?? (search box) to toolbar.
-		searchControls.add(UserPanel.getSearchBox());
+		// Add search box to panel
+		searchPanel.add(UserPanel.getSearchBox());
 		
-		// Add search button to toolbar
-		searchControls.add(UserPanel.createSearchButton());
-		// Add option selector to toolbar
-		searchControls.add(UserPanel.createOptionSelector());
+		// Add search button to panel
+		searchPanel.add(UserPanel.createSearchButton());
 		
-		// Return fully configured search controls.
-		return searchControls;
+		// Add option selector to panel
+		searchPanel.add(UserPanel.createOptionSelector());
+		
+		return searchPanel;
 		
 	}
 	
@@ -257,23 +249,22 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 *Create search button. Search button allows user to commit search
+	 *Create search button. Search button allows user to commit search.
+	 *NOTE: button not 100% necessary. a simple tap on the return key achieves the same ends
 	 *@param null
 	 *@return JButton search
 	 */
 	private static JButton createSearchButton() {
 		URL iconURL = UserPanel.class.getClassLoader().getResource("search.png");
 		ImageIcon iconSearch = new ImageIcon(iconURL);
-		// Use icon object to create a new close button. 
 		JButton searchButton = new JButton(iconSearch);
-		// Add ToolTipText.
 		searchButton.setToolTipText("Search");
-		// Set color
-		// Clicking of button results in the closing of current panel
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
 					Cytoscape.notifyUser("Please enter a search term");
+				} else if (! UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
+					Cytoscape.notifyUser("Illegal characters present. Please enter a valid search term.");
 				} else {
 					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
 				}
@@ -294,12 +285,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Switch current panel with indicated panel
-	 * @param String panel
+	 * Switch info panel to one that's specific
+	 * to the currently selected website
+	 * @param null
 	 * @return null
 	 */
-	private void switcharoo(String websitePanel) {
-		if (! websitePanel.trim().equalsIgnoreCase(this.getSelectedInfoPanel().getName())) {
+	private void performSwitcharoo() {
 			this.remove(this.getSelectedInfoPanel());
 			switch (UserPanel.getSelectedWebsite()) {
 				case Search.DEFAULT:
@@ -312,7 +303,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			this.add(this.getSelectedInfoPanel(), BorderLayout.CENTER);	
 			this.revalidate();
 			this.repaint();
-		}
 	}
 	
 	/**
@@ -329,8 +319,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox jcmbType = (JComboBox) e.getSource();
 				String website = (String) jcmbType.getSelectedItem();
+				// Set selected website before performing switcharoo
+				// NOTE: This step is imperative. Not doing this will
+				// result in a null pointer exception being thrown.
 				UserPanel.setSelectedWebsite(Search.getSiteMap().get(website));
-				UserPanel.getCurrentObjectRef().switcharoo(website);
+				// Perform switcharoo iff the panel being switched to is 
+				// distinct from the current panel
+				if (! website.trim().equalsIgnoreCase(UserPanel.getPanelObjectRef().getSelectedInfoPanel().getName())) {
+					UserPanel.getPanelObjectRef().performSwitcharoo();
+				}
 			}
 		});
 		return optionSelector;
@@ -344,9 +341,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 *@return JButton close
 	 */
 	private static JButton createCloseButton() {
-		// Use icon object to create a new close button. 
 		JButton closeButton = new JButton("Close");
-		// Add ToolTipText.
 		closeButton.setToolTipText("Close Social Network Panel");
 		// Clicking of button results in the closing of current panel
 		closeButton.addActionListener(new ActionListener() {
@@ -366,10 +361,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static JButton createResetButton() {
 		JButton resetButton = new JButton("Reset");
-		resetButton.setToolTipText("Reset info panel");
+		resetButton.setToolTipText("Reset");
+		// 'Reset' is achieved by creating a new panel
+		// and replacing the current panel with the new
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				
+				UserPanel.getPanelObjectRef().performSwitcharoo();
 			}
 		});
 		return resetButton;

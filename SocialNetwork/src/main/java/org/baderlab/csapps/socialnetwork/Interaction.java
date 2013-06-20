@@ -14,10 +14,8 @@ public class Interaction {
 	
 	/**
 	 * Create new consortium & edgeList hash-map 
-	 * @param ArrayList authorListNoDuplicates
-	 * @param ArrayList publicationList
-	 * @return 
-	 * @return null
+	 * @param ArrayList abstractEdgeList
+	 * @return Map map
 	 */
 	private static Map<Consortium, ArrayList<AbstractEdge>> loadMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
@@ -56,9 +54,9 @@ public class Interaction {
 	
 	/**
 	 * Return map. Keys are all distinct consortiums found in map.
-	 * Values are the various interactions that each individual consortium has had.
+	 * Values are the various interactions that each individual consortium shares.
 	 * @param null
-	 * @return Map consortiumEdgeMap
+	 * @return Map map
 	 */
 	public static Map<Consortium, ArrayList<AbstractEdge>> getMap(List<? extends AbstractEdge> edgeList) {
 		return Interaction.loadMap(edgeList);

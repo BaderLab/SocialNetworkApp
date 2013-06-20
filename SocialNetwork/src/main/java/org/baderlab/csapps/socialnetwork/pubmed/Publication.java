@@ -18,11 +18,11 @@ public class Publication extends AbstractEdge {
 	 */
 	private String pubDate = null;
 	/**
-	 * A list of all authors who played a part in the creation of this publication
+	 * A list of all authors who played a part in the creation of the publication
 	 */
 	private ArrayList<Author> authors = new ArrayList<Author>(); 
 	/**
-	 * The journal to which this publication belongs
+	 * The journal to which the publication belongs
 	 */
 	private String journal = null;
 	/**
@@ -30,11 +30,11 @@ public class Publication extends AbstractEdge {
 	 */
 	private String title = null;
 	/**
-	 * The total amount of times this publication has been cited
+	 * The total amount of times the publication has been cited
 	 */
 	private String timesCited = "0";
 	/**
-	 * The expected number of citations this publication expects to receive
+	 * The expected number of citations the publication expects to receive
 	 */
 	private String expectedCitations = null; 
 
@@ -57,7 +57,7 @@ public class Publication extends AbstractEdge {
 
 
 	/**
-	 * Return a text representation of all of this publication's authors
+	 * Return a text representation of all of publication's authors
 	 * @paran null
 	 * @return String authors
 	 */
@@ -72,7 +72,7 @@ public class Publication extends AbstractEdge {
 	
 	
 	/**
-	 * Return arraylist containing publication authors
+	 * Return list containing publication authors
 	 * @return
 	 */
 	public List<? extends AbstractNode> getNodes() {

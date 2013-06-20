@@ -31,11 +31,11 @@ import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAutho
  */
 public class Incites {
 	/**
-	 * Used for confirming faculty name when loading data files.
+	 * Confirmed. (Used when assessing Faculty input).
 	 */
 	final private static String CONFIRM = "CONFIRM";
 	/**
-	 * Used for confirming faculty name when loading data files. 
+	 * Not confirmed. (Used when assessing Faculty input).
 	 */
 	final private static String NOT_CONFIRMED = "NOT CONFIRMED";
 	/**
@@ -382,8 +382,8 @@ public class Incites {
 						Cytoscape.notifyUser("Network could not be created. Please specify faculty.");
 					} else {
 						if (Incites.getConfirmButtonRef().getName().equalsIgnoreCase(Incites.NOT_CONFIRMED)) {
-							Cytoscape.notifyUser("Network could not be created. Please confirm the following faculty " 
-									+ Incites.getFacultyTextFieldRef().getText());	
+							Cytoscape.notifyUser("Network could not be created. Please confirm faculty name " +
+									             "by pressing plus sign");	
 						} else {
 							try {
 								Cytoscape.createNetwork(Incites.getIncitesFileRef());
@@ -417,9 +417,9 @@ public class Incites {
 					if (confirmButton.getName().equalsIgnoreCase(Incites.NOT_CONFIRMED)) {
 						confirmButton.setIcon(Incites.ICON_CONFIRMED);
 						confirmButton.setName(Incites.CONFIRM);
-					} 
-				} 
-			}	
+					}
+				}
+			}
 		});	
 		return confirmButton;
 	}
@@ -434,7 +434,7 @@ public class Incites {
 		JButton loadButton = new JButton("...");
 		loadButton.setToolTipText("Load Incites data");
 		
-		// Clicking of button results in the popping of a dialog box that implores the user
+		// Clicking of button results in the popping up of a dialog box that implores the user
 		// to select a new data file. 
 		loadButton.addActionListener(new ActionListener() {
 			
@@ -453,6 +453,8 @@ public class Incites {
 					File textFile = chooser.getSelectedFile();
 					Incites.seIncitesFile(textFile);
 					Incites.getPathTextFieldRef().setText(textFile.getAbsolutePath());
+					Incites.getConfirmButtonRef().setName(Incites.NOT_CONFIRMED);
+					Incites.getConfirmButtonRef().setIcon(Incites.ICON_NOT_CONFIRMED);
 				} else {
 					Incites.seIncitesFile(null);
 					Incites.getPathTextFieldRef().setText(null);

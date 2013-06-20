@@ -64,7 +64,8 @@ import java.net.URL;
  * The user-triggered collapsable panel containing the component (trigger) in the titled border
  */
 public class CollapsiblePanel extends JPanel {
-    //Border
+	private static final long serialVersionUID = 1L;
+	//Border
     CollapsableTitledBorder border; // includes upper left component and line type
     Border collapsedBorderLine = BorderFactory.createEmptyBorder(2, 2, 2, 2); // no border
     Border expandedBorderLine = null; // because this is null, default is used, etched lowered border on MAC

@@ -75,7 +75,7 @@ public class Consortium {
 		if (node1 == null) {
 			if (other.node1 != null)
 				return false;
-		// Consortiums are considered equal regardless of order (i.e. author1 and author2
+		// Consortiums are considered equal regardless of order (i.e. node1 and node2
 		// are interchangeable).
 		} else if (! (node1.equals(other.node1) | node1.equals(other.node2)) )
 			return false;
@@ -85,17 +85,5 @@ public class Consortium {
 		} else if (! (node2.equals(other.node1) | node2.equals(other.node2)) )
 			return false;
 		return true;
-	}
-	
-	/**
-	 * Return string representation of Consortium in the format: 
-	 * node#1: [node1 name]
-	 * node#2: [node2 name]
-	 * @param null
-	 * @return String consortium
-	 */
-	public String toString() {
-		return "\nnode#1: " + node1
-			+  "\nnode#2: " + node2 + "\n";
 	}
 }

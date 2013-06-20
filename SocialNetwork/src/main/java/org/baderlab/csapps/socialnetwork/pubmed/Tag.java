@@ -6,7 +6,8 @@ package main.java.org.baderlab.csapps.socialnetwork.pubmed;
  */
 public class Tag {
 	/**
-	 * Tag is available globally to enable incremental building
+	 * Tag consists of queryKey, webEnv, retStart and retMax values.
+	 * Necessary to recover document summaries from PubMed
 	 */
 	private String tag = null;
 	

@@ -35,7 +35,7 @@ public class Search {
 	/**
 	 * Total hits
 	 */
-	public int hits = 0;
+	public int totalHits = 0;
 
 	/**
 	 * Create a new search session 
@@ -52,7 +52,7 @@ public class Search {
 				break;
 			case PUBMED: 
 				this.results = Pubmed.getListOfPublications(searchTerm);
-				this.hits = Pubmed.getTotalPubs();
+				this.totalHits = Pubmed.getTotalPubs();
 				break;
 		}
 	}
@@ -60,7 +60,7 @@ public class Search {
 	/**
 	 * Get list of all websites currently supported by search
 	 * @param null
-	 * @return List websiteList
+	 * @return ListsiteList
 	 */
 	public static String[] getSiteList() {
 		String[] siteList = { "--SELECT--", "PubMed"};
@@ -74,7 +74,7 @@ public class Search {
 	 * @return Map<String, int> academiaMap
 	 */
 	public static Map<String, Integer> getSiteMap() {
-		Map<String, Integer> siteMap = new HashMap();
+		Map<String, Integer> siteMap = new HashMap<String, Integer>();
 		siteMap.put("--SELECT--", Search.DEFAULT);
 		siteMap.put("PubMed", Search.PUBMED);
 		return siteMap;
@@ -92,10 +92,10 @@ public class Search {
 	/**
 	 * Get total number of hits
 	 * @param null
-	 * @return in hits
+	 * @return in totalHits
 	 */
-	public int getHits() {
-		return this.hits;
+	public int getTotalHits() {
+		return this.totalHits;
 	}
 	
 }

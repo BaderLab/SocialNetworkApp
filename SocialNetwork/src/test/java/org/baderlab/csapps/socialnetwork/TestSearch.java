@@ -25,7 +25,7 @@ public class TestSearch {
 	 */
 	public void testPubmedSearch() {
 		Search search = new Search("isserlin r", Search.PUBMED);
-		int hits = search.getHits();
+		int hits = search.getTotalHits();
 		int results = search.getResults().size();
 		assertTrue(hits == results);
 	}

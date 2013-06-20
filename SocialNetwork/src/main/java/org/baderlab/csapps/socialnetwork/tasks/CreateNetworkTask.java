@@ -1,6 +1,5 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
@@ -36,7 +33,6 @@ import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
-import org.xml.sax.SAXException;
 
 /**
  * Create a new network
@@ -107,12 +103,9 @@ public class CreateNetworkTask extends AbstractTask {
 	}
 	
 	/**
-	 * Return a network containing author's co-authors and all corresponding publications
-	 * @param String authorName
+	 * Return a network containing node's siblings and all corresponding edges
+	 * @param Map map
 	 * @return CyNetwork network
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
 	 */
 	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) {
 		// Create an empty network 
@@ -158,7 +151,7 @@ public class CreateNetworkTask extends AbstractTask {
 		
 		Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
 		
-		// Get all of author's co-authors and publications
+		// Get all consortiums and their corresponding edges
 		for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
 			consortium = entry.getKey();
 			edgeArray= entry.getValue();
@@ -194,7 +187,6 @@ public class CreateNetworkTask extends AbstractTask {
 				}
 			}
 			
-			// Set progress
 			updateProgress();
 			
 		}
@@ -230,7 +222,6 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @return null
 	 */
 	public void run(TaskMonitor monitor) throws Exception {
-		// ??
 		CyNetworkManager networkManager = cyNetworkManagerServiceRef;
 		CyNetworkViewManager networkViewManager = cyNetworkViewManagerServiceRef;
 
@@ -238,29 +229,28 @@ public class CreateNetworkTask extends AbstractTask {
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
 		
 		if (map == null) {
-			Cytoscape.notifyUser("Map has a value of null. Must be an issue w/ Cytoscape.getMap() or the file or term you're trying to build your network out of is invalid.");
+			Cytoscape.notifyUser("Network could not be loaded. Cytoscape network map could not be accessed.");
 		} else {
 			
 			//Set monitor parameters
 			this.monitor = monitor;
 			this.monitor.setTitle("Loading Network");
 			this.monitor.setProgress(0.0);
-			
-			// Total amount of steps to completion has to be set for progress to be tracked
-			this.totalSteps = map.size() + 2;
+			this.totalSteps = map.size();
 
 			// Load network
 			CyNetwork network = loadNetwork(map);
 
-			if (network == null)
+			if (network == null) {
 				return;
+			}
 			networkManager.addNetwork(network);
 
 			final Collection<CyNetworkView> views = networkViewManager.getNetworkViews(network);
 			CyNetworkView networkView = null;
-			if(views.size() != 0)
+			if(views.size() != 0) {
 				networkView = views.iterator().next();
-
+			}
 			if (networkView == null) {
 				// Create a new view for my network
 				networkView = cyNetworkViewFactoryServiceRef.createNetworkView(network);
@@ -269,9 +259,6 @@ public class CreateNetworkTask extends AbstractTask {
 				Cytoscape.notifyUser("Network already present");
 			}
 			
-			// MAJOR STEP: Update progress
-			updateProgress();
-
 			// Set the variable destroyView to true, the following snippet of code
 			// will destroy a view
 			boolean destroyView = false;
@@ -281,14 +268,11 @@ public class CreateNetworkTask extends AbstractTask {
 
 			// Set visuals
 			// create a new visual style
-			VisualStyle vs= visualStyleFactoryServiceRef.createVisualStyle("Social-Network-App Visual Style");
+			VisualStyle vs= visualStyleFactoryServiceRef.createVisualStyle("Social Network App Vis");
 
-			// ??
 			addNodeLabels(vs);
 			addEdgeLabels(vs);
 			
-			updateProgress();
-
 			// Add the new visual style to manager
 			vmmServiceRef.setCurrentVisualStyle(vs);
 

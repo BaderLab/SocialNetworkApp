@@ -198,20 +198,18 @@ public class Cytoscape {
 		
 			// Create new search session
 			Search search = new Search(searchTerm, website);
-			// Get a list of the results that are going to serve as edges. Result type
-			// may differ between different websites
+			// Get a list of the results that are going to serve as edges. Exact result type
+			// may vary with website
 			List<? extends AbstractEdge> results = search.getResults();
 			
 			if (results == null) {
 				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
-				// Set network name
 				Cytoscape.setNetworkName(searchTerm + "\'s copublication network");
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 				// Transfer map to Cytoscape's map variable
 				Cytoscape.setMap(map);
-				// Create network using map
 				Cytoscape.createNetwork();
 			}
 	}
