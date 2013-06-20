@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.xml.sax.SAXException;
 
-import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,15 +38,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	private static int selectedWebsite = Search.DEFAULT;
 		
-	private static JPanel searchPanel = null;
+	private static JPanel selectedInfoPanelRef = null;
+
+	private static JPanel searchPanelRef = null;
 		
-	private static JPanel controlPanel = null;
-	
-	private static JPanel currentInfoPanel = null;
+	private static JPanel controlPanelRef = null;
 	
 	private static UserPanel currentObjectRef = null;
 	
-	private static JTextField searchBox = null;
+	private static JTextField searchBoxRef = null;
 		
 	private static final long serialVersionUID = 8292806967891823933L;
 	
@@ -58,7 +56,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void setSearchBox(JTextField searchBox) {
-		UserPanel.searchBox = searchBox;
+		UserPanel.searchBoxRef = searchBox;
 	}
 	
 	/**
@@ -67,9 +65,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return JTextField searchBox
 	 */
 	public static JTextField getSearchBox() {
-		return UserPanel.searchBox;
+		return UserPanel.searchBoxRef;
 	}
-	
+
+
 	/**
 	 * Create a new panel
 	 * @param null
@@ -84,16 +83,16 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.setPreferredSize(new Dimension(400,200));
 		
 		// Add search box
-		UserPanel.searchPanel = UserPanel.createSearchPanel();
-		this.add(UserPanel.searchPanel, BorderLayout.NORTH);
+		UserPanel.searchPanelRef = UserPanel.createSearchPanel();
+		this.add(UserPanel.searchPanelRef, BorderLayout.NORTH);
 		
 		// Add default info panel
-		this.setCurrentInfoPanel(getDefaultInfoPanel());
-		this.add(currentInfoPanel, BorderLayout.CENTER);
+		this.setSelectedInfoPanel(getDefaultInfoPanel());
+		this.add(selectedInfoPanelRef, BorderLayout.CENTER);
 		
 		// Add control toolbar
-		UserPanel.controlPanel = UserPanel.createControlPanel();
-		this.add(UserPanel.controlPanel, BorderLayout.SOUTH);
+		UserPanel.controlPanelRef = UserPanel.createControlPanel();
+		this.add(UserPanel.controlPanelRef, BorderLayout.SOUTH);
 		
 		// Set UserPanel object reference to current object
 		UserPanel.setCurrentObjectRef(this);
@@ -105,8 +104,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param null
 	 * @return JPanel currentInfoPanel
 	 */
-	private JPanel getCurrentInfoPanel() {
-		return UserPanel.currentInfoPanel;
+	private JPanel getSelectedInfoPanel() {
+		return UserPanel.selectedInfoPanelRef;
 	}
 	
 	/**
@@ -114,8 +113,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param JPanel infoPanel
 	 * @return null
 	 */
-	private void setCurrentInfoPanel(JPanel infoPanel) {
-		UserPanel.currentInfoPanel = infoPanel;
+	private void setSelectedInfoPanel(JPanel infoPanel) {
+		UserPanel.selectedInfoPanelRef = infoPanel;
 	}
 	
 	/**
@@ -225,15 +224,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				} else if (UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
 					Cytoscape.notifyUser("Illegal characterrs present. Please enter a valid search term.");
 				} else {
-					try {
-						Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
-					} catch (ParserConfigurationException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					} catch (SAXException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					} catch (IOException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					}
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
 				}
 			}
 		});
@@ -284,15 +275,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
 					Cytoscape.notifyUser("Please enter a search term");
 				} else {
-					try {
-						Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
-					} catch (ParserConfigurationException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					} catch (SAXException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					} catch (IOException e) {
-						Cytoscape.notifyUser("Check createSearchBox() in panel.java. An exception occurred there.");
-					}
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
 				}
 			}
 		});
@@ -316,17 +299,17 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	private void switcharoo(String websitePanel) {
-		if (! websitePanel.trim().equalsIgnoreCase(this.getCurrentInfoPanel().getName())) {
-			this.remove(this.getCurrentInfoPanel());
+		if (! websitePanel.trim().equalsIgnoreCase(this.getSelectedInfoPanel().getName())) {
+			this.remove(this.getSelectedInfoPanel());
 			switch (UserPanel.getSelectedWebsite()) {
 				case Search.DEFAULT:
-					setCurrentInfoPanel(UserPanel.getDefaultInfoPanel());
+					setSelectedInfoPanel(UserPanel.getDefaultInfoPanel());
 					break;
 				case Search.PUBMED: 
-					setCurrentInfoPanel(Pubmed.getPubmedInfoPanel());
+					setSelectedInfoPanel(Pubmed.getPubmedInfoPanel());
 					break;
 			}
-			this.add(this.getCurrentInfoPanel(), BorderLayout.CENTER);	
+			this.add(this.getSelectedInfoPanel(), BorderLayout.CENTER);	
 			this.revalidate();
 			this.repaint();
 		}

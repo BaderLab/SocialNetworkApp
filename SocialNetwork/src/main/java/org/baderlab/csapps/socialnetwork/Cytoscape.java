@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +42,17 @@ public class Cytoscape {
 	 */
 	private static CreateNetworkTaskFactory networkTaskFactoryRef = null;
 	/**
-	 * A reference to the app's user panel. User will interact with app primary through
+	 * A reference to the app's user panel. User will interact with app primarily through
 	 * this panel.
 	 */
 	private static UserPanel userPanelRef = null;
 	/**
-	 * A reference to the user panel action. Class cytoscape needs it to close the panel
+	 * A reference to the user panel action. Cytoscape needs it to close the panel
 	 */
 	private static UserPanelAction userPanelAction = null;
 	/**
 	 * A reference to CyServiceRegistrar. Necessary for unregistering services at user's 
-	 * express wish and convenience.
+	 * convenience.
 	 */
 	private static CyServiceRegistrar cyServiceRegistrarRef = null;
 	/**
@@ -161,11 +162,12 @@ public class Cytoscape {
 	/**
 	 * Create a network from file
 	 * @param File networkFile
+	 * @throws FileNotFoundException 
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 */	
-	public static void createNetwork(File networkFile) throws ParserConfigurationException, SAXException, IOException {
+	public static void createNetwork(File networkFile) throws FileNotFoundException {
 		
 		// Parse for list of publications
 		List<? extends AbstractEdge> pubList = Incites.getPublications(networkFile);
@@ -174,7 +176,7 @@ public class Cytoscape {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
 			// Set network name
-			Cytoscape.setNetworkName(Incites.getFacultyTextField().getText().trim() + " Co-Publication Network");
+			Cytoscape.setNetworkName(Incites.getFacultyTextFieldRef().getText().trim() + " copub network");
 			// Construct map
 			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
 			// Store map
@@ -192,7 +194,7 @@ public class Cytoscape {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public static void createNetwork(String searchTerm, int website) throws ParserConfigurationException, SAXException, IOException {
+	public static void createNetwork(String searchTerm, int website) {
 		
 			// Create new search session
 			Search search = new Search(searchTerm, website);
@@ -204,7 +206,7 @@ public class Cytoscape {
 				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
 				// Set network name
-				Cytoscape.setNetworkName(searchTerm + "\'s Co-Publication Network");
+				Cytoscape.setNetworkName(searchTerm + "\'s copublication network");
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 				// Transfer map to Cytoscape's map variable
@@ -221,7 +223,7 @@ public class Cytoscape {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	private static void createNetwork() throws ParserConfigurationException, SAXException, IOException {
+	private static void createNetwork() {
 		
 		// Execute network task. 
 		// NOTE: Relevant node & edge info is not directly coupled with task execution. It is

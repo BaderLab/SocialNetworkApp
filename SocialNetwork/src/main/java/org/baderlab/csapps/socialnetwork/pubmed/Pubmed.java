@@ -321,7 +321,7 @@ public class Pubmed {
 		// Set border
         pubmedInfoPanel.setBorder(BorderFactory.createTitledBorder("PubMed"));
         
-		pubmedInfoPanel.add(Incites.createIncitesPanel(), BorderLayout.NORTH);
+		pubmedInfoPanel.add(Incites.createIncitesInfoPanel(), BorderLayout.NORTH);
 		
 		return pubmedInfoPanel;
 	}

@@ -114,7 +114,7 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
-	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) throws ParserConfigurationException, SAXException, IOException {
+	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) {
 		// Create an empty network 
 		CyNetwork myNet = cyNetworkFactoryServiceRef.createNetwork();
 		// Get network node table
