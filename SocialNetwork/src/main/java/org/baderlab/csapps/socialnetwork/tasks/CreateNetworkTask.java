@@ -45,9 +45,6 @@ public class CreateNetworkTask extends AbstractTask {
 	private CyNetworkManager cyNetworkManagerServiceRef;
 	private CyNetworkNaming cyNetworkNamingServiceRef;
 	private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
-	private VisualMappingManager vmmServiceRef;
-	private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
-	private VisualStyleFactory visualStyleFactoryServiceRef;
 	private int currentSteps = 0;
 	private int totalSteps = 0;
 	private double progress = 0.0;
@@ -59,47 +56,13 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @return null
 	 */
 	public CreateNetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
-			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef, 
-			VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingManager vmmServiceRef) {
+			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
 		this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 		this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
 		this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
 		this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
 		this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
-		this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
-		this.vmmServiceRef = vmmServiceRef;
-		this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
-	}
-	
-	/**
-	 * Add a label to each node
-	 * @param VisualStyle visualStyle
-	 * @return  VisualStyle visualStyle
-	 */
-	public VisualStyle addNodeLabels(VisualStyle visualStyle) {
-		// Set node color map to attribute ???
-		PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>)
-			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Last Name", Integer.class, BasicVisualLexicon.NODE_LABEL);
-					
-		visualStyle.addVisualMappingFunction(mapping);	
-		
-		return visualStyle;
-	}
-	
-	/**
-	 * Add a label to each edge
-	 * @param VisualStyle visualStyle
-	 * @return  VisualStyle visualStyle
-	 */
-	public VisualStyle addEdgeLabels(VisualStyle visualStyle) {
-		// Set node color map to attribute ???
-		PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>)
-			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Title", Integer.class, BasicVisualLexicon.EDGE_LABEL);
-					
-		visualStyle.addVisualMappingFunction(mapping);	
-		
-		return visualStyle;
 	}
 	
 	/**
@@ -190,6 +153,7 @@ public class CreateNetworkTask extends AbstractTask {
 			updateProgress();
 			
 		}
+		
 		return myNet;
 	}
 	
@@ -265,16 +229,6 @@ public class CreateNetworkTask extends AbstractTask {
 			if (destroyView) {
 				networkViewManager.destroyNetworkView(networkView);
 			}
-
-			// Set visuals
-			// create a new visual style
-			VisualStyle vs = visualStyleFactoryServiceRef.createVisualStyle("Social Network App Vis");
-
-			addNodeLabels(vs);
-			addEdgeLabels(vs);
-			
-			// Add the new visual style to manager
-			vmmServiceRef.setCurrentVisualStyle(vs);
 
 			// Auto apply layout
 			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef.getLayout("force-directed");

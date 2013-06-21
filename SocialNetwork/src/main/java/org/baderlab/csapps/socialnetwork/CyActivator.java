@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 
 import org.cytoscape.application.CyApplicationManager;
@@ -16,6 +17,7 @@ import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 import org.osgi.framework.BundleContext;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CyNetworkNaming;
@@ -31,6 +33,10 @@ public class CyActivator extends AbstractCyActivator {
 	}
 
 	public void start(BundleContext bc) {
+		
+		// ??
+		NetworkPanelCleanser networkPanelCleanser = new NetworkPanelCleanser();
+		registerService(bc, networkPanelCleanser, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		// ??
 		CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
@@ -63,6 +69,12 @@ public class CyActivator extends AbstractCyActivator {
 		VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService(bc,VisualMappingFunctionFactory.class,"(mapping.type=passthrough)");
 
 		// ??
+		VisualMappingFunctionFactory continuousMappingFactoryServiceRef = getService(bc,VisualMappingFunctionFactory.class,"(mapping.type=continuous)");
+		
+		// ??
+		VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService(bc,VisualMappingFunctionFactory.class,"(mapping.type=discrete)");		
+		
+		// ??
 		VisualMappingManager vmmServiceRef = getService(bc,VisualMappingManager.class);
 		
 		// ??
@@ -70,12 +82,17 @@ public class CyActivator extends AbstractCyActivator {
 		
 		// get the service registrar so we can register new services in different classes
 		CyServiceRegistrar cyServiceRegistrarRef = getService(bc, CyServiceRegistrar.class);
+		
+		// Initialize & register apply visual style task factory
+		ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = 
+				new ApplyVisualStyleTaskFactory(visualStyleFactoryServiceRef, vmmServiceRef, passthroughMappingFactoryServiceRef, 
+						                        continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef);
+		registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
 			
 		
 		// Initialize & register network task factory
 		CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
-																		cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, 
-																		visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, vmmServiceRef);
+																		cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef);
 		registerService(bc,networkTaskFactoryRef,TaskFactory.class, new Properties());
 		
 		// Create user panel 
@@ -85,7 +102,9 @@ public class CyActivator extends AbstractCyActivator {
 		serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
 		serviceProperties.put("preferredMenu", "Apps.Social Network");
-		UserPanelAction userPanelAction = new UserPanelAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, cyServiceRegistrarRef, userPanel);		
+		UserPanelAction userPanelAction = new UserPanelAction(serviceProperties, cyApplicationManagerServiceRef, 
+				                                              cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, 
+				                                              cyServiceRegistrarRef, userPanel);		
 		
 		registerService(bc, userPanelAction, CyAction.class, new Properties());
 		
@@ -108,6 +127,10 @@ public class CyActivator extends AbstractCyActivator {
 		// Transfer a reference of task manager service to class Cytoscape
 		// FYI: Makes execution of tasks via form-field more flexible
 		Cytoscape.setTaskManager(taskManager);
+		
+		// Transfer a reference of apply visual style task factory to class Cytoscape
+		// NOTE: Violates Dependency Injection
+		Cytoscape.setApplyVisualStyleTaskFactoryRef(applyVisualStyleTaskFactoryRef);
 
 	}
 }

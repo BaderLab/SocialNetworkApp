@@ -17,6 +17,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -37,6 +38,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static int selectedCategory = Category.DEFAULT;
 	/**
+	 * Visual style that user has selected
+	 */
+	private static int selectedVisualStyle = Cytoscape.DEFAULT;
+	/**
 	 * Reference to the currently displayed info panel
 	 */
 	private static JPanel infoPanelRef = null;
@@ -49,6 +54,14 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static JPanel controlPanelRef = null;
 	/**
+	 * Reference to network panel
+	 */
+	private static JPanel networkPanelRef = null;
+	/**
+	 * Reference to network panel label
+	 */
+	private static JLabel networkPanelLabelRef = null;
+	/**
 	 * Reference to the actual panel object being manipulated
 	 */
 	private static UserPanel PanelObjectRef = null;
@@ -60,6 +73,128 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Search option selector
 	 */
 	private static JComboBox searchOptionSelector = null;
+	/**
+	 * Visual style selector
+	 */
+	private static JComboBox visualStyleSelector = null;
+	/**
+	 * Reference to visual style panel
+	 */
+	private static JPanel visualStylePanel = null;
+	/**
+	 * What type of visual panel is currently being displayed to the user
+	 */
+	private static int visualStyleSelectorType = Category.DEFAULT;
+
+	
+	/**
+	 * Set visual style selector
+	 * @param JComboBox visualStyleSelector
+	 * @return null
+	 */
+	public static void setVisualStyleSelector(JComboBox visualStyleSelector) {
+		UserPanel.visualStyleSelector = visualStyleSelector;
+	}
+	
+	/**
+	 * Get visual style selector
+	 * @param null
+	 * @return JComboBox visualStyleSelector
+	 */
+	public static JComboBox getVisualStyleSelector() {
+		return UserPanel.visualStyleSelector;
+	}
+
+	
+	/**
+	 * Set visual style type
+	 * @param int visualStyleType
+	 * @return null
+	 */
+	public static void setVisualStyleSelectorType(int visualStyleType) {
+		UserPanel.visualStyleSelectorType = visualStyleType;
+	}
+	
+	/**
+	 * Get visual style type
+	 * @param null
+	 * @return int visualStyleType
+	 */
+	public static int getVisualStyleSelectorType() {
+		return UserPanel.visualStyleSelectorType;
+	}
+	
+	/**
+	 * Set visual style panel
+	 * @param JPanel visualStylePanel
+	 * @return null
+	 */
+	public static void setVisualStylePanel(JPanel visualStylePanel) {
+		UserPanel.visualStylePanel = visualStylePanel;
+	}
+	
+	/**
+	 * Get visual style panel
+	 * @param null
+	 * @return JPanel visualStylePanel
+	 */
+	public static JPanel getVisualStylePanel() {
+		return UserPanel.visualStylePanel;
+	}
+	
+	/**
+	 * Set network panel label ref
+	 * @param JLabel networkPanelLabel
+	 * @return null
+	 */
+	public static void setNetworkPanelLabelRef(JLabel networkPanelLabel) {
+		UserPanel.networkPanelLabelRef = networkPanelLabel;
+	}
+	
+	/**
+	 * Get network panel label ref
+	 * @param null
+	 * @return JLabel networkPanelLabelRef
+	 */
+	public static JLabel getNetworkPanelLabelRef() {
+		return UserPanel.networkPanelLabelRef;
+	}
+	
+	/**
+	 * Set network panel reference
+	 * @param JPanel networkPanelRef
+	 * @return null
+	 */
+	private static void setNetworkPanelRef(JPanel networkPanelRef) {
+		UserPanel.networkPanelRef = networkPanelRef;
+	}
+	
+	/**
+	 * Get network panel reference
+	 * @param null
+	 * @return JPanel networkPanelRef
+	 */
+	public static JPanel getNetworkPanelRef() {
+		return UserPanel.networkPanelRef;
+	}
+	
+	/**
+	 * Set selected visual style 
+	 * @param int visualStyle
+	 * @return null
+	 */
+	private static void setSelectedVisualStyle(int visualStyle) {
+		UserPanel.selectedVisualStyle = visualStyle;
+	}
+	
+	/**
+	 * Get selected visual style
+	 * @param null
+	 * @return int visualStyle
+	 */
+	private static int getSelectedVisualStyle() {
+		return UserPanel.selectedVisualStyle;
+	}
 	
 	/**
 	 * Set search option selector
@@ -108,7 +243,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 
 	/**
-	 * Get user panel searchboc
+	 * Get user panel searchbox
 	 * @param null
 	 * @return JTextField searchBox
 	 */
@@ -193,7 +328,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param null
 	 * @return int selectedCategory
 	 */
-	private static int getSelectedCategory() {
+	public static int getSelectedCategory() {
 		return UserPanel.selectedCategory;
 	}
 	
@@ -208,7 +343,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	private static JPanel createBottomPanel() {
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new BorderLayout());
-		bottomPanel.add(UserPanel.createNetworkPanel(), BorderLayout.NORTH);
+		UserPanel.setNetworkPanelRef(UserPanel.createNetworkPanel());
+		bottomPanel.add(UserPanel.getNetworkPanelRef(), BorderLayout.NORTH);
 		UserPanel.setControlPanelRef(UserPanel.createControlPanel());
 		bottomPanel.add(UserPanel.getControlPanelRef(), BorderLayout.SOUTH);
 		return bottomPanel;
@@ -254,8 +390,22 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	private static JPanel createNetworkPanel() {
 		JPanel networkPanel = new JPanel();
 		networkPanel.setBorder(BorderFactory.createTitledBorder("Network"));
+		networkPanel.setLayout(new BorderLayout());
 		return networkPanel;
-		}
+	}
+	
+	/**
+	 * Create visual style panel. Will allow the user to switch visual styles for 
+	 * a particular network.
+	 * @param null
+	 * @return JPanel visualStylePanel
+	 */
+	public static JPanel createVisualStylePanel() {
+		JPanel visualStylePanel = new JPanel();
+		visualStylePanel.setBorder(BorderFactory.createTitledBorder("Visual Style"));
+		visualStylePanel.setLayout(new BoxLayout(visualStylePanel, BoxLayout.X_AXIS));
+		return visualStylePanel;
+	}
 	
 	/**
 	 * Return new top panel for use in main app panel. Top panel
@@ -361,10 +511,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			public void actionPerformed(ActionEvent event) {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
 					Cytoscape.notifyUser("Please enter a search term");
-				} else if (! UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
-					Cytoscape.notifyUser("Illegal characters present. Please enter a valid search term.");
+				} else if (! UserPanel.isValidInput(UserPanel.getSearchBox()
+						   .getText().trim())) {
+					Cytoscape.notifyUser("Illegal characters present. " +
+							             "Please enter a valid search term.");
 				} else {
-					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedCategory());
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText()
+					, UserPanel.getSelectedCategory());
 				}
 			}
 		});
@@ -399,10 +552,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static JComboBox createCategoryOptionSelector() {
 		//Create new JComboBox
-		JComboBox optionSelector = new JComboBox(Category.getCategoryList());
-		optionSelector.setEditable(false);
-		optionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
-		optionSelector.addActionListener(new ActionListener() {
+		JComboBox categoryOptionSelector = new JComboBox(Category.getCategoryList());
+		categoryOptionSelector.setEditable(false);
+		categoryOptionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
+		categoryOptionSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox jcmbType = (JComboBox) e.getSource();
 				String category = (String) jcmbType.getSelectedItem();
@@ -412,21 +565,24 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				UserPanel.setSelectedCategory(Category.getCategoryMap().get(category));
 				// Perform switcharoo iff the panel being switched to is 
 				// distinct from the current panel
-				if (! category.trim().equalsIgnoreCase(UserPanel.getPanelObjectRef().getSelectedInfoPanel().getName())) {
+				if (! category.trim().equalsIgnoreCase(UserPanel
+					.getPanelObjectRef().getSelectedInfoPanel().getName())) {
 					UserPanel.getPanelObjectRef().performSwitcharoo();
 				}
 				//Create new JComboBox
 				switch(UserPanel.getSelectedCategory()) {
 					case Category.DEFAULT: 
-						UserPanel.getSearchOptionSelector().setModel(new DefaultComboBoxModel(Search.getDefaultOptionList()));
+						UserPanel.getSearchOptionSelector()
+						.setModel(new DefaultComboBoxModel(Search.getDefaultOptionList()));
 						break;
 					case Category.ACADEMIA: 
-						UserPanel.getSearchOptionSelector().setModel(new DefaultComboBoxModel(Search.getAcademiaOptionList()));
+						UserPanel.getSearchOptionSelector()
+						.setModel(new DefaultComboBoxModel(Search.getAcademiaOptionList()));
 						break;
 				}
 			}
 		});
-		return optionSelector;
+		return categoryOptionSelector;
 	}
 	
 	
@@ -436,15 +592,41 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return JComboBox optionSelector
 	 */
 	private static JComboBox createSearchOptionSelector() {
-		JComboBox optionSelector = new JComboBox(Search.getDefaultOptionList());
-		optionSelector.setEditable(false);
-		optionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
-		optionSelector.addActionListener(new ActionListener() {
+		JComboBox searchOptionSelector = new JComboBox(Search.getDefaultOptionList());
+		searchOptionSelector.setEditable(false);
+		searchOptionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
+		searchOptionSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 			}
 		});
-		return optionSelector;
+		return searchOptionSelector;
+	}
+	
+	/**
+	 * Create visual style selector. The type of selector created is dependent on
+	 * 
+	 * @param null
+	 * @return JComboBox visualStyleSelector
+	 */
+	public static JComboBox createVisualStyleSelector() {
+		JComboBox visualStyleSelector = new JComboBox(Category.getVisualStyleList());
+		visualStyleSelector.setEditable(false);
+		visualStyleSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
+		visualStyleSelector.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox jcmbType = (JComboBox) e.getSource();
+				String visualStyle = (String) jcmbType.getSelectedItem();
+				int visualStyleID = Category.getVisualStyleMap().get(visualStyle);
+				// Only apply visual style if selected visual style is distinct from
+				// current
+				if (! (UserPanel.getSelectedVisualStyle() == visualStyleID)) {
+					UserPanel.setSelectedVisualStyle(visualStyleID);
+					Cytoscape.applyVisualStyle(visualStyle);
+				}
+			}
+		});
+		return visualStyleSelector;
 	}
 	
 

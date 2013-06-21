@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -37,10 +38,14 @@ public class Cytoscape {
 	 */
 	private static TaskManager<?, ?> taskManagerServiceRef = null;
 	/**
-	 * CreateNetworkTaskFactory produces the required CoAuthorNetworkTask(s) slated
+	 * CreateNetworkTaskFactory produces the required CoAuthorNetworkTask(s). Slated
 	 * for execution by the task manager
 	 */
 	private static CreateNetworkTaskFactory networkTaskFactoryRef = null;
+	/**
+	 * ApplyViewTaskFactory applies the selected view to the current network
+	 */
+	private static ApplyVisualStyleTaskFactory applyViualStyleTaskFactoryRef = null;
 	/**
 	 * A reference to the app's user panel. User will interact with app primarily through
 	 * this panel.
@@ -58,7 +63,79 @@ public class Cytoscape {
 	/**
 	 * Network name
 	 */
-	private static String networkName = null;
+	private static String networkName = "DEFAULT";
+	/**
+	 * Network type. This information is for creating appropriate visual styles.
+	 */
+	private static int networkType = Category.DEFAULT;
+	/**
+	 * Selected network view
+	 */
+	private static int visualStyle = Cytoscape.DEFAULT;
+	/**
+	 * Default network view
+	 */
+	final public static int DEFAULT = -2;
+	/**
+	 * Chipped network view
+	 */
+	final public static int CHIPPED = -7;
+	
+	/**
+	 * Set network type
+	 * @param int networkType
+	 * @return null
+	 */
+	public static void setNetworkType(int networkType) {
+		Cytoscape.networkType = networkType;
+	}
+	
+	/**
+	 * Get network type
+	 * @param null
+	 * @return int networkType
+	 */
+	public static int getNetworkType() {
+		return Cytoscape.networkType;
+	}
+	
+	/**
+	 * Set apply view task factory reference
+	 * @param ApplyViewTaskFactory applyViewTaskFactoryRef
+	 * @return null
+	 */
+	public static void setApplyVisualStyleTaskFactoryRef(ApplyVisualStyleTaskFactory applyViewTaskFactoryRef) {
+		Cytoscape.applyViualStyleTaskFactoryRef = applyViewTaskFactoryRef;
+	}
+	
+	/**
+	 * Get apply view task factory reference
+	 * @param ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
+	 * @return null
+	 */
+	private static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {
+		return Cytoscape.applyViualStyleTaskFactoryRef;
+	}
+	
+	
+	/**
+	 * Set visual style
+	 * @param int visualStyle
+	 * @return null
+	 */
+	public static void setVisualStyle(int networkView) {
+		Cytoscape.visualStyle = networkView;
+	}
+	
+	/**
+	 * Get visual style
+	 * @param null
+	 * @return int visualStyle
+	 */
+	public static int getVisualStyle() {
+		return Cytoscape.visualStyle;
+	}
+
 	
 	/**
 	 * Set network name
@@ -176,7 +253,9 @@ public class Cytoscape {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
 			// Set network name
-			Cytoscape.setNetworkName(Incites.getFacultyTextFieldRef().getText().trim() + " copub network");
+			Cytoscape.setNetworkName("Faculty: " + Incites.getFacultyTextFieldRef().getText().trim());
+			// Set network type
+			Cytoscape.setNetworkType(UserPanel.getSelectedCategory());
 			// Construct map
 			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
 			// Store map
@@ -206,6 +285,7 @@ public class Cytoscape {
 				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
 				Cytoscape.setNetworkName(searchTerm + "\'s copublication network");
+				Cytoscape.setNetworkType(UserPanel.getSelectedCategory());
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
 				// Transfer map to Cytoscape's map variable
@@ -278,4 +358,16 @@ public class Cytoscape {
 		return Cytoscape.cyServiceRegistrarRef;
 	}
 	
+	/**
+	 * Apply visual style to network
+	 * @param String visualStyle
+	 * @return null
+	 */
+	public static void applyVisualStyle(String visualStyle) {
+		// Set visual style
+		Cytoscape.setVisualStyle(Category.getVisualStyleMap().get(visualStyle));
+		// Apply visual style
+		Cytoscape.getTaskManager().execute(Cytoscape.getApplyVisualStyleTaskFactoryRef().createTaskIterator());
+
+	}
 }

@@ -20,28 +20,20 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 		private CyNetworkManager cyNetworkManagerServiceRef;
 		private CyNetworkNaming cyNetworkNamingServiceRef;
 		private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
-		private VisualMappingManager vmmServiceRef;
-		private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
-		private VisualStyleFactory visualStyleFactoryServiceRef;
 	
 	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
-			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef, 
-			VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingManager vmmServiceRef) {
+			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
 			this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 			this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 			this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
 			this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
 			this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
 			this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
-			this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
-			this.vmmServiceRef = vmmServiceRef;
-			this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
 	}
 
 	public TaskIterator createTaskIterator() {
 		return new TaskIterator(new CreateNetworkTask(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
-				cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, 
-				visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, vmmServiceRef));
+				cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef));
 	}
 
 }

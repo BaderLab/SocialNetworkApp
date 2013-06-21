@@ -11,10 +11,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -22,6 +24,7 @@ import javax.swing.event.DocumentListener;
 
 import main.java.org.baderlab.csapps.socialnetwork.CollapsiblePanel;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 
 /**
@@ -40,18 +43,21 @@ public class Incites {
 	/**
 	 * Icon shown when user has not explicitly confirmed faculty input
 	 */
-	final private static ImageIcon ICON_NOT_CONFIRMED = new ImageIcon(Incites.class.getClassLoader().getResource("new.png"));
+	final private static ImageIcon ICON_NOT_CONFIRMED = 
+	new ImageIcon(Incites.class.getClassLoader().getResource("new.png"));
 	/**
 	 * Icon shown when user has explicitly confirmed faculty input
 	 */
-	final private static ImageIcon ICON_CONFIRMED = new ImageIcon(Incites.class.getClassLoader().getResource("tick.png"));
+	final private static ImageIcon ICON_CONFIRMED = 
+	new ImageIcon(Incites.class.getClassLoader().getResource("tick.png"));
 	/**
 	 * List of publications extracted from Incites data file
 	 */
 	private static List<Publication> pubList = null;
 	/**
-	 * A reference to the confirm button. Necessary for doing icon swapping. Has to be handled directly since
-	 * it mainly interacts with static entities. Use with EXTREME caution. 
+	 * A reference to the confirm button. Necessary for doing icon swapping. 
+	 * Has to be handled directly since it mainly interacts with static entities. 
+	 * Use with EXTREME caution. 
 	 */
 	private static JButton confirmButtonRef = null;
 	/**
@@ -204,7 +210,8 @@ public class Incites {
 	 * @param String rawAuthorText
 	 * @return ArrayList authorList
 	 */
-	public static ArrayList<Author> parseAuthors(String rawAuthorText) throws UnableToParseAuthorException {
+	public static ArrayList<Author> parseAuthors(String rawAuthorText) 
+			      throws UnableToParseAuthorException {
 		String[] authors = rawAuthorText.split(";");
 		if (authors.length == 0) {
 			throw new UnableToParseAuthorException();
@@ -249,8 +256,10 @@ public class Incites {
 			timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
 			hasTimesCited = timesCited.matches("\\d+?") ? true : false;
 			
-			expectedCitations = contents[1].trim().isEmpty() ? "0.00" : contents[1].trim();
-			hasExpectedCitations = expectedCitations.matches("(\\d+?)\\.?(\\d+?)") ? true : false;
+			expectedCitations = contents[1].trim().isEmpty() 
+					            ? "0.00" : contents[1].trim();
+			hasExpectedCitations = expectedCitations.matches
+					               ("(\\d+?)\\.?(\\d+?)") ? true : false;
 			
 			year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
 			hasPublicationYear = year.matches("\\d+?") ? true : false;
@@ -272,11 +281,13 @@ public class Incites {
 			hasTitle = true;
 			
 			// Consolidate
-			boolean isValid = hasTimesCited && hasExpectedCitations && hasPublicationYear && hasSubjectArea
-					&& hasAuthors && hasTitle;
+			boolean isValid = hasTimesCited && hasExpectedCitations 
+					          && hasPublicationYear && hasSubjectArea
+					          && hasAuthors && hasTitle;
 			
 			if (isValid) {
-				pub = new Publication(title, year, subjectArea, timesCited, expectedCitations, coauthorList);
+				pub = new Publication(title, year, subjectArea, timesCited, 
+						              expectedCitations, coauthorList);
 				pubList.add(pub);
 				return isValid;
 			} else {
@@ -287,14 +298,16 @@ public class Incites {
 	}
 
 	/**
-	 * Return all publications (as well as all associated author info) contained in network file.
+	 * Return all publications (as well as all associated author info) 
+	 * contained in network file.
 	 * Note that each publication serves as an edge and each author a node. 
 	 * Node info is embedded inside each edge.
 	 * @param File networkFile
 	 * @return List pubList
 	 * @throws FileNotFoundException 
 	 */
-	public static List<Publication> getPublications(File networkFile) throws FileNotFoundException {
+	public static List<Publication> getPublications(File networkFile) 
+			throws FileNotFoundException {
 			
 		Scanner in = new Scanner(networkFile);
 		String line;
@@ -329,9 +342,12 @@ public class Incites {
 				if (contents.length == 6) {
 
 					// Get publication info
-					timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
-					expectedCitations = contents[1].trim().isEmpty() ? "0.00" : contents[1].trim();
-					year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
+					timesCited = contents[0].trim().isEmpty() 
+							     ? "0" : contents[0].trim();
+					expectedCitations = contents[1].trim().isEmpty() 
+							     ? "0.00" : contents[1].trim();
+					year = contents[2].trim().isEmpty() 
+							     ? "0" : contents[2].trim();
 					subjectArea = contents[3];
 					authors = contents[4];
 					title = contents[5];
@@ -344,7 +360,8 @@ public class Incites {
 					}
 
 					// Set publication info
-					pub = new Publication(title, year, subjectArea, timesCited, expectedCitations, coauthorList);
+					pub = new Publication(title, year, subjectArea, 
+							              timesCited, expectedCitations, coauthorList);
 
 					//Add publication to overall list
 					pubList.add(pub);
@@ -371,23 +388,61 @@ public class Incites {
 		createNetworkButton.setToolTipText("Create network");
 		createNetworkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if (Incites.getIncitesFileRef() == null || Incites.getFacultyTextFieldRef().getText() == null) {
-					Cytoscape.notifyUser("Network could not be created. Please load file and/or specify faculty.");
+				if (Incites.getIncitesFileRef() == null || 
+					Incites.getFacultyTextFieldRef().getText() == null) {
+					Cytoscape.notifyUser("Network could not be created. " +
+							             "Please load file and/or specify faculty.");
 				} else { 
 					if (! Incites.getIncitesFileRef().getAbsolutePath().trim()
-							.equalsIgnoreCase(Incites.getPathTextFieldRef().getText().trim())) {
-						Cytoscape.notifyUser("Network could not be created. Please fix file path");
-					} else if (Incites.getFacultyTextFieldRef().getText().trim().isEmpty()) {
-						Cytoscape.notifyUser("Network could not be created. Please specify faculty.");
+							.equalsIgnoreCase(Incites.getPathTextFieldRef()
+							.getText().trim())) {
+						Cytoscape.notifyUser("Network could not be created. " +
+								             "Problem with file path. Please load file again.");
+					} else if (Incites.getFacultyTextFieldRef().getText().trim()
+							   .isEmpty()) {
+						Cytoscape.notifyUser("Network could not be created. " +
+								             "Please specify faculty.");
 					} else {
-						if (Incites.getConfirmButtonRef().getName().equalsIgnoreCase(Incites.NOT_CONFIRMED)) {
-							Cytoscape.notifyUser("Network could not be created. Please confirm faculty name " +
+						if (Incites.getConfirmButtonRef().getName()
+								   .equalsIgnoreCase(Incites.NOT_CONFIRMED)) {
+							Cytoscape.notifyUser("Network could not be created. " +
+									             "Please confirm faculty name " +
 									             "by pressing plus sign");	
 						} else {
 							try {
+								
 								Cytoscape.createNetwork(Incites.getIncitesFileRef());
+								
+								if (UserPanel.getNetworkPanelLabelRef() == null) {
+									UserPanel.setNetworkPanelLabelRef(new JLabel(Cytoscape.getNetworkName()));
+									UserPanel.getNetworkPanelRef().add(UserPanel.getNetworkPanelLabelRef(), 
+									BorderLayout.NORTH);
+								} else {
+									UserPanel.getNetworkPanelLabelRef().setText(Cytoscape.getNetworkName());
+								}
+								
+								if (UserPanel.getVisualStylePanel()  == null) {
+									UserPanel.setVisualStylePanel(UserPanel.createVisualStylePanel());
+									UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
+									UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
+									UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
+									UserPanel.getNetworkPanelRef().add(UserPanel.getVisualStylePanel(), 
+									BorderLayout.CENTER);
+								} else {
+									if (UserPanel.getVisualStyleSelectorType() != Cytoscape.getNetworkType()) {
+										UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());
+										UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
+										UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
+										UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
+									}
+								}
+								
+								UserPanel.getNetworkPanelRef().revalidate();
+								UserPanel.getNetworkPanelRef().repaint();
+								
 							} catch (FileNotFoundException e) {
-								Cytoscape.notifyUser(Incites.getPathTextFieldRef().getText() + " does not exist");
+								Cytoscape.notifyUser(Incites.getPathTextFieldRef().getText()
+										+ " does not exist");
 							}
 						}
 					}
@@ -404,12 +459,14 @@ public class Incites {
 	 */
 	private static JButton createConfirmButton() {
 		final JButton confirmButton = new JButton(Incites.ICON_NOT_CONFIRMED);
+		confirmButton.setBorder(BorderFactory.createEmptyBorder());
 		// Default setting is NOT_CONFIRMED
 		confirmButton.setName(Incites.NOT_CONFIRMED);
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// Set confirmation status to no, iff there's no text in the faculty textfield
-				if (Incites.getFacultyTextFieldRef().getText() == null || Incites.getFacultyTextFieldRef().getText().trim().isEmpty()) {
+				if (Incites.getFacultyTextFieldRef().getText() == null || 
+					Incites.getFacultyTextFieldRef().getText().trim().isEmpty()) {
 					confirmButton.setIcon(Incites.ICON_NOT_CONFIRMED);
 					confirmButton.setName(Incites.NOT_CONFIRMED);
 				} else {
@@ -473,7 +530,8 @@ public class Incites {
 	private static JPanel createFacultySpecPanel() {
 		CollapsiblePanel facultyPanel = new CollapsiblePanel("Specify Faculty");
 		facultyPanel.setCollapsed(true);
-		facultyPanel.getContentPane().setLayout(new BoxLayout(facultyPanel.getContentPane(), BoxLayout.X_AXIS));
+		facultyPanel.getContentPane()
+		.setLayout(new BoxLayout(facultyPanel.getContentPane(), BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
 		Incites.setFacultyTextFieldRef(new JTextField());
@@ -513,7 +571,8 @@ public class Incites {
 	private static JPanel createLoadDataPanel() {
 		CollapsiblePanel loadDataPanel = new CollapsiblePanel("Load File");
 		loadDataPanel.setCollapsed(true);
-		loadDataPanel.getContentPane().setLayout(new BoxLayout(loadDataPanel.getContentPane(), BoxLayout.X_AXIS));
+		loadDataPanel.getContentPane()
+		.setLayout(new BoxLayout(loadDataPanel.getContentPane(), BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
 		Incites.setLoadTextField(new JTextField());
@@ -539,10 +598,12 @@ public class Incites {
 			
 		// Set layout
 		incitesInfoPanel
-		.getContentPane().setLayout(new BoxLayout(incitesInfoPanel.getContentPane(), BoxLayout.Y_AXIS));	
+		.getContentPane().setLayout(new BoxLayout(incitesInfoPanel.getContentPane()
+		, BoxLayout.Y_AXIS));	
 		
 		// Add load panel
-		incitesInfoPanel.getContentPane().add(Incites.createLoadDataPanel(), BorderLayout.NORTH);
+		incitesInfoPanel.getContentPane().add(Incites.createLoadDataPanel()
+		, BorderLayout.NORTH);
 		
 		// Add faculty panel
 		incitesInfoPanel.getContentPane().add(Incites.createFacultySpecPanel());
