@@ -1,13 +1,11 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Pubmed;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Pubmed;
 
 import org.xml.sax.SAXException;
 
@@ -17,18 +15,6 @@ import org.xml.sax.SAXException;
  */
 public class Search {
 	/**
-	 * Default website 
-	 */
-	final public static int DEFAULT = 0;
-	/**
-	 * PubMed (IP = 130.14.29.110)
-	 */
-	final public static int PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
-	/**
-	 * Incites (IP = 167.68.24.112)
-	 */
-	final static public int INCITES = (167 << 24) + (68 << 16) + (24 << 8) + 112;
-	/**
 	 * Search results
 	 */
 	public List<? extends AbstractEdge> results = null;
@@ -36,7 +22,7 @@ public class Search {
 	 * Total hits
 	 */
 	public int totalHits = 0;
-
+	
 	/**
 	 * Create a new search session 
 	 * @param String searchTerm
@@ -47,10 +33,10 @@ public class Search {
 	 */
 	public Search(String searchTerm, int website) {
 		switch (website) {
-			case DEFAULT:
-				Cytoscape.notifyUser("Click --SELECT-- to select a website");
+			case Category.DEFAULT:
+				Cytoscape.notifyUser("Click --SELECT CATEGORY-- to select a category");
 				break;
-			case PUBMED: 
+			case Category.ACADEMIA: 
 				this.results = Pubmed.getListOfPublications(searchTerm);
 				this.totalHits = Pubmed.getTotalPubs();
 				break;
@@ -58,26 +44,13 @@ public class Search {
 	}
 
 	/**
-	 * Get list of all websites currently supported by search
+	 * Get list of all search options granted to user by default
 	 * @param null
-	 * @return ListsiteList
+	 * @return List siteList
 	 */
-	public static String[] getSiteList() {
-		String[] siteList = { "--SELECT--", "PubMed"};
-		return siteList;
-	}
-	
-	/**
-	 * Construct site map. Keys are string representations of each website
-	 * and values are the actual websites themselves
-	 * @param null
-	 * @return Map<String, int> academiaMap
-	 */
-	public static Map<String, Integer> getSiteMap() {
-		Map<String, Integer> siteMap = new HashMap<String, Integer>();
-		siteMap.put("--SELECT--", Search.DEFAULT);
-		siteMap.put("PubMed", Search.PUBMED);
-		return siteMap;
+	public static String[] getDefaultOptionList() {
+		String[] defaultOptionList = {"--SELECT--"};
+		return defaultOptionList;
 	}
 	
 	/**
@@ -96,6 +69,17 @@ public class Search {
 	 */
 	public int getTotalHits() {
 		return this.totalHits;
+	}
+
+	/**
+	 * Get list of all search options granted to users 
+	 * searching academic records
+	 * @param null
+	 * @return List academiaOptionList
+	 */
+	public static String[] getAcademiaOptionList() {
+		String[] academiaOptionList = { "--SELECT--", "Author", "Institution", "MeSH"};
+		return academiaOptionList;
 	}
 	
 }

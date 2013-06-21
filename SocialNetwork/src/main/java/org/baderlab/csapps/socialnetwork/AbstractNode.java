@@ -2,8 +2,6 @@ package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.util.Map;
 
-import org.cytoscape.model.CyNode;
-
 /**
  * A Cytoscape node
  * @author Victor Kofia

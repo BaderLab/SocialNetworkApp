@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,7 +20,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Pubmed;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -35,15 +35,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	/**
 	 * Website that user has selected
 	 */
-	private static int selectedWebsite = Search.DEFAULT;
+	private static int selectedCategory = Category.DEFAULT;
 	/**
 	 * Reference to the currently displayed info panel
 	 */
 	private static JPanel infoPanelRef = null;
 	/**
-	 * Reference to search panel
+	 * Reference to top panel
 	 */
-	private static JPanel searchPanelRef = null;
+	private static JPanel topPanelRef = null;
 	/**
 	 * Reference to control panel
 	 */
@@ -56,6 +56,28 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Reference to the search box. Necessary for extracting queries.
 	 */
 	private static JTextField searchBoxRef = null;
+	/**
+	 * Search option selector
+	 */
+	private static JComboBox searchOptionSelector = null;
+	
+	/**
+	 * Set search option selector
+	 * @param JComboBox searchOptionSelector
+	 * @return null
+	 */
+	private static void setSearchOptionSelector(JComboBox searchOptionSelector) {
+		UserPanel.searchOptionSelector = searchOptionSelector;
+	}
+	
+	/**
+	 * Get search option selector
+	 * @param null
+	 * @return JComboBox searchOptionSelector
+	 */
+	private static JComboBox getSearchOptionSelector() {
+		return UserPanel.searchOptionSelector;
+	}
 		
 	private static final long serialVersionUID = 8292806967891823933L;
 	
@@ -68,18 +90,17 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400,200));
-		
-		// Add search box
-		UserPanel.searchPanelRef = UserPanel.createSearchPanel();
-		this.add(UserPanel.searchPanelRef, BorderLayout.NORTH);
+			
+		// Add top panel
+		UserPanel.topPanelRef = UserPanel.createTopPanel();
+		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
 		
 		// Add default info panel
-		this.setSelectedInfoPanel(getDefaultInfoPanel());
+		this.setSelectedInfoPanel(Category.getDefaultInfoPanel());
 		this.add(infoPanelRef, BorderLayout.CENTER);
 		
-		// Add control toolbar
-		UserPanel.controlPanelRef = UserPanel.createControlPanel();
-		this.add(UserPanel.controlPanelRef, BorderLayout.SOUTH);
+		// Add bottom panel
+		this.add(UserPanel.createBottomPanel(), BorderLayout.SOUTH);
 		
 		// Save a reference to this panel object
 		UserPanel.setPanelObjectRef(this);
@@ -141,21 +162,56 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Set selected website
-	 * @param int website
+	 * Set control panel reference
+	 * @param JPanel controlPanelRef
 	 * @return null
 	 */
-	private static void setSelectedWebsite(int website) {
-		UserPanel.selectedWebsite = website;
+	private static void setControlPanelRef(JPanel controlPanelRef) {
+		UserPanel.controlPanelRef = controlPanelRef;
 	}
 	
 	/**
-	 * Get selected website
+	 * Get control panel reference
 	 * @param null
-	 * @return int selectedWebsite
+	 * @return JPanel controlPanelRef
 	 */
-	private static int getSelectedWebsite() {
-		return UserPanel.selectedWebsite;
+	private static JPanel getControlPanelRef() {
+		return UserPanel.controlPanelRef;
+	}
+	
+	/**
+	 * Set selected category
+	 * @param int category
+	 * @return null
+	 */
+	private static void setSelectedCategory(int category) {
+		UserPanel.selectedCategory = category;
+	}
+	
+	/**
+	 * Get selected category
+	 * @param null
+	 * @return int selectedCategory
+	 */
+	private static int getSelectedCategory() {
+		return UserPanel.selectedCategory;
+	}
+	
+	/**
+	 * Create bottom panel. Bottom panel will contain main
+	 * panel controls (reset, close). As well as a network
+	 * panel that will allow the user to change the network
+	 * parameters at their convenience.
+	 * @param null
+	 * @return JPanel bottomPanel
+	 */
+	private static JPanel createBottomPanel() {
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new BorderLayout());
+		bottomPanel.add(UserPanel.createNetworkPanel(), BorderLayout.NORTH);
+		UserPanel.setControlPanelRef(UserPanel.createControlPanel());
+		bottomPanel.add(UserPanel.getControlPanelRef(), BorderLayout.SOUTH);
+		return bottomPanel;
 	}
 	
 	/**
@@ -177,14 +233,56 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return new search panel for use in main app panel. Search panel will
-	 * allow user to perform searches.
+	 * Return new category panel. Will allow user to select a particular search category
+	 * @param null
+	 * @return JPanel categoryPanel
+	 */
+	private static JPanel createCategoryPanel() {
+		JPanel categoryPanel = new JPanel();
+		categoryPanel.setBorder(BorderFactory.createTitledBorder("Category"));
+		categoryPanel.setLayout(new BoxLayout(categoryPanel, BoxLayout.X_AXIS));
+		categoryPanel.add(UserPanel.createCategoryOptionSelector());
+		return categoryPanel;
+	}
+	
+	/**
+	 * Return new network panel. Will allow the lay user to modify network
+	 * parameters easily and conveniently.
+	 * @param null
+	 * @return JPanel networkPanel
+	 */
+	private static JPanel createNetworkPanel() {
+		JPanel networkPanel = new JPanel();
+		networkPanel.setBorder(BorderFactory.createTitledBorder("Network"));
+		return networkPanel;
+		}
+	
+	/**
+	 * Return new top panel for use in main app panel. Top panel
+	 * will contain search box and category option seelctor.
 	 * 
+	 * @param null
+	 * @return JPanel topPanel
+	 */
+	private static JPanel createTopPanel() {
+		
+		JPanel topPanel = new JPanel();
+		
+		topPanel.setLayout(new BorderLayout());
+		topPanel.add(UserPanel.createCategoryPanel(), BorderLayout.NORTH);
+		topPanel.add(UserPanel.createSearchPanel(), BorderLayout.SOUTH);
+		
+		return topPanel;
+	}
+	
+	/**
+	 * Create new search panel. Will allow user to search for a particular
+	 * network. Pre-defined search option will be made available to the user
+	 * via the search option selector.
 	 * @param null
 	 * @return JPanel searchPanel
 	 */
 	private static JPanel createSearchPanel() {
-		
 		JPanel searchPanel = new JPanel();
 		
 		// Organize panel horizontally.
@@ -213,10 +311,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			public void actionPerformed(ActionEvent event) {
 				if (UserPanel.getSearchBox().getText().trim().isEmpty()) {
 					Cytoscape.notifyUser("Please enter a search term into the search box");
-				} else if (UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
-					Cytoscape.notifyUser("Illegal characterrs present. Please enter a valid search term.");
+				} else if (! UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
+					Cytoscape.notifyUser("Illegal characters present. Please enter a valid search term.");
 				} else {
-					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedCategory());
 				}
 			}
 		});
@@ -228,10 +326,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		searchPanel.add(UserPanel.createSearchButton());
 		
 		// Add option selector to panel
-		searchPanel.add(UserPanel.createOptionSelector());
+		UserPanel.setSearchOptionSelector(UserPanel.createSearchOptionSelector());
+		searchPanel.add(UserPanel.getSearchOptionSelector());
 		
 		return searchPanel;
-		
 	}
 	
 	/**
@@ -266,23 +364,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				} else if (! UserPanel.isValidInput(UserPanel.getSearchBox().getText().trim())) {
 					Cytoscape.notifyUser("Illegal characters present. Please enter a valid search term.");
 				} else {
-					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedWebsite());
+					Cytoscape.createNetwork(UserPanel.getSearchBox().getText(), UserPanel.getSelectedCategory());
 				}
 			}
 		});
 		return searchButton;
 	}	
-	
-	/**
-	 * Load default info panel
-	 * @param null
-	 * @return null
-	 */
-	private static JPanel getDefaultInfoPanel() {
-		JPanel defaultInfoPanel = new JPanel();
-		defaultInfoPanel.setName("--SELECT--");
-		return defaultInfoPanel;
-	}
 	
 	/**
 	 * Switch info panel to one that's specific
@@ -292,12 +379,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private void performSwitcharoo() {
 			this.remove(this.getSelectedInfoPanel());
-			switch (UserPanel.getSelectedWebsite()) {
-				case Search.DEFAULT:
-					setSelectedInfoPanel(UserPanel.getDefaultInfoPanel());
+			switch (UserPanel.getSelectedCategory()) {
+				case Category.DEFAULT:
+					setSelectedInfoPanel(Category.getDefaultInfoPanel());
 					break;
-				case Search.PUBMED: 
-					setSelectedInfoPanel(Pubmed.getPubmedInfoPanel());
+				case Category.ACADEMIA: 
+					setSelectedInfoPanel(Category.getAcademiaInfoPanel());
 					break;
 			}
 			this.add(this.getSelectedInfoPanel(), BorderLayout.CENTER);	
@@ -306,28 +393,55 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return panel's primary option selector.
+	 * Return category option selector.
 	 * @param null 
 	 * @return JComboBox optionSelector
 	 */
-	private static JComboBox createOptionSelector() {
+	private static JComboBox createCategoryOptionSelector() {
 		//Create new JComboBox
-		JComboBox optionSelector = new JComboBox(Search.getSiteList());
+		JComboBox optionSelector = new JComboBox(Category.getCategoryList());
 		optionSelector.setEditable(false);
 		optionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
 		optionSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox jcmbType = (JComboBox) e.getSource();
-				String website = (String) jcmbType.getSelectedItem();
-				// Set selected website before performing switcharoo
+				String category = (String) jcmbType.getSelectedItem();
+				// Set selected category before performing switcharoo
 				// NOTE: This step is imperative. Not doing this will
 				// result in a null pointer exception being thrown.
-				UserPanel.setSelectedWebsite(Search.getSiteMap().get(website));
+				UserPanel.setSelectedCategory(Category.getCategoryMap().get(category));
 				// Perform switcharoo iff the panel being switched to is 
 				// distinct from the current panel
-				if (! website.trim().equalsIgnoreCase(UserPanel.getPanelObjectRef().getSelectedInfoPanel().getName())) {
+				if (! category.trim().equalsIgnoreCase(UserPanel.getPanelObjectRef().getSelectedInfoPanel().getName())) {
 					UserPanel.getPanelObjectRef().performSwitcharoo();
 				}
+				//Create new JComboBox
+				switch(UserPanel.getSelectedCategory()) {
+					case Category.DEFAULT: 
+						UserPanel.getSearchOptionSelector().setModel(new DefaultComboBoxModel(Search.getDefaultOptionList()));
+						break;
+					case Category.ACADEMIA: 
+						UserPanel.getSearchOptionSelector().setModel(new DefaultComboBoxModel(Search.getAcademiaOptionList()));
+						break;
+				}
+			}
+		});
+		return optionSelector;
+	}
+	
+	
+	/**
+	 * Return search option selector.
+	 * @param null 
+	 * @return JComboBox optionSelector
+	 */
+	private static JComboBox createSearchOptionSelector() {
+		JComboBox optionSelector = new JComboBox(Search.getDefaultOptionList());
+		optionSelector.setEditable(false);
+		optionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
+		optionSelector.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
 			}
 		});
 		return optionSelector;

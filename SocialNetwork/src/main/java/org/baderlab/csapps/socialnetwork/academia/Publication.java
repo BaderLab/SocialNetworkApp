@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.pubmed;
+package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,8 @@ public class Publication extends AbstractEdge {
 	 * @param title
 	 * @param coauthorList
 	 */
-	public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
+	public Publication(String title, String pubDate, String journal, String timesCited, 
+			           String expectedCitations, List<Author> coauthorList) {
 		this.pubDate = pubDate;
 		this.title = title;
 		this.journal = journal;

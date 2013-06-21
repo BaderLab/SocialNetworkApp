@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.Search;
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Author;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,8 +31,8 @@ public class TestAuthor {
 	 * Test if two analogous author objects are equal to each other
 	 */
 	public void testEquality() {
-		Author author1 = new Author("somebody h", Search.PUBMED);
-		Author author2 = new Author("somebody hm", Search.PUBMED);
+		Author author1 = new Author("somebody h", Author.PUBMED);
+		Author author2 = new Author("somebody hm", Author.PUBMED);
 		assertTrue(author1.equals(author2));
 	}
 	
@@ -42,8 +41,8 @@ public class TestAuthor {
 	 * Test if two analogous author objects have the exact same hashcode
 	 */
 	public void testHashCode() {
-		Author author1 = new Author("somebody h", Search.PUBMED);
-		Author author2 = new Author("somebody hm", Search.PUBMED);
+		Author author1 = new Author("somebody h", Author.PUBMED);
+		Author author2 = new Author("somebody hm", Author.PUBMED);
 		assertTrue(author1.hashCode() == author2.hashCode());
 	}
 	
@@ -53,8 +52,8 @@ public class TestAuthor {
 	 * author objects with the same name
 	 */
 	public void testListRecognition() {
-		Author author1 = new Author("somebody h", Search.PUBMED);
-		Author author2 = new Author("somebody hm", Search.PUBMED);
+		Author author1 = new Author("somebody h", Author.PUBMED);
+		Author author2 = new Author("somebody hm", Author.PUBMED);
 		ArrayList<Author> authorList = new ArrayList<Author>();
 		authorList.add(author1);
 		assertTrue(authorList.contains(author2));
@@ -66,8 +65,8 @@ public class TestAuthor {
 	 * names as being one and the same
 	 */
 	public void testMapRecognition() {
-		Author author1 = new Author("somebody h", Search.PUBMED);
-		Author author2 = new Author("somebody hm", Search.PUBMED);
+		Author author1 = new Author("somebody h", Author.PUBMED);
+		Author author2 = new Author("somebody hm", Author.PUBMED);
 		Map<Author, String> authorMap = new HashMap<Author, String>();
 		authorMap.put(author2, "intro");
 		assertTrue(authorMap.containsKey(author1));
@@ -79,8 +78,8 @@ public class TestAuthor {
 	 * between the two is casing
 	 */
 	public void testAuthorUpperCaseEquality() {
-		Author author = new Author("somebody h", Search.PUBMED);
-		Author authorUpperCase = new Author("sOMeBODy H", Search.PUBMED);
+		Author author = new Author("somebody h", Author.PUBMED);
+		Author authorUpperCase = new Author("sOMeBODy H", Author.PUBMED);
 		assertTrue(authorUpperCase.equals(author));
 	}
 	
@@ -90,8 +89,8 @@ public class TestAuthor {
 	 * between the two is casing
 	 */
 	public void testAuthorUpperCaseHashCode() {
-		Author author = new Author("somebody hm", Search.PUBMED);
-		Author authorUpperCase = new Author("sOMeBODy H", Search.PUBMED);
+		Author author = new Author("somebody hm", Author.PUBMED);
+		Author authorUpperCase = new Author("sOMeBODy H", Author.PUBMED);
 		assertTrue(authorUpperCase.hashCode() == author.hashCode());
 	}
 

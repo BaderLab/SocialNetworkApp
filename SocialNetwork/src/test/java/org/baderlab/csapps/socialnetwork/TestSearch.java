@@ -2,6 +2,7 @@ package test.java.org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
+import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 import org.junit.After;
@@ -24,7 +25,7 @@ public class TestSearch {
 	 * to the total number of results returned by search
 	 */
 	public void testPubmedSearch() {
-		Search search = new Search("isserlin r", Search.PUBMED);
+		Search search = new Search("isserlin r", Category.ACADEMIA);
 		int hits = search.getTotalHits();
 		int results = search.getResults().size();
 		assertTrue(hits == results);

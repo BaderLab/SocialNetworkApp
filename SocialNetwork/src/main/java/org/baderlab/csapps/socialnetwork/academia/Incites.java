@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.pubmed;
+package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -22,7 +22,6 @@ import javax.swing.event.DocumentListener;
 
 import main.java.org.baderlab.csapps.socialnetwork.CollapsiblePanel;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Search;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 
 /**
@@ -213,7 +212,7 @@ public class Incites {
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
 		for (String authorText : authors) {
-			author = new Author(authorText, Search.INCITES);
+			author = new Author(authorText, Author.INCITES);
 			if (! pubAuthorList.contains(author)) {
 				pubAuthorList.add(author);
 			}
@@ -472,7 +471,7 @@ public class Incites {
 	 * @return JPanel facultyPanel
 	 */
 	private static JPanel createFacultySpecPanel() {
-		CollapsiblePanel facultyPanel = new CollapsiblePanel("Faculty");
+		CollapsiblePanel facultyPanel = new CollapsiblePanel("Specify Faculty");
 		facultyPanel.setCollapsed(true);
 		facultyPanel.getContentPane().setLayout(new BoxLayout(facultyPanel.getContentPane(), BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify

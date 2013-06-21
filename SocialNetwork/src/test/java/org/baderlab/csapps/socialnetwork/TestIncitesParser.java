@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 
 import org.junit.After;
 import org.junit.Before;

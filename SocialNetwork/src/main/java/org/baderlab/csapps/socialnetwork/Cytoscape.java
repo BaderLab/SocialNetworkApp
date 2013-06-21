@@ -11,8 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
+import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
-import main.java.org.baderlab.csapps.socialnetwork.pubmed.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -194,10 +194,10 @@ public class Cytoscape {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public static void createNetwork(String searchTerm, int website) {
+	public static void createNetwork(String searchTerm, int category) {
 		
 			// Create new search session
-			Search search = new Search(searchTerm, website);
+			Search search = new Search(searchTerm, category);
 			// Get a list of the results that are going to serve as edges. Exact result type
 			// may vary with website
 			List<? extends AbstractEdge> results = search.getResults();
@@ -239,7 +239,7 @@ public class Cytoscape {
 	 */
 	public static void closeUserPanel() {
 		Cytoscape.getServiceRegistrar().unregisterService(Cytoscape.getUserPanelRef(), CytoPanelComponent.class);
-		Cytoscape.getUserPanelAction().setName("Display Panel");
+		Cytoscape.getUserPanelAction().setName("View Panel");
 	}
 	
 	/**

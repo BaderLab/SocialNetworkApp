@@ -1,10 +1,9 @@
-package main.java.org.baderlab.csapps.socialnetwork.pubmed;
+package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.Search;
 
 /**
  * The author of an article, journal review, or scientific paper
@@ -40,6 +39,14 @@ public class Author extends AbstractNode {
 	 * Author's total number of publications
 	 */
 	private int totalPubs = 0;
+	/**
+	 * Incites (IP = 167.68.24.112)
+	 */
+	final static public int INCITES = (167 << 24) + (68 << 16) + (24 << 8) + 112;
+	/**
+	 * PubMed (IP = 130.14.29.110)
+	 */
+	final public static int PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 	
 	/**
 	 * Capitalize the first letter of string and return. If string is 
@@ -65,7 +72,7 @@ public class Author extends AbstractNode {
 	 * @return null
 	 */
 	public Author(String rawAuthorText, int origin) {
-		if (origin == Search.PUBMED) {
+		if (origin == Author.PUBMED) {
 			String[] names = rawAuthorText.split("\\s");
 			if (names.length == 2) {
 				this.lastName = names[0];
@@ -80,7 +87,7 @@ public class Author extends AbstractNode {
 			} else if (names.length == 1) {
 				this.lastName = names[0];
 			}
-		} else if (origin == Search.INCITES){
+		} else if (origin == Author.INCITES){
 			this.firstName = Incites.parseFirstName(rawAuthorText);
 			this.middleInitial = Incites.parseMiddleInitial(rawAuthorText);
 			this.lastName = Incites.parseLastName(rawAuthorText);

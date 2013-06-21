@@ -268,7 +268,7 @@ public class CreateNetworkTask extends AbstractTask {
 
 			// Set visuals
 			// create a new visual style
-			VisualStyle vs= visualStyleFactoryServiceRef.createVisualStyle("Social Network App Vis");
+			VisualStyle vs = visualStyleFactoryServiceRef.createVisualStyle("Social Network App Vis");
 
 			addNodeLabels(vs);
 			addEdgeLabels(vs);
