@@ -70,28 +70,65 @@ public class Category {
 	 * @return JPanel academiaInfoPanel
 	 */
 	public static JPanel getAcademiaInfoPanel() {
-		JPanel pubmedInfoPanel = new JPanel();
-		pubmedInfoPanel.setName("Academia");
+		JPanel academiaInfoPanel = new JPanel();
 		
-		pubmedInfoPanel
+		academiaInfoPanel
 		.setLayout(new BorderLayout());
 		
-	    pubmedInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-	    
-		pubmedInfoPanel.add(Incites.createIncitesInfoPanel(), BorderLayout.NORTH);
+		academiaInfoPanel.setName("Academia");
 		
-		return pubmedInfoPanel;
+	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
+	    
+		academiaInfoPanel.add(Incites.createIncitesInfoPanel(), BorderLayout.NORTH);
+		
+		return academiaInfoPanel;
 	}
 
 	/**
-	 * Load default info panel
+	 * Get default info panel
 	 * @param null
-	 * @return null
+	 * @return JPanel defaultInfoPanel
 	 */
 	public static JPanel getDefaultInfoPanel() {
 		JPanel defaultInfoPanel = new JPanel();
-		defaultInfoPanel.setName("--SELECT--");
+		defaultInfoPanel.setName("--SELECT CATEGORY--");
 		return defaultInfoPanel;
+	}
+	
+	/**
+	 * Get Twitter info panel
+	 * @param null
+	 * @return JPanel twitterInfoPanel
+	 */
+	public static JPanel getTwitterInfoPanel() {
+		JPanel twitterInfoPanel = new JPanel();
+		twitterInfoPanel.setName("Twitter");
+		twitterInfoPanel.setBorder(BorderFactory.createTitledBorder("Twitter"));
+		return twitterInfoPanel;
+	}
+	
+	/**
+	 * Get LinkedIn info panel
+	 * @param null
+	 * @return JPanel linkedInInfoPanel
+	 */
+	public static JPanel getLinkedInInfoPanel() {
+		JPanel linkedInInfoPanel = new JPanel();
+		linkedInInfoPanel.setName("LinkedIn");
+		linkedInInfoPanel.setBorder(BorderFactory.createTitledBorder("LinkedIn"));
+		return linkedInInfoPanel;
+	}
+	
+	/**
+	 * Get Youtube info panel
+	 * @param null
+	 * @return JPanel youtubeInfoPanel
+	 */
+	public static JPanel getYoutubeInfoPanel() {
+		JPanel youtubeInfoPanel = new JPanel();
+		youtubeInfoPanel.setName("Youtube");
+		youtubeInfoPanel.setBorder(BorderFactory.createTitledBorder("Youtube"));
+		return youtubeInfoPanel;
 	}
 	
 	/**
@@ -103,11 +140,8 @@ public class Category {
 		// Which style list gets selected is dependent on what type of network the 
 		String[] visualStyleList = null;
 		switch(UserPanel.getVisualStyleSelectorType()) {
-			case Category.DEFAULT:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "FairyDust", "Milky Way" };
-				break;
 			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped", "Honor" };
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
 				break;
 			case Category.TWITTER:
 				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };

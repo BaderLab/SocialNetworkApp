@@ -335,7 +335,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	/**
 	 * Create bottom panel. Bottom panel will contain main
 	 * panel controls (reset, close). As well as a network
-	 * panel that will allow the user to change the network
+	 * panel that will allow the user to change network
 	 * parameters at their convenience.
 	 * @param null
 	 * @return JPanel bottomPanel
@@ -351,7 +351,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return new control panel for use in main app panel.
+	 * Create new control panel for use in main app panel.
 	 * Will allow users to reset or close the main app panel at their convenience.
 	 * @param null
 	 * @return JPanel control panel
@@ -369,7 +369,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return new category panel. Will allow user to select a particular search category
+	 * Create new category panel. Will allow user to select a particular search category
 	 * @param null
 	 * @return JPanel categoryPanel
 	 */
@@ -382,7 +382,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return new network panel. Will allow the lay user to modify network
+	 * Create new network panel. Will allow the lay user to modify network
 	 * parameters easily and conveniently.
 	 * @param null
 	 * @return JPanel networkPanel
@@ -408,7 +408,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return new top panel for use in main app panel. Top panel
+	 * Create new top panel for use in main app panel. Top panel
 	 * will contain search box and category option seelctor.
 	 * 
 	 * @param null
@@ -539,6 +539,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				case Category.ACADEMIA: 
 					setSelectedInfoPanel(Category.getAcademiaInfoPanel());
 					break;
+				case Category.TWITTER:
+					setSelectedInfoPanel(Category.getTwitterInfoPanel());
+					break;
+				case Category.LINKEDIN:
+					setSelectedInfoPanel(Category.getLinkedInInfoPanel());
+					break;
+				case Category.YOUTUBE:
+					setSelectedInfoPanel(Category.getYoutubeInfoPanel());
+					break;
 			}
 			this.add(this.getSelectedInfoPanel(), BorderLayout.CENTER);	
 			this.revalidate();
@@ -546,7 +555,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 	
 	/**
-	 * Return category option selector.
+	 * Create category option selector.
 	 * @param null 
 	 * @return JComboBox optionSelector
 	 */
@@ -579,6 +588,18 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 						UserPanel.getSearchOptionSelector()
 						.setModel(new DefaultComboBoxModel(Search.getAcademiaOptionList()));
 						break;
+					case Category.TWITTER:
+						UserPanel.getSearchOptionSelector()
+						.setModel(new DefaultComboBoxModel(Search.getTwitterOptionList()));
+						break;
+					case Category.LINKEDIN:
+						UserPanel.getSearchOptionSelector()
+						.setModel(new DefaultComboBoxModel(Search.getLinkedInOptionList()));
+						break;
+					case Category.YOUTUBE:
+						UserPanel.getSearchOptionSelector()
+						.setModel(new DefaultComboBoxModel(Search.getYoutubeOptionList()));
+						break;
 				}
 			}
 		});
@@ -587,7 +608,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	
 	/**
-	 * Return search option selector.
+	 * Create search option selector.
 	 * @param null 
 	 * @return JComboBox optionSelector
 	 */
@@ -597,11 +618,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		searchOptionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
 		searchOptionSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				
 			}
 		});
 		return searchOptionSelector;
 	}
+	
 	
 	/**
 	 * Create visual style selector. The type of selector created is dependent on
@@ -628,7 +650,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		});
 		return visualStyleSelector;
 	}
-	
 
 
 	/**
@@ -680,7 +701,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
 	
 	/**
-	 * Return panel title
+	 * Get panel title
 	 * @param null
 	 * @return String panelTitle
 	 */
@@ -690,7 +711,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	
 	/**
-	 * Return panel icon
+	 * Get panel icon
 	 * @param null
 	 * @return Icon panelIcon
 	 */

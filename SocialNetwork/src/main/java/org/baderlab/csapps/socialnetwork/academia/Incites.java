@@ -422,17 +422,29 @@ public class Incites {
 								}
 								
 								if (UserPanel.getVisualStylePanel()  == null) {
+									
+									// Create new visual style panel
 									UserPanel.setVisualStylePanel(UserPanel.createVisualStylePanel());
+									
+									// It is imperative that visual selector type be set before the visual
+									// selector. Not doing this will cause random & seemingly untraceable
+									// usability errors to materialize. (%VST)
 									UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
 									UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
+									
 									UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
 									UserPanel.getNetworkPanelRef().add(UserPanel.getVisualStylePanel(), 
 									BorderLayout.CENTER);
 								} else {
 									if (UserPanel.getVisualStyleSelectorType() != Cytoscape.getNetworkType()) {
+										
+										// Remove the current visual style selector
 										UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());
+										
+										// %VST
 										UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
 										UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
+										
 										UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
 									}
 								}
