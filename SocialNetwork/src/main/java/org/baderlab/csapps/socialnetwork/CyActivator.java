@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
@@ -36,8 +37,8 @@ public class CyActivator extends AbstractCyActivator {
 	public void start(BundleContext bc) {
 		
 		// ??
-		NetworkJanitor networkJanitor = new NetworkJanitor();
-		registerService(bc, networkJanitor, NetworkAboutToBeDestroyedListener.class, new Properties());
+		DestroyedNetworkCleanUp destroyedNetworkCleanUp = new DestroyedNetworkCleanUp();
+		registerService(bc, destroyedNetworkCleanUp, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		// ??
 		CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
@@ -136,6 +137,11 @@ public class CyActivator extends AbstractCyActivator {
 		// Transfer a reference of apply visual style task factory to class Cytoscape
 		// NOTE: Violates Dependency Injection
 		Cytoscape.setApplyVisualStyleTaskFactoryRef(applyVisualStyleTaskFactoryRef);
+		
+		// Transfer a reference of destroy network task factory to class Cytoscape
+		// NOTE: Violates Dependency Injection
+		Cytoscape.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
+
 
 	}
 }

@@ -40,11 +40,13 @@
 // $LastChangedRevision$
 // $LastChangedBy$
 // $HeadURL$
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.panels;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

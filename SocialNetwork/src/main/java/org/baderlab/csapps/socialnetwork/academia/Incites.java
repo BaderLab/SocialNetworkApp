@@ -21,11 +21,11 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import main.java.org.baderlab.csapps.socialnetwork.CollapsiblePanel;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.Network;
-import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
+import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 /**
  * Methods for manipulating Incites data
@@ -416,7 +416,7 @@ public class Incites {
 														
 								// Get a reference to the network
 							    try {
-							        Thread.sleep(15000);
+							        Thread.sleep(10000);
 							    } catch (InterruptedException e) {
 							        // We've been interrupted: no more messages.
 							        return;

@@ -13,7 +13,7 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.Network;
-import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;

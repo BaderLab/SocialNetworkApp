@@ -1,5 +1,5 @@
-package main.java.org.baderlab.csapps.socialnetwork;
-	
+package main.java.org.baderlab.csapps.socialnetwork.panels;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,11 +19,17 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+
+import main.java.org.baderlab.csapps.socialnetwork.Category;
+import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Network;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -46,6 +52,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Visual style that user has selected
 	 */
 	private static int selectedVisualStyle = Cytoscape.DEFAULT;
+	/**
+	 * Network that user has selected
+	 */
+	private static Network selectedNetwork = null;
 	/**
 	 * Reference to the currently displayed info panel
 	 */
@@ -90,6 +100,81 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Reference to network table
 	 */
 	private static JTable networkTableRef = null;
+	/**
+	 * Row in network table that user has selected
+	 */
+	private static int selectedRowInNetworkTable = -1;
+	
+	
+	/**
+	 * Set selected row in network table
+	 * @param int selectedRow
+	 * @return null
+	 */
+	public static void setSelectedRowInNetworkTable(int selectedRow) {
+		UserPanel.selectedRowInNetworkTable = selectedRow;
+	}
+	
+	
+	/**
+	 * Get selected row in network table
+	 * @param null
+	 * @return int selectedRow
+	 */
+	public static int getSelectedRowInNetworkTable() {
+		return UserPanel.selectedRowInNetworkTable;
+	}
+	
+	
+	
+	/**
+	 * Set selected network
+	 * @param Network network
+	 * @return null
+	 */
+	public static void setSelectedNetwork(Network network) {
+		UserPanel.selectedNetwork = network;
+	}
+	
+	/**
+	 * Get selected network
+	 * @param null
+	 * @return Network network
+	 */
+	public static Network getSelectedNetwork() {
+		return UserPanel.selectedNetwork;
+	}
+	
+	/**
+	 * Create menu item for destroying networks
+	 * 
+	 * @param null
+	 * @return JMenuItem destroyNetworkMenuItem
+	 */
+	public static JMenuItem createDestroyNetworkMenuItem() {
+		// Create new menu item.
+		JMenuItem destroyNetworkMenuItem = new JMenuItem("Destroy Network");
+		// Clicking of menu item results in the destruction of a network
+		destroyNetworkMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				Cytoscape.destroyNetwork(UserPanel.getSelectedNetwork());
+				DefaultTableModel model = (DefaultTableModel) UserPanel.getNetworkTableRef().getModel();
+				model.removeRow(UserPanel.getSelectedRowInNetworkTable());
+				UserPanel.setSelectedNetwork(null);
+				UserPanel.setSelectedRowInNetworkTable(-1);
+				UserPanel.getNetworkTableRef().validate();
+				UserPanel.getNetworkTableRef().repaint();
+
+				TitledBorder visualStylePanelBorder = (TitledBorder) UserPanel.getVisualStylePanel().getBorder();
+				visualStylePanelBorder.setTitle("Visual Styles");
+				UserPanel.getVisualStylePanel().revalidate();
+				UserPanel.getVisualStylePanel().repaint();
+
+				UserPanel.swapVisualStyleSelector(UserPanel.getSelectedCategory());
+			}
+		});
+		return destroyNetworkMenuItem;
+	}
 	
 	/**
 	 * Add network to user panel
@@ -109,50 +194,56 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			}
 			model.addRow(network.getNetworkAttrArray());
 			UserPanel.setNetworkTableRef(networkTable);
+			
+			final JPopupMenu destroyNetworkContextMenu = new JPopupMenu();
+			destroyNetworkContextMenu.add(UserPanel.createDestroyNetworkMenuItem());
 		    
 			networkTable.addMouseListener(new MouseAdapter() {
 		        public void mousePressed(MouseEvent e) {
-		            // This is for a single click event anywhere on the JTable
+		        
+		            // Clicking on a network once causes it to be selected
 		            if (e.getClickCount() == 1) {
 		                JTable target = (JTable) e.getSource();
-		                		                
-		                // Not necessary now but in the future if I want
-		                // to discriminate between different fields in 
-		                // the textbox even more then I'll have to use this.
-//		                int column = target.getSelectedColumn();
+		                		                			                
+		                UserPanel.setSelectedRowInNetworkTable(target.getSelectedRow());
 		                
-		                int row = target.getSelectedRow();
-
+		                // Get selected network
+		                String name = (String) UserPanel.getNetworkTableRef().getModel()
+		                		                                  .getValueAt(UserPanel.getSelectedRowInNetworkTable(), 0);
+		                UserPanel.setSelectedNetwork(Cytoscape.getNetworkMap().get(name));
+		    			
 		                // Changing the title of the visual style panel
-		                String networkName = (String) UserPanel.getNetworkTableRef().getModel()
-		                		                                  .getValueAt(row, 0);
 		    			TitledBorder visualStylePanelBorder = (TitledBorder) UserPanel.getVisualStylePanel().getBorder();
-		    			visualStylePanelBorder.setTitle(networkName + " Visual Styles");
+		    			visualStylePanelBorder.setTitle(UserPanel.getSelectedNetwork().getName() + " Visual Styles");
 		    			UserPanel.getVisualStylePanel().revalidate();
 		    			UserPanel.getVisualStylePanel().repaint();
-		    			
-		    			// Changing the visual style selector type
-		                String networkType = (String) UserPanel.getNetworkTableRef().getModel()
-                                .getValueAt(row, 3);
-		                int networkTypeId = Category.getCategoryMap().get(networkType);
-		                		
-			    		UserPanel.swapVisualStyleSelector(networkTypeId);
+
+		    			// Changing the visual style selector type		                		
+			    		UserPanel.swapVisualStyleSelector(UserPanel.getSelectedNetwork().getRawVisualStyleSelectorType());
 
 		            }
+		            
+					// Right clicking on a network will bring up
+		        	// the destroy network context menu
+					if (e.getButton() == MouseEvent.BUTTON3) {
+						// Display context menu to user with all associated options.
+						destroyNetworkContextMenu.show(UserPanel.getNetworkTableRef(), e.getX(), e.getY());
+					} 
+	
 		        }
 
 		    });
-			
+
 			JScrollPane networkTablePane = new JScrollPane(UserPanel.getNetworkTableRef());
 			networkTablePane.setPreferredSize(new Dimension(200, 100));
 			UserPanel.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
-			
+
 		// Add network info to table
 		} else {
 			DefaultTableModel networkTableModel = (DefaultTableModel) UserPanel.getNetworkTableRef().getModel();
 			networkTableModel.addRow(network.getNetworkAttrArray());
 		}
-		
+
 		UserPanel.getNetworkPanelRef().revalidate();
 		UserPanel.getNetworkPanelRef().repaint();
 

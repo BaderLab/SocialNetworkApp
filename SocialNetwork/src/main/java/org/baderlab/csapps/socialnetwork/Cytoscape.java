@@ -14,8 +14,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -85,6 +87,32 @@ public class Cytoscape {
 	 * Network slated for destruction
 	 */
 	private static Network networkToBeDestroyed = null;
+	/**
+	 * A reference to the destroy network task factory
+	 */
+	private static DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = null;
+	
+	/**
+	 * Get destroy network task factory reference
+	 * @param null
+	 * @return DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef 
+	 */
+	public static DestroyNetworkTaskFactory getDestroyNetworkTaskFactoryRef() {
+		return Cytoscape.destroyNetworkTaskFactoryRef;
+	}
+	
+	/**
+	 * Set destroy network task factory reference
+	 * @param DestroyNetworkTaskFActory destroyNetworkTaskFactory
+	 * @return null
+	 */
+	public static void setDestroyNetworkTaskFactoryRef(DestroyNetworkTaskFactory 
+			                                       destroyNetworkTaskFactory) {
+		Cytoscape.destroyNetworkTaskFactoryRef = destroyNetworkTaskFactory;
+	}
+	
+	
+	
 	
 	/**
 	 * Get network to be destroyed
@@ -332,6 +360,17 @@ public class Cytoscape {
 		// This method is a blackbox and should NOT be directly executed under ANY circumstances
 		Cytoscape.getTaskManager().execute(Cytoscape.getNetworkTaskFactoryRef().createTaskIterator());
 		
+	}
+	
+	/**
+	 * Destroy a network
+	 * @param Network network
+	 * @return null
+	 */
+	public static void destroyNetwork(Network network) {
+		Cytoscape.setNetworkToBeDestroyed(network);
+		Cytoscape.getNetworkMap().remove(network);
+		Cytoscape.getTaskManager().execute(Cytoscape.getDestroyNetworkTaskFactoryRef().createTaskIterator());
 	}
 	
 	/**

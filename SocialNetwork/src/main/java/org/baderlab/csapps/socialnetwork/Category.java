@@ -14,12 +14,14 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
  * @author Victor Kofia
  */
 public class Category {
-
+	/**
+	 * Default category
+	 */
 	final public static int DEFAULT = 0;
 	/**
 	 * Academia (IP = 130.14.29.110)
 	 */
-	final public static int ACADEMIA = 1;
+	final public static int ACADEMIA = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 	/**
 	 * LinkedIn (IP = 216.52.242.80)
 	 */
@@ -44,7 +46,7 @@ public class Category {
 	}
 	
 	/**
-	 * Construct category map. Keys are string representations of each category
+	 * Get category map. Keys are string representations of each category
 	 * and values are the actual categories themselves
 	 * @param null
 	 * @return Map<String, int> academiaMap
