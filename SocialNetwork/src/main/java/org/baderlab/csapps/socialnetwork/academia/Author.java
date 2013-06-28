@@ -42,7 +42,7 @@ public class Author extends AbstractNode {
 	/**
 	 * Incites (IP = 167.68.24.112)
 	 */
-	final static public int INCITES = (167 << 24) + (68 << 16) + (24 << 8) + 112;
+	final public static int INCITES = (167 << 24) + (68 << 16) + (24 << 8) + 112;
 	/**
 	 * PubMed (IP = 130.14.29.110)
 	 */

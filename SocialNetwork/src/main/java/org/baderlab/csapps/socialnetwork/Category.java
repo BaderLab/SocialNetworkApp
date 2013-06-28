@@ -15,16 +15,13 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
  */
 public class Category {
 
-	/**
-	 * Default website 
-	 */
 	final public static int DEFAULT = 0;
 	/**
-	 * Academia
+	 * Academia (IP = 130.14.29.110)
 	 */
 	final public static int ACADEMIA = 1;
 	/**
-	 * LinkedIn (IP = 216.52.242.80
+	 * LinkedIn (IP = 216.52.242.80)
 	 */
 	final public static int LINKEDIN = (216 << 24) + (52 << 16) + (242 << 8) + 80;
 	/**
@@ -63,13 +60,44 @@ public class Category {
 	}
 
 	/**
-	 * Get academia info panel. In addition to Pubmed specific features, 
+	 * Get visual style list
+	 * @param int visualStyleSelectorType
+	 * @return String[] visualStyleList
+	 */
+	public static String[] getVisualStyleList(int visualStyleSelectorType) {
+		// Which style list gets selected is dependent on what type of network the 
+		String[] visualStyleList = null;
+		switch(visualStyleSelectorType) {
+			case Category.ACADEMIA:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
+				break;
+			case Category.TWITTER:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
+				break;
+		}
+		return visualStyleList;
+	}
+
+	/**
+	 * Get visual style map
+	 * @param null
+	 * @return Map visualStyleMap
+	 */
+	public static Map<String, Integer> getVisualStyleMap() {
+		Map<String, Integer> visualStyleMap = new HashMap<String, Integer>();
+		visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Cytoscape.DEFAULT);
+		visualStyleMap.put("Chipped", Cytoscape.CHIPPED);
+		return visualStyleMap;
+	}
+
+	/**
+	 * Create academia info panel. In addition to Pubmed specific features, 
 	 * this panel will also enable the user to load Incites data.
 	 * @param null
 	 * @return 
 	 * @return JPanel academiaInfoPanel
 	 */
-	public static JPanel getAcademiaInfoPanel() {
+	public static JPanel createAcademiaInfoPanel() {
 		JPanel academiaInfoPanel = new JPanel();
 		
 		academiaInfoPanel
@@ -85,22 +113,22 @@ public class Category {
 	}
 
 	/**
-	 * Get default info panel
+	 * Create default info panel
 	 * @param null
 	 * @return JPanel defaultInfoPanel
 	 */
-	public static JPanel getDefaultInfoPanel() {
+	public static JPanel createDefaultInfoPanel() {
 		JPanel defaultInfoPanel = new JPanel();
 		defaultInfoPanel.setName("--SELECT CATEGORY--");
 		return defaultInfoPanel;
 	}
 	
 	/**
-	 * Get Twitter info panel
+	 * Create Twitter info panel
 	 * @param null
 	 * @return JPanel twitterInfoPanel
 	 */
-	public static JPanel getTwitterInfoPanel() {
+	public static JPanel createTwitterInfoPanel() {
 		JPanel twitterInfoPanel = new JPanel();
 		twitterInfoPanel.setName("Twitter");
 		twitterInfoPanel.setBorder(BorderFactory.createTitledBorder("Twitter"));
@@ -108,11 +136,11 @@ public class Category {
 	}
 	
 	/**
-	 * Get LinkedIn info panel
+	 * Create LinkedIn info panel
 	 * @param null
 	 * @return JPanel linkedInInfoPanel
 	 */
-	public static JPanel getLinkedInInfoPanel() {
+	public static JPanel createLinkedInInfoPanel() {
 		JPanel linkedInInfoPanel = new JPanel();
 		linkedInInfoPanel.setName("LinkedIn");
 		linkedInInfoPanel.setBorder(BorderFactory.createTitledBorder("LinkedIn"));
@@ -120,47 +148,43 @@ public class Category {
 	}
 	
 	/**
-	 * Get Youtube info panel
+	 * Create Youtube info panel
 	 * @param null
 	 * @return JPanel youtubeInfoPanel
 	 */
-	public static JPanel getYoutubeInfoPanel() {
+	public static JPanel createYoutubeInfoPanel() {
 		JPanel youtubeInfoPanel = new JPanel();
 		youtubeInfoPanel.setName("Youtube");
 		youtubeInfoPanel.setBorder(BorderFactory.createTitledBorder("Youtube"));
 		return youtubeInfoPanel;
 	}
-	
-	/**
-	 * Get visual style list
-	 * @param null
-	 * @return String[] visualStyleList
-	 */
-	public static String[] getVisualStyleList() {
-		// Which style list gets selected is dependent on what type of network the 
-		String[] visualStyleList = null;
-		switch(UserPanel.getVisualStyleSelectorType()) {
-			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
-				break;
-			case Category.TWITTER:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
-				break;
-		}
-		return visualStyleList;
-	}
-	
 
 	/**
-	 * Get view map
-	 * @param null
-	 * @return Map viewMap
+	 * Get list of all search filters granted to user.
+	 * Filter type varies with category.
+	 * @param selectedCategory
+	 * @return String[] searchFilterList
 	 */
-	public static Map<String, Integer> getVisualStyleMap() {
-		Map<String, Integer> visualStyleMap = new HashMap<String, Integer>();
-		visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Cytoscape.DEFAULT);
-		visualStyleMap.put("Chipped", Cytoscape.CHIPPED);
-		return visualStyleMap;
+	public static String[] getSearchFilterList(int selectedCategory) {
+		String[] searchFilterList = null;
+		switch (selectedCategory) {
+			case Category.DEFAULT:
+				searchFilterList = new String[] {"--SELECT--"};
+				break;
+			case Category.ACADEMIA:
+				searchFilterList = new String[] { "--SELECT--", "Authors", "Institutions", "MeSH"};
+				break;
+			case Category.TWITTER:
+				searchFilterList = new String[] { "--SELECT--", "Users", "HashTags"};
+				break;
+			case Category.LINKEDIN:
+				searchFilterList = new String[] { "--SELECT--", "Users", "Groups", "Companies"};
+				break;
+			case Category.YOUTUBE:
+				searchFilterList = new String[] { "--SELECT--", "Videos", "Channels"};
+				break;
+		}
+		return searchFilterList;
 	}
 
 }

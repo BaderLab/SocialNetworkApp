@@ -3,6 +3,7 @@ package main.java.org.baderlab.csapps.socialnetwork;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
+import main.java.org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CyAction;
@@ -35,8 +36,8 @@ public class CyActivator extends AbstractCyActivator {
 	public void start(BundleContext bc) {
 		
 		// ??
-		NetworkPanelCleanser networkPanelCleanser = new NetworkPanelCleanser();
-		registerService(bc, networkPanelCleanser, NetworkAboutToBeDestroyedListener.class, new Properties());
+		NetworkJanitor networkJanitor = new NetworkJanitor();
+		registerService(bc, networkJanitor, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		// ??
 		CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
@@ -94,6 +95,10 @@ public class CyActivator extends AbstractCyActivator {
 		CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
 																		cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef);
 		registerService(bc,networkTaskFactoryRef,TaskFactory.class, new Properties());
+		
+		// Initialize & register destroy network task factory
+		DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef);
+		registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
 		
 		// Create user panel 
 		UserPanel userPanel = new UserPanel();

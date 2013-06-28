@@ -44,16 +44,6 @@ public class Search {
 	}
 
 	/**
-	 * Get list of all search options granted to user by default
-	 * @param null
-	 * @return List siteList
-	 */
-	public static String[] getDefaultOptionList() {
-		String[] defaultOptionList = {"--SELECT--"};
-		return defaultOptionList;
-	}
-	
-	/**
 	 * Get results
 	 * @param null
 	 * @return List results
@@ -69,17 +59,6 @@ public class Search {
 	 */
 	public int getTotalHits() {
 		return this.totalHits;
-	}
-
-	/**
-	 * Get list of all search options granted to users 
-	 * searching academic records
-	 * @param null
-	 * @return List academiaOptionList
-	 */
-	public static String[] getAcademiaOptionList() {
-		String[] academiaOptionList = { "--SELECT--", "Author", "Institution", "MeSH"};
-		return academiaOptionList;
 	}
 	
 }

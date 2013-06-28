@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class Cytoscape {
 	/**
 	 * ApplyViewTaskFactory applies the selected view to the current network
 	 */
-	private static ApplyVisualStyleTaskFactory applyViualStyleTaskFactoryRef = null;
+	private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
 	/**
 	 * A reference to the app's user panel. User will interact with app primarily through
 	 * this panel.
@@ -61,14 +62,6 @@ public class Cytoscape {
 	 */
 	private static CyServiceRegistrar cyServiceRegistrarRef = null;
 	/**
-	 * Network name
-	 */
-	private static String networkName = "DEFAULT";
-	/**
-	 * Network type. This information is for creating appropriate visual styles.
-	 */
-	private static int networkType = Category.DEFAULT;
-	/**
 	 * Selected network view
 	 */
 	private static int visualStyle = Cytoscape.DEFAULT;
@@ -80,23 +73,75 @@ public class Cytoscape {
 	 * Chipped network view
 	 */
 	final public static int CHIPPED = -7;
+	/**
+	 * Network map
+	 */
+	private static Map<String, Network> networkMap = null;
+	/**
+	 * Name of network
+	 */
+	private static String networkName = null;
+	/**
+	 * Network slated for destruction
+	 */
+	private static Network networkToBeDestroyed = null;
 	
 	/**
-	 * Set network type
-	 * @param int networkType
-	 * @return null
+	 * Get network to be destroyed
+	 * @param null
+	 * @return Network networkToBeDestroyed
 	 */
-	public static void setNetworkType(int networkType) {
-		Cytoscape.networkType = networkType;
+	public static Network getNetworkToBeDestroyed() {
+		return Cytoscape.networkToBeDestroyed;
 	}
 	
 	/**
-	 * Get network type
-	 * @param null
-	 * @return int networkType
+	 * Set network to be destroyed
+	 * @param Network networkToBeDestroyed
+	 * @return null
 	 */
-	public static int getNetworkType() {
-		return Cytoscape.networkType;
+	public static void setNetworkToBeDestroyed(Network networkToBeDestroyed) {
+		Cytoscape.networkToBeDestroyed = networkToBeDestroyed;
+	}
+	
+	public static void setNetworkName(String networkName) {
+		Cytoscape.networkName = networkName;
+	}
+	
+	public static String getNetworkName() {
+		return Cytoscape.networkName;
+	}
+	
+	/**
+	 * Set network map
+	 * @param Map networkMap
+	 * @return null
+	 */
+	public static void setNetworkMap(Map<String, Network> networkMap) {
+		Cytoscape.networkMap = networkMap;
+	}
+	
+	/**
+	 * Add network to network map
+	 * @param Network network
+	 * @return null
+	 */
+	public static void addNetwork(Network network) {
+		if (Cytoscape.getNetworkMap() == null) {
+			Cytoscape.setNetworkMap(new HashMap<String, Network>());
+			Cytoscape.getNetworkMap().put(network.getName(), network);
+		} else {
+			Cytoscape.getNetworkMap().put(network.getName(), network);
+		}
+	}
+	
+	/**
+	 * Get network map
+	 * @param null
+	 * @return Map networkMap
+	 */
+	public static Map<String, Network> getNetworkMap() {
+		return Cytoscape.networkMap;
 	}
 	
 	/**
@@ -105,7 +150,7 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void setApplyVisualStyleTaskFactoryRef(ApplyVisualStyleTaskFactory applyViewTaskFactoryRef) {
-		Cytoscape.applyViualStyleTaskFactoryRef = applyViewTaskFactoryRef;
+		Cytoscape.applyVisualStyleTaskFactoryRef = applyViewTaskFactoryRef;
 	}
 	
 	/**
@@ -114,7 +159,7 @@ public class Cytoscape {
 	 * @return null
 	 */
 	private static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {
-		return Cytoscape.applyViualStyleTaskFactoryRef;
+		return Cytoscape.applyVisualStyleTaskFactoryRef;
 	}
 	
 	
@@ -134,25 +179,6 @@ public class Cytoscape {
 	 */
 	public static int getVisualStyle() {
 		return Cytoscape.visualStyle;
-	}
-
-	
-	/**
-	 * Set network name
-	 * @param String networkName
-	 * @return null
-	 */
-	private static void setNetworkName(String networkName) {
-		Cytoscape.networkName = networkName;
-	}
-	
-	/**
-	 * Get network name
-	 * @param null
-	 * @return String networkName
-	 */
-	public static String getNetworkName() {
-		return Cytoscape.networkName;
 	}
 	
 	/**
@@ -252,16 +278,15 @@ public class Cytoscape {
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
-			// Set network name
-			Cytoscape.setNetworkName("Faculty: " + Incites.getFacultyTextFieldRef().getText().trim());
-			// Set network type
-			Cytoscape.setNetworkType(UserPanel.getSelectedCategory());
+			
 			// Construct map
 			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
 			// Store map
 			Cytoscape.setMap(map);
+			Cytoscape.setNetworkName(Incites.getFacultyTextFieldRef().getText().trim());
 			// Create network using map
 			Cytoscape.createNetwork();
+			
 		}
 		
 	}
@@ -274,7 +299,6 @@ public class Cytoscape {
 	 * @throws IOException
 	 */
 	public static void createNetwork(String searchTerm, int category) {
-		
 			// Create new search session
 			Search search = new Search(searchTerm, category);
 			// Get a list of the results that are going to serve as edges. Exact result type
@@ -284,10 +308,9 @@ public class Cytoscape {
 			if (results == null) {
 				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
-				Cytoscape.setNetworkName(searchTerm + "\'s copublication network");
-				Cytoscape.setNetworkType(UserPanel.getSelectedCategory());
 				// Create new map using results
 				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
+				Cytoscape.setNetworkName(searchTerm);
 				// Transfer map to Cytoscape's map variable
 				Cytoscape.setMap(map);
 				Cytoscape.createNetwork();

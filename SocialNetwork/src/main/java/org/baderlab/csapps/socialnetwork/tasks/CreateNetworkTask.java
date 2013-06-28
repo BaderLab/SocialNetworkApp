@@ -12,6 +12,8 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Network;
+import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -25,12 +27,6 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
-import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.VisualStyleFactory;
-import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
@@ -153,7 +149,7 @@ public class CreateNetworkTask extends AbstractTask {
 			updateProgress();
 			
 		}
-		
+						
 		return myNet;
 	}
 	
@@ -208,6 +204,10 @@ public class CreateNetworkTask extends AbstractTask {
 			if (network == null) {
 				return;
 			}
+			
+			// add network to Cytoscape
+			Cytoscape.addNetwork(new Network(Cytoscape.getNetworkName(), network, UserPanel.getSelectedCategory()));
+		
 			networkManager.addNetwork(network);
 
 			final Collection<CyNetworkView> views = networkViewManager.getNetworkViews(network);

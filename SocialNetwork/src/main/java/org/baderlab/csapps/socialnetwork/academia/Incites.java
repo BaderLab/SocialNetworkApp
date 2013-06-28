@@ -16,7 +16,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -24,6 +23,7 @@ import javax.swing.event.DocumentListener;
 
 import main.java.org.baderlab.csapps.socialnetwork.CollapsiblePanel;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Network;
 import main.java.org.baderlab.csapps.socialnetwork.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 
@@ -144,7 +144,7 @@ public class Incites {
 	 * @param File incitesData
 	 * @return null
 	 */
-	public static void seIncitesFile(File selectedFile) {
+	public static void setIncitesFile(File selectedFile) {
 		incitesFileRef = selectedFile;
 	}
 
@@ -411,47 +411,22 @@ public class Incites {
 						} else {
 							try {
 								
+								// Create network
 								Cytoscape.createNetwork(Incites.getIncitesFileRef());
-								
-								if (UserPanel.getNetworkPanelLabelRef() == null) {
-									UserPanel.setNetworkPanelLabelRef(new JLabel(Cytoscape.getNetworkName()));
-									UserPanel.getNetworkPanelRef().add(UserPanel.getNetworkPanelLabelRef(), 
-									BorderLayout.NORTH);
-								} else {
-									UserPanel.getNetworkPanelLabelRef().setText(Cytoscape.getNetworkName());
-								}
-								
-								if (UserPanel.getVisualStylePanel()  == null) {
-									
-									// Create new visual style panel
-									UserPanel.setVisualStylePanel(UserPanel.createVisualStylePanel());
-									
-									// It is imperative that visual selector type be set before the visual
-									// selector. Not doing this will cause random & seemingly untraceable
-									// usability errors to materialize. (%VST)
-									UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
-									UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
-									
-									UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
-									UserPanel.getNetworkPanelRef().add(UserPanel.getVisualStylePanel(), 
-									BorderLayout.CENTER);
-								} else {
-									if (UserPanel.getVisualStyleSelectorType() != Cytoscape.getNetworkType()) {
-										
-										// Remove the current visual style selector
-										UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());
-										
-										// %VST
-										UserPanel.setVisualStyleSelectorType(UserPanel.getSelectedCategory());
-										UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector());
-										
-										UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
-									}
-								}
-								
-								UserPanel.getNetworkPanelRef().revalidate();
-								UserPanel.getNetworkPanelRef().repaint();
-								
+														
+								// Get a reference to the network
+							    try {
+							        Thread.sleep(15000);
+							    } catch (InterruptedException e) {
+							        // We've been interrupted: no more messages.
+							        return;
+							    }
+							    
+								Network lastCreatedNetwork = Cytoscape.getNetworkMap().get(Cytoscape.getNetworkName());
+										                
+								UserPanel.addNetworkToNetworkPanel(lastCreatedNetwork);								
+								UserPanel.addNetworkVisualStyles(lastCreatedNetwork);
+																
 							} catch (FileNotFoundException e) {
 								Cytoscape.notifyUser(Incites.getPathTextFieldRef().getText()
 										+ " does not exist");
@@ -519,12 +494,12 @@ public class Incites {
 				// Only attempt to read data file if user clicks "OK"
 				if (check == JFileChooser.APPROVE_OPTION) {
 					File textFile = chooser.getSelectedFile();
-					Incites.seIncitesFile(textFile);
+					Incites.setIncitesFile(textFile);
 					Incites.getPathTextFieldRef().setText(textFile.getAbsolutePath());
 					Incites.getConfirmButtonRef().setName(Incites.NOT_CONFIRMED);
 					Incites.getConfirmButtonRef().setIcon(Incites.ICON_NOT_CONFIRMED);
 				} else {
-					Incites.seIncitesFile(null);
+					Incites.setIncitesFile(null);
 					Incites.getPathTextFieldRef().setText(null);
 				}
 				
@@ -540,7 +515,7 @@ public class Incites {
 	 * @return JPanel facultyPanel
 	 */
 	private static JPanel createFacultySpecPanel() {
-		CollapsiblePanel facultyPanel = new CollapsiblePanel("Specify Faculty");
+		CollapsiblePanel facultyPanel = new CollapsiblePanel("Specify Network Name");
 		facultyPanel.setCollapsed(true);
 		facultyPanel.getContentPane()
 		.setLayout(new BoxLayout(facultyPanel.getContentPane(), BoxLayout.X_AXIS));
