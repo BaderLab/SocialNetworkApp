@@ -11,20 +11,20 @@ public abstract class AbstractNode {
 	/**
 	 * A map containing all of node's attributes
 	 */
-	protected Map<String, String> attrMap;
+	protected Map<String, String> nodeAttrMap;
 	
 	/**
 	 * Return map containing all of node's attributes
 	 * @param null
 	 * @return Map attrMap
 	 */
-	public abstract Map<String, String> getAttrMap();
+	public abstract Map<String, String> getNodeAttrMap();
 	
 	/**
 	 * Construct an attribute map for node
 	 * @param null
 	 * @return null
 	 */
-	public abstract void constructAttrMap();
+	public abstract void constructNodeAttrMap();
 	
 }

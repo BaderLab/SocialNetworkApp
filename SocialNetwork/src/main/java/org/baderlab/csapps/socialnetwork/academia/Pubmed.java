@@ -20,34 +20,14 @@ import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
  */
 public class Pubmed {
 	/**
-	 * The total number of publications found in search
-	 */
-	private static String totalPubs = null;
-	/**
-	 * Unique queryKey. Necessary for retrieving search results
-	 */
-	private static String queryKey = null;
-	/**
-	 * Unique WebEnv. Necessary for retrieving search results
-	 */
-	private static String webEnv = null;
-	/**
-	 * The index of the first record returned in search
-	 */
-	private static String retStart = null;
-	/**
-	 * The number of UIDs returned in search at one go
-	 */
-	private static String retMax = null;
-	/**
 	 * The author of a specific publication. Globally referenced to enable 
 	 * addition of multiple authors into a publication
 	 */
 	private static Author author = null;
 	/**
-	 * A list containing all the results that search session has yielded
-	 */
-	private static List<Publication> pubList = new ArrayList<Publication>();
+ 	 * A publication's journal
+ 	 */
+ 	private static String journal = null;
 	/**
 	 * A list containing all authors found in a particular publication
 	 */
@@ -56,38 +36,74 @@ public class Pubmed {
 	 * A publication's date
 	 */
  	private static String pubDate = null;
- 	/**
+	/**
+	 * A list containing all the results that search session has yielded
+	 */
+	private static List<Publication> pubList = new ArrayList<Publication>();
+	/**
+	 * Unique queryKey. Necessary for retrieving search results
+	 */
+	private static String queryKey = null;
+	/**
+	 * The number of UIDs returned in search at one go
+	 */
+	private static String retMax = null;
+	/**
+	 * The index of the first record returned in search
+	 */
+	private static String retStart = null;
+	/**
  	 * A publication's title
  	 */
  	private static String title = null;
  	/**
- 	 * A publication's journal
- 	 */
- 	private static String journal = null;
+	 * The total number of publications found in search
+	 */
+	private static String totalPubs = null;
+ 	/**
+	 * Unique WebEnv. Necessary for retrieving search results
+	 */
+	private static String webEnv = null;
  	
  	/**
- 	 * Return total # of publications yielded from search. Method has to be called right
- 	 * after search has been commited. If called at any other time, there is no guarantee
- 	 * that the value returned will be accurate and/or valid.
- 	 * @param null
- 	 * @return int totalPubs
- 	 */
- 	public static int getTotalPubs() {
- 		if (totalPubs == null) {
- 			return -1;
- 		} else {
- 			return Integer.parseInt(Pubmed.totalPubs);
- 		}
- 	}
+	 * Commit search once values for queryKey, webEnv, retStart and retMax
+	 * have been found
+	 * @param null
+	 * @return null
+	 */
+	public static void commitPubMedSearch() {
+		// Create new SAX Parser
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser;
+		try {
+			saxParser = factory.newSAXParser();
+			if (Integer.parseInt(totalPubs) > 500) {
+				// WIP (Work In Progress)
+				// On the event that a search yields 500+ publications, these publications will
+				// need to be accessed incrementally as pubmed places sanctions on people who 
+				// request XML files that are too large
+			}
+			else {
+				// Use newly discovered queryKey and webEnv to build a tag
+				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
+				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag );
+				// Load all publications at once
+				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
+			}
+		} catch (ParserConfigurationException e) {
+			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
+		} catch (SAXException e) {
+			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
+		} catch (IOException e) {
+			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
+		}
+	}
  	
  	/**
  	 * Return a list of all the publications (& co-authors) found for the specified authorName, 
  	 * MeSH term or Institution name.
  	 * @param String searchTerm
  	 * @return List pubList
- 	 * @throws ParserConfigurationException 
- 	 * @throws IOException 
- 	 * @throws SAXException 
  	 */
  	public static List<Publication> getListOfPublications(String searchTerm) {
 		// Clear pubList & pubAuthorList
@@ -119,95 +135,6 @@ public class Pubmed {
  	
  	
 	/**
-	 * Commit search once values for queryKey, webEnv, retStart and retMax
-	 * have been found
-	 * @param null
-	 * @return null
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 */
-	public static void commitPubMedSearch() {
-		// Create new SAX Parser
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser;
-		try {
-			saxParser = factory.newSAXParser();
-			if (Integer.parseInt(totalPubs) > 500) {
-				// WIP (Work In Progress)
-				// On the event that a search yields 500+ publications, these publications will
-				// need to be accessed incrementally as pubmed places sanctions on people who 
-				// request XML files that are too large
-			}
-			else {
-				// Use newly discovered queryKey and webEnv to build a tag
-				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag );
-				// Load all publications at once
-				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
-			}
-		} catch (ParserConfigurationException e) {
-			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
-		} catch (SAXException e) {
-			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
-		} catch (IOException e) {
-			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
-		}
-	}
-	
-	
-	/**
-	 * Get search handler
-	 * @param null
-	 * @return DefaultHandler searchHandler
-	 */
-	public static DefaultHandler getSearchHandler() throws SAXException, IOException, ParserConfigurationException {
-		DefaultHandler searchHandler = new DefaultHandler() {
-			boolean isQueryKey = false, isWebEnv = false, isTotalPubs = false;
-			int i = 0;
-			
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-				// qName stores the element's actual designation
-				if (i == 0 && qName.equalsIgnoreCase("Count")) {
-					isTotalPubs = true;
-					i += 1;
-				}
-				if (qName.equalsIgnoreCase("QueryKey")) {
-					isQueryKey = true;
-				}
-				if (qName.equalsIgnoreCase("WebEnv")) {
-					isWebEnv = true;
-				}
-			}
-			
-			public void endElement(String uri, String localName, String qName) throws SAXException {
-				// qName stores the element's actual designation
-			}
-			
-			public void characters(char ch[], int start, int length) throws SAXException {
-				// start and length give both the starting index and the length (respectively)
-				// of the chunk of characters inside the character array that are not elements
-				if (isTotalPubs) {
-					totalPubs = new String(ch, start, length);
-					isTotalPubs = false;
-				}
-				if (isQueryKey) {
-					queryKey = new String(ch, start, length);
-					isQueryKey = false;
-				}
-				if (isWebEnv) {
-					webEnv = new String(ch, start, length);
-					isWebEnv = false;
-				}
-			}
-		};
-		
-		return searchHandler;
-		
-	}
-	
-	
-	/**
 	 * Get publication handler
 	 * @param null
 	 * @return DefaultHandler publicationHandler
@@ -217,45 +144,6 @@ public class Pubmed {
 		DefaultHandler publicationHandler = new DefaultHandler() {
 			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false;
 			
-			/**
-			 * Returns true iff attributes contains the specified  text
-			 * @param Attribute attributes
-			 * @param String text
-			 * @return
-			 */
-			public boolean contains(Attributes attributes, String text) {
-				for (int i = 0; i < attributes.getLength(); i++) {
-					if(attributes.getValue(i).equalsIgnoreCase(text)) {
-						return true;
-					}
-				}
-				return false;
-			}
-			
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-				// qName stores the element's actual designation
-				if (contains(attributes, "Author")) {
-					isAuthor = true;
-				}
-				if (contains(attributes, "FullJournalName")) {
-					isJournal = true;
-				}
-				if (contains(attributes, "PubDate")) {
-					isPubDate = true;
-				}
-				if (contains(attributes, "Title")) {
-					isTitle = true;
-				}
-			}
-
-			public void endElement(String uri, String localName, String qName) throws SAXException {
-				// qName stores the element's actual designation
-				if (qName.equalsIgnoreCase("DocSum")) {
-					pubList.add(new Publication(title, pubDate, journal, null, null, pubAuthorList));
-					pubAuthorList.clear();
-				}
-			}
-
 			public void characters(char ch[], int start, int length) throws SAXException {
 				// start and length give both the starting index and the length (respectively)
 				// of the chunk of characters inside the character array that are not elements
@@ -280,9 +168,114 @@ public class Pubmed {
 					isTitle = false;
 				}
 			}
+			
+			/**
+			 * Returns true iff attributes contains the specified  text
+			 * @param Attribute attributes
+			 * @param String text
+			 * @return
+			 */
+			public boolean contains(Attributes attributes, String text) {
+				for (int i = 0; i < attributes.getLength(); i++) {
+					if(attributes.getValue(i).equalsIgnoreCase(text)) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				// qName stores the element's actual designation
+				if (qName.equalsIgnoreCase("DocSum")) {
+					pubList.add(new Publication(title, pubDate, journal, null, null, pubAuthorList));
+					pubAuthorList.clear();
+				}
+			}
+
+			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				// qName stores the element's actual designation
+				if (contains(attributes, "Author")) {
+					isAuthor = true;
+				}
+				if (contains(attributes, "FullJournalName")) {
+					isJournal = true;
+				}
+				if (contains(attributes, "PubDate")) {
+					isPubDate = true;
+				}
+				if (contains(attributes, "Title")) {
+					isTitle = true;
+				}
+			}
 		};
 		
 		return publicationHandler;
 	}
+	
+	
+	/**
+	 * Get search handler
+	 * @param null
+	 * @return DefaultHandler searchHandler
+	 */
+	public static DefaultHandler getSearchHandler() throws SAXException, IOException, ParserConfigurationException {
+		DefaultHandler searchHandler = new DefaultHandler() {
+			int i = 0;
+			boolean isQueryKey = false, isWebEnv = false, isTotalPubs = false;
+			
+			public void characters(char ch[], int start, int length) throws SAXException {
+				// start and length give both the starting index and the length (respectively)
+				// of the chunk of characters inside the character array that are not elements
+				if (isTotalPubs) {
+					totalPubs = new String(ch, start, length);
+					isTotalPubs = false;
+				}
+				if (isQueryKey) {
+					queryKey = new String(ch, start, length);
+					isQueryKey = false;
+				}
+				if (isWebEnv) {
+					webEnv = new String(ch, start, length);
+					isWebEnv = false;
+				}
+			}
+			
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+			
+			}
+			
+			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+				if (i == 0 && qName.equalsIgnoreCase("Count")) {
+					isTotalPubs = true;
+					i += 1;
+				}
+				if (qName.equalsIgnoreCase("QueryKey")) {
+					isQueryKey = true;
+				}
+				if (qName.equalsIgnoreCase("WebEnv")) {
+					isWebEnv = true;
+				}
+			}
+		};
+		
+		return searchHandler;
+		
+	}
+	
+	
+	/**
+ 	 * Return total # of publications yielded from search. Method has to be called right
+ 	 * after search has been commited. If called at any other time, there is no guarantee
+ 	 * that the value returned will be accurate and/or valid.
+ 	 * @param null
+ 	 * @return int totalPubs
+ 	 */
+ 	public static int getTotalPubs() {
+ 		if (totalPubs == null) {
+ 			return -1;
+ 		} else {
+ 			return Integer.parseInt(Pubmed.totalPubs);
+ 		}
+ 	}
 	
 }

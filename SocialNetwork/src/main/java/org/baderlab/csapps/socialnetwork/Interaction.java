@@ -7,7 +7,8 @@ import java.util.Map;
 
 
 /**
- * Interaction 
+ * Interaction class creates the map that will
+ * eventually be used to build a network.
  * @author Victor Kofia
  */
 public class Interaction {	
@@ -20,7 +21,7 @@ public class Interaction {
 	private static Map<Consortium, ArrayList<AbstractEdge>> loadMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
 		Map<Consortium, ArrayList<AbstractEdge>> map = new HashMap<Consortium, ArrayList<AbstractEdge>>();
-		// Iterate through each publication
+		// Iterate through each edge
 		for (AbstractEdge edge : abstractEdgeList) {
 			int i = 0, j = 0;
 			Consortium consortium = null;

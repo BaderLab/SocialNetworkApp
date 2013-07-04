@@ -14,49 +14,68 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
  */
 public class Publication extends AbstractEdge {
 	/**
-	 * The publication's release date
+	 * A list of all authors who played a part in the creation of Publication
 	 */
-	private String pubDate = null;
+	private ArrayList<Author> authorList = new ArrayList<Author>();
 	/**
-	 * A list of all authors who played a part in the creation of the publication
+	 * The expected number of citations Publication expects to receive
 	 */
-	private ArrayList<Author> authors = new ArrayList<Author>(); 
+	private String expectedCitations = null; 
 	/**
-	 * The journal to which the publication belongs
+	 * The journal to which Publication belongs
 	 */
 	private String journal = null;
 	/**
-	 * The publication's title
+	 * Publication's release date
 	 */
-	private String title = null;
+	private String pubDate = null;
 	/**
-	 * The total amount of times the publication has been cited
+	 * The total amount of times Publication has been cited
 	 */
 	private String timesCited = "0";
 	/**
-	 * The expected number of citations the publication expects to receive
+	 * Publication title
 	 */
-	private String expectedCitations = null; 
+	private String title = null; 
 
 	
 	/**
 	 * Create new publication with specified title, pubdate and list of authors
-	 * @param pubDate
-	 * @param title
-	 * @param coauthorList
+	 * @param String pubDate
+	 * @param String title
+	 * @param String journal
+	 * @param String timesCited
+	 * @param String expectedCitations
+	 * @param List coauthorList
+	 * @return null
 	 */
 	public Publication(String title, String pubDate, String journal, String timesCited, 
 			           String expectedCitations, List<Author> coauthorList) {
 		this.pubDate = pubDate;
 		this.title = title;
 		this.journal = journal;
-		this.authors.addAll(coauthorList);
+		this.authorList.addAll(coauthorList);
 		this.timesCited = timesCited;
 		this.expectedCitations = expectedCitations;
-		constructAttrMap();
+		constructEdgeAttrMap();
 	}
 
 
+	/**
+	 * Construct edge attribute map for use in Cytoscape
+	 * @param null
+	 * @return null
+	 */
+	public void constructEdgeAttrMap() {
+		edgeAttrMap = new HashMap<String, String>();
+		edgeAttrMap.put("Times Cited", this.timesCited);
+		edgeAttrMap.put("Expected Citations", this.expectedCitations);
+		edgeAttrMap.put("Pub Date", this.pubDate);
+		edgeAttrMap.put("Journal", this.journal);
+		edgeAttrMap.put("Title", this.title);
+	}
+	
+	
 	/**
 	 * Return a text representation of all of publication's authors
 	 * @paran null
@@ -65,48 +84,38 @@ public class Publication extends AbstractEdge {
 	public String getAuthors() {
 		String allAuthors = "";
 		// Add a comma between each author
-		for (Author author: authors) {
+		for (Author author: authorList) {
 			allAuthors += author + ", ";
 		}
 		return allAuthors;
 	}
 	
+	/**
+	 * Get edge attribute map
+	 * @param null
+	 * @return Map edgeAttrMap
+	 */
+	public Map<String, String> getEdgeAttrMap() {
+		return this.edgeAttrMap;
+	}
+	
 	
 	/**
-	 * Return list containing publication authors
-	 * @return
+	 * Get expected citations
+	 * @param null
+	 * @return String expectedCitations
+	 */
+	public String getExpectedCitations() {
+		return expectedCitations;
+	}
+	
+	
+	/**
+	 * Return list containing publication's authors
+	 * @return List authorList
 	 */
 	public List<? extends AbstractNode> getNodes() {
-		return this.authors;
-	}
-	
-	/**
-	 * Set publication title
-	 * @param String title
-	 * @return null
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
-	
-	/**
-	 * Get publication title
-	 * @param null
-	 * @return String title
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
-	
-	/**
-	 * Set publication pub date
-	 * @param String date
-	 * @return null
-	 */
-	public void setPubDate(String date) {
-		this.pubDate = date;
+		return this.authorList;
 	}
 	
 	
@@ -121,30 +130,6 @@ public class Publication extends AbstractEdge {
 	
 	
 	/**
-	 * Set publication authors
-	 * @param ArrayList authors
-	 * @return null
-	 */
-	public void setAuthors(ArrayList<Author> authors) {
-		this.authors = authors;
-	}
-	
-	
-	/**
-	 * Return a string representation of the publication in the format: ??
-	 * Title: title
-	 * PubDate: pubdate
-	 * Authors: author
-	 * @param null
-	 * @return String publication
-	 */
-	public String toString() {
-		// removing period (for cosmetic purposes)
-		return title.substring(0,title.length() - 1);
-	}
-
-	
-	/**
 	 * Return times cited
 	 * @param null
 	 * @return String timesCited
@@ -152,25 +137,27 @@ public class Publication extends AbstractEdge {
 	public String getTimesCited() {
 		return timesCited;
 	}
-
-
+	
+	
 	/**
-	 * Set times cited
-	 * @param String timesCited
+	 * Get publication title
+	 * @param null
+	 * @return String title
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+
+	
+	/**
+	 * Set publication authors
+	 * @param ArrayList authors
 	 * @return null
 	 */
-	public void setTimesCited(String timesCited) {
-		this.timesCited = timesCited;
+	public void setAuthors(ArrayList<Author> authors) {
+		this.authorList = authors;
 	}
 
-	/**
-	 * Get expected citations
-	 * @param null
-	 * @return String expectedCitations
-	 */
-	public String getExpectedCitations() {
-		return expectedCitations;
-	}
 
 	/**
 	 * Set expected citations
@@ -180,27 +167,44 @@ public class Publication extends AbstractEdge {
 	public void setExpectedCitations(String expectedCitations) {
 		this.expectedCitations = expectedCitations;
 	}
-	
+
 	/**
-	 * Construct attribute map for use in Cytoscape
-	 * @param null
+	 * Set publication pub date
+	 * @param String date
 	 * @return null
 	 */
-	public void constructAttrMap() {
-		attrMap = new HashMap<String, String>();
-		attrMap.put("Times Cited", this.timesCited);
-		attrMap.put("Expected Citations", this.expectedCitations);
-		attrMap.put("Pub Date", this.pubDate);
-		attrMap.put("Journal", this.journal);
-		attrMap.put("Title", this.title);
+	public void setPubDate(String date) {
+		this.pubDate = date;
+	}
+
+	/**
+	 * Set times cited
+	 * @param String timesCited
+	 * @return null
+	 */
+	public void setTimesCited(String timesCited) {
+		this.timesCited = timesCited;
 	}
 	
 	/**
-	 * Get attribute map
-	 * @param null
-	 * @return Map attrMap
+	 * Set publication title
+	 * @param String title
+	 * @return null
 	 */
-	public Map<String, String> getAttrMap() {
-		return this.attrMap;
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	/**
+	 * Return a string representation of the publication in the format:
+	 * <br>Title: title
+	 * <br>PubDate: pubdate
+	 * <br>Authors: author
+	 * @param null
+	 * @return String publication
+	 */
+	public String toString() {
+		// removing period (for cosmetic purposes)
+		return title.substring(0,title.length() - 1);
 	}
 }

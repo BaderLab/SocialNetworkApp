@@ -12,21 +12,21 @@ public abstract class AbstractEdge {
 	/**
 	 * A map containing all of edge's attributes
 	 */
-	protected Map<String, String> attrMap;
+	protected Map<String, String> edgeAttrMap;
 	
 	/**
 	 * Return map containing all of edge's attributes
 	 * @param null
 	 * @return Map attrMap
 	 */
-	public abstract Map<String, String> getAttrMap();
+	public abstract Map<String, String> getEdgeAttrMap();
 	
 	/**
 	 * Construct an attribute map for edge
 	 * @param null
 	 * @return null
 	 */
-	public abstract void constructAttrMap();
+	public abstract void constructEdgeAttrMap();
 	
 	/**
 	 * Return all nodes attached to edge

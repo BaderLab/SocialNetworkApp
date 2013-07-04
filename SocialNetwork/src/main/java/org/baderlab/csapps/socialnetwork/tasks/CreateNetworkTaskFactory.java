@@ -18,8 +18,12 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 		private CyNetworkNaming cyNetworkNamingServiceRef;
 		private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
 	
-	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
-			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
+	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, 
+			                        CyNetworkFactory cyNetworkFactoryServiceRef, 
+			                        CyNetworkManager cyNetworkManagerServiceRef, 
+			                        CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
+			                        CyNetworkViewManager cyNetworkViewManagerServiceRef, 
+			                        CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
 			this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 			this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 			this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -29,8 +33,12 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 	}
 
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new CreateNetworkTask(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef, cyNetworkManagerServiceRef, 
-				cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef));
+		return new TaskIterator(new CreateNetworkTask(cyNetworkNamingServiceRef, 
+				                                      cyNetworkFactoryServiceRef, 
+				                                      cyNetworkManagerServiceRef, 
+				                                      cyNetworkViewFactoryServiceRef, 
+				                                      cyNetworkViewManagerServiceRef, 
+				                                      cyLayoutManagerServiceRef));
 	}
 
 }

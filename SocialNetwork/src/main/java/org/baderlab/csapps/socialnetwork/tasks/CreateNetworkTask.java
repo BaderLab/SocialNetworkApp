@@ -12,8 +12,6 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Network;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -35,24 +33,28 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 public class CreateNetworkTask extends AbstractTask {
+	private int currentSteps = 0;
+	private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
 	private CyNetworkFactory cyNetworkFactoryServiceRef;
-	private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
-	private CyNetworkViewManager cyNetworkViewManagerServiceRef;
 	private CyNetworkManager cyNetworkManagerServiceRef;
 	private CyNetworkNaming cyNetworkNamingServiceRef;
-	private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
-	private int currentSteps = 0;
-	private int totalSteps = 0;
-	private double progress = 0.0;
+	private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
+	private CyNetworkViewManager cyNetworkViewManagerServiceRef;
 	private TaskMonitor monitor = null;
+	private double progress = 0.0;
+	private int totalSteps = 0;
 
 	/**
 	 * Create a new network task
 	 * @param null
 	 * @return null
 	 */
-	public CreateNetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager cyNetworkManagerServiceRef, 
-			CyNetworkViewFactory cyNetworkViewFactoryServiceRef, CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
+	public CreateNetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, 
+			                 CyNetworkFactory cyNetworkFactoryServiceRef, 
+			                 CyNetworkManager cyNetworkManagerServiceRef, 
+			                 CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
+			                 CyNetworkViewManager cyNetworkViewManagerServiceRef, 
+			                 CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
 		this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 		this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -80,10 +82,10 @@ public class CreateNetworkTask extends AbstractTask {
 		nodeTable = myNet.getDefaultNodeTable();
 		Object[] keys = map.keySet().toArray();
 		AbstractNode key = ((Consortium) keys[0]).getNode1();
-		for (String attr : key.getAttrMap().keySet()) {
+		for (String attr : key.getNodeAttrMap().keySet()) {
 			nodeTable.createColumn(attr, String.class, false);
 		}
-		 	    
+		
  	    // Add all columns to edge table
 		// WIP: WORK IN PROGRESS
 		// ????
@@ -92,13 +94,14 @@ public class CreateNetworkTask extends AbstractTask {
  	    @SuppressWarnings("unchecked")
 		ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
  	    AbstractEdge value = values2.get(0);
- 	    for (String attr : value.getAttrMap().keySet()) {
+ 	    for (String attr : value.getEdgeAttrMap().keySet()) {
  	    	edgeTable.createColumn(attr, String.class, false);
  	    }
 		
 		// Set network name
 		myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-		.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle(Cytoscape.getNetworkName()));
+		.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
+				                         (Cytoscape.getNetworkName()));
 		
 		// Build network
 		Consortium consortium = null;
@@ -123,7 +126,7 @@ public class CreateNetworkTask extends AbstractTask {
 			if (! nodeMap.containsKey(node1)) {
 				nodeRef = myNet.addNode();
 				// Add each node attribute to its respective column
-				for (Entry<String, String> attr : node1.getAttrMap().entrySet()) {
+				for (Entry<String, String> attr : node1.getNodeAttrMap().entrySet()) {
 					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), attr.getValue());
 				}
 				nodeMap.put(node1, nodeRef);
@@ -132,7 +135,7 @@ public class CreateNetworkTask extends AbstractTask {
 			if (! nodeMap.containsKey(node2)) {
 				nodeRef = myNet.addNode();
 				// Add each node attribute to its respective column
-				for (Entry<String, String> attr : node2.getAttrMap().entrySet()) {
+				for (Entry<String, String> attr : node2.getNodeAttrMap().entrySet()) {
 					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), attr.getValue());
 				}
 				nodeMap.put(node2, nodeRef);
@@ -141,7 +144,7 @@ public class CreateNetworkTask extends AbstractTask {
 			for (AbstractEdge edge : edgeArray) {
 				edgeRef = myNet.addEdge(nodeMap.get(node1), nodeMap.get(node2), false);
 				// Add each edge attribute to it's respective column
-				for (Entry<String, String> attr : edge.getAttrMap().entrySet()) {
+				for (Entry<String, String> attr : edge.getEdgeAttrMap().entrySet()) {
 					edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), attr.getValue());
 				}
 			}
@@ -151,29 +154,6 @@ public class CreateNetworkTask extends AbstractTask {
 		}
 						
 		return myNet;
-	}
-	
-	/**
-	 * Update progress monitor
-	 * @param int currentSteps
-	 * @return null
-	 */
-	private void updateProgress() {
-		this.currentSteps += 1;
-		this.progress = (double)this.currentSteps / this.totalSteps;
-		this.monitor.setStatusMessage("Complete: " + toPercent(this.progress));
-		this.monitor.setProgress(this.progress);
-	}
-	
-	/**
-	 * Return progress as a percentage
-	 * @param Double progress
-	 * @return String percentage
-	 */
-	private String toPercent(double progress) {
-		progress = progress * 100;
-		DecimalFormat df = new DecimalFormat("00");
-		return df.format(progress) + "%";
 	}
 	
 	/**
@@ -189,7 +169,8 @@ public class CreateNetworkTask extends AbstractTask {
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
 		
 		if (map == null) {
-			Cytoscape.notifyUser("Network could not be loaded. Cytoscape network map could not be accessed.");
+			Cytoscape.notifyUser
+			("Network could not be loaded. Cytoscape network map could not be accessed.");
 		} else {
 			
 			//Set monitor parameters
@@ -205,12 +186,10 @@ public class CreateNetworkTask extends AbstractTask {
 				return;
 			}
 			
-			// add network to Cytoscape
-			Cytoscape.addNetwork(new Network(Cytoscape.getNetworkName(), network, UserPanel.getSelectedCategory()));
-		
 			networkManager.addNetwork(network);
 
-			final Collection<CyNetworkView> views = networkViewManager.getNetworkViews(network);
+			final Collection<CyNetworkView> views = networkViewManager
+					                                .getNetworkViews(network);
 			CyNetworkView networkView = null;
 			if(views.size() != 0) {
 				networkView = views.iterator().next();
@@ -229,11 +208,43 @@ public class CreateNetworkTask extends AbstractTask {
 			if (destroyView) {
 				networkViewManager.destroyNetworkView(networkView);
 			}
+			
+			Object[] networkAttributes = Cytoscape.getSocialNetworkMap()
+					                              .get(Cytoscape.getNetworkName());
+			networkAttributes[0] = network;
+			networkAttributes[2] = networkView;
 
 			// Auto apply layout
 			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef.getLayout("force-directed");
 			String layoutAttribute = null;
-			insertTasksAfterCurrentTask(layout.createTaskIterator(networkView, layout.createLayoutContext(), CyLayoutAlgorithm.ALL_NODE_VIEWS, layoutAttribute));
+			insertTasksAfterCurrentTask(layout.createTaskIterator
+					(networkView, 
+					 layout.createLayoutContext(), 
+					 CyLayoutAlgorithm.ALL_NODE_VIEWS, 
+					 layoutAttribute));
 		}
+	}
+	
+	/**
+	 * Return progress as a percentage
+	 * @param Double progress
+	 * @return String percentage
+	 */
+	private String toPercent(double progress) {
+		progress = progress * 100;
+		DecimalFormat df = new DecimalFormat("00");
+		return df.format(progress) + "%";
+	}
+	
+	/**
+	 * Update progress monitor
+	 * @param int currentSteps
+	 * @return null
+	 */
+	private void updateProgress() {
+		this.currentSteps += 1;
+		this.progress = (double)this.currentSteps / this.totalSteps;
+		this.monitor.setStatusMessage("Complete: " + toPercent(this.progress));
+		this.monitor.setProgress(this.progress);
 	}
 }

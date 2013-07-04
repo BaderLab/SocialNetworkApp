@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
+import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
@@ -34,12 +35,13 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	/**
 	 * Add a label to each node
 	 * @param VisualStyle visualStyle
-	 * @return  VisualStyle visualStyle
+	 * @return VisualStyle visualStyle
 	 */
 	public VisualStyle addNodeLabels(VisualStyle visualStyle) {
 		// Set node color map to attribute ???
 		PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>)
-			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Last Name", Integer.class, BasicVisualLexicon.NODE_LABEL);
+			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Last Name", 
+					                      Integer.class, BasicVisualLexicon.NODE_LABEL);
 					
 		visualStyle.addVisualMappingFunction(mapping);	
 		
@@ -49,20 +51,27 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	/**
 	 * Add a label to each edge
 	 * @param VisualStyle visualStyle
-	 * @return  VisualStyle visualStyle
+	 * @return VisualStyle visualStyle
 	 */
 	public VisualStyle addEdgeLabels(VisualStyle visualStyle) {
 		// Set node color map to attribute ???
 		PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>)
-			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Title", Integer.class, BasicVisualLexicon.EDGE_LABEL);
+			passthroughMappingFactoryServiceRef.createVisualMappingFunction("Title", 
+					                   Integer.class, BasicVisualLexicon.EDGE_LABEL);
 					
 		visualStyle.addVisualMappingFunction(mapping);	
 		
 		return visualStyle;
 	}
 	
+	/**
+	 * Create chipped visual style
+	 * @param null
+	 * @return VisualStyle chippedVisualStyle
+	 */
 	private VisualStyle createChippedVisualStyle() {
-		VisualStyle defaultVisualStyle = visualStyleFactoryServiceRef.createVisualStyle("Chipped");
+		VisualStyle defaultVisualStyle = visualStyleFactoryServiceRef
+				                         .createVisualStyle("Chipped");
 		addNodeLabels(defaultVisualStyle);
 		addEdgeLabels(defaultVisualStyle);
 		return defaultVisualStyle;
@@ -72,11 +81,11 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * Apply selected network view
 	 */
 	public void run(TaskMonitor arg0) throws Exception {
-		switch(Cytoscape.getVisualStyle()) {
-			case Cytoscape.DEFAULT:
+		switch(Cytoscape.getVisualStyleID()) {
+			case Category.DEFAULT:
 				vmmServiceRef.setCurrentVisualStyle(defaultVisualStyle);
 				break;
-			case Cytoscape.CHIPPED:
+			case Category.CHIPPED:
 				vmmServiceRef.setCurrentVisualStyle(this.chippedVisualStyle);
 				break;
 		}

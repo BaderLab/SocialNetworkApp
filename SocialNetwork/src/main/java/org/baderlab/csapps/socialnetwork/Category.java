@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 
 /**
@@ -15,88 +16,60 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
  */
 public class Category {
 	/**
+	 * Academia (IP = 74.125.226.112)
+	 */
+	final public static int ACADEMIA = (74 << 24) + (125 << 16) + (226 << 8) + 112;
+	/**
 	 * Default category
 	 */
-	final public static int DEFAULT = 0;
+	final public static int DEFAULT = -1;
 	/**
-	 * Academia (IP = 130.14.29.110)
+	 * Incites (IP = 84.18.180.87)
 	 */
-	final public static int ACADEMIA = (130 << 24) + (14 << 16) + (29 << 8) + 110;
+	final public static int INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
 	/**
 	 * LinkedIn (IP = 216.52.242.80)
 	 */
 	final public static int LINKEDIN = (216 << 24) + (52 << 16) + (242 << 8) + 80;
 	/**
-	 * Youtube (IP = 74.125.226.101)
+	 * Pubmed (IP = 130.14.29.110)
 	 */
-	final public static int YOUTUBE = (74 << 24) + (125 << 16) + (226 << 8) + 101;
+	final public static int PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
+	/**
+	 * Scopus (IP = 198.185.19.57)
+	 */
+	final public static int SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
 	/**
 	 * Twitter (IP = 199.59.150.39)
 	 */
 	final public static int TWITTER = (199 << 24) + (59 << 16) + (150 << 8) + 39;
+	/**
+	 * Youtube (IP = 74.125.226.101)
+	 */
+	final public static int YOUTUBE = (74 << 24) + (125 << 16) + (226 << 8) + 101;
+	/** 
+	 * A category map 
+	 *<br> key: String representation of category
+	 * <br> value: category ID
+	 */
+	private static Map<String, Integer> categoryMapA = null;
+	/**
+	 * A category map 
+	 * <br> key: category ID 
+	 * <br> value: String representation of category
+	 */
+	private static Map<Integer, String> categoryMapB = null;
+	/**
+	 * A visual style map
+	 * <br> key: String representation of visual style
+	 * <br> value: visual style ID
+	 */
+	private static Map<String, Integer> visualStyleMap = null;
 	
-	/**
-	 * Get list of all categories currently supported by app
-	 * @param null
-	 * @return List categoryList
-	 */
-	public static String[] getCategoryList() {
-		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
-		return categoryList;
-	}
-	
-	/**
-	 * Get category map. Keys are string representations of each category
-	 * and values are the actual categories themselves
-	 * @param null
-	 * @return Map<String, int> academiaMap
-	 */
-	public static Map<String, Integer> getCategoryMap() {
-		Map<String, Integer> categoryMap = new HashMap<String, Integer>();
-		categoryMap.put("--SELECT CATEGORY--", DEFAULT);
-		categoryMap.put("Academia", ACADEMIA);
-		categoryMap.put("Twitter", TWITTER);
-		categoryMap.put("LinkedIn", LINKEDIN);
-		categoryMap.put("Youtube", YOUTUBE);
-		return categoryMap;
-	}
-
-	/**
-	 * Get visual style list
-	 * @param int visualStyleSelectorType
-	 * @return String[] visualStyleList
-	 */
-	public static String[] getVisualStyleList(int visualStyleSelectorType) {
-		// Which style list gets selected is dependent on what type of network the 
-		String[] visualStyleList = null;
-		switch(visualStyleSelectorType) {
-			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
-				break;
-			case Category.TWITTER:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
-				break;
-		}
-		return visualStyleList;
-	}
-
-	/**
-	 * Get visual style map
-	 * @param null
-	 * @return Map visualStyleMap
-	 */
-	public static Map<String, Integer> getVisualStyleMap() {
-		Map<String, Integer> visualStyleMap = new HashMap<String, Integer>();
-		visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Cytoscape.DEFAULT);
-		visualStyleMap.put("Chipped", Cytoscape.CHIPPED);
-		return visualStyleMap;
-	}
-
 	/**
 	 * Create academia info panel. In addition to Pubmed specific features, 
 	 * this panel will also enable the user to load Incites data.
 	 * @param null
-	 * @return 
 	 * @return JPanel academiaInfoPanel
 	 */
 	public static JPanel createAcademiaInfoPanel() {
@@ -124,19 +97,7 @@ public class Category {
 		defaultInfoPanel.setName("--SELECT CATEGORY--");
 		return defaultInfoPanel;
 	}
-	
-	/**
-	 * Create Twitter info panel
-	 * @param null
-	 * @return JPanel twitterInfoPanel
-	 */
-	public static JPanel createTwitterInfoPanel() {
-		JPanel twitterInfoPanel = new JPanel();
-		twitterInfoPanel.setName("Twitter");
-		twitterInfoPanel.setBorder(BorderFactory.createTitledBorder("Twitter"));
-		return twitterInfoPanel;
-	}
-	
+
 	/**
 	 * Create LinkedIn info panel
 	 * @param null
@@ -148,7 +109,19 @@ public class Category {
 		linkedInInfoPanel.setBorder(BorderFactory.createTitledBorder("LinkedIn"));
 		return linkedInInfoPanel;
 	}
-	
+
+	/**
+	 * Create Twitter info panel
+	 * @param null
+	 * @return JPanel twitterInfoPanel
+	 */
+	public static JPanel createTwitterInfoPanel() {
+		JPanel twitterInfoPanel = new JPanel();
+		twitterInfoPanel.setName("Twitter");
+		twitterInfoPanel.setBorder(BorderFactory.createTitledBorder("Twitter"));
+		return twitterInfoPanel;
+	}
+
 	/**
 	 * Create Youtube info panel
 	 * @param null
@@ -162,9 +135,39 @@ public class Category {
 	}
 
 	/**
-	 * Get list of all search filters granted to user.
+	 * Get unique id (numeral) associated with category
+	 * @param String category
+	 * @return int categoryID
+	 */
+	public static int getCategoryID(String category) {
+		if (Category.categoryMapA == null) {
+			Category.categoryMapA = new HashMap<String, Integer>();
+			categoryMapA.put("--SELECT CATEGORY--", DEFAULT);
+			categoryMapA.put("Academia", ACADEMIA);
+			categoryMapA.put("Twitter", TWITTER);
+			categoryMapA.put("LinkedIn", LINKEDIN);
+			categoryMapA.put("Youtube", YOUTUBE);
+			categoryMapA.put("Incites", INCITES);
+			categoryMapA.put("Scopus", SCOPUS);
+			categoryMapA.put("Pubmed", PUBMED);
+		}
+		return categoryMapA.get(category);
+	}
+
+	/**
+	 * Get list of all categories currently supported by app
+	 * @param null
+	 * @return List categoryList
+	 */
+	public static String[] getCategoryList() {
+		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
+		return categoryList;
+	}
+	
+	/**
+	 * Get list of search filters.
 	 * Filter type varies with category.
-	 * @param selectedCategory
+	 * @param int selectedCategory
 	 * @return String[] searchFilterList
 	 */
 	public static String[] getSearchFilterList(int selectedCategory) {
@@ -188,5 +191,68 @@ public class Category {
 		}
 		return searchFilterList;
 	}
+
+	/**
+	 * Get visual style list of a certain type
+	 * @param int visualStyleSelectorType
+	 * @return String[] visualStyleList
+	 */
+	public static String[] getVisualStyleList(int visualStyleSelectorType) {
+		String[] visualStyleList = null;
+		switch(visualStyleSelectorType) {
+			case Category.DEFAULT:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
+				break;
+			case Category.ACADEMIA:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
+				break;
+			case Category.INCITES:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "BiblioInsight"};
+				break;
+			case Category.TWITTER:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
+				break;
+		}
+		return visualStyleList;
+	}
+
+	/**
+	 * Get unique id (numeral) associated with visual style
+	 * @param String visualStyle
+	 * @return int visualStyleID
+	 */
+	public static int getVisualStyleID(String visualStyle) {
+		if (Category.visualStyleMap == null) {
+			Category.visualStyleMap = new HashMap<String, Integer>();
+			Category.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
+			Category.visualStyleMap.put("Chipped", Category.CHIPPED);
+		}
+		return Category.visualStyleMap.get(visualStyle);
+	}
+
+	/**
+	 * Return string representation of category
+	 * @param int categoryID
+	 * @return String category
+	 */
+	public static String toString(int categoryID) {
+		if (Category.categoryMapB == null) {
+			Category.categoryMapB = new HashMap<Integer, String>();
+			categoryMapB.put(DEFAULT, "--SELECT CATEGORY--");
+			categoryMapB.put(ACADEMIA, "Academia");
+			categoryMapB.put(TWITTER, "Twitter");
+			categoryMapB.put(LINKEDIN, "LinkedIn");
+			categoryMapB.put(YOUTUBE, "Youtube");
+			categoryMapB.put(INCITES, "Incites");
+			categoryMapB.put(SCOPUS, "Scopus");
+			categoryMapB.put(PUBMED, "Pubmed");
+		}
+		return categoryMapB.get(categoryID);
+	}
+
+	/**
+	 * Chipped network view
+	 */
+	final public static int CHIPPED = -7;
 
 }

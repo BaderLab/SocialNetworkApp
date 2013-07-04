@@ -1,13 +1,8 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import main.java.org.baderlab.csapps.socialnetwork.academia.Pubmed;
-
-import org.xml.sax.SAXException;
 
 /**
  * A search session
@@ -27,16 +22,14 @@ public class Search {
 	 * Create a new search session 
 	 * @param String searchTerm
 	 * @param int website
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
+	 * @return null
 	 */
 	public Search(String searchTerm, int website) {
 		switch (website) {
 			case Category.DEFAULT:
 				Cytoscape.notifyUser("Click --SELECT CATEGORY-- to select a category");
 				break;
-			case Category.ACADEMIA: 
+			case Category.ACADEMIA:
 				this.results = Pubmed.getListOfPublications(searchTerm);
 				this.totalHits = Pubmed.getTotalPubs();
 				break;

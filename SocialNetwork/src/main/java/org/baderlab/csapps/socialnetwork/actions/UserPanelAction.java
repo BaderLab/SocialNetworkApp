@@ -23,8 +23,8 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 public class UserPanelAction extends AbstractCyAction {
 	
 	private static final long serialVersionUID = -4717114252027573487L;
-	private CytoPanel cytoPanelWest = null;
 	private CyServiceRegistrar cyServiceRegistrarRef = null;
+	private CytoPanel cytoPanelWest = null;
 	private UserPanel userPanel = null;
 		
 	public UserPanelAction(Map<String,String> configProps, CyApplicationManager cyApplicationManagerServiceRef, 
@@ -40,10 +40,15 @@ public class UserPanelAction extends AbstractCyAction {
 		this.userPanel = userPanel;
 	}
 	
-    public void actionPerformed(ActionEvent event) {
-    	    	    	
+	/**
+	 * Display / Hide the main panel
+	 * @param null
+	 * @return null
+	 */
+    public void actionPerformed(ActionEvent event) {	
     	if (this.getName().trim().equalsIgnoreCase("View Panel")) {
-    		this.cyServiceRegistrarRef.registerService(this.userPanel, CytoPanelComponent.class, new Properties());
+    		this.cyServiceRegistrarRef.registerService
+    		  (this.userPanel, CytoPanelComponent.class, new Properties());
     		// If the state of the cytoPanelWest is HIDE, show it
     		if (cytoPanelWest.getState() == CytoPanelState.HIDE) {
     			cytoPanelWest.setState(CytoPanelState.DOCK);
@@ -56,10 +61,10 @@ public class UserPanelAction extends AbstractCyAction {
     		cytoPanelWest.setSelectedIndex(index);
     		this.setName("Hide Panel");
     	} else if (this.getName().trim().equalsIgnoreCase("Hide Panel")) {
-    		this.cyServiceRegistrarRef.unregisterService(this.userPanel, CytoPanelComponent.class);
+    		this.cyServiceRegistrarRef.unregisterService 
+    		       (this.userPanel, CytoPanelComponent.class);
     		this.setName("View Panel");
     	} 
-    	
     }
  
 }

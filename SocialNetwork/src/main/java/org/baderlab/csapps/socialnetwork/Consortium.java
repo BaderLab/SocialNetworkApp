@@ -26,7 +26,7 @@ public class Consortium {
 	}
 	
 	/**
-	 * Get node1
+	 * Get node1. Returns null if no node is present.
 	 * @param null
 	 * @return AbstractNode author1
 	 */
@@ -35,7 +35,8 @@ public class Consortium {
 	}
 	
 	/**
-	 * Get node2
+	 * Get node2. Returns null if no node
+	 * is present.
 	 * @param null
 	 * @return AbstractNode author2
 	 */
@@ -45,9 +46,9 @@ public class Consortium {
 
 	/**
 	 * Return Consortium hash code. Used to determine a consortium's identity. 
-	 * Current system considers consortiums composed of the same nodes
-	 * but stored in different variables (i.e. Victor stored in node2 instead
-	 * of node1) as being one and the same
+	 * Current system considers consortiums with the same nodes but different 
+	 * ordering (i.e. Victor stored in node2 instead of node1) to be one and 
+	 * the same.
 	 * @param null
 	 * @return int hashCode
 	 */
@@ -59,8 +60,7 @@ public class Consortium {
 	}
 
 	/**
-	 * Return true iff consortium is equal (in all the important aspects)
-	 * to other
+	 * Return true iff consortium is equal to other.
 	 * @param Object Consortium
 	 * @return boolean 
 	 */

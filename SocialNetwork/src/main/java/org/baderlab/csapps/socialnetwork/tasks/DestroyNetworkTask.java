@@ -13,9 +13,11 @@ public class DestroyNetworkTask extends AbstractTask {
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
 	}
 
-	@Override
+	/**
+	 * Destroy a network
+	 */
 	public void run(TaskMonitor taskMonitor) throws Exception {
-		cyNetworkManagerServiceRef.destroyNetwork(Cytoscape.getNetworkToBeDestroyed().getNetworkRef());
+		cyNetworkManagerServiceRef.destroyNetwork(Cytoscape.getNetworkToBeDestroyed());
 	}
 
 }

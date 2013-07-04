@@ -13,8 +13,11 @@ public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
 	private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
 	
-	public ApplyVisualStyleTaskFactory(VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingManager vmmServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
-			VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef)  {
+	public ApplyVisualStyleTaskFactory(VisualStyleFactory visualStyleFactoryServiceRef, 
+			                           VisualMappingManager vmmServiceRef, 
+			                           VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
+			                           VisualMappingFunctionFactory continuousMappingFactoryServiceRef, 
+			                           VisualMappingFunctionFactory discreteMappingFactoryServiceRef)  {
 		this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
 		this.vmmServiceRef = vmmServiceRef;
 		this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
@@ -23,8 +26,11 @@ public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
 	}
 	
 	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ApplyVisualStyleTask(visualStyleFactoryServiceRef, vmmServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
-				discreteMappingFactoryServiceRef));
+		return new TaskIterator(new ApplyVisualStyleTask(visualStyleFactoryServiceRef, 
+				                                         vmmServiceRef, 
+				                                         passthroughMappingFactoryServiceRef, 
+				                                         continuousMappingFactoryServiceRef, 
+				                                         discreteMappingFactoryServiceRef));
 	}
 
 }
