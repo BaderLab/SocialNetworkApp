@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
+import java.awt.Cursor;
 import java.util.List;
 
 import main.java.org.baderlab.csapps.socialnetwork.academia.Pubmed;
@@ -25,6 +26,7 @@ public class Search {
 	 * @return null
 	 */
 	public Search(String searchTerm, int website) {
+        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		switch (website) {
 			case Category.DEFAULT:
 				Cytoscape.notifyUser("Click --SELECT CATEGORY-- to select a category");
@@ -34,6 +36,7 @@ public class Search {
 				this.totalHits = Pubmed.getTotalPubs();
 				break;
 		}
+        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	/**
