@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
@@ -138,12 +139,13 @@ public class Cytoscape {
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
 		
 		// Parse for list of publications
-		List<? extends AbstractEdge> pubList = Incites.getPublications(networkFile);
+		List<? extends Publication> pubList = Incites.getPublications(networkFile);
 		
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
-			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(pubList); 
+			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList); 
+//			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(pubList); 
 			Cytoscape.setMap(map);
 			String networkName = Incites.getFacultyTextFieldRef().getText().trim();
 			// Check if a network with a similar name already exists
@@ -180,7 +182,7 @@ public class Cytoscape {
 				Cytoscape.notifyUser("Network could not be loaded");
 			} else {
 				// Create new map using results
-				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getMap(results);
+				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(results);
 				// Check if a similar network already exists
 				if (Cytoscape.isNameValid(searchTerm)) {
 					Cytoscape.setNetworkName(searchTerm);

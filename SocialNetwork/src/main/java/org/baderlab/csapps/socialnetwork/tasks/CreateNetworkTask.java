@@ -82,8 +82,14 @@ public class CreateNetworkTask extends AbstractTask {
 		nodeTable = myNet.getDefaultNodeTable();
 		Object[] keys = map.keySet().toArray();
 		AbstractNode key = ((Consortium) keys[0]).getNode1();
-		for (String attr : key.getNodeAttrMap().keySet()) {
-			nodeTable.createColumn(attr, String.class, false);
+		for (Entry<String, Object> attr : key.getNodeAttrMap().entrySet()) {
+			String attrName = attr.getKey();
+			Object attrType = attr.getValue();
+			if (attrType instanceof String) {
+				nodeTable.createColumn(attrName, String.class, false);
+			} else if (attrType instanceof Integer) {
+				nodeTable.createColumn(attrName, Integer.class, false);
+			}
 		}
 		
  	    // Add all columns to edge table
@@ -94,8 +100,14 @@ public class CreateNetworkTask extends AbstractTask {
  	    @SuppressWarnings("unchecked")
 		ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
  	    AbstractEdge value = values2.get(0);
- 	    for (String attr : value.getEdgeAttrMap().keySet()) {
- 	    	edgeTable.createColumn(attr, String.class, false);
+ 	    for (Entry<String, Object> attr : value.getEdgeAttrMap().entrySet()) {
+			String attrName = attr.getKey();
+			Object attrType = attr.getValue();
+			if (attrType instanceof String) {
+				edgeTable.createColumn(attrName, String.class, false);
+			} else if (attrType instanceof Integer) {
+				edgeTable.createColumn(attrName, Integer.class, false);
+			}
  	    }
 		
 		// Set network name
@@ -126,8 +138,9 @@ public class CreateNetworkTask extends AbstractTask {
 			if (! nodeMap.containsKey(node1)) {
 				nodeRef = myNet.addNode();
 				// Add each node attribute to its respective column
-				for (Entry<String, String> attr : node1.getNodeAttrMap().entrySet()) {
-					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), attr.getValue());
+				for (Entry<String, Object> attr : node1.getNodeAttrMap().entrySet()) {
+					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
+							                            attr.getValue());
 				}
 				nodeMap.put(node1, nodeRef);
 			}
@@ -135,8 +148,9 @@ public class CreateNetworkTask extends AbstractTask {
 			if (! nodeMap.containsKey(node2)) {
 				nodeRef = myNet.addNode();
 				// Add each node attribute to its respective column
-				for (Entry<String, String> attr : node2.getNodeAttrMap().entrySet()) {
-					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), attr.getValue());
+				for (Entry<String, Object> attr : node2.getNodeAttrMap().entrySet()) {
+					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
+							                            attr.getValue());
 				}
 				nodeMap.put(node2, nodeRef);
 			}
@@ -144,8 +158,9 @@ public class CreateNetworkTask extends AbstractTask {
 			for (AbstractEdge edge : edgeArray) {
 				edgeRef = myNet.addEdge(nodeMap.get(node1), nodeMap.get(node2), false);
 				// Add each edge attribute to it's respective column
-				for (Entry<String, String> attr : edge.getEdgeAttrMap().entrySet()) {
-					edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), attr.getValue());
+				for (Entry<String, Object> attr : edge.getEdgeAttrMap().entrySet()) {
+					edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
+							                                attr.getValue());
 				}
 			}
 			
@@ -196,7 +211,8 @@ public class CreateNetworkTask extends AbstractTask {
 			}
 			if (networkView == null) {
 				// Create a new view for my network
-				networkView = cyNetworkViewFactoryServiceRef.createNetworkView(network);
+				networkView = cyNetworkViewFactoryServiceRef
+						      .createNetworkView(network);
 				networkViewManager.addNetworkView(networkView);
 			} else {
 				Cytoscape.notifyUser("Network already present");
@@ -215,7 +231,8 @@ public class CreateNetworkTask extends AbstractTask {
 			networkAttributes[2] = networkView;
 
 			// Auto apply layout
-			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef.getLayout("force-directed");
+			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef
+					                   .getLayout("force-directed");
 			String layoutAttribute = null;
 			insertTasksAfterCurrentTask(layout.createTaskIterator
 					(networkView, 

@@ -12,14 +12,14 @@ public abstract class AbstractEdge {
 	/**
 	 * A map containing all of edge's attributes
 	 */
-	protected Map<String, String> edgeAttrMap;
-	
+	protected Map<String, Object> edgeAttrMap;
+		
 	/**
 	 * Return map containing all of edge's attributes
 	 * @param null
 	 * @return Map attrMap
 	 */
-	public abstract Map<String, String> getEdgeAttrMap();
+	public abstract Map<String, Object> getEdgeAttrMap();
 	
 	/**
 	 * Construct an attribute map for edge

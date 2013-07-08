@@ -174,19 +174,19 @@ public class Category {
 		String[] searchFilterList = null;
 		switch (selectedCategory) {
 			case Category.DEFAULT:
-				searchFilterList = new String[] {"--SELECT--"};
+				searchFilterList = new String[] {"--SELECT FILTER--"};
 				break;
 			case Category.ACADEMIA:
-				searchFilterList = new String[] { "--SELECT--", "Authors", "Institutions", "MeSH"};
+				searchFilterList = new String[] { "--SELECT FILTER--", "Authors", "Institutions", "MeSH"};
 				break;
 			case Category.TWITTER:
-				searchFilterList = new String[] { "--SELECT--", "Users", "HashTags"};
+				searchFilterList = new String[] { "--SELECT FILTER--", "Users", "HashTags"};
 				break;
 			case Category.LINKEDIN:
-				searchFilterList = new String[] { "--SELECT--", "Users", "Groups", "Companies"};
+				searchFilterList = new String[] { "--SELECT FILTER--", "Users", "Groups", "Companies"};
 				break;
 			case Category.YOUTUBE:
-				searchFilterList = new String[] { "--SELECT--", "Videos", "Channels"};
+				searchFilterList = new String[] { "--SELECT FILTER--", "Videos", "Channels"};
 				break;
 		}
 		return searchFilterList;
@@ -207,7 +207,7 @@ public class Category {
 				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
 				break;
 			case Category.INCITES:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "BiblioInsight"};
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
 				break;
 			case Category.TWITTER:
 				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };

@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Copublications;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
+
 
 /**
  * Interaction class creates the map that will
@@ -14,13 +18,33 @@ import java.util.Map;
 public class Interaction {	
 	
 	/**
-	 * Create new consortium & edgeList hash-map 
-	 * @param ArrayList abstractEdgeList
-	 * @return Map map
+	 * Return abstract map. Keys are all distinct consortiums found in map.
+	 * Values are the various interactions that each individual consortium shares.
+	 * @param null
+	 * @return Map abstractMap
 	 */
-	private static Map<Consortium, ArrayList<AbstractEdge>> loadMap(List<? extends AbstractEdge> abstractEdgeList) {
+	public static Map<Consortium, ArrayList<AbstractEdge>> getAbstractMap(List<? extends AbstractEdge> edgeList) {
+		return Interaction.loadAbstractMap(edgeList);
+	}
+		
+	/**
+	 * Return academia map. Keys are all distinct consortiums found in map.
+	 * Values are the copublications associated with these consortiums.
+	 * @param null
+	 * @return Map academiaMap
+	 */
+	public static Map<Consortium, ArrayList<AbstractEdge>> getAcademiaMap(List<? extends Publication> pubList) {
+		return Interaction.loadAcademiaMap(pubList);
+	}
+	
+	/**
+	 * Create a new abstract, consortium & edgeList hash-map 
+	 * @param ArrayList abstractEdgeList
+	 * @return Map abstractMap
+	 */
+	private static Map<Consortium, ArrayList<AbstractEdge>> loadAbstractMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
-		Map<Consortium, ArrayList<AbstractEdge>> map = new HashMap<Consortium, ArrayList<AbstractEdge>>();
+		Map<Consortium, ArrayList<AbstractEdge>> abstractMap = new HashMap<Consortium, ArrayList<AbstractEdge>>();
 		// Iterate through each edge
 		for (AbstractEdge edge : abstractEdgeList) {
 			int i = 0, j = 0;
@@ -37,30 +61,76 @@ public class Interaction {
 					node2 = edge.getNodes().get(j);
 					consortium = new Consortium(node1, node2);
 					// Check for consortium's existence before it's entered into map
-					if (! map.containsKey(consortium)) {
+					if (! abstractMap.containsKey(consortium)) {
 						edgeList = new ArrayList<AbstractEdge>();
 						edgeList.add(edge);
-						map.put(consortium, edgeList);
+						abstractMap.put(consortium, edgeList);
 					} else {
-						map.get(consortium).add(edge);
+						abstractMap.get(consortium).add(edge);
 					}
 					j += 1;
 				}
 				i += 1;
 			}
 		}
-		return map;
+		return abstractMap;
 	}
-		
 	
 	/**
-	 * Return map. Keys are all distinct consortiums found in map.
-	 * Values are the various interactions that each individual consortium shares.
-	 * @param null
-	 * @return Map map
+	 * Create new Academia hash-map 
+	 * @param ArrayList abstractEdgeList
+	 * @return Map academiaMap
 	 */
-	public static Map<Consortium, ArrayList<AbstractEdge>> getMap(List<? extends AbstractEdge> edgeList) {
-		return Interaction.loadMap(edgeList);
+	private static Map<Consortium, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends Publication> publicationList) {
+		// Create new academia map
+		Map<Consortium, ArrayList<AbstractEdge>> academiaMap = new HashMap<Consortium, ArrayList<AbstractEdge>>();
+		Map<Author, Author> authorMap = new HashMap<Author, Author>();
+		int i = 0, j = 0;
+		Consortium consortium = null;
+		Author author1 = null, author2 = null;
+		Copublications copublications = null;
+		// Iterate through each publication
+		for (Publication publication : publicationList) {
+			i = 0;
+			j = 0;
+			consortium = null;
+			author1 = null;
+			author2 = null;
+			copublications = null;
+			while (i < publication.getNodes().size()) {
+				author1 = (Author) publication.getNodes().get(i);
+				if (authorMap.get(author1) == null) {
+					authorMap.put(author1, author1);
+				} 
+				// Update time cited for both author#1 and author#2
+				authorMap.get(author1).setTimesCited(authorMap.get(author1).getTimesCited() 
+						 + (publication.getTimesCited()));
+				j = i + 1;
+				while (j < publication.getNodes().size()) {
+					author2 = (Author) publication.getNodes().get(j);
+					if (authorMap.get(author2) == null) {
+						authorMap.put(author2, author2);
+					}
+					authorMap.get(author2).setTimesCited(authorMap.get(author2).getTimesCited() 
+							 + publication.getTimesCited());
+					consortium = new Consortium(authorMap.get(author1), authorMap.get(author2));
+					// Check for consortium's existence before it's entered into map
+					if (! academiaMap.containsKey(consortium)) {
+						copublications = new Copublications(consortium, (Publication) publication);
+						ArrayList<AbstractEdge> list = new ArrayList<AbstractEdge>();
+						list.add(copublications);
+						academiaMap.put(consortium, list);
+					} else {
+						copublications = (Copublications) academiaMap.get(consortium).get(0);
+						copublications.addPublication((Publication) publication);
+					}
+					j += 1;
+				}
+				i += 1;
+			}
+
+		}
+		return academiaMap;
 	}
 	
 }

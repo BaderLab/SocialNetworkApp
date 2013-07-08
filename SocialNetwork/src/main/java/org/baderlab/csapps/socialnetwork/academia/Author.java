@@ -44,9 +44,9 @@ public class Author extends AbstractNode {
 	 */
 	private String middleInitial = "N/A";
 	/**
-	 * Author's total number of publications
+	 * Author's total number of citations
 	 */
-	private int totalPubs = 0;
+	private int timesCited = 0;
 	
 	/**
 	 * Create a new author with the first name, last name and middle initial specified in rawAuthorText.
@@ -95,10 +95,11 @@ public class Author extends AbstractNode {
 	 * @return null
 	 */
 	public void constructNodeAttrMap() {
-		nodeAttrMap = new HashMap<String, String>();
+		nodeAttrMap = new HashMap<String, Object>();
 		nodeAttrMap.put("Last Name", this.lastName);
 		nodeAttrMap.put("First Name", this.firstName);
 		nodeAttrMap.put("Institution", this.institution);
+		nodeAttrMap.put("Times Cited", this.timesCited);
 	}
 
 	/**
@@ -160,18 +161,18 @@ public class Author extends AbstractNode {
 	 * @param null
 	 * @return Map attrMap
 	 */
-	public Map<String, String> getNodeAttrMap() {
+	public Map<String, Object> getNodeAttrMap() {
 		return this.nodeAttrMap;
 	}
 
 	
 	/**
-	 * Get author's total number of publications
+	 * Get author's total number of citations
 	 * @param null
-	 * @return String totalPubs
+	 * @return int timesCited
 	 */
-	public int getTotalPubs() {
-		return totalPubs;
+	public int getTimesCited() {
+		return this.timesCited;
 	}
 	
 	/**
@@ -279,12 +280,23 @@ public class Author extends AbstractNode {
 //	}
 	
 	/**
-	 * Set author's total number of publications
-	 * @param int totalPubs
+	 * Set author's total number of citations
+	 * @param int timesCited
 	 * @return null
 	 */
-	public void setTotalPubs(int totalPubs) {
-		this.totalPubs = totalPubs;
+	public void setTimesCited(String timesCited) {
+		this.timesCited = Integer.parseInt(timesCited);
+		this.getNodeAttrMap().put("Times Cited", timesCited);
+	}
+	
+	/**
+	 * Set author's total number of citations
+	 * @param int timesCited
+	 * @return null
+	 */
+	public void setTimesCited(int timesCited) {
+		this.timesCited = timesCited;
+		this.getNodeAttrMap().put("Times Cited", Integer.toString(timesCited));
 	}
 	
 	/**

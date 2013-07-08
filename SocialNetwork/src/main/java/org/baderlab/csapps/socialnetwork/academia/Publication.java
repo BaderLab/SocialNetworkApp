@@ -32,7 +32,7 @@ public class Publication extends AbstractEdge {
 	/**
 	 * The total amount of times Publication has been cited
 	 */
-	private String timesCited = "0";
+	private int timesCited = 0;
 	/**
 	 * Publication title
 	 */
@@ -55,7 +55,7 @@ public class Publication extends AbstractEdge {
 		this.title = title;
 		this.journal = journal;
 		this.authorList.addAll(coauthorList);
-		this.timesCited = timesCited;
+		this.timesCited = Integer.parseInt(timesCited);
 		this.expectedCitations = expectedCitations;
 		constructEdgeAttrMap();
 	}
@@ -67,7 +67,7 @@ public class Publication extends AbstractEdge {
 	 * @return null
 	 */
 	public void constructEdgeAttrMap() {
-		edgeAttrMap = new HashMap<String, String>();
+		edgeAttrMap = new HashMap<String, Object>();
 		edgeAttrMap.put("Times Cited", this.timesCited);
 		edgeAttrMap.put("Expected Citations", this.expectedCitations);
 		edgeAttrMap.put("Pub Date", this.pubDate);
@@ -95,7 +95,7 @@ public class Publication extends AbstractEdge {
 	 * @param null
 	 * @return Map edgeAttrMap
 	 */
-	public Map<String, String> getEdgeAttrMap() {
+	public Map<String, Object> getEdgeAttrMap() {
 		return this.edgeAttrMap;
 	}
 	
@@ -132,9 +132,9 @@ public class Publication extends AbstractEdge {
 	/**
 	 * Return times cited
 	 * @param null
-	 * @return String timesCited
+	 * @return int timesCited
 	 */
-	public String getTimesCited() {
+	public int getTimesCited() {
 		return timesCited;
 	}
 	
@@ -179,10 +179,10 @@ public class Publication extends AbstractEdge {
 
 	/**
 	 * Set times cited
-	 * @param String timesCited
+	 * @param int timesCited
 	 * @return null
 	 */
-	public void setTimesCited(String timesCited) {
+	public void setTimesCited(int timesCited) {
 		this.timesCited = timesCited;
 	}
 	
