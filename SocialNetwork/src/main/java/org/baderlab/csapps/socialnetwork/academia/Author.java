@@ -49,7 +49,8 @@ public class Author extends AbstractNode {
 	private int timesCited = 0;
 	
 	/**
-	 * Create a new author with the first name, last name and middle initial specified in rawAuthorText.
+	 * Create a new author with the first name, last name and middle initial specified 
+	 * in rawAuthorText.
 	 * Source file origin is specified by a special int value
 	 * @param String rawAuthorText
 	 * @param int origin
@@ -284,19 +285,9 @@ public class Author extends AbstractNode {
 	 * @param int timesCited
 	 * @return null
 	 */
-	public void setTimesCited(String timesCited) {
-		this.timesCited = Integer.parseInt(timesCited);
-		this.getNodeAttrMap().put("Times Cited", timesCited);
-	}
-	
-	/**
-	 * Set author's total number of citations
-	 * @param int timesCited
-	 * @return null
-	 */
 	public void setTimesCited(int timesCited) {
 		this.timesCited = timesCited;
-		this.getNodeAttrMap().put("Times Cited", Integer.toString(timesCited));
+		this.getNodeAttrMap().put("Times Cited", timesCited);
 	}
 	
 	/**

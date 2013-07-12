@@ -41,7 +41,6 @@ public class CyActivator extends AbstractCyActivator {
 
 	public void start(BundleContext bc) {
 		
-		
 		// Acquire services
 		CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
 		
@@ -85,8 +84,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener();
-		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
-
+		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());		
 		
 		
 		// Create and register task factories
@@ -109,7 +107,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef);
 		registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
-	
+		
 		
 		// Create & register main user panel
 		UserPanel userPanel = new UserPanel();

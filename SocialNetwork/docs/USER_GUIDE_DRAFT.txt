@@ -1,0 +1,39 @@
+SOCIAL NETWORK APP USER GUIDE
+
+TABLE OF CONTENTS
+PART 1: INTRODUCTION
+PART 2: GETTING STARTED
+
+PART 1: INTRODUCTION
+In this highly connected society of ours a lot of us are getting increasingly tangled up in a complex social web (i.e. Facebook. Twitter, Instagram, LinkedIn) These 'social webs' or 'networks' vary in type and purpose but one essential characteristic they share is that they facilitate social interaction in a safe and open space. LinkedIn uses groups and profiles to foster and develop professional relationships. Facebook's premise is similar to that of LinkedIn's but it is much less rigid in comparison. Instagram's area of expertise is pictures; no words, just pictures. Twitter has done away with all superfluity by restricting social interaction to hashtags and short 140 character 'tweets'.
+
+It is impossible for any one person to size up the many intricacies of these networks through simple intuition. Tools that render these complex networks fit for human eyes have been in dire need for quite some time now. The Social Network App was designed to fill this need. Through the Social Network App, researchers can now easily visualize and analyze data pooled from today's largest social networks.
+
+PART 2: GETTING STARTED
+REQUIREMENTS / AUDIENCE
+This user guide is geared towards absolute beginners; people who have never had any interaction with Cytoscape 3.0. If you anticipate that this guide may move a bit too slow for your taste then it would probably be wise to SKIP AHEAD
+INSTALLATION
+The Social Network App only runs on the latest version of Cytoscape (Cytoscape 3.0). Instructions for downloading and installing Cytoscape 3.0 can be found HERE.
+The Social Network App itself is currently available in the Cytoscape App Store. You can access it through this link HERE. Alternatively, you may go to the Cytoscape App Store HERE and search for 'Social Network App' (without quotes)
+LAUNCHING THE APP:
+* Click on 'Apps'
+* Scroll over to 'Social Network'
+* Click on 'View Panel'
+A new panel titled 'Social Network' will materialize on the left side of Cytoscape. 
+SOCIAL NETWORK APP PANEL BASICS
+The Social Network App User Interface is divided into four main areas:
+(1) Category: this area allows you to select a Social Network 'category'. The four main categories are 'Academia', 'Twitter', 'LinkedIn' and 'Youtube'. To select a category, simply move the cursor over to this panel and click on '--SELECT CATEGORY--'.
+(2) Search: the search area contains three important subsections: the search-box, the search button and the search filter. 
+* Search Box: enter the key-word or query you want to build a network out of here.
+* Search Button: used to commit a search. Upon clicking this button, the App will search for and automatically build a network using the query provided in the search box. If the search box is empty or contains spurious characters, then a search will not be commited. 
+* Search Filter: allows you to filter your searches. If a broad search doesn't net you want you want, then try to filter your search. To select a filter click on '--SEARCH FILTER--'
+(4) Info Panel: contains information and features specific to each category. Since each individual info panel is tied to a specific category, these panels share few similarities. In-depth descriptions of all the features contained in these info panels are provided below:
+* Academia
+* Twitter
+* LinkedIn
+* Youtube
+(4) Network Panel: keeps track of all the different 'Social' networks that have been made so far. Each specific network has its own set of visual styles. Selecting a social network in this panel results in a custom set of visual styles being shown. These visual styles cover a lot of range. They are meant to draw attention to a specified social network's salient features. To select a visual style click on '--SELECT VISUAL STYLE--' If you find the custom visual styles to be somewhat lacking then you may construct your own. CLICK HERE for a tutorial on how to build your own visual styles.
+
+
+TIP FOR PROOFREADING
+* 3 edits, staggered over a significant length of time are enough. More than 3 edits is overkill and will net you diminishing returns.

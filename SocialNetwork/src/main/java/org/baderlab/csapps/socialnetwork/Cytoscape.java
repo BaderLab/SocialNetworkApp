@@ -69,9 +69,9 @@ public class Cytoscape {
 	/**
 	 *Social network map. 
 	 *<br>Key: network name 
-	 *<br>Value: {CyNetwork, Category, CyNetworkView}
+	 *<br>Value: social network
 	 */
-	private static Map<String, Object[]> socialNetworkMap = null;
+	private static Map<String, SocialNetwork> socialNetworkMap = null;
 	/**
 	 * A reference to the cytoscape task manager
 	 */
@@ -89,6 +89,10 @@ public class Cytoscape {
 	 * Selected network view
 	 */
 	private static int visualStyleID = Category.DEFAULT;
+	/**
+	 * Currently selected social network
+	 */
+	private static SocialNetwork currentlySelectedSocialNetwork = null;
 	
 	/**
 	 * Apply visual style to network
@@ -99,9 +103,8 @@ public class Cytoscape {
 		Cytoscape.setVisualStyleID(Category.getVisualStyleID(visualStyle));
 		Cytoscape.getTaskManager().execute(Cytoscape.getApplyVisualStyleTaskFactoryRef()
 				                  .createTaskIterator());
-
 	}
-
+	
 	/**
 	 * Close user panel. Method will do nothing if user panel
 	 * has not been registered prior to it's execution.
@@ -113,7 +116,7 @@ public class Cytoscape {
 		(Cytoscape.getUserPanelRef(), CytoPanelComponent.class);
 		Cytoscape.getUserPanelAction().setName("View Panel");
 	}
-
+	
 	/**
 	 * Create a network. Method marked private in order to prevent users from inadvertently
 	 * creating a network before all pertinent edge and node info is set.
@@ -128,16 +131,16 @@ public class Cytoscape {
 		// This method is a blackbox and should NOT be directly executed under ANY circumstances
 		Cytoscape.getTaskManager().execute(Cytoscape.getNetworkTaskFactoryRef()
 				 .createTaskIterator());
-		
+	
 	}
-
+	
 	/**
 	 * Create a network from file
 	 * @param File networkFile
 	 * @return null
 	 */	
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
-		
+	
 		// Parse for list of publications
 		List<? extends Publication> pubList = Incites.getPublications(networkFile);
 		
@@ -152,7 +155,7 @@ public class Cytoscape {
 			if (Cytoscape.isNameValid(networkName)) {
 				Cytoscape.setNetworkName(networkName);
 				Cytoscape.getSocialNetworkMap().put(networkName, 
-						                            new Object[] {null, Category.INCITES, null});
+						                            new SocialNetwork(Category.INCITES));
 				// Create network using map
 				Cytoscape.createNetwork();
 			} else {
@@ -160,7 +163,7 @@ public class Cytoscape {
 						                                      + "Please enter a new name.");
 			}
 		}
-		
+	
 	}
 
 	/**
@@ -187,7 +190,7 @@ public class Cytoscape {
 				if (Cytoscape.isNameValid(searchTerm)) {
 					Cytoscape.setNetworkName(searchTerm);
 					Cytoscape.getSocialNetworkMap().put(searchTerm, 
-						  new Object[] {null, category, null});
+						  new SocialNetwork(category));
 					// Transfer map to Cytoscape's map variable
 					Cytoscape.setMap(map);
 					// Create network using map
@@ -302,11 +305,11 @@ public class Cytoscape {
 	 * @param null
 	 * @return Map social networks
 	 */
-	public static Map<String, Object[]> getSocialNetworkMap() {
+	public static Map<String, SocialNetwork> getSocialNetworkMap() {
 		if (Cytoscape.socialNetworkMap == null) {
-			Cytoscape.setSocialNetworkMap(new HashMap<String, Object[]>());
+			Cytoscape.setSocialNetworkMap(new HashMap<String, SocialNetwork>());
 			Cytoscape.socialNetworkMap.put("DEFAULT", 
-					           new Object[]{null, Category.DEFAULT, null});
+					                       new SocialNetwork(Category.DEFAULT));
 		}
 		return Cytoscape.socialNetworkMap;
 	}
@@ -394,7 +397,7 @@ public class Cytoscape {
 	public static void setCurrentNetworkView(String networkName) {
 		CyNetworkView networkView = (CyNetworkView) 
 				                    Cytoscape.getSocialNetworkMap()
-				                    .get(networkName)[2];
+				                    .get(networkName).getNetworkView();
 		Cytoscape.getCyAppManagerServiceRef().setCurrentNetworkView(networkView);
 	}
 
@@ -471,7 +474,7 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void setSocialNetworkMap
-	                   (Map<String, Object[]> socialNetwork) {
+	                   (Map<String, SocialNetwork> socialNetwork) {
 		Cytoscape.socialNetworkMap = socialNetwork;
 	}
 	
@@ -509,5 +512,24 @@ public class Cytoscape {
 	 */
 	public static void setVisualStyleID(int visualStyleID) {
 		Cytoscape.visualStyleID = visualStyleID;
+	}
+
+	/**
+	 * Get currently selected social network
+	 * @param null
+	 * @return SocialNetwork currentlySelectedSocialNetwork
+	 */
+	public static SocialNetwork getCurrentlySelectedSocialNetwork() {
+		return Cytoscape.currentlySelectedSocialNetwork;
+	}
+
+	/**
+	 * Set currently selected social network
+	 * @param SocialNetwork currentlySelectedSocialNetwork
+	 * @return null
+	 */
+	public static void setCurrentlySelectedSocialNetwork(
+			SocialNetwork currentlySelectedSocialNetwork) {
+		Cytoscape.currentlySelectedSocialNetwork = currentlySelectedSocialNetwork;
 	}
 }

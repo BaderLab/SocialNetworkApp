@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
@@ -37,7 +38,7 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 		if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
 			DefaultTableModel model = (DefaultTableModel) UserPanel.getNetworkTableRef().getModel();
 			model.removeRow(getRow(model, name));
-			Map<String, Object[]> map = Cytoscape.getSocialNetworkMap();
+			Map<String, SocialNetwork> map = Cytoscape.getSocialNetworkMap();
 			map.remove(name);
 			UserPanel.addNetworkVisualStyle("DEFAULT");
 		}

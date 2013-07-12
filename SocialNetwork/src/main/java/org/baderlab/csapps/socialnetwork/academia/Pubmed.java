@@ -132,8 +132,6 @@ public class Pubmed {
 		return pubList;
  	}
  	
- 	
- 	
 	/**
 	 * Get publication handler
 	 * @param null
@@ -192,7 +190,8 @@ public class Pubmed {
 				}
 			}
 
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			public void startElement(String uri, String localName, String qName, Attributes attributes) 
+					                                                              throws SAXException {
 				// qName stores the element's actual designation
 				if (contains(attributes, "Author")) {
 					isAuthor = true;
@@ -261,7 +260,6 @@ public class Pubmed {
 		return searchHandler;
 		
 	}
-	
 	
 	/**
  	 * Return total # of publications yielded from search. Method has to be called right

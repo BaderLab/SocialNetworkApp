@@ -12,6 +12,7 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -182,7 +183,7 @@ public class CreateNetworkTask extends AbstractTask {
 
 		// Get map
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
-		
+				
 		if (map == null) {
 			Cytoscape.notifyUser
 			("Network could not be loaded. Cytoscape network map could not be accessed.");
@@ -225,11 +226,11 @@ public class CreateNetworkTask extends AbstractTask {
 				networkViewManager.destroyNetworkView(networkView);
 			}
 			
-			Object[] networkAttributes = Cytoscape.getSocialNetworkMap()
+			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap()
 					                              .get(Cytoscape.getNetworkName());
-			networkAttributes[0] = network;
-			networkAttributes[2] = networkView;
-
+			socialNetwork.setNetworkRef(network);
+			socialNetwork.setNetworkView(networkView);
+			
 			// Auto apply layout
 			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef
 					                   .getLayout("force-directed");

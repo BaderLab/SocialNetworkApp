@@ -55,7 +55,9 @@ public class Publication extends AbstractEdge {
 		this.title = title;
 		this.journal = journal;
 		this.authorList.addAll(coauthorList);
-		this.timesCited = Integer.parseInt(timesCited);
+		if (timesCited != null) {
+			this.timesCited = Integer.parseInt(timesCited);
+		}
 		this.expectedCitations = expectedCitations;
 		constructEdgeAttrMap();
 	}
@@ -69,7 +71,10 @@ public class Publication extends AbstractEdge {
 	public void constructEdgeAttrMap() {
 		edgeAttrMap = new HashMap<String, Object>();
 		edgeAttrMap.put("Times Cited", this.timesCited);
-		edgeAttrMap.put("Expected Citations", this.expectedCitations);
+		/**
+		 * NOTE: EXPECTED CITATIONS NOT BEING ENTERED INTO MAP. FIX OR REMOVE
+		 */
+//		edgeAttrMap.put("Expected Citations", this.expectedCitations);
 		edgeAttrMap.put("Pub Date", this.pubDate);
 		edgeAttrMap.put("Journal", this.journal);
 		edgeAttrMap.put("Title", this.title);

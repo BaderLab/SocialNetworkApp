@@ -102,7 +102,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void addNetworkVisualStyle(String networkName) {
-		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)[1];
+		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)
+				                             .getNetworkType();
 		if (UserPanel.getVisualStylePanel()  == null) {
 			// Create new visual style panel
 			UserPanel.setVisualStylePanel(UserPanel.createVisualStylePanel(networkName));
@@ -129,7 +130,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		// Get network name
 		String networkName = Cytoscape.getNetworkName(network);
-		int networkCategory = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)[1];
+		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)
+				                             .getNetworkType();
 	
 		// Create a new table and add network's info if there's none
 		if (getNetworkTableRef() ==  null) {		
@@ -145,7 +147,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			
 			// Add row to table
 			model.addRow(new Object[] {(String) networkName, (Integer) network.getNodeCount(), 
-					         (Integer) network.getEdgeCount(), Category.toString(networkCategory)});
+					         (Integer) network.getEdgeCount(), Category.toString(networkType)});
 					
 			// Set table reference
 			setNetworkTableRef(networkTable);
@@ -191,7 +193,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			DefaultTableModel networkTableModel = (DefaultTableModel) getNetworkTableRef()
 					                                                           .getModel();
 			networkTableModel.addRow(new Object[] {networkName, (Integer) network.getNodeCount(), 
-					         (Integer) network.getEdgeCount(), Category.toString(networkCategory)});
+					         (Integer) network.getEdgeCount(), Category.toString(networkType)});
 			
 		}
 		
@@ -211,7 +213,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void changeNetworkVisualStyle(String networkName) {
-		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)[1];
+		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)
+				                             .getNetworkType();
 		TitledBorder visualStylePanelBorder = (TitledBorder) UserPanel.getVisualStylePanel()
 				                                                      .getBorder();
 		visualStylePanelBorder.setTitle(networkName + " Visual Styles");
@@ -333,7 +336,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			public void actionPerformed(ActionEvent event) {
 				// Destroy currently selected network
 				String selectedNetwork = UserPanel.getSelectedNetwork();
-				Cytoscape.destroyNetwork((CyNetwork)Cytoscape.getSocialNetworkMap().get(selectedNetwork)[0]);
+				Cytoscape.destroyNetwork((CyNetwork)Cytoscape.getSocialNetworkMap().get(selectedNetwork)
+						                                     .getNetworkRef());
 			}
 		});
 		return destroyNetworkMenuItem;

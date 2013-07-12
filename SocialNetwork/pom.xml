@@ -16,8 +16,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<artifactId>social-network-app</artifactId>
 	<packaging>bundle</packaging>
 	<name>${bundle.symbolicName}</name>
-
-
+	
   	<repositories>
 		<repository>
 			<id>cytoscape_snapshots</id>
@@ -42,8 +41,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
 		</repository>
 	</repositories>
-  
-  
+
+
 	<version>3.1.0-SNAPSHOT</version>
 	<build>
 		<plugins>
@@ -76,6 +75,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 						<Export-Package>!${bundle.namespace}.*</Export-Package>
 						<Private-Package>${bundle.namespace}.*</Private-Package>
 						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<configuration>
+					<instructions>
+						...
+						<Embed-Dependency>commons-math;groupId=org.apache.commons;inline=true</Embed-Dependency>
+						<Import-Package>*;resolution:=optional</Import-Package>
+						...
 					</instructions>
 				</configuration>
 			</plugin>
@@ -137,7 +149,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
+		</dependency>
 	</dependencies>
-
-
 </project>

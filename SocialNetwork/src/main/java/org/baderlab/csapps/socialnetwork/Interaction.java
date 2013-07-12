@@ -9,16 +9,15 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Copublications;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
 
-
 /**
  * Interaction class creates the map that will
- * eventually be used to build a network.
+ * eventually be used to build network.
  * @author Victor Kofia
  */
 public class Interaction {	
 	
 	/**
-	 * Return abstract map. Keys are all distinct consortiums found in map.
+	 * Get abstract map. Keys are all distinct consortiums found in map.
 	 * Values are the various interactions that each individual consortium shares.
 	 * @param null
 	 * @return Map abstractMap
@@ -28,7 +27,7 @@ public class Interaction {
 	}
 		
 	/**
-	 * Return academia map. Keys are all distinct consortiums found in map.
+	 * Get academia map. Keys are all distinct consortiums found in map.
 	 * Values are the copublications associated with these consortiums.
 	 * @param null
 	 * @return Map academiaMap
@@ -103,6 +102,14 @@ public class Interaction {
 					authorMap.put(author1, author1);
 				} 
 				// Update time cited for both author#1 and author#2
+//				if (author1.getLastName().equalsIgnoreCase("Hanley")) {
+//					System.out.println(publication.getNodes());
+//					System.out.println("I am author #1");
+//					System.out.println("This is the publication I'm reading " + publication.getTitle());
+//					System.out.println("This is my times cited before adding " + Integer.toString(authorMap.get(author1).getTimesCited()));
+//					System.out.println("This is what I'm about to add " + Integer.toString(publication.getTimesCited()));
+//					System.out.println("\n\n");
+//				}
 				authorMap.get(author1).setTimesCited(authorMap.get(author1).getTimesCited() 
 						 + (publication.getTimesCited()));
 				j = i + 1;
@@ -111,8 +118,6 @@ public class Interaction {
 					if (authorMap.get(author2) == null) {
 						authorMap.put(author2, author2);
 					}
-					authorMap.get(author2).setTimesCited(authorMap.get(author2).getTimesCited() 
-							 + publication.getTimesCited());
 					consortium = new Consortium(authorMap.get(author1), authorMap.get(author2));
 					// Check for consortium's existence before it's entered into map
 					if (! academiaMap.containsKey(consortium)) {
