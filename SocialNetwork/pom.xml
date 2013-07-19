@@ -5,7 +5,7 @@
 	<properties>
 		<bundle.symbolicName>social-network-app</bundle.symbolicName>
 		<bundle.namespace>main.java.org.baderlab.csapps.socialnetwork</bundle.namespace>
-		<cytoscape.api.version>3.1.0-SNAPSHOT</cytoscape.api.version>
+		<cytoscape.api.version>3.0.1</cytoscape.api.version>
 
 		<maven-bundle-plugin.version>2.3.4</maven-bundle-plugin.version>
 		<osgi.api.version>4.2.0</osgi.api.version>
@@ -14,7 +14,6 @@
 
 	<groupId>org.baderlab.csapps.socialnetwork</groupId>
 	<artifactId>social-network-app</artifactId>
-	<packaging>bundle</packaging>
 	<name>${bundle.symbolicName}</name>
 
 	<repositories>
@@ -43,7 +42,7 @@
 	</repositories>
 
 
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.0.1</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -63,7 +62,22 @@
 					</compilerArguments>
 				</configuration>
 			</plugin>
-			<plugin>
+		<!--  <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<Cytoscape-API-Compatibility>3.0</Cytoscape-API-Compatibility>
+							<Cytoscape-App>SocialNetworkApp</Cytoscape-App>
+							<Cytoscape-App-Name>SocialNetworkApp</Cytoscape-App-Name>
+							<Cytoscape-App-Version>0.1</Cytoscape-App-Version>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin> 
+		-->	<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${maven-bundle-plugin.version}</version>
@@ -76,8 +90,6 @@
 						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
 						<Export-Package>!${bundle.namespace}.*;version="${project.version}"</Export-Package>
 						<Import-Package>*;resolution:=optional</Import-Package>
-						<_failok>true</_failok>
-			
 					</instructions>
 				</configuration>
 			</plugin>
@@ -168,4 +180,5 @@
 			<version>3.8</version>
 		</dependency>
 	</dependencies>
+	<packaging>bundle</packaging>
 </project>

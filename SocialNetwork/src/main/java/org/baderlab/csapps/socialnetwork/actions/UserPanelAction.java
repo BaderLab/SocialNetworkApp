@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.Action;
+
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.application.CyApplicationManager;
@@ -33,7 +35,8 @@ public class UserPanelAction extends AbstractCyAction {
 		
 		super(configProps, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef);
 		
- 		this.setName("View Panel");		
+		putValue(Action.NAME, "View Panel");
+// 		this.setName("View Panel");		
  		
 		this.cytoPanelWest = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.WEST);
 		this.cyServiceRegistrarRef = cyServiceRegistrarRef;
@@ -46,7 +49,8 @@ public class UserPanelAction extends AbstractCyAction {
 	 * @return null
 	 */
     public void actionPerformed(ActionEvent event) {	
-    	if (this.getName().trim().equalsIgnoreCase("View Panel")) {
+		String currentName = (String) getValue(Action.NAME);
+    	if (currentName.trim().equalsIgnoreCase("View Panel")) {
     		this.cyServiceRegistrarRef.registerService
     		  (this.userPanel, CytoPanelComponent.class, new Properties());
     		// If the state of the cytoPanelWest is HIDE, show it
@@ -59,11 +63,13 @@ public class UserPanelAction extends AbstractCyAction {
     			return;
     		}
     		cytoPanelWest.setSelectedIndex(index);
-    		this.setName("Hide Panel");
+//    		this.setName("Hide Panel");
+    		putValue(Action.NAME, "View Panel");
     	} else if (this.getName().trim().equalsIgnoreCase("Hide Panel")) {
     		this.cyServiceRegistrarRef.unregisterService 
     		       (this.userPanel, CytoPanelComponent.class);
-    		this.setName("View Panel");
+//    		this.setName("View Panel");
+    		putValue(Action.NAME, "View Panel");
     	} 
     }
  
