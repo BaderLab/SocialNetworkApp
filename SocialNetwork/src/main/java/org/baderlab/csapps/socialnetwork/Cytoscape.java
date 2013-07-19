@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -147,7 +148,11 @@ public class Cytoscape {
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
-			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList); 
+			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList);
+			if (map.size() == 0) {
+				Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
+				return;
+			}
 //			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(pubList); 
 			Cytoscape.setMap(map);
 			String networkName = Incites.getFacultyTextFieldRef().getText().trim();
@@ -156,6 +161,8 @@ public class Cytoscape {
 				Cytoscape.setNetworkName(networkName);
 				Cytoscape.getSocialNetworkMap().put(networkName, 
 						                            new SocialNetwork(Category.INCITES));
+				// Change mouse cursor
+		        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				// Create network using map
 				Cytoscape.createNetwork();
 			} else {
@@ -183,23 +190,34 @@ public class Cytoscape {
 			
 			if (results == null) {
 				Cytoscape.notifyUser("Network could not be loaded");
-			} else {
-				// Create new map using results
-				Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(results);
-				// Check if a similar network already exists
-				if (Cytoscape.isNameValid(searchTerm)) {
-					Cytoscape.setNetworkName(searchTerm);
-					Cytoscape.getSocialNetworkMap().put(searchTerm, 
-						  new SocialNetwork(category));
-					// Transfer map to Cytoscape's map variable
-					Cytoscape.setMap(map);
-					// Create network using map
-					Cytoscape.createNetwork();
-				} else {
-					Cytoscape.notifyUser("Network " + searchTerm + " already exists in Cytoscape. "
-							           + "Please enter a new name.");
-				}
+				return;
+			} 
+			
+			if (results.size() == 0) {
+				Cytoscape.notifyUser("Search didn't yield any results");
+				return;
 			}
+			
+			// 
+	        
+			// Create new map using results
+			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(results);
+			// Check if a similar network already exists
+			if (Cytoscape.isNameValid(searchTerm)) {
+				Cytoscape.setNetworkName(searchTerm);
+				Cytoscape.getSocialNetworkMap().put(searchTerm, 
+					  new SocialNetwork(category));
+				// Transfer map to Cytoscape's map variable
+				Cytoscape.setMap(map);
+				// Change mouse cursor
+		        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				// Create network using map
+				Cytoscape.createNetwork();
+			} else {
+				Cytoscape.notifyUser("Network " + searchTerm + " already exists in Cytoscape. "
+						           + "Please enter a new name.");
+			}
+			
 	}
 
 	/**

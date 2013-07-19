@@ -160,7 +160,8 @@ public class Category {
 	 * @return List categoryList
 	 */
 	public static String[] getCategoryList() {
-		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
+//		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
+		String[] categoryList = { "--SELECT CATEGORY--", "Academia"};
 		return categoryList;
 	}
 	
@@ -204,7 +205,7 @@ public class Category {
 				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
 				break;
 			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
 				break;
 			case Category.INCITES:
 				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};

@@ -44,7 +44,7 @@ public class CreateNetworkTask extends AbstractTask {
 	private TaskMonitor monitor = null;
 	private double progress = 0.0;
 	private int totalSteps = 0;
-
+	
 	/**
 	 * Create a new network task
 	 * @param null
@@ -70,106 +70,117 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @return CyNetwork network
 	 */
 	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) {
-		// Create an empty network 
-		CyNetwork myNet = cyNetworkFactoryServiceRef.createNetwork();
-		// Get network node table
-		CyTable nodeTable = null;
-		// Get network edge table
-		CyTable edgeTable = null;
-		
-		// Add all columns to node table
-		// WIP: WORK IN PROGRESS
-		// ????
-		nodeTable = myNet.getDefaultNodeTable();
-		Object[] keys = map.keySet().toArray();
-		AbstractNode key = ((Consortium) keys[0]).getNode1();
-		for (Entry<String, Object> attr : key.getNodeAttrMap().entrySet()) {
-			String attrName = attr.getKey();
-			Object attrType = attr.getValue();
-			if (attrType instanceof String) {
-				nodeTable.createColumn(attrName, String.class, false);
-			} else if (attrType instanceof Integer) {
-				nodeTable.createColumn(attrName, Integer.class, false);
+		try {
+			// Create an empty network 
+			CyNetwork myNet = cyNetworkFactoryServiceRef.createNetwork();
+			// Get network node table
+			CyTable nodeTable = null;
+			// Get network edge table
+			CyTable edgeTable = null;
+
+			// Add all columns to node table
+			// WIP: WORK IN PROGRESS
+			// ????
+			nodeTable = myNet.getDefaultNodeTable();
+			Object[] keys = map.keySet().toArray();
+			AbstractNode key = ((Consortium) keys[0]).getNode1();
+			for (Entry<String, Object> attr : key.getNodeAttrMap().entrySet()) {
+				String attrName = attr.getKey();
+				Object attrType = attr.getValue();
+				if (attrType instanceof String) {
+					nodeTable.createColumn(attrName, String.class, false);
+				} else if (attrType instanceof Integer) {
+					nodeTable.createColumn(attrName, Integer.class, false);
+				}
 			}
+
+			// Add all columns to edge table
+			// WIP: WORK IN PROGRESS
+			// ????
+			edgeTable = myNet.getDefaultEdgeTable();
+			Object[] values = map.values().toArray();
+			@SuppressWarnings("unchecked")
+			ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
+			AbstractEdge value = values2.get(0);
+			for (Entry<String, Object> attr : value.getEdgeAttrMap().entrySet()) {
+				String attrName = attr.getKey();
+				Object attrType = attr.getValue();
+				if (attrType instanceof String) {
+					edgeTable.createColumn(attrName, String.class, false);
+				} else if (attrType instanceof Integer) {
+					edgeTable.createColumn(attrName, Integer.class, false);
+				}
+			}
+
+			// Set network name
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
+			.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
+					(Cytoscape.getNetworkName()));
+
+			// Build network
+			Consortium consortium = null;
+			AbstractNode node1 = null;
+			AbstractNode node2 = null;
+			List<? extends AbstractEdge> edgeArray = null;
+			CyEdge edgeRef = null;
+			CyNode nodeRef = null;
+
+			Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
+
+			// Get all consortiums and their corresponding edges
+			for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
+				consortium = entry.getKey();
+				edgeArray= entry.getValue();
+
+				// Get nodes
+				node1 = consortium.getNode1();
+				node2 = consortium.getNode2();
+
+				// Check for nodes in nodeMap
+				if (! nodeMap.containsKey(node1)) {
+					nodeRef = myNet.addNode();
+					// Add each node attribute to its respective column
+					for (Entry<String, Object> attr : node1.getNodeAttrMap().entrySet()) {
+						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
+								attr.getValue());
+					}
+					nodeMap.put(node1, nodeRef);
+				}
+
+				if (! nodeMap.containsKey(node2)) {
+					nodeRef = myNet.addNode();
+					// Add each node attribute to its respective column
+					for (Entry<String, Object> attr : node2.getNodeAttrMap().entrySet()) {
+						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
+								attr.getValue());
+					}
+					nodeMap.put(node2, nodeRef);
+				}
+
+				for (AbstractEdge edge : edgeArray) {
+					edgeRef = myNet.addEdge(nodeMap.get(node1), nodeMap.get(node2), false);
+					// Add each edge attribute to it's respective column
+					for (Entry<String, Object> attr : edge.getEdgeAttrMap().entrySet()) {
+						edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
+								attr.getValue());
+					}
+				}
+
+				updateProgress();
+
+			}
+
+			this.monitor.setTitle("Creating network view");
+			this.monitor.setProgress(0.25);
+			this.monitor.setStatusMessage("Complete 25%");
+			return myNet;
+		} catch (ArrayIndexOutOfBoundsException exception) {
+			Cytoscape.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
+			Cytoscape.getSocialNetworkMap().remove(Cytoscape.getNetworkName());
+			Cytoscape.setNetworkName(null);
+			this.monitor = null;
+			return null;
 		}
-		
- 	    // Add all columns to edge table
-		// WIP: WORK IN PROGRESS
-		// ????
- 	    edgeTable = myNet.getDefaultEdgeTable();
- 	    Object[] values = map.values().toArray();
- 	    @SuppressWarnings("unchecked")
-		ArrayList<AbstractEdge> values2 = (ArrayList<AbstractEdge>) values[0];
- 	    AbstractEdge value = values2.get(0);
- 	    for (Entry<String, Object> attr : value.getEdgeAttrMap().entrySet()) {
-			String attrName = attr.getKey();
-			Object attrType = attr.getValue();
-			if (attrType instanceof String) {
-				edgeTable.createColumn(attrName, String.class, false);
-			} else if (attrType instanceof Integer) {
-				edgeTable.createColumn(attrName, Integer.class, false);
-			}
- 	    }
-		
-		// Set network name
-		myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-		.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
-				                         (Cytoscape.getNetworkName()));
-		
-		// Build network
-		Consortium consortium = null;
-		AbstractNode node1 = null;
-		AbstractNode node2 = null;
-		List<? extends AbstractEdge> edgeArray = null;
-		CyEdge edgeRef = null;
-		CyNode nodeRef = null;
-		
-		Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
-		
-		// Get all consortiums and their corresponding edges
-		for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
-			consortium = entry.getKey();
-			edgeArray= entry.getValue();
-			
-			// Get nodes
-			node1 = consortium.getNode1();
-			node2 = consortium.getNode2();
-			
-			// Check for nodes in nodeMap
-			if (! nodeMap.containsKey(node1)) {
-				nodeRef = myNet.addNode();
-				// Add each node attribute to its respective column
-				for (Entry<String, Object> attr : node1.getNodeAttrMap().entrySet()) {
-					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
-							                            attr.getValue());
-				}
-				nodeMap.put(node1, nodeRef);
-			}
-			
-			if (! nodeMap.containsKey(node2)) {
-				nodeRef = myNet.addNode();
-				// Add each node attribute to its respective column
-				for (Entry<String, Object> attr : node2.getNodeAttrMap().entrySet()) {
-					nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
-							                            attr.getValue());
-				}
-				nodeMap.put(node2, nodeRef);
-			}
-			
-			for (AbstractEdge edge : edgeArray) {
-				edgeRef = myNet.addEdge(nodeMap.get(node1), nodeMap.get(node2), false);
-				// Add each edge attribute to it's respective column
-				for (Entry<String, Object> attr : edge.getEdgeAttrMap().entrySet()) {
-					edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
-							                                attr.getValue());
-				}
-			}
-			
-			updateProgress();
-			
-		}
-						
-		return myNet;
 	}
 	
 	/**
@@ -203,9 +214,12 @@ public class CreateNetworkTask extends AbstractTask {
 			}
 			
 			networkManager.addNetwork(network);
-
+			
 			final Collection<CyNetworkView> views = networkViewManager
 					                                .getNetworkViews(network);
+			
+			this.monitor.setProgress(0.75);
+			this.monitor.setStatusMessage("Complete: 75%");
 			CyNetworkView networkView = null;
 			if(views.size() != 0) {
 				networkView = views.iterator().next();
@@ -219,6 +233,7 @@ public class CreateNetworkTask extends AbstractTask {
 				Cytoscape.notifyUser("Network already present");
 			}
 			
+		
 			// Set the variable destroyView to true, the following snippet of code
 			// will destroy a view
 			boolean destroyView = false;
@@ -265,4 +280,5 @@ public class CreateNetworkTask extends AbstractTask {
 		this.monitor.setStatusMessage("Complete: " + toPercent(this.progress));
 		this.monitor.setProgress(this.progress);
 	}
+	
 }

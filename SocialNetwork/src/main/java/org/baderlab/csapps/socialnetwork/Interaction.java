@@ -133,7 +133,6 @@ public class Interaction {
 				}
 				i += 1;
 			}
-
 		}
 		return academiaMap;
 	}

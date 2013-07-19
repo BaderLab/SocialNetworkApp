@@ -4,9 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Tester;
+import main.java.org.baderlab.csapps.socialnetwork.Tester2;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 /**
  * Methods for manipulating Incites data
@@ -42,75 +51,116 @@ public class Incites {
 	 * List of publications extracted from Incites data file
 	 */
 	private static List<Publication> pubList = null;
+	/**
+	 * Author location map
+	 */
+	private static Map<String, String> locationMap = null;
+	
+	/**
+	 * Set location map
+	 * @param Map locationMap
+	 * @return null
+	 */
+	public static void setLocationMap(Map<String, String> locationMap) {
+		Incites.locationMap = locationMap;
+	}
+	
+	/**
+	 * Get location map
+	 * @param null
+	 * @return Map locationMap
+	 */
+	public static Map<String, String> getLocationMap() {
+		
+		if (Incites.locationMap == null) {
+			try {
+				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				ObjectInputStream ois = new ObjectInputStream(in);
+				Incites.setLocationMap((Map) ois.readObject());
+			} catch (FileNotFoundException e) {
+				Cytoscape.notifyUser("Failed to load location map. FileNotFoundException.");
+			} catch (IOException e) {
+				Cytoscape.notifyUser("Failed to load location map. IOException.");
+			} catch (ClassNotFoundException e) {
+				Cytoscape.notifyUser("Failed to load location map. ClassNotFoundException.");
+			}
+		}
+		
+		return Incites.locationMap;
+	}
 
 	/**
 	 * Return true iff the provided line comes from an Incites data file
 	 * @param String line
 	 * @return boolean
 	 */
-	public static boolean checkIfValid(String line) {
-		String[] contents = line.split("[\n\t]");
-		if (contents.length < 6) {
-			return false;
-		} else {
-			boolean hasTimesCited = false;
-			boolean hasExpectedCitations = false;
-			boolean hasPublicationYear = false;
-			boolean hasSubjectArea = false;
-			boolean hasAuthors = false;
-			boolean hasTitle = false;
-			
-			String year = null;
-			String subjectArea = null;
-			String authors = null;
-			String title = null;
-			String timesCited = null;
-			String expectedCitations = "0.00";
-			List<Author> coauthorList = null;
-			Publication pub;
-			
-			timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
-			hasTimesCited = timesCited.matches("\\d+?") ? true : false;
-			
-			expectedCitations = contents[1].trim().isEmpty() 
-					            ? "0.00" : contents[1].trim();
-			hasExpectedCitations = expectedCitations.matches
-					               ("(\\d+?)\\.?(\\d+?)") ? true : false;
-			
-			year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
-			hasPublicationYear = year.matches("\\d+?") ? true : false;
-			
-			subjectArea = contents[3];
-			hasSubjectArea = subjectArea.matches("[A-Z]+?") ? true : false;
-			
-			authors = contents[4];
-			
-			try {
-				coauthorList = Incites.parseAuthors(authors);
-				hasAuthors = true;
-			} catch (UnableToParseAuthorException e) {
-				hasAuthors = false;
-			}
-			
-			// Difficult to identify an Incites specific title. Thus, true by default.
-			title = contents[5];
-			hasTitle = true;
-			
-			// Consolidate
-			boolean isValid = hasTimesCited && hasExpectedCitations 
-					          && hasPublicationYear && hasSubjectArea
-					          && hasAuthors && hasTitle;
-			
-			if (isValid) {
-				pub = new Publication(title, year, subjectArea, timesCited, 
-						              expectedCitations, coauthorList);
-				pubList.add(pub);
-				return isValid;
+	public static boolean checkIfValid(Scanner in) {
+		boolean isValid = false;
+		for (int i = 0; i < 5; i++) {
+			String line = in.nextLine().trim();
+			String[] contents = line.split("[\n\t]");
+			if (contents.length != 6) {
+				return false;
 			} else {
-				return ! isValid;
-			}
+				boolean hasTimesCited = false;
+				boolean hasExpectedCitations = false;
+				boolean hasPublicationYear = false;
+				boolean hasSubjectArea = false;
+				boolean hasAuthors = false;
+				boolean hasTitle = false;
 
+				String year = null;
+				String subjectArea = null;
+				String authors = null;
+				String title = null;
+				String timesCited = null;
+				String expectedCitations = "0.00";
+				List<Author> coauthorList = null;
+				Publication pub;
+
+				timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
+				hasTimesCited = timesCited.matches("\\d+?") ? true : false;
+
+				expectedCitations = contents[1].trim().isEmpty() 
+						? "0.00" : contents[1].trim();
+				hasExpectedCitations = expectedCitations.matches
+						("(\\d+?)\\.?(\\d+?)") ? true : false;
+
+				year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
+				hasPublicationYear = year.matches("\\d+?") ? true : false;
+
+				subjectArea = contents[3];
+				hasSubjectArea = subjectArea.matches("[A-Z]+?") ? true : false;
+
+				authors = contents[4];
+
+				try {
+					coauthorList = Incites.parseAuthors(authors);
+					hasAuthors = true;
+				} catch (UnableToParseAuthorException e) {
+					hasAuthors = false;
+				}
+
+				// Difficult to identify an Incites specific title. Thus, true by default.
+				title = contents[5];
+				hasTitle = true;
+
+				// Consolidate
+				isValid = hasTimesCited && hasExpectedCitations 
+						&& hasPublicationYear && hasSubjectArea
+						&& hasAuthors && hasTitle;
+
+				if (isValid) {
+					pub = new Publication(title, year, subjectArea, timesCited, 
+							expectedCitations, coauthorList);
+					pubList.add(pub);
+				} else {
+					return ! isValid;
+				}
+
+			}
 		}
+		return ! isValid;
 	}
 
 	/**
@@ -127,18 +177,15 @@ public class Incites {
 			public void actionPerformed(ActionEvent event) {
 				if (Incites.getIncitesFileRef() == null || 
 					Incites.getFacultyTextFieldRef().getText() == null) {
-					Cytoscape.notifyUser("Network could not be created. " +
-							             "Please load file and/or specify network name.");
+					Cytoscape.notifyUser("Please select a file and/or specify network name.");
 				} else { 
 					if (! Incites.getIncitesFileRef().getAbsolutePath().trim()
 							.equalsIgnoreCase(Incites.getPathTextFieldRef()
 							.getText().trim())) {
-						Cytoscape.notifyUser("Network could not be created. " +
-								             "Problem with file path. Please load file again.");
+						Cytoscape.notifyUser("Please select a file.");
 					} else if (Incites.getFacultyTextFieldRef().getText().trim()
 							   .isEmpty()) {
-						Cytoscape.notifyUser("Network could not be created. " +
-								             "Please specify network name.");
+						Cytoscape.notifyUser("Please specify network name.");
 					} else {
 						try {
 							// Create network
@@ -325,10 +372,9 @@ public class Incites {
 		if (! in.hasNext()) {
 			isValid = false;
 		} else {
-			line = in.nextLine().trim();
-			isValid = Incites.checkIfValid(line);
+			isValid = Incites.checkIfValid(in);
 		}
-
+		
 		// Read Incites data file
 		if (isValid) {
 			while (in.hasNext()) {
@@ -336,7 +382,6 @@ public class Incites {
 				contents = line.split("[\t\n]");
 
 				if (contents.length == 6) {
-
 					// Get publication info
 					timesCited = contents[0].trim().isEmpty() 
 							     ? "0" : contents[0].trim();
@@ -358,14 +403,30 @@ public class Incites {
 					// Set publication info
 					pub = new Publication(title, year, subjectArea, 
 							              timesCited, expectedCitations, coauthorList);
-
+//					System.out.println("Title: " + title
+//							           + "\nYear: " + year
+//							           + "\nSubject Area: " + subjectArea
+//							           + "\nTimes Cited: " + timesCited
+//							           + "\nExpected Citations: " + expectedCitations
+//							           + "\nCo-Authors: " + coauthorList.toString() + "\n\n");
 					//Add publication to overall list
-					pubList.add(pub);
+					Incites.pubList.add(pub);
 
 				} 
+				
+//				if (contents.length == 7) {
+//					System.out.println("Col#1: " + contents[0]
+//					           + "\nCol#2: " + contents[1]
+//					           + "\nCol#3: " + contents[2]
+//					           + "\nCol#4: " + contents[3]
+//					           + "\nCol#5: " + contents[4]
+//					           + "\nCol#6: " + contents[5]
+//					           + "\nCol#7: " + contents[6] + "\n\n");
+//				}
 			}
 			
-			return pubList;
+			
+			return Incites.pubList;
 		}
 
 		// If file is invalid, null will be returned

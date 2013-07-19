@@ -756,8 +756,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void swapVisualStyleSelector(int visualStyleSelectorType) {
-		System.out.println("This is the networks type " + Integer.toString(visualStyleSelectorType));
-		System.out.println("This is the type that's currently present: " + Integer.toString(UserPanel.getVisualStyleSelectorType()));
 		if (UserPanel.getVisualStyleSelectorType() != visualStyleSelectorType) {
 			// Remove the current visual style selector
 			UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());

@@ -1,9 +1,19 @@
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.Tester;
 
 /**
  * The author of an article, journal review, or scientific paper
@@ -47,7 +57,7 @@ public class Author extends AbstractNode {
 	 * Author's total number of citations
 	 */
 	private int timesCited = 0;
-	
+		
 	/**
 	 * Create a new author with the first name, last name and middle initial specified 
 	 * in rawAuthorText.
@@ -80,6 +90,8 @@ public class Author extends AbstractNode {
 				this.middleInitial = Incites.parseMiddleInitial(rawAuthorText);
 				this.lastName = Incites.parseLastName(rawAuthorText);
 				this.institution = Incites.parseInstitution(rawAuthorText);
+				Map<String, String> locationMap = Incites.getLocationMap();
+				this.setLocation(Incites.getLocationMap().get(institution));
 				break;
 		}
 		
@@ -99,8 +111,9 @@ public class Author extends AbstractNode {
 		nodeAttrMap = new HashMap<String, Object>();
 		nodeAttrMap.put("Last Name", this.lastName);
 		nodeAttrMap.put("First Name", this.firstName);
-		nodeAttrMap.put("Institution", this.institution);
 		nodeAttrMap.put("Times Cited", this.timesCited);
+		nodeAttrMap.put("Institution", this.institution);
+		nodeAttrMap.put("Location", this.location);
 	}
 
 	/**
@@ -205,13 +218,18 @@ public class Author extends AbstractNode {
 	 * @return null
 	 */
 	public void setLocation(String location) {
-		this.location = location;
+		if (location == null) {
+			this.location = "N/A";
+		} else {
+			this.location = location;
+		}
 	}
 
 	/**
 	 * NOTE: As author identification becomes more refined it may be wise 
 	 * to make a few more adjustments to hashCode(). 
 	 */
+	
 //	@Override
 //	public int hashCode() {
 //		final int prime = 31;
@@ -236,6 +254,7 @@ public class Author extends AbstractNode {
 	 * NOTE: As author identification becomes more refined it may be wise 
 	 * to make a few more adjustments to equals(). 
 	 */
+	
 //	@Override
 //	public boolean equals(Object obj) {
 //		if (this == obj)
