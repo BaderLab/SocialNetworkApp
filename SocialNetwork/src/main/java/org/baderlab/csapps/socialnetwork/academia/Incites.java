@@ -4,12 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Tester;
-import main.java.org.baderlab.csapps.socialnetwork.Tester2;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 /**
  * Methods for manipulating Incites data

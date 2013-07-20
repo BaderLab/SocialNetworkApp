@@ -260,7 +260,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
-	 * Create chipped visual style
+	 * Create Chipped visual style
 	 * @param null
 	 * @return VisualStyle chippedVisualStyle
 	 */

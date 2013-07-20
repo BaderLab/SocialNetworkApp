@@ -127,10 +127,12 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 							new Object[] {"Times Cited", minNodeSize + 1, maxNodeSize});
 					
 					
+					
 					// Specify EDGE_TRANSPARENCY
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, 
 							                                     new Object[] {"# of copubs"});
 					
+
 					
 					// Specify NODE_FILL_COLOR
 					Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();

@@ -143,7 +143,8 @@ public class Cytoscape {
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
 	
 		// Parse for list of publications
-		List<? extends Publication> pubList = Incites.getPublications(networkFile);
+//		List<? extends Publication> pubList = Incites.getPublications(networkFile);
+		List<? extends Publication> pubList = Tester.getPublications(networkFile);
 		
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");

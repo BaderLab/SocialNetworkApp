@@ -62,22 +62,7 @@
 					</compilerArguments>
 				</configuration>
 			</plugin>
-		<!--  <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<Cytoscape-API-Compatibility>3.0</Cytoscape-API-Compatibility>
-							<Cytoscape-App>SocialNetworkApp</Cytoscape-App>
-							<Cytoscape-App-Name>SocialNetworkApp</Cytoscape-App-Name>
-							<Cytoscape-App-Version>0.1</Cytoscape-App-Version>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin> 
-		-->	<plugin>
+			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${maven-bundle-plugin.version}</version>
@@ -89,20 +74,11 @@
 						<Private-Package>${bundle.namespace}.*</Private-Package>
 						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
 						<Export-Package>!${bundle.namespace}.*;version="${project.version}"</Export-Package>
+						<!--  <Embed-Dependency>commons-math;groupId=org.apache.commons;inline=false</Embed-Dependency> -->
+						<!--  <Embed-Dependency>poi;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
+						<!--  <Embed-Dependency>poi-ooxml;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
+						 <Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!junit|swing-app-api|swing-application-api|layout-api|org.osgi.core|session-api|service-api|work-api|application-api</Embed-Dependency>
 						<Import-Package>*;resolution:=optional</Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven-bundle-plugin.version}</version>
-				<configuration>
-					<instructions>
-						...
-						<Embed-Dependency>commons-math;groupId=org.apache.commons;inline=true</Embed-Dependency>
-						<Import-Package>*;resolution:=optional</Import-Package>
-						...
 					</instructions>
 				</configuration>
 			</plugin>
@@ -149,11 +125,6 @@
 			<type>bundle</type>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-		</dependency>
-		<dependency>
 			<groupId>org.cytoscape</groupId>
 			<artifactId>swing-app-api</artifactId>
 			<version>3.0.1</version>
@@ -171,13 +142,23 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
+			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 	</dependencies>
 	<packaging>bundle</packaging>
