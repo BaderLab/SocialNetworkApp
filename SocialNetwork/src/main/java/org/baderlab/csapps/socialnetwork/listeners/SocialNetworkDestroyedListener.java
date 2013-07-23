@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;

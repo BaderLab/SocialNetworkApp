@@ -3,6 +3,7 @@ package main.java.org.baderlab.csapps.socialnetwork.academia;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.org.baderlab.csapps.socialnetwork.Category;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -150,7 +151,7 @@ public class Pubmed {
 					isPubDate = false;
 				}
 				if (isAuthor) {
-					author = new Author(new String(ch, start, length), Author.PUBMED);
+					author = new Author(new String(ch, start, length), Category.PUBMED);
 					// add author to publication author list
 					if (! pubAuthorList.contains(author)) {						
 						pubAuthorList.add(author);

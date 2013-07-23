@@ -9,7 +9,8 @@ import java.util.Map;
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.networks.IncitesNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -93,18 +94,17 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 			
 			// Add to network table
 			UserPanel.addToNetworkPanel(event.getNetwork());
-			
-			// Configure network visual styles
-			
+						
 			// NOTE: Might be resource intensive. Create a new thread?
 			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
 			int networkID = socialNetwork.getNetworkType();
 			switch (networkID) {
 				case Category.INCITES:
-					
+										
 					// Specify NODE_LABEL
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, 
 							new Object[] {"Last Name"});
+					
 					
 					
 					// Specify EDGE_WIDTH
@@ -115,6 +115,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					int maxEdgeWidth = getLargestInCutoff(copubList, 100.0);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_WIDTH, 
 							new Object[] {"# of copubs", minEdgeWidth + 1, maxEdgeWidth});
+					
 					
 					
 					// Specify Node_SIZE
@@ -131,8 +132,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					// Specify EDGE_TRANSPARENCY
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, 
 							                                     new Object[] {"# of copubs"});
+			
 					
-
 					
 					// Specify NODE_FILL_COLOR
 					Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
@@ -141,18 +142,23 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					locationsMap.put("Canada", new Color(255,13,35));
 					locationsMap.put("United States", new Color(42,78,222));
 					locationsMap.put("International", new Color(42,230,246));
+					locationsMap.put("Community", new Color(211, 3, 253));
+					locationsMap.put("UNIV TORONTO", new Color(20, 253, 3));
 					colorAttrMap.put("Location", locationsMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, 
 						                              new Object[] {colorAttrMap});
 					
+					
+					
 					// Specify NODE_SHAPE
 					Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
-					HashMap<String, NodeShape> institutionsMap = new HashMap<String, NodeShape>();
-					institutionsMap.put("UNIV TORONTO", NodeShapeVisualProperty.TRIANGLE);
-					shapeAttrMap.put("Institution", institutionsMap);
+					HashMap<String, NodeShape> facultyMap = new HashMap<String, NodeShape>();
+					facultyMap.put(((IncitesNetwork) socialNetwork).getFacultyName(), NodeShapeVisualProperty.TRIANGLE);
+					facultyMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
+					shapeAttrMap.put("Faculty", facultyMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, 
                             new Object[] {shapeAttrMap});
-					
+															
 					break;
 			}
 			

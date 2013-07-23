@@ -15,12 +15,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
 import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
@@ -205,25 +207,38 @@ public class Incites {
 	public static JPanel createIncitesInfoPanel() {
 		
 		// Create new Incites info panel.
-		CollapsiblePanel incitesInfoPanel = new CollapsiblePanel("Incites");
-		incitesInfoPanel.setCollapsed(true);
+		JPanel incitesInfoPanel = new JPanel();
+		incitesInfoPanel.setBorder(BorderFactory.createTitledBorder("Incites"));
 			
 		// Set layout
-		incitesInfoPanel
-		.getContentPane().setLayout(new BoxLayout(incitesInfoPanel.getContentPane()
+		incitesInfoPanel.setLayout(new BoxLayout(incitesInfoPanel
 		, BoxLayout.Y_AXIS));	
 		
 		// Add load panel
-		incitesInfoPanel.getContentPane().add(Incites.createLoadDataPanel()
+		incitesInfoPanel.add(Incites.createLoadDataPanel()
 		, BorderLayout.NORTH);
 		
 		// Add faculty panel
-		incitesInfoPanel.getContentPane().add(Incites.createSpecifyNetworkNamePanel());
+		incitesInfoPanel.add(Incites.createSpecifyNetworkNamePanel());
 		
 		// Add 'create network button' to panel
-		incitesInfoPanel.getContentPane().add(Incites.createCNB());
+		incitesInfoPanel.add(Incites.createCNB());
 		
 		return incitesInfoPanel;
+	}
+	
+	/**
+	 * Extract filename from path
+	 * @param String path
+	 * @return String filename
+	 */
+	public static String parseFileName(String path) {
+		Pattern pattern = Pattern.compile("([^\\/]+?)(\\.xlsx|\\.txt)$");
+		Matcher matcher = pattern.matcher(path);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return "N/A";
 	}
 
 	/**
@@ -255,6 +270,7 @@ public class Incites {
 					File textFile = chooser.getSelectedFile();
 					Incites.setIncitesFile(textFile);
 					Incites.getPathTextFieldRef().setText(textFile.getAbsolutePath());
+					Incites.getFacultyTextFieldRef().setText(Incites.parseFileName(textFile.getAbsolutePath()));
 				} else {
 					Incites.setIncitesFile(null);
 					Incites.getPathTextFieldRef().setText(null);
@@ -274,18 +290,17 @@ public class Incites {
 	 * @return JPanel loadDataPanel
 	 */
 	private static JPanel createLoadDataPanel() {
-		CollapsiblePanel loadDataPanel = new CollapsiblePanel("Load File");
-		loadDataPanel.setCollapsed(true);
-		loadDataPanel.getContentPane()
-		.setLayout(new BoxLayout(loadDataPanel.getContentPane(), BoxLayout.X_AXIS));
+		JPanel loadDataPanel = new JPanel();
+		loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
+		loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
 		Incites.setLoadTextField(new JTextField());
 		Incites.getPathTextFieldRef().setEditable(true);
 		// Add text field to collapsible panel
-		loadDataPanel.getContentPane().add(Incites.getPathTextFieldRef());
+		loadDataPanel.add(Incites.getPathTextFieldRef());
 		// Add load data button to collapsible panel
-		loadDataPanel.getContentPane().add(Incites.createLoadButton());
+		loadDataPanel.add(Incites.createLoadButton());
 		return loadDataPanel;
 	}
 
@@ -295,16 +310,15 @@ public class Incites {
 	 * @return JPanel networkNamePanel
 	 */
 	private static JPanel createSpecifyNetworkNamePanel() {
-		CollapsiblePanel specifyNetworkNamePanel = new CollapsiblePanel("Specify Network Name");
-		specifyNetworkNamePanel.setCollapsed(true);
-		specifyNetworkNamePanel.getContentPane()
-		.setLayout(new BoxLayout(specifyNetworkNamePanel.getContentPane(), BoxLayout.X_AXIS));
+		JPanel specifyNetworkNamePanel = new JPanel();
+		specifyNetworkNamePanel.setBorder(BorderFactory.createTitledBorder("Specify Network Name"));
+		specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
 		Incites.setFacultyTextFieldRef(new JTextField());
 		Incites.getFacultyTextFieldRef().setEditable(true);
 		// Add text field to collapsible panel
-		specifyNetworkNamePanel.getContentPane().add(Incites.getFacultyTextFieldRef());
+		specifyNetworkNamePanel.add(Incites.getFacultyTextFieldRef());
 		return specifyNetworkNamePanel;
 	}
 
@@ -443,7 +457,7 @@ public class Incites {
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
 		for (String authorText : authors) {
-			author = new Author(authorText, Author.INCITES);
+			author = new Author(authorText, Category.INCITES);
 			if (! pubAuthorList.contains(author)) {
 				pubAuthorList.add(author);
 			}

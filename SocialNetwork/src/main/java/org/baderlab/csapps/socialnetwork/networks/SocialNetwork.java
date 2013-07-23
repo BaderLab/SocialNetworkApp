@@ -1,7 +1,10 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.networks;
 
 import java.util.HashMap;
 import java.util.Map;
+
+
+import main.java.org.baderlab.csapps.socialnetwork.Category;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;

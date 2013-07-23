@@ -2,6 +2,7 @@ package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,10 @@ public class Interaction {
 	 * @param null
 	 * @return Map academiaMap
 	 */
-	public static Map<Consortium, ArrayList<AbstractEdge>> getAcademiaMap(List<? extends Publication> pubList) {
-		return Interaction.loadAcademiaMap(pubList);
+	public static Map<Consortium, ArrayList<AbstractEdge>> getAcademiaMap(List<? extends Publication> pubList,
+																		  String facultyName,
+																		  HashSet facultyHashSet) {
+		return Interaction.loadAcademiaMap(pubList, facultyName, facultyHashSet);
 	}
 	
 	/**
@@ -77,31 +80,38 @@ public class Interaction {
 	
 	/**
 	 * Create new Academia hash-map 
+	 * @param facultyName 
 	 * @param ArrayList abstractEdgeList
 	 * @return Map academiaMap
 	 */
-	private static Map<Consortium, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends Publication> publicationList) {
+	private static Map<Consortium, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends Publication> publicationList,
+			                                                                String facultyName, HashSet facultyHashSet) {		
 		// Create new academia map
 		Map<Consortium, ArrayList<AbstractEdge>> academiaMap = new HashMap<Consortium, ArrayList<AbstractEdge>>();
 		Map<Author, Author> authorMap = new HashMap<Author, Author>();
-		int i = 0, j = 0;
+		int h = 0, i = 0, j = 0;
 		Consortium consortium = null;
 		Author author1 = null, author2 = null;
 		Copublications copublications = null;
+		Publication publication = null;
 		// Iterate through each publication
-		for (Publication publication : publicationList) {
+		while (h < publicationList.size() - 1) {
 			i = 0;
 			j = 0;
 			consortium = null;
 			author1 = null;
 			author2 = null;
 			copublications = null;
+			publication = publicationList.get(h);
 			while (i < publication.getNodes().size()) {
 				author1 = (Author) publication.getNodes().get(i);
 				if (authorMap.get(author1) == null) {
+					if (facultyHashSet.contains(author1)) {
+						author1.setFaculty(facultyName);
+					}
 					authorMap.put(author1, author1);
 				} 
-				// Update time cited for both author#1 and author#2
+//				// Update time cited for both author#1 and author#2
 //				if (author1.getLastName().equalsIgnoreCase("Hanley")) {
 //					System.out.println(publication.getNodes());
 //					System.out.println("I am author #1");
@@ -116,6 +126,9 @@ public class Interaction {
 				while (j < publication.getNodes().size()) {
 					author2 = (Author) publication.getNodes().get(j);
 					if (authorMap.get(author2) == null) {
+						if (facultyHashSet.contains(author2)) {
+							author2.setFaculty(facultyName);
+						}
 						authorMap.put(author2, author2);
 					}
 					consortium = new Consortium(authorMap.get(author1), authorMap.get(author2));
@@ -129,11 +142,13 @@ public class Interaction {
 						copublications = (Copublications) academiaMap.get(consortium).get(0);
 						copublications.addPublication((Publication) publication);
 					}
-					j += 1;
+					j++;
 				}
-				i += 1;
+				i++;
 			}
+			h++;
 		}
+		
 		return academiaMap;
 	}
 	

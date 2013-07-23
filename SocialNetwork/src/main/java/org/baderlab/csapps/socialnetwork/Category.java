@@ -24,6 +24,10 @@ public class Category {
 	 */
 	final public static int DEFAULT = -1;
 	/**
+	 * Faculty category 
+	 */
+	final public static int FACULTY = -2;
+	/**
 	 * Incites (IP = 84.18.180.87)
 	 */
 	final public static int INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
@@ -161,7 +165,7 @@ public class Category {
 	 */
 	public static String[] getCategoryList() {
 //		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
-		String[] categoryList = { "--SELECT CATEGORY--", "Academia"};
+		String[] categoryList = {"Academia"};
 		return categoryList;
 	}
 	

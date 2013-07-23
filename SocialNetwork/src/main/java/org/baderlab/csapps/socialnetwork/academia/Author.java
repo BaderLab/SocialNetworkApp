@@ -1,19 +1,11 @@
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Tester;
+import main.java.org.baderlab.csapps.socialnetwork.Category;
+
 
 /**
  * The author of an article, journal review, or scientific paper
@@ -21,14 +13,6 @@ import main.java.org.baderlab.csapps.socialnetwork.Tester;
  *
  */
 public class Author extends AbstractNode {
-	/**
-	 * Incites (IP = 167.68.24.112)
-	 */
-	final public static int INCITES = (167 << 24) + (68 << 16) + (24 << 8) + 112;
-	/**
-	 * PubMed (IP = 130.14.29.110)
-	 */
-	final public static int PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 	/**
 	 * Author's first initial
 	 */
@@ -57,6 +41,10 @@ public class Author extends AbstractNode {
 	 * Author's total number of citations
 	 */
 	private int timesCited = 0;
+	/**
+	 * Author's faculty
+	 */
+	private String faculty = "N/A";
 		
 	/**
 	 * Create a new author with the first name, last name and middle initial specified 
@@ -69,7 +57,7 @@ public class Author extends AbstractNode {
 	public Author(String rawAuthorText, int origin) {
 		
 		switch (origin) {
-			case Author.PUBMED:
+			case Category.PUBMED:
 				String[] names = rawAuthorText.split("\\s");
 				if (names.length == 2) {
 					this.lastName = names[0];
@@ -85,14 +73,19 @@ public class Author extends AbstractNode {
 					this.lastName = names[0];
 				}
 				break;
-			case Author.INCITES:
+			case Category.INCITES:
 				this.firstName = Incites.parseFirstName(rawAuthorText);
+				this.firstInitial = this.firstName.substring(0,1);
 				this.middleInitial = Incites.parseMiddleInitial(rawAuthorText);
 				this.lastName = Incites.parseLastName(rawAuthorText);
 				this.institution = Incites.parseInstitution(rawAuthorText);
-				Map<String, String> locationMap = Incites.getLocationMap();
 				this.setLocation(Incites.getLocationMap().get(institution));
 				break;
+			case Category.FACULTY:
+				String[] authorAttr = rawAuthorText.split(";");
+				this.lastName = authorAttr[1];
+				this.firstName = authorAttr[0];
+				this.firstInitial = this.firstName.substring(0,1);
 		}
 		
 		// Construct author's attribute map
@@ -114,6 +107,7 @@ public class Author extends AbstractNode {
 		nodeAttrMap.put("Times Cited", this.timesCited);
 		nodeAttrMap.put("Institution", this.institution);
 		nodeAttrMap.put("Location", this.location);
+		nodeAttrMap.put("Faculty", this.faculty);
 	}
 
 	/**
@@ -123,7 +117,7 @@ public class Author extends AbstractNode {
 	 */
 	public boolean equals(Object other) {
 		return this.lastName.equalsIgnoreCase(((Author)other).lastName) &&
-			   this.firstInitial.equalsIgnoreCase(((Author)other).firstInitial);
+			   this.firstName.equalsIgnoreCase(((Author)other).firstName);
 	}
 
 	/**
@@ -317,6 +311,25 @@ public class Author extends AbstractNode {
 	public String toString() {
 		return "Name: " + lastName + "-" + firstInitial
 			+  "\nInstitution: " + institution + "\n\n";
+	}
+
+	/**
+	 * Get author's faculty
+	 * @param null
+	 * @return String faculty
+	 */
+	public String getFaculty() {
+		return faculty;
+	}
+
+	/**
+	 * Set author's faculty
+	 * @param String faculty
+	 * @return null
+	 */
+	public void setFaculty(String faculty) {
+		this.faculty = faculty;
+		this.getNodeAttrMap().put("Faculty", this.faculty);
 	}
  
 }

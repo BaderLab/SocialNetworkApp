@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,9 @@ import org.cytoscape.model.CyRow;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
+
+import main.java.org.baderlab.csapps.socialnetwork.networks.IncitesNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
 
 /**
  * Cytoscape
@@ -144,12 +148,17 @@ public class Cytoscape {
 	
 		// Parse for list of publications
 //		List<? extends Publication> pubList = Incites.getPublications(networkFile);
-		List<? extends Publication> pubList = Tester.getPublications(networkFile);
+		List<? extends Publication> pubList = Tester.getPubList(networkFile);
 		
+		// Get faculty set
+		Object[] facultyAttr = Tester.getFacultyAttr(networkFile);
+		String facultyName = (String) facultyAttr[0];
+		HashSet facultyHashSet = (HashSet) facultyAttr[1];
+				
 		if (pubList == null) {
 			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
 		} else {
-			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList);
+			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList, facultyName, facultyHashSet);
 			if (map.size() == 0) {
 				Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
 				return;
@@ -160,18 +169,19 @@ public class Cytoscape {
 			// Check if a network with a similar name already exists
 			if (Cytoscape.isNameValid(networkName)) {
 				Cytoscape.setNetworkName(networkName);
+				IncitesNetwork incitesNetwork = new IncitesNetwork(Category.INCITES);
+				incitesNetwork.setFacultyName(facultyName);
 				Cytoscape.getSocialNetworkMap().put(networkName, 
-						                            new SocialNetwork(Category.INCITES));
+						                            incitesNetwork);
 				// Change mouse cursor
 		        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				// Create network using map
 				Cytoscape.createNetwork();
 			} else {
-				Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape. "
-						                                      + "Please enter a new name.");
+				Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
+						                                      + " Please enter a new name.");
 			}
 		}
-	
 	}
 
 	/**

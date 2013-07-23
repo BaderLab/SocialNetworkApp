@@ -780,8 +780,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		UserPanel.topPanelRef = UserPanel.createTopPanel();
 		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
 		
-		// Add default info panel
-		this.setSelectedInfoPanel(Category.createDefaultInfoPanel());
+		// Add academia info panel
+		this.setSelectedInfoPanel(Category.createAcademiaInfoPanel());
 		this.add(infoPanelRef, BorderLayout.CENTER);
 		
 		// Add bottom panel
