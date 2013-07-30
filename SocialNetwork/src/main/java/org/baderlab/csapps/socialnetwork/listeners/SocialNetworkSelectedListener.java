@@ -1,7 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork.listeners;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.application.events.SetSelectedNetworksEvent;

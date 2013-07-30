@@ -80,7 +80,7 @@ public class CyActivator extends AbstractCyActivator {
 		SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener();
 		registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 		
-		SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener();
+		SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef);
 		registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener();

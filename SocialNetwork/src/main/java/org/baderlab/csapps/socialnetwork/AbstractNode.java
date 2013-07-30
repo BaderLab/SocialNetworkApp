@@ -21,10 +21,10 @@ public abstract class AbstractNode {
 	public abstract Map<String, Object> getNodeAttrMap();
 	
 	/**
-	 * Construct an attribute map for node
-	 * @param null
+	 * Set map containing all of anode's attributes
+	 * @param Map attrMap
 	 * @return null
 	 */
-	public abstract void constructNodeAttrMap();
+	public abstract void setNodeAttrMap(Map<String, Object> attrMap);
 	
 }

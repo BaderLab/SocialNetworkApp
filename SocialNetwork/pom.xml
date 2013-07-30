@@ -74,10 +74,10 @@
 						<Private-Package>${bundle.namespace}.*</Private-Package>
 						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
 						<Export-Package>!${bundle.namespace}.*;version="${project.version}"</Export-Package>
-						<!--  <Embed-Dependency>commons-math;groupId=org.apache.commons;inline=false</Embed-Dependency> -->
-						<!--  <Embed-Dependency>poi;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
-						<!--  <Embed-Dependency>poi-ooxml;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
-						 <Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!junit|swing-app-api|swing-application-api|layout-api|org.osgi.core|session-api|service-api|work-api|application-api</Embed-Dependency>
+						<!-- <Embed-Dependency>commons-math;groupId=org.apache.commons;inline=false</Embed-Dependency> -->
+						<!-- <Embed-Dependency>poi;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
+						<!-- <Embed-Dependency>poi-ooxml;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
+						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!junit|swing-app-api|swing-application-api|layout-api|org.osgi.core|session-api|service-api|work-api|application-api</Embed-Dependency>
 						<Import-Package>*;resolution:=optional</Import-Package>
 					</instructions>
 				</configuration>
@@ -159,6 +159,11 @@
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
 			<version>2.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
 	</dependencies>
 	<packaging>bundle</packaging>

@@ -9,17 +9,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 
+import org.apache.commons.io.FilenameUtils;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetwork;
@@ -28,8 +33,7 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
 
-import main.java.org.baderlab.csapps.socialnetwork.networks.IncitesNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 
 /**
  * Cytoscape
@@ -42,7 +46,12 @@ public class Cytoscape {
 	 */
 	private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
 	/**
-	 * A reference to the cytoscape application manager
+	 * Currently selected social network
+	 */
+	private static SocialNetwork currentlySelectedSocialNetwork = null;
+	/**
+	 * A reference to the cytoscape application manager. Necessary for
+	 * changing network views.
 	 */
 	private static CyApplicationManager cyAppManagerServiceRef = null;
 	/**
@@ -78,11 +87,13 @@ public class Cytoscape {
 	 */
 	private static Map<String, SocialNetwork> socialNetworkMap = null;
 	/**
-	 * A reference to the cytoscape task manager
+	 * A reference to the cytoscape task manager. As the name suggests
+	 * the task manager is used for executing tasks.
 	 */
 	private static TaskManager<?, ?> taskManagerServiceRef = null;
 	/**
-	 * A reference to the user panel action. Used for closing the panel.
+	 * A reference to user panel action. Controls panel actions (viewing,
+	 * closing ... etc)
 	 */
 	private static UserPanelAction userPanelAction = null;
 	/**
@@ -91,13 +102,9 @@ public class Cytoscape {
 	 */
 	private static UserPanel userPanelRef = null;
 	/**
-	 * Selected network view
+	 * Currently selected visual style ID
 	 */
 	private static int visualStyleID = Category.DEFAULT;
-	/**
-	 * Currently selected social network
-	 */
-	private static SocialNetwork currentlySelectedSocialNetwork = null;
 	
 	/**
 	 * Apply visual style to network
@@ -107,7 +114,7 @@ public class Cytoscape {
 	public static void applyVisualStyle(String visualStyle) {
 		Cytoscape.setVisualStyleID(Category.getVisualStyleID(visualStyle));
 		Cytoscape.getTaskManager().execute(Cytoscape.getApplyVisualStyleTaskFactoryRef()
-				                  .createTaskIterator());
+				                                    .createTaskIterator());
 	}
 	
 	/**
@@ -145,41 +152,118 @@ public class Cytoscape {
 	 * @return null
 	 */	
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
-	
-		// Parse for list of publications
-//		List<? extends Publication> pubList = Incites.getPublications(networkFile);
-		List<? extends Publication> pubList = Tester.getPubList(networkFile);
-		
-		// Get faculty set
-		Object[] facultyAttr = Tester.getFacultyAttr(networkFile);
-		String facultyName = (String) facultyAttr[0];
-		HashSet facultyHashSet = (HashSet) facultyAttr[1];
-				
-		if (pubList == null) {
-			Cytoscape.notifyUser("Invalid file. Please load a valid Incites data file.");
-		} else {
-			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList, facultyName, facultyHashSet);
+		// Verify that network name is valid
+		String networkName = AcademiaPanel.getFacultyTextFieldRef().getText().trim();
+		if (! Cytoscape.isNameValid(networkName)) {
+			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
+					+ " Please enter a new name.");
+			return;
+		}
+		// Change mouse cursor
+		Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		// Initialize boilerplate variables
+		List<? extends Publication> pubList = null;
+		Object[] facultyAttr = null;
+		String extension = null;
+		Map<Consortium, ArrayList<AbstractEdge>> map = null;
+		// Create network out of Incites data
+		if (Incites.getIncitesCheckBox().isSelected()) {
+			extension = FilenameUtils.getExtension(networkFile.getPath());
+			// Load data from text file
+			if (extension.trim().equalsIgnoreCase("txt")) {
+				pubList = Incites.getTXTPubList(networkFile);
+				if (pubList != null) {
+					Object[] options = { "Yes", "No" };
+					// Ask user about faculty data
+					// NOTE: Incites network-data files lack faculty information
+					int userAction = JOptionPane.showOptionDialog(null, 
+							"You are loading this network from a text file.\n" +
+									"To specify faculty information you will need to" +
+									" provide an extra data file.\n" +
+									"Do you want to load the faculty data file now?", 
+									"Faculty Data Missing",
+									JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+									null, options, options[0]);
+					if (userAction == 0) {
+						JFileChooser chooser = new JFileChooser();
+						chooser.setCurrentDirectory(new File(""));
+						chooser.setDialogTitle("Select Faculty File");
+						chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						int check = chooser.showDialog(null, "OK");
+						// Load faculty data
+						if (check == JFileChooser.APPROVE_OPTION) {
+							facultyAttr = Incites.getTXTFacultyAttr(chooser.getSelectedFile());
+						} else {
+							facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
+						}
+					} else if (userAction == 1) {
+						facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
+					}
+				// Notify user that file type is invalid
+				} else {
+					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					Cytoscape.notifyUser("Invalid file\nPlease load a valid Incites data file");
+					return;
+				}
+			// Load data from excel spreadsheet
+			} else if (extension.trim().equalsIgnoreCase("xlsx")) {
+				pubList = Incites.getXLSXPubList(networkFile);
+				// Get faculty set
+				facultyAttr = Incites.getXLSXFacultyAttr(networkFile);
+				if (pubList == null) {
+					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					Cytoscape.notifyUser("Invalid file\nPlease load a valid Incites data file.");
+					return;
+				}
+			// Notify user of inappropriate file type
+			} else {
+				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				Cytoscape.notifyUser("Invalid file\nIncite data files either have to be excel " +
+						             "spreadsheets or text files.");
+				return;
+			}
+			String facultyName = (String) facultyAttr[0];
+			HashSet<Author> facultyHashSet = (HashSet<Author>) facultyAttr[1];
+			// Create map
+			map = Interaction.getAcademiaMap(pubList, facultyName, facultyHashSet);
 			if (map.size() == 0) {
+				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
 				return;
 			}
-//			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(pubList); 
 			Cytoscape.setMap(map);
-			String networkName = Incites.getFacultyTextFieldRef().getText().trim();
-			// Check if a network with a similar name already exists
-			if (Cytoscape.isNameValid(networkName)) {
+			Cytoscape.setNetworkName(networkName);
+			// Add faculty name to social network map
+			SocialNetwork socialNetwork = new SocialNetwork(Category.INCITES);
+			socialNetwork.getAttrMap().put("Faculty Name", facultyName);
+			Cytoscape.getSocialNetworkMap().put(networkName, 
+					socialNetwork);
+			// Create network using map
+			Cytoscape.createNetwork();
+		// Create network out of Scopus data
+		} else if (Scopus.getScopusCheckBox().isSelected()) {
+			extension = FilenameUtils.getExtension(networkFile.getPath());
+			if (extension.trim().equalsIgnoreCase("csv")) {
+				pubList = Scopus.getScopusPubList(networkFile);
+				// Create map
+				map = Interaction.getAcademiaMap(pubList, null, null);
+				if (map.size() == 0) {
+					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
+					return;
+				}
+				Cytoscape.setMap(map);
 				Cytoscape.setNetworkName(networkName);
-				IncitesNetwork incitesNetwork = new IncitesNetwork(Category.INCITES);
-				incitesNetwork.setFacultyName(facultyName);
+				SocialNetwork socialNetwork = new SocialNetwork(Category.SCOPUS);
 				Cytoscape.getSocialNetworkMap().put(networkName, 
-						                            incitesNetwork);
-				// Change mouse cursor
-		        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+						                            socialNetwork);
 				// Create network using map
 				Cytoscape.createNetwork();
 			} else {
-				Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
-						                                      + " Please enter a new name.");
+				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				Cytoscape.notifyUser("Invalid file\nScopus data files have to be csv " +
+						             "spreadsheets");
+				return;
 			}
 		}
 	}
@@ -191,44 +275,54 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void createNetwork(String searchTerm, int category) {
+
+		// Verify that network name is valid
+		if (! Cytoscape.isNameValid(searchTerm)) {
+			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
+					+ " Please enter a new name.");
+			return;
+		}
 		
-			// Create new search session
-			Search search = new Search(searchTerm, category);
-			
-			// Get a list of the results that are going to serve as edges. Exact result type
-			// may vary with website
-			List<? extends AbstractEdge> results = search.getResults();
-			
-			if (results == null) {
-				Cytoscape.notifyUser("Network could not be loaded");
-				return;
-			} 
-			
-			if (results.size() == 0) {
-				Cytoscape.notifyUser("Search didn't yield any results");
-				return;
-			}
-			
-			// 
-	        
-			// Create new map using results
-			Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAbstractMap(results);
-			// Check if a similar network already exists
-			if (Cytoscape.isNameValid(searchTerm)) {
-				Cytoscape.setNetworkName(searchTerm);
-				Cytoscape.getSocialNetworkMap().put(searchTerm, 
-					  new SocialNetwork(category));
-				// Transfer map to Cytoscape's map variable
-				Cytoscape.setMap(map);
-				// Change mouse cursor
-		        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				// Create network using map
-				Cytoscape.createNetwork();
-			} else {
-				Cytoscape.notifyUser("Network " + searchTerm + " already exists in Cytoscape. "
-						           + "Please enter a new name.");
-			}
-			
+		// Create new search session
+		Search search = new Search(searchTerm, category);
+
+		// Get a list of the results that are going to serve as edges. Exact result type
+		// may vary with website
+		List<? extends AbstractEdge> results = (List<? extends AbstractEdge>) search.getResults();
+
+		if (results == null) {
+			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			Cytoscape.notifyUser("Network could not be loaded");
+			return;
+		} 
+
+		if (results.size() == 0) {
+			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			Cytoscape.notifyUser("Search did not yield any results");
+			return;
+		}
+		
+		Map<Consortium, ArrayList<AbstractEdge>> map = null;
+
+		switch (category) {
+			case Category.ACADEMIA:
+				// Create new map using results
+				map = Interaction.getAcademiaMap(results, null, null);
+				/**
+				 * TEMPORARY
+				 */
+				// Change category (to Pubmed)
+				category = Category.PUBMED;
+				break;
+		}
+		
+		Cytoscape.setNetworkName(searchTerm);
+		Cytoscape.getSocialNetworkMap().put(searchTerm, 
+				new SocialNetwork(category));
+		// Transfer map to Cytoscape's map variable
+		Cytoscape.setMap(map);
+		// Create network using map
+		Cytoscape.createNetwork();			
 	}
 
 	/**
@@ -244,11 +338,20 @@ public class Cytoscape {
 
 	/**
 	 * Get apply view task factory
-	 * @param ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
-	 * @return null
+	 * @param null
+	 * @return ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
 	 */
-	private static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {
+	public static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {
 		return Cytoscape.applyVisualStyleTaskFactoryRef;
+	}
+
+	/**
+	 * Get currently selected social network
+	 * @param null
+	 * @return SocialNetwork currentlySelectedSocialNetwork
+	 */
+	public static SocialNetwork getCurrentlySelectedSocialNetwork() {
+		return Cytoscape.currentlySelectedSocialNetwork;
 	}
 
 	/**
@@ -301,6 +404,16 @@ public class Cytoscape {
 	}
 
 	/**
+	 * Get network table column names
+	 * @param null
+	 * @return String[] networkTableColumnNames
+	 * @return
+	 */
+	public static String[] getNetworkTableColumnNames() {
+		return new String[] {"Name", "Node Count", "Edge Count", "Category"};
+	}
+
+	/**
 	 * Get network task factory
 	 * @param null
 	 * @return NetworkTaskFactory networkTaskFactory
@@ -329,10 +442,10 @@ public class Cytoscape {
 
 	/**
 	 * Get social network map
-	 *<br>Key: network name 
-	 *<br>Value: {CyNetwork, Category, CyNetworkView}
 	 * @param null
 	 * @return Map social networks
+	 * <br><i>Key: network name</i> 
+	 * <br><i>Value: {CyNetwork, Category, CyNetworkView}</i>
 	 */
 	public static Map<String, SocialNetwork> getSocialNetworkMap() {
 		if (Cytoscape.socialNetworkMap == null) {
@@ -342,17 +455,7 @@ public class Cytoscape {
 		}
 		return Cytoscape.socialNetworkMap;
 	}
-
-	/**
-	 * Get network table column names
-	 * @param null
-	 * @return String[] networkTableColumnNames
-	 * @return
-	 */
-	public static String[] getNetworkTableColumnNames() {
-		return new String[] {"Name", "Node Count", "Edge Count", "Category"};
-	}
-
+	
 	/**
 	 * Get Cytoscape task manager
 	 * @param null
@@ -361,7 +464,7 @@ public class Cytoscape {
 	public static TaskManager<?, ?> getTaskManager() {
 		return Cytoscape.taskManagerServiceRef;
 	}
-	
+
 	/**
 	 * Get user panel action
 	 * @param null
@@ -388,10 +491,10 @@ public class Cytoscape {
 	public static int getVisualStyleID() {
 		return Cytoscape.visualStyleID;
 	}
-
+	
 	/**
 	 * Return true iff a network with a similar name is 
-	 * not already present in Cytoscape
+	 * <i>not</i> already present in Cytoscape
 	 * @param String networkName
 	 * @return boolean
 	 */
@@ -417,6 +520,16 @@ public class Cytoscape {
 	                   (ApplyVisualStyleTaskFactory applyViewTaskFactoryRef) {
 		Cytoscape.applyVisualStyleTaskFactoryRef = applyViewTaskFactoryRef;
 	}
+
+	/**
+	 * Set currently selected social network
+	 * @param SocialNetwork currentlySelectedSocialNetwork
+	 * @return null
+	 */
+	public static void setCurrentlySelectedSocialNetwork(
+			SocialNetwork currentlySelectedSocialNetwork) {
+		Cytoscape.currentlySelectedSocialNetwork = currentlySelectedSocialNetwork;
+	}
 	
 	/**
 	 * Set network's view as the current view
@@ -429,7 +542,7 @@ public class Cytoscape {
 				                    .get(networkName).getNetworkView();
 		Cytoscape.getCyAppManagerServiceRef().setCurrentNetworkView(networkView);
 	}
-
+	
 	/**
 	 * Set Cytoscape application manager
 	 * @param CyApplicationManager cyAppManagerServiceRef
@@ -515,7 +628,7 @@ public class Cytoscape {
 	public static void setTaskManager(TaskManager<?, ?> taskManager) {
 		Cytoscape.taskManagerServiceRef = taskManager;
 	}
-	
+
 	/**
 	 * Set user panel action
 	 * @param UserPanelAction userPanelAction
@@ -524,7 +637,7 @@ public class Cytoscape {
 	public static void setUserPanelAction(UserPanelAction userPanelAction) {
 		Cytoscape.userPanelAction = userPanelAction;
 	}
-	
+
 	/**
 	 * Set user panel reference
 	 * @param UserPanel userPanelRef
@@ -541,24 +654,5 @@ public class Cytoscape {
 	 */
 	public static void setVisualStyleID(int visualStyleID) {
 		Cytoscape.visualStyleID = visualStyleID;
-	}
-
-	/**
-	 * Get currently selected social network
-	 * @param null
-	 * @return SocialNetwork currentlySelectedSocialNetwork
-	 */
-	public static SocialNetwork getCurrentlySelectedSocialNetwork() {
-		return Cytoscape.currentlySelectedSocialNetwork;
-	}
-
-	/**
-	 * Set currently selected social network
-	 * @param SocialNetwork currentlySelectedSocialNetwork
-	 * @return null
-	 */
-	public static void setCurrentlySelectedSocialNetwork(
-			SocialNetwork currentlySelectedSocialNetwork) {
-		Cytoscape.currentlySelectedSocialNetwork = currentlySelectedSocialNetwork;
 	}
 }

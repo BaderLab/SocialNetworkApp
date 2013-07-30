@@ -28,6 +28,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
 	private VisualStyle chippedVisualStyle;
+	private VisualStyle vanueVisualStyle;
 	private VisualStyle defaultVisualStyle;
 	private TaskMonitor taskMonitor;
 	
@@ -58,7 +59,19 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		if (this.chippedVisualStyle == null) {
 			this.chippedVisualStyle = this.createChippedVisualStyle();
 		}
-		return chippedVisualStyle;
+		return this.chippedVisualStyle;
+	}
+	
+	/**
+	 * Get Vanue visual style
+	 * @param null
+	 * @return VisualStyle vanueVisualStyle
+	 */
+	private VisualStyle getVanueVisualStyle() {
+		if (this.vanueVisualStyle == null) {
+			this.vanueVisualStyle = this.createVanueVisualStyle();
+		}
+		return this.vanueVisualStyle;
 	}
 	
 	/**
@@ -275,6 +288,20 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		modifyNodeShape(chippedVisualStyle);
 		return chippedVisualStyle;
 	}
+	
+	/**
+	 * Create Vanue visual style
+	 * @param null
+	 * @return VisualStyle vanueVisualStyle 
+	 */
+	private VisualStyle createVanueVisualStyle() {
+		VisualStyle vanueVisualStyle = visualStyleFactoryServiceRef
+                .createVisualStyle("Vanue");
+		addNodeLabels(vanueVisualStyle);
+		modifyNodeSize(vanueVisualStyle);
+		modifyEdgeWidth(vanueVisualStyle);
+		return vanueVisualStyle;
+	}
 
 	/**
 	 * Apply selected network view
@@ -289,8 +316,17 @@ public class ApplyVisualStyleTask extends AbstractTask {
 				break;
 			case Category.CHIPPED:
 				this.getTaskMonitor().setTitle("Loading Chipped Visual Style ... ");
+				this.getTaskMonitor().setProgress(0.0);
+				this.getTaskMonitor().setStatusMessage("");
 				vmmServiceRef.setCurrentVisualStyle(this.getChippedVisualStyle());
 				break;
+			case Category.VANUE:
+				this.getTaskMonitor().setTitle("Loading Vanue Visual Style ... ");
+				this.getTaskMonitor().setProgress(0.0);
+				this.getTaskMonitor().setStatusMessage("");
+				vmmServiceRef.setCurrentVisualStyle(this.getVanueVisualStyle());
+				break;
+
 		}
 	}
 

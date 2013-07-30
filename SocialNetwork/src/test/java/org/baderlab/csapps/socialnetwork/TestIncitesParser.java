@@ -39,7 +39,7 @@ public class TestIncitesParser {
 	public void testEmptyFile() {
 		File emptyFile = new File("src/test/resources/empty_incites_data_file.txt");
 		try {
-			assertTrue(Incites.getPublications(emptyFile) == null);
+			assertTrue(Incites.getTXTPubList(emptyFile) == null);
 		} catch (FileNotFoundException e) {
 			assertTrue(false);
 		}
@@ -52,7 +52,7 @@ public class TestIncitesParser {
 	public void testInvalidFile() {
 		File invalidFile = new File("src/test/resources/invalid_incites_data_file.txt");
 		try {
-			assertTrue(Incites.getPublications(invalidFile) == null);
+			assertTrue(Incites.getTXTPubList(invalidFile) == null);
 		} catch (FileNotFoundException e) {
 			assertTrue(false);
 		}
@@ -65,7 +65,7 @@ public class TestIncitesParser {
 	public void testValidFile() {
 		File validFile = new File("src/test/resources/valid_incites_data_file.txt");
 		try {
-			assertTrue(Incites.getPublications(validFile) != null);
+			assertTrue(Incites.getTXTPubList(validFile) != null);
 		} catch (FileNotFoundException e) {
 			assertTrue(false);
 		}

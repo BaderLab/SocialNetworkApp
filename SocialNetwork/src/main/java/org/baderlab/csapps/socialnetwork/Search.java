@@ -32,11 +32,11 @@ public class Search {
 				Cytoscape.notifyUser("Click --SELECT CATEGORY-- to select a category");
 				break;
 			case Category.ACADEMIA:
-				this.results = Pubmed.getListOfPublications(searchTerm);
-				this.totalHits = Pubmed.getTotalPubs();
+				Pubmed pubmed = new Pubmed(searchTerm);
+				this.results = pubmed.getListOfPublications();
+				this.totalHits = pubmed.getTotalPubs();
 				break;
 		}
-        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	/**

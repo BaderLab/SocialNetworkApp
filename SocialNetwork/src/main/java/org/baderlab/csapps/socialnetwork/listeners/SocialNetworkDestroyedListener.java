@@ -5,9 +5,10 @@ import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 
@@ -16,6 +17,11 @@ import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
  * @author Victor Kofia
  */
 public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyedListener {
+	private CyNetworkManager cyNetworkManagerServiceRef = null;
+	
+	public SocialNetworkDestroyedListener(CyNetworkManager cyNetworkManagerServiceRef) {
+		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+	}
 	
 	/**
 	 * Get the row in table that contains the specified name. 
@@ -40,7 +46,10 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 			model.removeRow(getRow(model, name));
 			Map<String, SocialNetwork> map = Cytoscape.getSocialNetworkMap();
 			map.remove(name);
-			UserPanel.addNetworkVisualStyle("DEFAULT");
+			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
+				Cytoscape.setCurrentlySelectedSocialNetwork(null);
+				UserPanel.addNetworkVisualStyle("DEFAULT");
+			}
 		}
 	}
 	

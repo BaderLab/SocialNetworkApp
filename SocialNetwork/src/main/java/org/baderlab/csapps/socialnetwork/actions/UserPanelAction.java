@@ -28,16 +28,22 @@ public class UserPanelAction extends AbstractCyAction {
 	private CyServiceRegistrar cyServiceRegistrarRef = null;
 	private CytoPanel cytoPanelWest = null;
 	private UserPanel userPanel = null;
-		
+	
+	/**
+	 * Create new Cytoscape action.
+	 * @param configProps
+	 * @param cyApplicationManagerServiceRef
+	 * @param cyNetworkViewManagerServiceRef
+	 * @param cySwingApplicationServiceRef
+	 * @param cyServiceRegistrarRef
+	 * @param userPanel
+	 */
 	public UserPanelAction(Map<String,String> configProps, CyApplicationManager cyApplicationManagerServiceRef, 
 						  CyNetworkViewManager cyNetworkViewManagerServiceRef, CySwingApplication cySwingApplicationServiceRef,
 						    CyServiceRegistrar cyServiceRegistrarRef, UserPanel userPanel) {
 		
 		super(configProps, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef);
-		
 		putValue(Action.NAME, "View Panel");
-// 		this.setName("View Panel");		
- 		
 		this.cytoPanelWest = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.WEST);
 		this.cyServiceRegistrarRef = cyServiceRegistrarRef;
 		this.userPanel = userPanel;
@@ -63,12 +69,10 @@ public class UserPanelAction extends AbstractCyAction {
     			return;
     		}
     		cytoPanelWest.setSelectedIndex(index);
-//    		this.setName("Hide Panel");
-    		putValue(Action.NAME, "View Panel");
-    	} else if (this.getName().trim().equalsIgnoreCase("Hide Panel")) {
+    		putValue(Action.NAME, "Hide Panel");
+    	} else if (currentName.trim().equalsIgnoreCase("Hide Panel")) {
     		this.cyServiceRegistrarRef.unregisterService 
     		       (this.userPanel, CytoPanelComponent.class);
-//    		this.setName("View Panel");
     		putValue(Action.NAME, "View Panel");
     	} 
     }

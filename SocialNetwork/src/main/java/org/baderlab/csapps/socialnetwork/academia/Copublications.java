@@ -10,7 +10,7 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 
 /**
- * A copublication
+ * A co-publication
  * @author Victor Kofia
  */
 public class Copublications extends AbstractEdge {
@@ -20,13 +20,13 @@ public class Copublications extends AbstractEdge {
 	private ArrayList<Publication> pubList = null;
 	/**
 	 * An edge attribute map/
-	 * <br> Keys: Attribute type (i.e. name)
-	 * <br> Value: Attribute value (i.e. Cytoscape app store)
+	 * <br> Keys: <i>Attribute type (i.e. name)</i>
+	 * <br> Value: <i>Attribute value (i.e. Cytoscape app store)</i>
 	 */
 	private Map<String, Object> edgeAttrMap = null;
 	
 	/**
-	 * Get total # of copublications
+	 * Get total # of co-publications
 	 * @param null
 	 * @return int totalPubs
 	 */
@@ -53,8 +53,10 @@ public class Copublications extends AbstractEdge {
 	}
  	
 	/**
-	 * Create a new copublications tracker for consortium.
-	 *
+	 * Create a new co-publications tracker for consortium.
+	 *@param Consortium consortium
+	 *@param Publication publication
+	 *@return null
 	 */
 	public Copublications(Consortium consortium, Publication publication) {
 		this.setPubList(new ArrayList<Publication>());

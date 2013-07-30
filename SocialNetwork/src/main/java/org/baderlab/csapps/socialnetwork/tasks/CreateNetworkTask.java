@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
+import java.awt.Cursor;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,8 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.networks.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -27,6 +29,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 
 /**
@@ -175,6 +178,7 @@ public class CreateNetworkTask extends AbstractTask {
 			this.monitor.setStatusMessage("Complete 25%");
 			return myNet;
 		} catch (ArrayIndexOutOfBoundsException exception) {
+			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
 			Cytoscape.getSocialNetworkMap().remove(Cytoscape.getNetworkName());
 			Cytoscape.setNetworkName(null);
@@ -246,15 +250,25 @@ public class CreateNetworkTask extends AbstractTask {
 			socialNetwork.setNetworkRef(network);
 			socialNetwork.setNetworkView(networkView);
 			
-			// Auto apply layout
+			// Auto apply visual style and layout
 			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef
 					                   .getLayout("force-directed");
 			String layoutAttribute = null;
-			insertTasksAfterCurrentTask(layout.createTaskIterator
-					(networkView, 
-					 layout.createLayoutContext(), 
-					 CyLayoutAlgorithm.ALL_NODE_VIEWS, 
-					 layoutAttribute));
+			TaskIterator layoutTaskIterator = layout.createTaskIterator
+							(networkView, 
+							 layout.createLayoutContext(), 
+							 CyLayoutAlgorithm.ALL_NODE_VIEWS, 
+							 layoutAttribute);
+			TaskIterator taskIterator = new TaskIterator();
+			taskIterator.append(layoutTaskIterator);
+			int visualStyleID = Cytoscape.getCurrentlySelectedSocialNetwork()
+                                         .getDefaultVisualStyle();
+			Cytoscape.setVisualStyleID(visualStyleID);
+			UserPanel.setSelectedVisualStyle(visualStyleID);
+			taskIterator.append(Cytoscape.getApplyVisualStyleTaskFactoryRef()
+				                                    .createTaskIterator());
+			insertTasksAfterCurrentTask(taskIterator);
+
 		}
 	}
 	

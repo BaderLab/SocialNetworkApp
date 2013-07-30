@@ -1,3 +1,4 @@
+
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
  */
 public class Publication extends AbstractEdge {
 	/**
-	 * A list of all authors who played a part in the creation of Publication
+	 * A list of all authors who collaborated on Publication
 	 */
 	private ArrayList<Author> authorList = new ArrayList<Author>();
 	/**
@@ -34,13 +35,13 @@ public class Publication extends AbstractEdge {
 	 */
 	private int timesCited = 0;
 	/**
-	 * Publication title
+	 * Publication's title
 	 */
 	private String title = null; 
 
 	
 	/**
-	 * Create new publication with specified title, pubdate and list of authors
+	 * Create new publication
 	 * @param String pubDate
 	 * @param String title
 	 * @param String journal
@@ -71,10 +72,6 @@ public class Publication extends AbstractEdge {
 	public void constructEdgeAttrMap() {
 		edgeAttrMap = new HashMap<String, Object>();
 		edgeAttrMap.put("Times Cited", this.timesCited);
-		/**
-		 * NOTE: EXPECTED CITATIONS NOT BEING ENTERED INTO MAP. FIX OR REMOVE
-		 */
-//		edgeAttrMap.put("Expected Citations", this.expectedCitations);
 		edgeAttrMap.put("Pub Date", this.pubDate);
 		edgeAttrMap.put("Journal", this.journal);
 		edgeAttrMap.put("Title", this.title);
@@ -116,7 +113,7 @@ public class Publication extends AbstractEdge {
 	
 	
 	/**
-	 * Return list containing publication's authors
+	 * Get authors
 	 * @return List authorList
 	 */
 	public List<? extends AbstractNode> getNodes() {
@@ -135,7 +132,7 @@ public class Publication extends AbstractEdge {
 	
 	
 	/**
-	 * Return times cited
+	 * Get times cited
 	 * @param null
 	 * @return int timesCited
 	 */
@@ -202,14 +199,14 @@ public class Publication extends AbstractEdge {
 	
 	/**
 	 * Return a string representation of the publication in the format:
-	 * <br>Title: title
-	 * <br>PubDate: pubdate
-	 * <br>Authors: author
+	 * <br>Title: <i>title</i>
+	 * <br>PubDate: <i>pubdate</i>
+	 * <br>Authors: <i>author</i>
 	 * @param null
 	 * @return String publication
 	 */
 	public String toString() {
-		// removing period (for cosmetic purposes)
-		return title.substring(0,title.length() - 1);
+		return "Title: " + title
+			+  "\nTimes Cited: " + timesCited;
 	}
 }

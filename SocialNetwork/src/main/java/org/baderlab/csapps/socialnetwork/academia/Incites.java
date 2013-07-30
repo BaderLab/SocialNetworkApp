@@ -1,31 +1,31 @@
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JCheckBox;
+
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.exceptions.UnableToParseAuthorException;
-import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Methods for manipulating Incites data
@@ -33,58 +33,17 @@ import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
  */
 public class Incites {
 	/**
-	 * A reference to the faculty text field. Used to verify correct faculty input.
+	 * Reference to Incites checkbox
 	 */
-	public static JTextField facultyTextFieldRef = new JTextField();
-	/**
-	 * A reference to an Incites data file. Used to verify correct file path.
-	 */
-	public static File incitesFileRef = null;
-	/**
-	 * A reference to the load data text field. Used to verify correct file path.
-	 */
-	public static JTextField pathTextFieldRef = new JTextField();
-	/**
-	 * List of publications extracted from Incites data file
-	 */
-	private static List<Publication> pubList = null;
+	public static JCheckBox incitesCheckBox = null;
 	/**
 	 * Author location map
 	 */
 	private static Map<String, String> locationMap = null;
-	
 	/**
-	 * Set location map
-	 * @param Map locationMap
-	 * @return null
+	 * List of publications extracted from Incites data file
 	 */
-	public static void setLocationMap(Map<String, String> locationMap) {
-		Incites.locationMap = locationMap;
-	}
-	
-	/**
-	 * Get location map
-	 * @param null
-	 * @return Map locationMap
-	 */
-	public static Map<String, String> getLocationMap() {
-		
-		if (Incites.locationMap == null) {
-			try {
-				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
-				ObjectInputStream ois = new ObjectInputStream(in);
-				Incites.setLocationMap((Map) ois.readObject());
-			} catch (FileNotFoundException e) {
-				Cytoscape.notifyUser("Failed to load location map. FileNotFoundException.");
-			} catch (IOException e) {
-				Cytoscape.notifyUser("Failed to load location map. IOException.");
-			} catch (ClassNotFoundException e) {
-				Cytoscape.notifyUser("Failed to load location map. ClassNotFoundException.");
-			}
-		}
-		
-		return Incites.locationMap;
-	}
+	private static List<Publication> pubList = null;
 
 	/**
 	 * Return true iff the provided line comes from an Incites data file
@@ -105,7 +64,6 @@ public class Incites {
 				boolean hasSubjectArea = false;
 				boolean hasAuthors = false;
 				boolean hasTitle = false;
-
 				String year = null;
 				String subjectArea = null;
 				String authors = null;
@@ -114,39 +72,30 @@ public class Incites {
 				String expectedCitations = "0.00";
 				List<Author> coauthorList = null;
 				Publication pub;
-
 				timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
 				hasTimesCited = timesCited.matches("\\d+?") ? true : false;
-
 				expectedCitations = contents[1].trim().isEmpty() 
 						? "0.00" : contents[1].trim();
 				hasExpectedCitations = expectedCitations.matches
 						("(\\d+?)\\.?(\\d+?)") ? true : false;
-
 				year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
 				hasPublicationYear = year.matches("\\d+?") ? true : false;
-
 				subjectArea = contents[3];
 				hasSubjectArea = subjectArea.matches("[A-Z]+?") ? true : false;
-
 				authors = contents[4];
-
 				try {
 					coauthorList = Incites.parseAuthors(authors);
 					hasAuthors = true;
 				} catch (UnableToParseAuthorException e) {
 					hasAuthors = false;
 				}
-
 				// Difficult to identify an Incites specific title. Thus, true by default.
 				title = contents[5];
 				hasTitle = true;
-
 				// Consolidate
 				isValid = hasTimesCited && hasExpectedCitations 
 						&& hasPublicationYear && hasSubjectArea
 						&& hasAuthors && hasTitle;
-
 				if (isValid) {
 					pub = new Publication(title, year, subjectArea, timesCited, 
 							expectedCitations, coauthorList);
@@ -154,214 +103,99 @@ public class Incites {
 				} else {
 					return ! isValid;
 				}
-
 			}
 		}
 		return ! isValid;
 	}
 
 	/**
-	 * Create 'create network' button. Create network button 
-	 * attempts to create a network out of a file specified
-	 * by the user.
+	 * Get Incites checkbox
 	 * @param null
-	 * @return JButton createNetworkButton
+	 * @return JCheckBox incitesCheckBox
 	 */
-	private static JButton createCNB() {
-		JButton createNetworkButton = new JButton("Create Network");
-		createNetworkButton.setToolTipText("Create network");
-		createNetworkButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				if (Incites.getIncitesFileRef() == null || 
-					Incites.getFacultyTextFieldRef().getText() == null) {
-					Cytoscape.notifyUser("Please select a file and/or specify network name.");
-				} else { 
-					if (! Incites.getIncitesFileRef().getAbsolutePath().trim()
-							.equalsIgnoreCase(Incites.getPathTextFieldRef()
-							.getText().trim())) {
-						Cytoscape.notifyUser("Please select a file.");
-					} else if (Incites.getFacultyTextFieldRef().getText().trim()
-							   .isEmpty()) {
-						Cytoscape.notifyUser("Please specify network name.");
-					} else {
-						try {
-							// Create network
-							Cytoscape.createNetwork(Incites.getIncitesFileRef());						
-						} catch (FileNotFoundException e) {
-							Cytoscape.notifyUser(Incites.getPathTextFieldRef().getText()
-									+ " does not exist");
-						}
-					}
-				}
-			}
-		});
-		return createNetworkButton;
+	public static JCheckBox getIncitesCheckBox() {
+		return Incites.incitesCheckBox;
 	}
 
 	/**
-	 * Create Incites info panel.
-	 * Allows user to load Incites derived text files
+	 * Get location map
 	 * @param null
-	 * @return JPanel incitesInfoPanel
+	 * @return Map locationMap
 	 */
-	public static JPanel createIncitesInfoPanel() {
-		
-		// Create new Incites info panel.
-		JPanel incitesInfoPanel = new JPanel();
-		incitesInfoPanel.setBorder(BorderFactory.createTitledBorder("Incites"));
-			
-		// Set layout
-		incitesInfoPanel.setLayout(new BoxLayout(incitesInfoPanel
-		, BoxLayout.Y_AXIS));	
-		
-		// Add load panel
-		incitesInfoPanel.add(Incites.createLoadDataPanel()
-		, BorderLayout.NORTH);
-		
-		// Add faculty panel
-		incitesInfoPanel.add(Incites.createSpecifyNetworkNamePanel());
-		
-		// Add 'create network button' to panel
-		incitesInfoPanel.add(Incites.createCNB());
-		
-		return incitesInfoPanel;
-	}
-	
-	/**
-	 * Extract filename from path
-	 * @param String path
-	 * @return String filename
-	 */
-	public static String parseFileName(String path) {
-		Pattern pattern = Pattern.compile("([^\\/]+?)(\\.xlsx|\\.txt)$");
-		Matcher matcher = pattern.matcher(path);
-		if (matcher.find()) {
-			return matcher.group(1);
+	public static Map<String, String> getLocationMap() {
+		if (Incites.locationMap == null) {
+			try {
+				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				ObjectInputStream ois = new ObjectInputStream(in);
+				Incites.setLocationMap((Map<String, String>) ois.readObject());
+			} catch (FileNotFoundException e) {
+				Cytoscape.notifyUser("Failed to load location map. FileNotFoundException.");
+			} catch (IOException e) {
+				Cytoscape.notifyUser("Failed to load location map. IOException.");
+			} catch (ClassNotFoundException e) {
+				Cytoscape.notifyUser("Failed to load location map. ClassNotFoundException.");
+			}
 		}
-		return "N/A";
+		return Incites.locationMap;
 	}
 
 	/**
-	 *Create load button. Load button loads data file onto Cytoscape for parsing
-	 *@param null
-	 *@return JButton load
+	 * Parse data in TXT file and return an array containing
+	 * faculty attributes
+	 * @param File txtFile
+	 * @return Object[] {facultyName, facultySet}
 	 */
-	private static JButton createLoadButton() {
-		
-		JButton loadButton = new JButton("...");
-		loadButton.setToolTipText("Load Incites data");
-		
-		// Clicking of button results in the popping up of a dialog box that implores the user
-		// to select a new data file. 
-		loadButton.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent event) {
-				// Ask user to select the appropriate data file.
-				JFileChooser chooser = new JFileChooser();
-				// Initialize the chooser dialog box to desktop
-				File directory = new File("~/Desktop");
-				chooser.setCurrentDirectory(directory);
-				chooser.setDialogTitle("Data Selection");
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int check = chooser.showDialog(null, "OK");
-				
-				// Only attempt to read data file if user clicks "OK"
-				if (check == JFileChooser.APPROVE_OPTION) {
-					File textFile = chooser.getSelectedFile();
-					Incites.setIncitesFile(textFile);
-					Incites.getPathTextFieldRef().setText(textFile.getAbsolutePath());
-					Incites.getFacultyTextFieldRef().setText(Incites.parseFileName(textFile.getAbsolutePath()));
-				} else {
-					Incites.setIncitesFile(null);
-					Incites.getPathTextFieldRef().setText(null);
+	public static Object[] getTXTFacultyAttr(File txtFile) {	
+		HashSet<Author> facultySet = new HashSet<Author>();
+		String facultyName = "N/A";
+		try {
+			Scanner in = new Scanner(txtFile);
+			// Skip superfluous lines
+			in.nextLine();
+			in.nextLine();
+			facultySet = new HashSet<Author>();
+			String line = null;
+			String[] columns = null;
+			String[] names = new String[2];
+			String authorData = "";
+			// Add faculty members to hash-set
+			while (in.hasNext()) {
+				line = in.nextLine();
+				columns = line.split("\\t");
+				names[0] = Incites.matchName(columns[0]);
+				names[1] = Incites.matchName(columns[1]);
+				for (String name : names) {
+					authorData += name + ";";
 				}
-				
+				facultySet.add(new Author(authorData, Category.FACULTY));
+				authorData = "";
 			}
-			
-		});
-		
-		return loadButton;
+			facultyName = columns[columns.length - 1];
+			return new Object[] {facultyName, facultySet};
+
+		} catch (FileNotFoundException e) {
+			Cytoscape.notifyUser("Faculty file could not be found.\n" +
+					             "Faculty info will not be included" +
+					             " in final network.");
+		} catch (Exception e) {
+			Cytoscape.notifyUser("An error prevented the faculty file" +
+					             " from being loaded");
+		}
+		return new Object[] {facultyName, facultySet};
 	}
 
-	/**
-	 * Create new load data panel. Allows user to specify path
-	 * of desired data file
-	 * @param null
-	 * @return JPanel loadDataPanel
-	 */
-	private static JPanel createLoadDataPanel() {
-		JPanel loadDataPanel = new JPanel();
-		loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
-		loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
-		// Create new text field and set reference. Reference will be used later on to verify
-		// correct file path
-		Incites.setLoadTextField(new JTextField());
-		Incites.getPathTextFieldRef().setEditable(true);
-		// Add text field to collapsible panel
-		loadDataPanel.add(Incites.getPathTextFieldRef());
-		// Add load data button to collapsible panel
-		loadDataPanel.add(Incites.createLoadButton());
-		return loadDataPanel;
-	}
-
-	/**Create specify network name panel. The purpose of 
-	 * this panel should be fairly obvious.
-	 * @param null
-	 * @return JPanel networkNamePanel
-	 */
-	private static JPanel createSpecifyNetworkNamePanel() {
-		JPanel specifyNetworkNamePanel = new JPanel();
-		specifyNetworkNamePanel.setBorder(BorderFactory.createTitledBorder("Specify Network Name"));
-		specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
-		// Create new text field and set reference. Reference will be used later on to verify
-		// correct file path
-		Incites.setFacultyTextFieldRef(new JTextField());
-		Incites.getFacultyTextFieldRef().setEditable(true);
-		// Add text field to collapsible panel
-		specifyNetworkNamePanel.add(Incites.getFacultyTextFieldRef());
-		return specifyNetworkNamePanel;
-	}
-
-	/**
-	 * Get faculty text field
-	 * @param null
-	 * @return JTextField facultyTextField
-	 */
-	public static JTextField getFacultyTextFieldRef() {
-		return facultyTextFieldRef;
-	}
-	
-	/**
-	 * Get selected Incites data file
-	 * @param null
-	 * @return File incitesData
-	 */
-	public static File getIncitesFileRef() {
-		return incitesFileRef;
-	}
-	
-	/**
-	 * Get path text field
-	 * @param null
-	 * @return JTextField pathTextField
-	 */
-	public static JTextField getPathTextFieldRef() {
-		return pathTextFieldRef;
-	}
-	
 	/**
 	 * Return all publications (as well as all associated author info) 
-	 * contained in network file.
+	 * contained in text file.
 	 * Note that each publication serves as an edge and each author a node. 
 	 * Node info is embedded inside each edge.
-	 * @param File networkFile
+	 * @param File textFile
 	 * @return List pubList
 	 * @throws FileNotFoundException 
 	 */
-	public static List<Publication> getPublications(File networkFile) 
+	public static List<Publication> getTXTPubList(File textFile) 
 			throws FileNotFoundException {
-			
-		Scanner in = new Scanner(networkFile);
+		Scanner in = new Scanner(textFile);
 		String line;
 		String[] contents;
 		String year = null;
@@ -372,76 +206,225 @@ public class Incites {
 		String expectedCitations = "0.00";
 		Publication pub;
 		boolean isValid = false;
-
 		List<Author> coauthorList = null;
-		
 		Incites.pubList = new ArrayList<Publication>();
-
 		// Verify that file is in fact derived from Incites
 		if (! in.hasNext()) {
 			isValid = false;
 		} else {
 			isValid = Incites.checkIfValid(in);
 		}
-		
 		// Read Incites data file
 		if (isValid) {
 			while (in.hasNext()) {
 				line = in.nextLine().trim();
 				contents = line.split("[\t\n]");
-
 				if (contents.length == 6) {
 					// Get publication info
 					timesCited = contents[0].trim().isEmpty() 
-							     ? "0" : contents[0].trim();
+							? "0" : contents[0].trim();
 					expectedCitations = contents[1].trim().isEmpty() 
-							     ? "0.00" : contents[1].trim();
+							? "0.00" : contents[1].trim();
 					year = contents[2].trim().isEmpty() 
-							     ? "0" : contents[2].trim();
+							? "0" : contents[2].trim();
 					subjectArea = contents[3];
 					authors = contents[4];
 					title = contents[5];
-
 					// Get author list
 					try {
 						coauthorList = Incites.parseAuthors(authors);
+					// Terminate parsing as soon as one infelicitous
+					// author has been reached
+					// (compromises entire file)
 					} catch (UnableToParseAuthorException e) {
 						return null;
 					}
-
 					// Set publication info
 					pub = new Publication(title, year, subjectArea, 
-							              timesCited, expectedCitations, coauthorList);
-//					System.out.println("Title: " + title
-//							           + "\nYear: " + year
-//							           + "\nSubject Area: " + subjectArea
-//							           + "\nTimes Cited: " + timesCited
-//							           + "\nExpected Citations: " + expectedCitations
-//							           + "\nCo-Authors: " + coauthorList.toString() + "\n\n");
+							timesCited, expectedCitations, coauthorList);
 					//Add publication to overall list
 					Incites.pubList.add(pub);
-
 				} 
-				
-//				if (contents.length == 7) {
-//					System.out.println("Col#1: " + contents[0]
-//					           + "\nCol#2: " + contents[1]
-//					           + "\nCol#3: " + contents[2]
-//					           + "\nCol#4: " + contents[3]
-//					           + "\nCol#5: " + contents[4]
-//					           + "\nCol#6: " + contents[5]
-//					           + "\nCol#7: " + contents[6] + "\n\n");
-//				}
 			}
-			
-			
 			return Incites.pubList;
 		}
-
 		// If file is invalid, null will be returned
 		return null;
 	}
-	
+
+	/**
+	 * Parse data in XLSX file and return an array containing
+	 * faculty attributes
+	 * @param File xlsxFile
+	 * @return Object[] {facultyName, facultySet}
+	 */
+	public static Object[] getXLSXFacultyAttr(File xlsxFile) {	
+		HashSet<Author> facultySet = null;
+		String facultyName = "";
+		try {
+			FileInputStream fileInputStream = new FileInputStream(xlsxFile);
+
+			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+			XSSFSheet sheet = workbook.getSheetAt(3); //4th sheet from workbook
+
+			Iterator<Row> rowIterator = sheet.iterator();
+			Iterator<Cell> cellIterator = null;
+
+			int j = 0;
+			String authorAttr = "", cellValue = "";
+			facultySet = new HashSet<Author>();
+
+			// Skip the first two rows
+			Row row = rowIterator.next();
+			rowIterator.next();
+
+			Cell cell = null;
+
+			// Get faculty data
+			while(rowIterator.hasNext()) {
+				row = rowIterator.next();
+				cellIterator = row.cellIterator();
+				j = 0;
+				while(j < 2) {
+					cell = cellIterator.next();
+					cellValue = cell.getStringCellValue();
+					if (cellValue.trim().isEmpty()) {
+						return new Object[] {facultyName, facultySet};
+					}
+					authorAttr += cell.getStringCellValue().trim() + ";";
+					j++;
+				}
+				facultySet.add(new Author(authorAttr, Category.FACULTY));
+				authorAttr = "";
+			}
+
+			// Get faculty name
+			cell = cellIterator.next();
+			facultyName = cell.getStringCellValue();
+
+			fileInputStream.close();
+
+		} catch (FileNotFoundException e) {
+			Cytoscape.notifyUser("File cannot be located. Please verify that" +
+		             " spreadsheet file has been loaded correctly.");
+		} catch (IOException e) {
+			Cytoscape.notifyUser("Cytoscape is unable to read the spreadsheet file." +
+				     "This is an internal issue. Peruse FEI for troubleshooting tips.");
+		}
+
+		return new Object[] {facultyName, facultySet};
+	}
+
+	/**
+	 * Return all publications (as well as all associated author info) 
+	 * contained in xlsx file.
+	 * Note that each publication serves as an edge and each author a node. 
+	 * Node info is embedded inside each edge.
+	 * <br> Faculty info not present
+	 * @param File xlsxFile
+	 * @return null
+	 */
+	public static ArrayList<Publication> getXLSXPubList(File xlsxFile) {
+		ArrayList<Publication> pubList = Incites.loadXLSXPubList(xlsxFile);
+		return pubList;
+	}
+
+	/**
+	 * Load all publications (as well as all associated author info) 
+	 * contained in xlsx file.
+	 * Note that each publication serves as an edge and each author a node. 
+	 * Node info is embedded inside each edge.
+	 * <br> Faculty info not present
+	 * @param File file
+	 * @return null
+	 */
+	public static ArrayList<Publication> loadXLSXPubList(File file) {
+		ArrayList<Publication> pubList = null;
+		try {
+			FileInputStream fileInputStream = new FileInputStream(file);
+
+			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+			XSSFSheet sheet = workbook.getSheetAt(2); //3rd sheet from workbook
+			
+			Iterator<Row> rowIterator = sheet.iterator();
+			Iterator<Cell> cellIterator = null;
+
+			int j = 0;
+			Publication pub = null;
+			String[] pubAttr = new String[7];
+			pubList = new ArrayList<Publication>();
+
+			Row row = rowIterator.next();
+
+			// Get publication and author data
+			while(rowIterator.hasNext()) {
+				row = rowIterator.next();
+				//For each row, iterate through all the columns
+				cellIterator = row.cellIterator();
+				j = 0;
+				while(cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					switch(cell.getCellType()) {
+					case Cell.CELL_TYPE_NUMERIC:
+						pubAttr[j] = String.format("%.2f%n", 
+								 cell.getNumericCellValue());
+						break;
+					case Cell.CELL_TYPE_STRING:
+						pubAttr[j] = cell.getStringCellValue();
+						break;
+					}
+					j++;
+				}
+				String title = pubAttr[6];
+				String year = Incites.toFloor(pubAttr[2]);
+				String subjectArea = pubAttr[3];
+				String timesCited = Incites.toFloor(pubAttr[0]);
+				String expectedCitations = pubAttr[1];
+				ArrayList<Author> authors = parseAuthors(pubAttr[4]);
+				
+				// If author list has a single author, add a duplicate
+				// in order to ensure consistency
+				// i.e. a consortium has to contain at minimum two authors
+				if (authors.size() == 1) {
+					authors.add(authors.get(0));
+				}
+				
+				pub = new Publication(title, year, subjectArea, 
+						timesCited, expectedCitations, authors);
+				pubList.add(pub);
+			}
+			
+			fileInputStream.close();
+			
+		} catch (FileNotFoundException e) {
+			Cytoscape.notifyUser("File cannot be located. Please verify that" +
+					             " spreadsheet file has been loaded correctly.");
+		} catch (IOException e) {
+			Cytoscape.notifyUser("Cytoscape is unable to read the spreadsheet file." +
+					     "This is an internal issue. Peruse FEI for troubleshooting tips.");
+		} catch (UnableToParseAuthorException e) {
+			Cytoscape.notifyUser("File contains corrupt author data. Please use a valid" +
+					"Incites spreadsheet.");
+		}
+		
+		return pubList;
+
+	}
+
+	/**
+	 * Match author's canonical name (i.e. matches 'Bubbles' in string 'Bubbles PK.')
+	 * @param String rawLastName
+	 * @return String lastName
+	 */
+	private static String matchName(String rawName) {
+		Pattern pattern = Pattern.compile("^(.+?)\\s");
+		Matcher matcher = pattern.matcher(rawName);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return rawName;
+	}
+
 	/**
 	 * Parse raw author text and return array list containing all authors
 	 * and their associated info
@@ -449,7 +432,7 @@ public class Incites {
 	 * @return ArrayList authorList
 	 */
 	public static ArrayList<Author> parseAuthors(String rawAuthorText) 
-			      throws UnableToParseAuthorException {
+			throws UnableToParseAuthorException {
 		String[] authors = rawAuthorText.split(";");
 		if (authors.length == 0) {
 			throw new UnableToParseAuthorException();
@@ -464,14 +447,14 @@ public class Incites {
 		}
 		return pubAuthorList;
 	}
-	
+
 	/**
 	 * Parse author's first name
 	 * @param String incitesText
 	 * @return String firstName
 	 */
 	public static String parseFirstName(String incitesText) {
-		Pattern firstNamePattern = Pattern.compile(",(.+?)\\s");
+		Pattern firstNamePattern = Pattern.compile(",(.+?)(\\s|\\.)");
 		Matcher firstNameMatcher = firstNamePattern.matcher(incitesText);
 		if (firstNameMatcher.find()) {
 			return firstNameMatcher.group(1).trim();
@@ -494,7 +477,7 @@ public class Incites {
 	}
 
 	/**
-	 * Parse author's lastname
+	 * Parse author's last-name
 	 * @param String incitesText
 	 * @return String lastName
 	 */
@@ -506,7 +489,7 @@ public class Incites {
 		}
 		return "N/A";
 	}
-
+	
 	/**
 	 * Parse author's middle initial
 	 * @param String incitesText
@@ -520,32 +503,36 @@ public class Incites {
 		}
 		return "N/A";
 	}
-	
+
 	/**
-	 * Set faculty text field
-	 * @param JTextField facultyTextField
+	 * Set Incites checkbox
+	 * @param JCheckBox incitesCheckBox
 	 * @return null
 	 */
-	public static void setFacultyTextFieldRef(JTextField facultyTextField) {
-		facultyTextFieldRef = facultyTextField;
+	public static void setIncitesCheckBox(JCheckBox incitesCheckBox) {
+		Incites.incitesCheckBox = incitesCheckBox;
 	}
 
 	/**
-	 * Set selected Incites data file
-	 * @param File incitesData
+	 * Set location map
+	 * @param Map locationMap
 	 * @return null
 	 */
-	public static void setIncitesFile(File selectedFile) {
-		incitesFileRef = selectedFile;
+	public static void setLocationMap(Map<String, String> locationMap) {
+		Incites.locationMap = locationMap;
 	}
-	
+
 	/**
-	 * Set path text field
-	 * @param JTextField pathTextField
-	 * @return null
+	 * Return the floor of the number contained in string
+	 * @param num
+	 * @return floor
 	 */
-	public static void setLoadTextField(JTextField pathTextField) {
-		pathTextFieldRef = pathTextField;
+	public static String toFloor(String floor) {
+		Pattern pattern = Pattern.compile("(\\d+?)\\.");
+		Matcher matcher = pattern.matcher(floor);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return "N/A";
 	}
-	
 }

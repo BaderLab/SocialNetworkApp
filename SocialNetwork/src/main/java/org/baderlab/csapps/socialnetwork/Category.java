@@ -1,14 +1,13 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
-import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+
+import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-
-
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 
 /**
  * Categories
@@ -19,6 +18,10 @@ public class Category {
 	 * Academia (IP = 74.125.226.112)
 	 */
 	final public static int ACADEMIA = (74 << 24) + (125 << 16) + (226 << 8) + 112;
+	/**
+	 * Chipped network view
+	 */
+	final public static int CHIPPED = -100;
 	/**
 	 * Default category
 	 */
@@ -48,13 +51,18 @@ public class Category {
 	 */
 	final public static int TWITTER = (199 << 24) + (59 << 16) + (150 << 8) + 39;
 	/**
+	 * Vanue network view
+	 */
+	final public static int VANUE = -101;
+	
+	/**
 	 * Youtube (IP = 74.125.226.101)
 	 */
 	final public static int YOUTUBE = (74 << 24) + (125 << 16) + (226 << 8) + 101;
 	/** 
 	 * A category map 
 	 *<br> key: String representation of category
-	 * <br> value: category ID
+	 *<br> value: category ID
 	 */
 	private static Map<String, Integer> categoryMapA = null;
 	/**
@@ -69,27 +77,6 @@ public class Category {
 	 * <br> value: visual style ID
 	 */
 	private static Map<String, Integer> visualStyleMap = null;
-	
-	/**
-	 * Create academia info panel. In addition to Pubmed specific features, 
-	 * this panel will also enable the user to load Incites data.
-	 * @param null
-	 * @return JPanel academiaInfoPanel
-	 */
-	public static JPanel createAcademiaInfoPanel() {
-		JPanel academiaInfoPanel = new JPanel();
-		
-		academiaInfoPanel
-		.setLayout(new BorderLayout());
-		
-		academiaInfoPanel.setName("Academia");
-		
-	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-	    
-		academiaInfoPanel.add(Incites.createIncitesInfoPanel(), BorderLayout.NORTH);
-		
-		return academiaInfoPanel;
-	}
 
 	/**
 	 * Create default info panel
@@ -137,7 +124,7 @@ public class Category {
 		youtubeInfoPanel.setBorder(BorderFactory.createTitledBorder("Youtube"));
 		return youtubeInfoPanel;
 	}
-
+	
 	/**
 	 * Get unique id (numeral) associated with category
 	 * @param String category
@@ -168,7 +155,7 @@ public class Category {
 		String[] categoryList = {"Academia"};
 		return categoryList;
 	}
-	
+
 	/**
 	 * Get list of search filters.
 	 * Filter type varies with category.
@@ -198,30 +185,6 @@ public class Category {
 	}
 
 	/**
-	 * Get visual style list of a certain type
-	 * @param int visualStyleSelectorType
-	 * @return String[] visualStyleList
-	 */
-	public static String[] getVisualStyleList(int visualStyleSelectorType) {
-		String[] visualStyleList = null;
-		switch(visualStyleSelectorType) {
-			case Category.DEFAULT:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
-				break;
-			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
-				break;
-			case Category.INCITES:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "Chipped"};
-				break;
-			case Category.TWITTER:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
-				break;
-		}
-		return visualStyleList;
-	}
-
-	/**
 	 * Get unique id (numeral) associated with visual style
 	 * @param String visualStyle
 	 * @return int visualStyleID
@@ -231,10 +194,41 @@ public class Category {
 			Category.visualStyleMap = new HashMap<String, Integer>();
 			Category.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
 			Category.visualStyleMap.put("Chipped", Category.CHIPPED);
+			Category.visualStyleMap.put("Vanue", Category.VANUE);
 		}
 		return Category.visualStyleMap.get(visualStyle);
 	}
 
+	/**
+	 * Get visual style list of a certain type
+	 * @param int visualStyleSelectorType
+	 * @return String[] visualStyleList
+	 */
+	public static String[] getVisualStyleList(int visualStyleSelectorType) {
+		String[] visualStyleList = null;
+		switch(visualStyleSelectorType) {
+			case Category.ACADEMIA:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
+				break;
+			case Category.DEFAULT:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
+				break;
+			case Category.INCITES:
+				visualStyleList = new String[] {"Chipped"};
+				break;
+			case Category.PUBMED:
+				visualStyleList = new String[] {"Vanue"};
+				break;
+			case Category.SCOPUS:
+				visualStyleList = new String[] {"Vanue"};
+				break;
+			case Category.TWITTER:
+				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
+				break;
+		}
+		return visualStyleList;
+	}
+	
 	/**
 	 * Return string representation of category
 	 * @param int categoryID
@@ -254,10 +248,40 @@ public class Category {
 		}
 		return categoryMapB.get(categoryID);
 	}
-
+	
 	/**
-	 * Chipped network view
+	 * Construct Incites attribute map
+	 * @param null
+	 * @return Map nodeAttrMap
 	 */
-	final public static int CHIPPED = -7;
+	public static TreeMap<String, Object> constructIncitesAttrMap(Author author) {
+		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
+		String lastName = author.getLastName();
+		String firstInitial = author.getFirstInitial();
+		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
+		nodeAttrMap.put("Last Name", lastName);
+		nodeAttrMap.put("First Name", author.getFirstName());
+		nodeAttrMap.put("Times Cited", author.getTimesCited());
+		nodeAttrMap.put("Institution", author.getInstitution());
+		nodeAttrMap.put("Location", author.getLocation());
+		nodeAttrMap.put("Faculty", author.getFaculty());
+		return nodeAttrMap;
+	}
+	
+	/**
+	 * Construct Scopus attribute map.
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static TreeMap<String, Object> constructScopusAttrMap(Author author) {
+		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
+		String lastName = author.getLastName();
+		String firstInitial = author.getFirstInitial();
+		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
+		nodeAttrMap.put("Last Name", lastName);
+		nodeAttrMap.put("First Initial", firstInitial);
+		nodeAttrMap.put("Times Cited", author.getTimesCited());
+		return nodeAttrMap;
+	}
 
 }

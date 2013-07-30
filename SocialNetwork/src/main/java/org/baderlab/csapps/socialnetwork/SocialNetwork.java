@@ -1,10 +1,7 @@
-package main.java.org.baderlab.csapps.socialnetwork.networks;
+package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-import main.java.org.baderlab.csapps.socialnetwork.Category;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -36,6 +33,14 @@ public class SocialNetwork {
 	 * <br>Value: Object[] {String attrName, int min, int max}
 	 */
 	private Map<Object, Object[]> visualStyleMap = null;
+	/**
+	 * The network's default visual style
+	 */
+	private int defaultVisualStyle = Category.DEFAULT;
+	/**
+	 * The network's attribute map (stores all network attr)
+	 */
+	private Map<String, Object> attrMap = null;
 	
 	/**
 	 * Create a new social network
@@ -44,6 +49,18 @@ public class SocialNetwork {
 	 */
 	public SocialNetwork(int networkType) {
 		this.setNetworkType(networkType);
+		// Set default visual styles
+		switch(networkType) {
+			case Category.INCITES:
+				this.setDefaultVisualStyle(Category.CHIPPED);
+				break;
+			case Category.SCOPUS:
+				this.setDefaultVisualStyle(Category.VANUE);
+				break;
+			case Category.PUBMED:
+				this.setDefaultVisualStyle(Category.VANUE);
+				break;
+		}
 	}
 
 	/**
@@ -137,6 +154,46 @@ public class SocialNetwork {
 	 */
 	public void setVisualStyleMap(Map<Object, Object[]> visualStyleMap) {
 		this.visualStyleMap = visualStyleMap;
+	}
+
+	/**
+	 * Get network's default visual style
+	 * @param null
+	 * @return int defaultVisualStyle
+	 * @return
+	 */
+	public int getDefaultVisualStyle() {
+		return defaultVisualStyle;
+	}
+
+	/**
+	 * Set network's default visual style
+	 * @param int defaultVisualStyle
+	 * @return null
+	 */
+	public void setDefaultVisualStyle(int defaultVisualStyle) {
+		this.defaultVisualStyle = defaultVisualStyle;
+	}
+
+	/**
+	 * Get network attribute map
+	 * @param null
+	 * @return Map attrMap
+	 */
+	public Map<String, Object> getAttrMap() {
+		if (this.attrMap == null) {
+			this.setAttrMap(new HashMap<String, Object>());
+		}
+		return this.attrMap;
+	}
+
+	/**
+	 * Set network attribute map
+	 * @param Map attrMap
+	 * @return null
+	 */
+	public void setAttrMap(Map<String, Object> attrMap) {
+		this.attrMap = attrMap;
 	}
 	
 		

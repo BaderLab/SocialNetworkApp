@@ -21,95 +21,61 @@ import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
  */
 public class Pubmed {
 	/**
-	 * The author of a specific publication. Globally referenced to enable 
-	 * addition of multiple authors into a publication
+	 * The author of a specific publication. Globally referenced to allow for 
+	 * multiple additions in to publication
 	 */
-	private static Author author = null;
+	private Author author = null;
 	/**
  	 * A publication's journal
  	 */
- 	private static String journal = null;
+ 	private String journal = null;
 	/**
 	 * A list containing all authors found in a particular publication
 	 */
-	private static ArrayList<Author> pubAuthorList = new ArrayList<Author>();
+	private ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 	/**
 	 * A publication's date
 	 */
- 	private static String pubDate = null;
-	/**
+ 	private String pubDate = null;
+ 	/**
 	 * A list containing all the results that search session has yielded
 	 */
-	private static List<Publication> pubList = new ArrayList<Publication>();
+	private List<Publication> pubList = new ArrayList<Publication>();
 	/**
 	 * Unique queryKey. Necessary for retrieving search results
 	 */
-	private static String queryKey = null;
+	private String queryKey = null;
 	/**
 	 * The number of UIDs returned in search at one go
 	 */
-	private static String retMax = null;
+	private String retMax = null;
 	/**
 	 * The index of the first record returned in search
 	 */
-	private static String retStart = null;
+	private String retStart = null;
+	/**
+ 	 * A publication's total number of citations
+ 	 */
+ 	private String timesCited = null;
 	/**
  	 * A publication's title
  	 */
- 	private static String title = null;
+ 	private String title = null;
  	/**
 	 * The total number of publications found in search
 	 */
-	private static String totalPubs = null;
+	private String totalPubs = null;
  	/**
 	 * Unique WebEnv. Necessary for retrieving search results
 	 */
-	private static String webEnv = null;
- 	
- 	/**
-	 * Commit search once values for queryKey, webEnv, retStart and retMax
-	 * have been found
-	 * @param null
+	private String webEnv = null;
+	
+	/**
+	 * Create a new Pubmed search session
+	 * @param String searchTerm
 	 * @return null
 	 */
-	public static void commitPubMedSearch() {
-		// Create new SAX Parser
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser;
-		try {
-			saxParser = factory.newSAXParser();
-			if (Integer.parseInt(totalPubs) > 500) {
-				// WIP (Work In Progress)
-				// On the event that a search yields 500+ publications, these publications will
-				// need to be accessed incrementally as pubmed places sanctions on people who 
-				// request XML files that are too large
-			}
-			else {
-				// Use newly discovered queryKey and webEnv to build a tag
-				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag );
-				// Load all publications at once
-				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
-			}
-		} catch (ParserConfigurationException e) {
-			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
-		} catch (SAXException e) {
-			Cytoscape.notifyUser("Encountered temporary server issues. Please try again some other time.");
-		} catch (IOException e) {
-			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
-		}
-	}
- 	
- 	/**
- 	 * Return a list of all the publications (& co-authors) found for the specified authorName, 
- 	 * MeSH term or Institution name.
- 	 * @param String searchTerm
- 	 * @return List pubList
- 	 */
- 	public static List<Publication> getListOfPublications(String searchTerm) {
-		// Clear pubList & pubAuthorList
- 		pubList.clear();
- 		pubAuthorList.clear();
+	public Pubmed(String searchTerm) {
  		//Query
 		Query query = new Query(searchTerm);
 		try {
@@ -118,18 +84,68 @@ public class Pubmed {
 			SAXParser saxParser;
 			saxParser = factory.newSAXParser();
 			// Get Query Key & Web Env
-			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=" + query);
-			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
+			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
+					"/eutils/esearch.fcgi?db=pubmed&term=" + query);
+			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez" +
+	    "/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
-			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! Parser Configuration Exception!!");
+			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+		             "try again some other time.");
 		} catch (SAXException e) {
-			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! SAX Exception!!");
+			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+		             "try again some other time.");
 		} catch (IOException e) {
-			Cytoscape.notifyUser("Pubmed.getListOfPublications() ran into some trouble! IOException!!");
+			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
+		             "internet connection.");
 		}
-		// Return all results
+	}
+ 	
+ 	/**
+	 * Commit search using: (queryKey, webEnv, retStart and retMax)
+	 * @param null
+	 * @return null
+	 */
+	public void commitPubMedSearch() {
+		// Create new SAX Parser
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser;
+		try {
+			saxParser = factory.newSAXParser();
+			if (Integer.parseInt(totalPubs) > 500) {
+				// WIP (Work In Progress)
+				// On the event that a search yields 500+ publications, these publications will
+				// need to be accessed incrementally as pubmed places sanctions on large requests
+			}
+			else {
+				// Use newly discovered queryKey and webEnv to build a tag
+				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
+				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
+						"/eutils/esummary.fcgi?db=pubmed" + tag );
+				// Load all publications at once
+				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
+					"/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
+			}
+		} catch (ParserConfigurationException e) {
+			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+					             "try again some other time.");
+		} catch (SAXException e) {
+			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+					             "try again some other time.");
+		} catch (IOException e) {
+			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
+					             "internet connection.");
+		}
+	}
+ 	
+ 	/**
+ 	 * Return a list of all the publications (& co-authors) found for User's specified 
+ 	 * authorName, MeSH term or Institution name.
+ 	 * @param null
+ 	 * @return List pubList
+ 	 */
+ 	public List<Publication> getListOfPublications() {	// Return all results
 		return pubList;
  	}
  	
@@ -138,10 +154,11 @@ public class Pubmed {
 	 * @param null
 	 * @return DefaultHandler publicationHandler
 	 */
-	public static DefaultHandler getPublicationHandler() {
+	public DefaultHandler getPublicationHandler() {
 		
 		DefaultHandler publicationHandler = new DefaultHandler() {
-			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false;
+			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, 
+					isTimesCited = false;
 			
 			public void characters(char ch[], int start, int length) throws SAXException {
 				// start and length give both the starting index and the length (respectively)
@@ -166,6 +183,10 @@ public class Pubmed {
 					title = new String(ch, start, length);
 					isTitle = false;
 				}
+				if (isTimesCited) {
+					timesCited = new String(ch, start, length);
+					isTimesCited = false;
+				}
 			}
 			
 			/**
@@ -186,7 +207,7 @@ public class Pubmed {
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				// qName stores the element's actual designation
 				if (qName.equalsIgnoreCase("DocSum")) {
-					pubList.add(new Publication(title, pubDate, journal, null, null, pubAuthorList));
+					pubList.add(new Publication(title, pubDate, journal, timesCited, null, pubAuthorList));
 					pubAuthorList.clear();
 				}
 			}
@@ -206,6 +227,9 @@ public class Pubmed {
 				if (contains(attributes, "Title")) {
 					isTitle = true;
 				}
+				if (contains(attributes, "PmcRefCount")) {
+					isTimesCited = true;
+				}
 			}
 		};
 		
@@ -218,13 +242,17 @@ public class Pubmed {
 	 * @param null
 	 * @return DefaultHandler searchHandler
 	 */
-	public static DefaultHandler getSearchHandler() throws SAXException, IOException, ParserConfigurationException {
+	public DefaultHandler getSearchHandler() throws SAXException, 
+	                                                IOException, 
+	                                                ParserConfigurationException {
 		DefaultHandler searchHandler = new DefaultHandler() {
 			int i = 0;
 			boolean isQueryKey = false, isWebEnv = false, isTotalPubs = false;
 			
-			public void characters(char ch[], int start, int length) throws SAXException {
-				// start and length give both the starting index and the length (respectively)
+			public void characters(char ch[], int start, int length) 
+					                                         throws SAXException {
+				// start and length give both the starting index and the length
+				// (respectively)
 				// of the chunk of characters inside the character array that are not elements
 				if (isTotalPubs) {
 					totalPubs = new String(ch, start, length);
@@ -240,11 +268,17 @@ public class Pubmed {
 				}
 			}
 			
-			public void endElement(String uri, String localName, String qName) throws SAXException {
+			public void endElement(String uri, 
+					               String localName, 
+					               String qName) throws SAXException {
 			
 			}
 			
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			public void startElement(String uri, 
+									 String localName, 
+									 String qName, 
+					                 Attributes attributes) throws SAXException {
+				// Only the first count tag is useful for our purposes.
 				if (i == 0 && qName.equalsIgnoreCase("Count")) {
 					isTotalPubs = true;
 					i += 1;
@@ -263,17 +297,15 @@ public class Pubmed {
 	}
 	
 	/**
- 	 * Return total # of publications yielded from search. Method has to be called right
- 	 * after search has been commited. If called at any other time, there is no guarantee
- 	 * that the value returned will be accurate and/or valid.
+ 	 * Return total # of publications yielded from search.
  	 * @param null
  	 * @return int totalPubs
  	 */
- 	public static int getTotalPubs() {
+ 	public int getTotalPubs() {
  		if (totalPubs == null) {
  			return -1;
  		} else {
- 			return Integer.parseInt(Pubmed.totalPubs);
+ 			return Integer.parseInt(this.totalPubs);
  		}
  	}
 	
