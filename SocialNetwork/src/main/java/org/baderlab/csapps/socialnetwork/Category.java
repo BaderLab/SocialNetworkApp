@@ -169,7 +169,7 @@ public class Category {
 				searchFilterList = new String[] {"--SELECT FILTER--"};
 				break;
 			case Category.ACADEMIA:
-				searchFilterList = new String[] { "--SELECT FILTER--", "Authors", "Institutions", "MeSH"};
+				searchFilterList = new String[] {"Authors"};
 				break;
 			case Category.TWITTER:
 				searchFilterList = new String[] { "--SELECT FILTER--", "Users", "HashTags"};

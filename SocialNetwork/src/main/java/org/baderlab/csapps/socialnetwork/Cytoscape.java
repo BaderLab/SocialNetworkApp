@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -126,7 +127,7 @@ public class Cytoscape {
 	public static void closeUserPanel() {
 		Cytoscape.getServiceRegistrar().unregisterService
 		(Cytoscape.getUserPanelRef(), CytoPanelComponent.class);
-		Cytoscape.getUserPanelAction().setName("View Panel");
+		Cytoscape.getUserPanelAction().putValue(Action.NAME, "View Panel");
 	}
 	
 	/**
@@ -156,7 +157,7 @@ public class Cytoscape {
 		String networkName = AcademiaPanel.getFacultyTextFieldRef().getText().trim();
 		if (! Cytoscape.isNameValid(networkName)) {
 			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
-					+ " Please enter a new name.");
+					           + " Please enter a new name.");
 			return;
 		}
 		// Change mouse cursor
@@ -164,46 +165,47 @@ public class Cytoscape {
 		// Initialize boilerplate variables
 		List<? extends Publication> pubList = null;
 		Object[] facultyAttr = null;
+		HashSet<Author> facultySet = null;
 		String extension = null;
-		Map<Consortium, ArrayList<AbstractEdge>> map = null;
+		SocialNetwork socialNetwork = null;
+		String facultyName = null;
 		// Create network out of Incites data
 		if (Incites.getIncitesCheckBox().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
 			// Load data from text file
 			if (extension.trim().equalsIgnoreCase("txt")) {
 				pubList = Incites.getTXTPubList(networkFile);
-				if (pubList != null) {
-					Object[] options = { "Yes", "No" };
-					// Ask user about faculty data
-					// NOTE: Incites network-data files lack faculty information
-					int userAction = JOptionPane.showOptionDialog(null, 
-							"You are loading this network from a text file.\n" +
-									"To specify faculty information you will need to" +
-									" provide an extra data file.\n" +
-									"Do you want to load the faculty data file now?", 
-									"Faculty Data Missing",
-									JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-									null, options, options[0]);
-					if (userAction == 0) {
-						JFileChooser chooser = new JFileChooser();
-						chooser.setCurrentDirectory(new File(""));
-						chooser.setDialogTitle("Select Faculty File");
-						chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-						int check = chooser.showDialog(null, "OK");
-						// Load faculty data
-						if (check == JFileChooser.APPROVE_OPTION) {
-							facultyAttr = Incites.getTXTFacultyAttr(chooser.getSelectedFile());
-						} else {
-							facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
-						}
-					} else if (userAction == 1) {
-						facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
-					}
 				// Notify user that file type is invalid
-				} else {
+				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					Cytoscape.notifyUser("Invalid file\nPlease load a valid Incites data file");
 					return;
+				}
+				Object[] options = { "Yes", "No" };
+				// Ask user about faculty data
+				// NOTE: Incites network-data files lack faculty information
+				int userAction = JOptionPane.showOptionDialog(null, 
+						"You are loading this network from a text file.\n" +
+								"To specify faculty information you will need to" +
+								" provide an extra data file.\n" +
+								"Do you want to load the faculty data file now?", 
+								"Faculty Data Missing",
+								JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+								null, options, options[0]);
+				if (userAction == 0) {
+					JFileChooser chooser = new JFileChooser();
+					chooser.setCurrentDirectory(new File(""));
+					chooser.setDialogTitle("Select Faculty File");
+					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					int check = chooser.showDialog(null, "OK");
+					// Load faculty data
+					if (check == JFileChooser.APPROVE_OPTION) {
+						facultyAttr = Incites.getTXTFacultyAttr(chooser.getSelectedFile());
+					} else {
+						facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
+					}
+				} else if (userAction == 1) {
+					facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
 				}
 			// Load data from excel spreadsheet
 			} else if (extension.trim().equalsIgnoreCase("xlsx")) {
@@ -212,7 +214,7 @@ public class Cytoscape {
 				facultyAttr = Incites.getXLSXFacultyAttr(networkFile);
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Cytoscape.notifyUser("Invalid file\nPlease load a valid Incites data file.");
+					Cytoscape.notifyUser("Invalid file\nThis Incites file is corrupt.");
 					return;
 				}
 			// Notify user of inappropriate file type
@@ -222,43 +224,21 @@ public class Cytoscape {
 						             "spreadsheets or text files.");
 				return;
 			}
-			String facultyName = (String) facultyAttr[0];
-			HashSet<Author> facultyHashSet = (HashSet<Author>) facultyAttr[1];
-			// Create map
-			map = Interaction.getAcademiaMap(pubList, facultyName, facultyHashSet);
-			if (map.size() == 0) {
-				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
-				return;
-			}
-			Cytoscape.setMap(map);
-			Cytoscape.setNetworkName(networkName);
+			facultyName = (String) facultyAttr[0];
+			facultySet = (HashSet<Author>) facultyAttr[1];
 			// Add faculty name to social network map
-			SocialNetwork socialNetwork = new SocialNetwork(Category.INCITES);
+			socialNetwork = new SocialNetwork(Category.INCITES);
 			socialNetwork.getAttrMap().put("Faculty Name", facultyName);
-			Cytoscape.getSocialNetworkMap().put(networkName, 
-					socialNetwork);
-			// Create network using map
-			Cytoscape.createNetwork();
 		// Create network out of Scopus data
 		} else if (Scopus.getScopusCheckBox().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
 			if (extension.trim().equalsIgnoreCase("csv")) {
 				pubList = Scopus.getScopusPubList(networkFile);
-				// Create map
-				map = Interaction.getAcademiaMap(pubList, null, null);
-				if (map.size() == 0) {
+				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
 					return;
 				}
-				Cytoscape.setMap(map);
-				Cytoscape.setNetworkName(networkName);
-				SocialNetwork socialNetwork = new SocialNetwork(Category.SCOPUS);
-				Cytoscape.getSocialNetworkMap().put(networkName, 
-						                            socialNetwork);
-				// Create network using map
-				Cytoscape.createNetwork();
+				socialNetwork = new SocialNetwork(Category.SCOPUS);
 			} else {
 				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				Cytoscape.notifyUser("Invalid file\nScopus data files have to be csv " +
@@ -266,6 +246,18 @@ public class Cytoscape {
 				return;
 			}
 		}
+		// Create map
+		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList, facultyName, facultySet);
+		if (map.size() == 0) {
+			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
+			return;
+		}
+		Cytoscape.setMap(map);
+		Cytoscape.setNetworkName(networkName);
+		Cytoscape.getSocialNetworkMap().put(networkName, socialNetwork);
+		// Create network using map
+		Cytoscape.createNetwork();
 	}
 
 	/**
@@ -275,35 +267,28 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void createNetwork(String searchTerm, int category) {
-
 		// Verify that network name is valid
 		if (! Cytoscape.isNameValid(searchTerm)) {
 			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
 					+ " Please enter a new name.");
 			return;
 		}
-		
 		// Create new search session
 		Search search = new Search(searchTerm, category);
-
 		// Get a list of the results that are going to serve as edges. Exact result type
 		// may vary with website
 		List<? extends AbstractEdge> results = (List<? extends AbstractEdge>) search.getResults();
-
 		if (results == null) {
 			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Network could not be loaded");
 			return;
 		} 
-
 		if (results.size() == 0) {
 			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Search did not yield any results");
 			return;
 		}
-		
 		Map<Consortium, ArrayList<AbstractEdge>> map = null;
-
 		switch (category) {
 			case Category.ACADEMIA:
 				// Create new map using results
@@ -315,7 +300,6 @@ public class Cytoscape {
 				category = Category.PUBMED;
 				break;
 		}
-		
 		Cytoscape.setNetworkName(searchTerm);
 		Cytoscape.getSocialNetworkMap().put(searchTerm, 
 				new SocialNetwork(category));

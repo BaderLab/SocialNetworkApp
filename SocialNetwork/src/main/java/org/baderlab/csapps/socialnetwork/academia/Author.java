@@ -17,7 +17,7 @@ public class Author extends AbstractNode {
 	/**
 	 * Author's first initial
 	 */
-	private String firstInitial = "N/A";
+	private String firstInitial = "?";
 	/**
 	 * Author's first name
 	 */
@@ -55,15 +55,15 @@ public class Author extends AbstractNode {
 		switch (origin) {
 			case Category.SCOPUS:
 				String[] scopusNames = rawAuthorText.split("\\s|\\.");
-				if (scopusNames.length >= 3) {
+				if (scopusNames.length == 1) {
 					this.lastName = scopusNames[0];
-					this.firstInitial = scopusNames[1];
-					this.middleInitial = scopusNames[2];
 				} else if (scopusNames.length == 2) {
 					this.lastName = scopusNames[0];
 					this.firstInitial = scopusNames[1];
-				} else if (scopusNames.length == 1) {
+				} else if (scopusNames.length >= 3) {
 					this.lastName = scopusNames[0];
+					this.firstInitial = scopusNames[1];
+					this.middleInitial = scopusNames[2];
 				}
 				// Set Scopus attributes
 				this.setNodeAttrMap(Category.constructScopusAttrMap(this));
@@ -72,16 +72,20 @@ public class Author extends AbstractNode {
 				String[] pubmedNames = rawAuthorText.split("\\s");
 				if (pubmedNames.length == 1) {
 					this.lastName =  pubmedNames[0];
-				} else if (pubmedNames.length == 2){
+				} else {
 					this.lastName = pubmedNames[0];
-					if (pubmedNames[1].length() == 2) {
+					int i = 1;
+					for (i = 1; i < pubmedNames.length - 1; i++) {
+						this.lastName += " " + pubmedNames[i];
+					}
+					if (pubmedNames[i].length() >= 2) {
 						//Extract both first initial & middle initial
-						this.firstInitial = pubmedNames[1].substring(0,1);
-						this.middleInitial = pubmedNames[1].substring(1);
+						this.firstInitial = pubmedNames[i].substring(0,1);
+						this.middleInitial = pubmedNames[i].substring(1);
 					} else {
 						// If no middle initial is specified, it will be marked
 						// as unknown
-						this.firstInitial = pubmedNames[1];
+						this.firstInitial = pubmedNames[i];
 					}
 				}
 				// Use Scopus attribute map to set map for Pubmed map 
@@ -90,7 +94,9 @@ public class Author extends AbstractNode {
 				break;
 			case Category.INCITES:
 				this.firstName = Incites.parseFirstName(rawAuthorText);
-				this.firstInitial = this.firstName.substring(0,1);
+				if (! this.firstName.equalsIgnoreCase("N/A")) {
+					this.firstInitial = this.firstName.substring(0,1);
+				}
 				this.middleInitial = Incites.parseMiddleInitial(rawAuthorText);
 				this.lastName = Incites.parseLastName(rawAuthorText);
 				this.institution = Incites.parseInstitution(rawAuthorText);
@@ -120,8 +126,8 @@ public class Author extends AbstractNode {
 	 * @return boolean
 	 */
 	public boolean equals(Object other) {
-		return this.lastName.equalsIgnoreCase(((Author)other).lastName) &&
-			   this.firstName.equalsIgnoreCase(((Author)other).firstName);
+		return this.lastName.equalsIgnoreCase(((Author)other).lastName)
+			&& this.firstName.equalsIgnoreCase(((Author)other).firstName);
 	}
 
 	/**
@@ -375,7 +381,7 @@ public class Author extends AbstractNode {
 	 * @return String author
 	 */
 	public String toString() {
-		return "Name: " + lastName + "-" + firstInitial
+		return "Name: " + lastName + "-" + firstName
 			+  "\nInstitution: " + institution + "\n\n";
 	}
  

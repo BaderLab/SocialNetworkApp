@@ -19,7 +19,7 @@ public class Copublications extends AbstractEdge {
 	 */
 	private ArrayList<Publication> pubList = null;
 	/**
-	 * An edge attribute map/
+	 * An edge attribute map
 	 * <br> Keys: <i>Attribute type (i.e. name)</i>
 	 * <br> Value: <i>Attribute value (i.e. Cytoscape app store)</i>
 	 */
@@ -72,6 +72,7 @@ public class Copublications extends AbstractEdge {
 	public void addPublication(Publication publication) {
 		this.getPubList().add(publication);
 		this.getEdgeAttrMap().put("# of copubs", this.getPubList().size());
+		((ArrayList<String>) this.getEdgeAttrMap().get("publications")).add(publication.getTitle());
 	}
 
 	/**
@@ -100,6 +101,9 @@ public class Copublications extends AbstractEdge {
 	public void constructEdgeAttrMap() {
 		this.setEdgeAttrMap(new HashMap<String, Object>());
 		this.getEdgeAttrMap().put("# of copubs", this.getPubList().size());
+		ArrayList<String> titles = new ArrayList<String>();
+		titles.add(this.getPubList().get(0).getTitle());
+		this.getEdgeAttrMap().put("publications", titles);
 	}
 
 	/**

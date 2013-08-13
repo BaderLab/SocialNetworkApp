@@ -80,9 +80,7 @@ public class Pubmed {
 		Query query = new Query(searchTerm);
 		try {
 			// Create new SAXParser
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			SAXParser saxParser;
-			saxParser = factory.newSAXParser();
+			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 			// Get Query Key & Web Env
 			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
 					"/eutils/esearch.fcgi?db=pubmed&term=" + query);
@@ -91,12 +89,15 @@ public class Pubmed {
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
 		} catch (SAXException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
 		} catch (IOException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
 		             "internet connection.");
 		}
@@ -108,11 +109,8 @@ public class Pubmed {
 	 * @return null
 	 */
 	public void commitPubMedSearch() {
-		// Create new SAX Parser
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser;
 		try {
-			saxParser = factory.newSAXParser();
+			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 			if (Integer.parseInt(totalPubs) > 500) {
 				// WIP (Work In Progress)
 				// On the event that a search yields 500+ publications, these publications will
@@ -128,12 +126,15 @@ public class Pubmed {
 					"/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
 			}
 		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
 					             "try again some other time.");
 		} catch (SAXException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
 					             "try again some other time.");
 		} catch (IOException e) {
+			e.printStackTrace();
 			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
 					             "internet connection.");
 		}
@@ -155,11 +156,9 @@ public class Pubmed {
 	 * @return DefaultHandler publicationHandler
 	 */
 	public DefaultHandler getPublicationHandler() {
-		
 		DefaultHandler publicationHandler = new DefaultHandler() {
 			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, 
 					isTimesCited = false;
-			
 			public void characters(char ch[], int start, int length) throws SAXException {
 				// start and length give both the starting index and the length (respectively)
 				// of the chunk of characters inside the character array that are not elements
@@ -188,7 +187,6 @@ public class Pubmed {
 					isTimesCited = false;
 				}
 			}
-			
 			/**
 			 * Returns true iff attributes contains the specified  text
 			 * @param Attribute attributes
@@ -203,7 +201,6 @@ public class Pubmed {
 				}
 				return false;
 			}
-
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				// qName stores the element's actual designation
 				if (qName.equalsIgnoreCase("DocSum")) {
@@ -211,7 +208,6 @@ public class Pubmed {
 					pubAuthorList.clear();
 				}
 			}
-
 			public void startElement(String uri, String localName, String qName, Attributes attributes) 
 					                                                              throws SAXException {
 				// qName stores the element's actual designation
@@ -232,10 +228,8 @@ public class Pubmed {
 				}
 			}
 		};
-		
 		return publicationHandler;
 	}
-	
 	
 	/**
 	 * Get search handler
@@ -246,9 +240,7 @@ public class Pubmed {
 	                                                IOException, 
 	                                                ParserConfigurationException {
 		DefaultHandler searchHandler = new DefaultHandler() {
-			int i = 0;
 			boolean isQueryKey = false, isWebEnv = false, isTotalPubs = false;
-			
 			public void characters(char ch[], int start, int length) 
 					                                         throws SAXException {
 				// start and length give both the starting index and the length
@@ -267,21 +259,18 @@ public class Pubmed {
 					isWebEnv = false;
 				}
 			}
-			
 			public void endElement(String uri, 
 					               String localName, 
 					               String qName) throws SAXException {
 			
 			}
-			
 			public void startElement(String uri, 
 									 String localName, 
 									 String qName, 
 					                 Attributes attributes) throws SAXException {
 				// Only the first count tag is useful for our purposes.
-				if (i == 0 && qName.equalsIgnoreCase("Count")) {
+				if (qName.equalsIgnoreCase("Count")) {
 					isTotalPubs = true;
-					i += 1;
 				}
 				if (qName.equalsIgnoreCase("QueryKey")) {
 					isQueryKey = true;
@@ -291,11 +280,8 @@ public class Pubmed {
 				}
 			}
 		};
-		
 		return searchHandler;
-		
 	}
-	
 	/**
  	 * Return total # of publications yielded from search.
  	 * @param null
@@ -308,5 +294,4 @@ public class Pubmed {
  			return Integer.parseInt(this.totalPubs);
  		}
  	}
-	
 }

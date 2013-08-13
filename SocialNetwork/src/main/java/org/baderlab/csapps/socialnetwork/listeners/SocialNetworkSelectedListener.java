@@ -9,11 +9,8 @@ import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.model.CyNetwork;
 
 public class SocialNetworkSelectedListener implements SetSelectedNetworksListener {
-	
 	public void handleEvent(SetSelectedNetworksEvent event) {
-		
 		String name = null;
-		
 		for (CyNetwork network : event.getNetworks()) {
 			name = Cytoscape.getNetworkName(network);
 			if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
@@ -23,10 +20,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 				return;
 			}
 		}
-		
 		Cytoscape.setCurrentlySelectedSocialNetwork(null);
 		UserPanel.addNetworkVisualStyle("DEFAULT");
-		
 	}
-	
 }

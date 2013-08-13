@@ -162,6 +162,9 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					maxEdgeWidth = getLargestInCutoff(copubList, 100.0);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_WIDTH, 
 							new Object[] {"# of copubs", minEdgeWidth + 1, maxEdgeWidth});
+					// Specify EDGE_TRANSPARENCY
+					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, 
+							                                     new Object[] {"# of copubs"});
 					break;
 				case Category.PUBMED:
 					// Specify NODE_LABEL
@@ -183,6 +186,9 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					maxEdgeWidth = getLargestInCutoff(copubList, 100.0);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_WIDTH, 
 							new Object[] {"# of copubs", minEdgeWidth + 1, maxEdgeWidth});
+					// Specify EDGE_TRANSPARENCY
+					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, 
+							                                     new Object[] {"# of copubs"});
 					break;
 			}
 			Cytoscape.setCurrentlySelectedSocialNetwork(socialNetwork);

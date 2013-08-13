@@ -776,6 +776,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400,200));
+		
+		// The app will start off with an 'Academia' flavored
+		// UI
+		UserPanel.setSelectedCategory(Category.ACADEMIA);
 			
 		// Add top panel
 		UserPanel.topPanelRef = UserPanel.createTopPanel();
@@ -783,7 +787,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		
 		// Add the default info panel (Academia)
 		this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
-		UserPanel.setSelectedCategory(Category.ACADEMIA);
 		this.add(UserPanel.infoPanelRef, BorderLayout.CENTER);
 		
 		// Add bottom panel

@@ -11,8 +11,9 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Copublications;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
 
 /**
- * Interaction class creates the maps that will
- * eventually be used to build <b>Social networks</b>.
+ * This class is used to create maps that will
+ * later on function as building blocks for
+ * networks.
  * @author Victor Kofia
  */
 public class Interaction {	
@@ -99,8 +100,8 @@ public class Interaction {
 		Map<Consortium, ArrayList<AbstractEdge>> academiaMap = 
 				      new HashMap<Consortium, ArrayList<AbstractEdge>>();
 		// Create new author map 
-		// Key: author facsimile
-		// Value: original author reference
+		// Key: author's facsimile
+		// Value: original author
 		Map<Author, Author> authorMap = new HashMap<Author, Author>();
 		int h = 0, i = 0, j = 0;
 		Consortium consortium = null;
@@ -165,7 +166,7 @@ public class Interaction {
 		
 		// If network does not require faculty data then don't show error message. 
 		// However, if the network does require faculty data, notify the user on
-		// whether or not inclusion of this data happened successfully.
+		// whether or not the data's inclusion happened successfully.
 		if (facultySet != null && someFaculty == false) {
 			Cytoscape.notifyUser("Faculty information could not be loaded into the network.\n");
 		}
@@ -173,5 +174,4 @@ public class Interaction {
 		return academiaMap;
 	}
 
-	
 }

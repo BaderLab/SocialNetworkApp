@@ -300,6 +300,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		addNodeLabels(vanueVisualStyle);
 		modifyNodeSize(vanueVisualStyle);
 		modifyEdgeWidth(vanueVisualStyle);
+		modifyEdgeOpacity(vanueVisualStyle);
 		return vanueVisualStyle;
 	}
 
@@ -326,7 +327,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
 				this.getTaskMonitor().setStatusMessage("");
 				vmmServiceRef.setCurrentVisualStyle(this.getVanueVisualStyle());
 				break;
-
 		}
 	}
 

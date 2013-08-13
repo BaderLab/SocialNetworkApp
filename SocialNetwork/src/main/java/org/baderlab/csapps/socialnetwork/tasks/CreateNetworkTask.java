@@ -112,6 +112,8 @@ public class CreateNetworkTask extends AbstractTask {
 					edgeTable.createColumn(attrName, String.class, false);
 				} else if (attrType instanceof Integer) {
 					edgeTable.createColumn(attrName, Integer.class, false);
+				} else if (attrType instanceof List) {
+					edgeTable.createListColumn(attrName, String.class, false);
 				}
 			}
 
@@ -178,6 +180,7 @@ public class CreateNetworkTask extends AbstractTask {
 			this.monitor.setStatusMessage("Complete 25%");
 			return myNet;
 		} catch (ArrayIndexOutOfBoundsException exception) {
+			exception.printStackTrace();
 			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
 			Cytoscape.getSocialNetworkMap().remove(Cytoscape.getNetworkName());
