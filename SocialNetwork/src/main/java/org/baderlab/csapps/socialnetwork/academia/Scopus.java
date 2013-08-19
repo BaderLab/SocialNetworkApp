@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
@@ -19,17 +19,17 @@ import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 public class Scopus {
 	
 	/**
-	 * Reference to Scopus checkbox
+	 * Reference to Scopus radio button
 	 */
-	public static JCheckBox scopusCheckBox = null;
+	public static JRadioButton scopusRadioButton = null;
 
 	/**
-	 * Get Scopus checkbox
+	 * Get Scopus radio button
 	 * @param null
-	 * @return JCheckBox scopusCheckBox
+	 * @return JRadioButton radioButton
 	 */
-	public static JCheckBox getScopusCheckBox() {
-		return scopusCheckBox;
+	public static JRadioButton getScopusRadioButton() {
+		return scopusRadioButton;
 	}
 	
 	/**
@@ -50,9 +50,7 @@ public class Scopus {
 	 * @author Victor Kofia
 	 */
 	public static class UnableToParseYearException extends Exception {
-		
 		private static final long serialVersionUID = 1L;
-		
 	}
 	
 	/**
@@ -60,7 +58,7 @@ public class Scopus {
 	 * @param File scopusDataFile
 	 * @return ArrayList pubList
 	 */
-	public static ArrayList<Publication> getScopusPubList(File scopusDataFile) {
+	public ArrayList<Publication> getScopusPubList(File scopusDataFile) {
 		ArrayList<Publication> pubList = null;
 		try {
 			pubList = new ArrayList<Publication>();
@@ -88,10 +86,6 @@ public class Scopus {
 				subjectArea = columns[3];
 				numericalData = columns[4];
 				lastIndex = numericalData.lastIndexOf(",");
-//				System.out.println("Year: " + year
-//		         + "\nSubject Area: " + columns[3]
-//		         + "\nAuthors: " + authors
-//		         + "\nTitle: " + title + "\n\n");
 				if (lastIndex == numericalData.length() - 1) {
 					timesCited = "0";
 				} else {
@@ -129,12 +123,12 @@ public class Scopus {
 	}
 
 	/**
-	 * Set Scopus checkbox
-	 * @param JCheckBox scopusCheckBox
+	 * Set Scopus radio button
+	 * @param JCheckBox scopusRadioButton
 	 * @return null
 	 */
-	public static void setScopusCheckBox(JCheckBox scopusCheckBox) {
-		Scopus.scopusCheckBox = scopusCheckBox;
+	public static void setScopusRadioButton(JRadioButton scopusRadioButton) {
+		Scopus.scopusRadioButton = scopusRadioButton;
 	}
  
 }

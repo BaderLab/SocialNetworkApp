@@ -84,7 +84,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener();
-		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());		
+		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 		
 		
 		// Create and register task factories

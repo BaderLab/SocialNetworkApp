@@ -82,8 +82,6 @@ public class CreateNetworkTask extends AbstractTask {
 			CyTable edgeTable = null;
 
 			// Add all columns to node table
-			// WIP: WORK IN PROGRESS
-			// ????
 			nodeTable = myNet.getDefaultNodeTable();
 			Object[] keys = map.keySet().toArray();
 			AbstractNode key = ((Consortium) keys[0]).getNode1();
@@ -98,8 +96,6 @@ public class CreateNetworkTask extends AbstractTask {
 			}
 
 			// Add all columns to edge table
-			// WIP: WORK IN PROGRESS
-			// ????
 			edgeTable = myNet.getDefaultEdgeTable();
 			Object[] values = map.values().toArray();
 			@SuppressWarnings("unchecked")
@@ -198,7 +194,7 @@ public class CreateNetworkTask extends AbstractTask {
 	public void run(TaskMonitor monitor) throws Exception {
 		CyNetworkManager networkManager = cyNetworkManagerServiceRef;
 		CyNetworkViewManager networkViewManager = cyNetworkViewManagerServiceRef;
-
+		
 		// Get map
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
 				
@@ -212,10 +208,10 @@ public class CreateNetworkTask extends AbstractTask {
 			this.monitor.setTitle("Loading Network");
 			this.monitor.setProgress(0.0);
 			this.totalSteps = map.size();
-
+			
 			// Load network
 			CyNetwork network = loadNetwork(map);
-
+			
 			if (network == null) {
 				return;
 			}
@@ -262,6 +258,7 @@ public class CreateNetworkTask extends AbstractTask {
 							 layout.createLayoutContext(), 
 							 CyLayoutAlgorithm.ALL_NODE_VIEWS, 
 							 layoutAttribute);
+			
 			TaskIterator taskIterator = new TaskIterator();
 			taskIterator.append(layoutTaskIterator);
 			int visualStyleID = Cytoscape.getCurrentlySelectedSocialNetwork()

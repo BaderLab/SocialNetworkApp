@@ -21,7 +21,7 @@ public abstract class AbstractNode {
 	public abstract Map<String, Object> getNodeAttrMap();
 	
 	/**
-	 * Set map containing all of anode's attributes
+	 * Set map containing all of node's attributes
 	 * @param Map attrMap
 	 * @return null
 	 */

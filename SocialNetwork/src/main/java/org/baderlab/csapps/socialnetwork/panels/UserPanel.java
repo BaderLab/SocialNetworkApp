@@ -97,6 +97,35 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	private static int visualStyleSelectorType = Category.DEFAULT;
 	
 	/**
+	 * Create a new panel
+	 * @param null
+	 * @return null
+	 */
+	public UserPanel() {
+		
+		this.setLayout(new BorderLayout());
+		this.setPreferredSize(new Dimension(400,200));
+		
+		// An 'Academia' flavored UI has been set as default
+		UserPanel.setSelectedCategory(Category.ACADEMIA);
+			
+		// Add top panel
+		UserPanel.topPanelRef = UserPanel.createTopPanel();
+		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
+		
+		// Add the default info panel (Academia)
+		this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
+		this.add(UserPanel.infoPanelRef, BorderLayout.CENTER);
+		
+		// Add bottom panel
+		this.add(UserPanel.createBottomPanel(), BorderLayout.SOUTH);
+		
+		// Save a reference to this panel object
+		Cytoscape.setUserPanelRef(this);
+		
+	}
+
+	/**
 	 * Add network's visual style to user panel
 	 * @param Network network
 	 * @return null
@@ -126,7 +155,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param CyNetwork network
 	 * @return null
 	 */
-	public static void addToNetworkPanel(CyNetwork network) {
+	public static void addNetworkToNetworkPanel(CyNetwork network) {
 		
 		// Get network name
 		String networkName = Cytoscape.getNetworkName(network);
@@ -407,8 +436,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
 	/**
 	 *Create search button. Search button allows user to commit search.
-	 *NOTE: button not 100% necessary. its function can be duplicated 
-	 *by a simple tap of the return key
+	 *NOTE: Button not 100% necessary. Its function can be duplicated 
+	 *by a simple tap on the return key
 	 *@param null
 	 *@return JButton search
 	 */
@@ -448,7 +477,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		searchOptionSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// SEARCH FILTERS
-				// ??
+				// WIP (Work In Progress)
 			}
 		});
 		return searchOptionSelector;
@@ -516,6 +545,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
 	/**
 	 * Create visual style selector. The type of selector created is dependent on
+	 * the network's type. Different networks have different custom visual styles.
 	 * 
 	 * @param int visualStyleSelectorType
 	 * @return JComboBox visualStyleSelector
@@ -767,37 +797,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		}
 	}
 
-	/**
-	 * Create a new panel
-	 * @param null
-	 * @return null
-	 */
-	public UserPanel() {
-		
-		this.setLayout(new BorderLayout());
-		this.setPreferredSize(new Dimension(400,200));
-		
-		// The app will start off with an 'Academia' flavored
-		// UI
-		UserPanel.setSelectedCategory(Category.ACADEMIA);
-			
-		// Add top panel
-		UserPanel.topPanelRef = UserPanel.createTopPanel();
-		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
-		
-		// Add the default info panel (Academia)
-		this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
-		this.add(UserPanel.infoPanelRef, BorderLayout.CENTER);
-		
-		// Add bottom panel
-		this.add(UserPanel.createBottomPanel(), BorderLayout.SOUTH);
-		
-		// Save a reference to this panel object
-		Cytoscape.setUserPanelRef(this);
-		
-	}
-
-	
 	public Component getComponent() {
 		return this;
 	}

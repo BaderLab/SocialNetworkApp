@@ -2,6 +2,10 @@ package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -38,9 +42,14 @@ public class SocialNetwork {
 	 */
 	private int defaultVisualStyle = Category.DEFAULT;
 	/**
-	 * The network's attribute map (stores all network attr)
+	 * The network's attribute map (stores all network table attr)
 	 */
 	private Map<String, Object> attrMap = null;
+	/**
+	 * The network's stat map (stores network issues)
+	 */
+	private Map<String, Object> statMap = null;
+	
 	
 	/**
 	 * Create a new social network
@@ -108,7 +117,7 @@ public class SocialNetwork {
 		if (this.visualStyleMap == null) {
 			this.setVisualStyleMap(new HashMap<Object, Object[]>());
 		}
-		return visualStyleMap;
+		return this.visualStyleMap;
 	}
 
 	/**
@@ -194,6 +203,40 @@ public class SocialNetwork {
 	 */
 	public void setAttrMap(Map<String, Object> attrMap) {
 		this.attrMap = attrMap;
+	}
+
+	/**
+	 * Get stat map
+	 * @param null
+	 * @return Map statMap
+	 */
+	public Map<String, Object> getStatMap() {
+		if (this.statMap == null) {
+			this.setStatMap(new HashMap<String, Object>());
+		}
+		return statMap;
+	}
+
+	/**
+	 * Set stat map
+	 * @param Map statMap
+	 * @return null 
+	 */
+	private void setStatMap(Map<String, Object> statMap) {
+		this.statMap = statMap;
+	}
+	
+	/**
+	 * Show user network stats
+	 * @param null
+	 * @return null
+	 */
+	public void showStats() {
+		String message = "";
+		for ( Entry<String, Object> entry  : this.getStatMap().entrySet()) {
+			message += entry.getKey() + ": " + Integer.toString((Integer)entry.getValue()) + "\n";
+		}
+		JOptionPane.showMessageDialog(new JPanel(), message);
 	}
 	
 		

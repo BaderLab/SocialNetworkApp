@@ -67,13 +67,13 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 	}
 	
 	/**
-	 * Add network to network table and configure visual styles
+	 * Adds network to network table and configures visual styles
 	 * if necessary.
 	 * @param NetworkAddedEvent event
 	 * @return null
 	 */
 	public void handleEvent(NetworkAddedEvent event) {
-		// Set cursor to default (network's already been loaded)
+		// Set mouse cursor to default (network's already been loaded)
         Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		String name = Cytoscape.getNetworkName(event.getNetwork());
 		// If the network being added is a social network, then
@@ -81,9 +81,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 		if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
 			
 			// Add to network table
-			UserPanel.addToNetworkPanel(event.getNetwork());
+			UserPanel.addNetworkToNetworkPanel(event.getNetwork());
 						
-			// NOTE: Might be resource intensive. Create a new thread?
 			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
 			int networkID = socialNetwork.getNetworkType();
 			// Node table reference
@@ -128,7 +127,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					locationsMap.put("Canada", new Color(255,13,35));
 					locationsMap.put("United States", new Color(42,78,222));
 					locationsMap.put("International", new Color(42,230,246));
-					locationsMap.put("Community", new Color(211, 3, 253));
+					locationsMap.put("Other", new Color(211, 3, 253));
 					locationsMap.put("UNIV TORONTO", new Color(20, 253, 3));
 					colorAttrMap.put("Location", locationsMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, 
@@ -140,7 +139,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					facultyMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
 					shapeAttrMap.put("Faculty", facultyMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, 
-                            new Object[] {shapeAttrMap});												
+                            new Object[] {shapeAttrMap});
+					socialNetwork.showStats();
 					break;
 				case Category.SCOPUS:
 					// Specify NODE_LABEL

@@ -2,11 +2,13 @@ package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.common.Levenshtein;
+
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 
 /**
- * The author of an article, journal review, or scientific paper
+ * An author for an article, journal review, or scientific paper
  * @author Victor Kofia
  */
 public class Author extends AbstractNode {
@@ -42,6 +44,33 @@ public class Author extends AbstractNode {
 	 * Author's total number of citations
 	 */
 	private int timesCited = 0;
+	/**
+	 * Author's origin
+	 */
+	private int origin = Category.DEFAULT;
+	/**
+	 * True iff author has been identified as faculty
+	 */
+	private boolean identified = false;
+	
+	/**
+	 * Set identification
+	 * @param boolean bool
+	 * @return null
+	 */
+	private void setIdenfitication(boolean bool) {
+		this.identified = bool;
+	}
+	
+	/**
+	 * Returns true iff author is a faculty member and has been
+	 * successfully identified
+	 * @param null
+	 * @return boolean identified
+	 */
+	public boolean isIdentified() {
+		return this.identified;
+	}
 		
 	/**
 	 * Create a new author with the first name, last name and middle initial specified 
@@ -52,6 +81,7 @@ public class Author extends AbstractNode {
 	 * @return null
 	 */
 	public Author(String rawAuthorText, int origin) {
+		this.setOrigin(origin);
 		switch (origin) {
 			case Category.SCOPUS:
 				String[] scopusNames = rawAuthorText.split("\\s|\\.");
@@ -79,7 +109,7 @@ public class Author extends AbstractNode {
 						this.lastName += " " + pubmedNames[i];
 					}
 					if (pubmedNames[i].length() >= 2) {
-						//Extract both first initial & middle initial
+						// Extract both first initial & middle initial
 						this.firstInitial = pubmedNames[i].substring(0,1);
 						this.middleInitial = pubmedNames[i].substring(1);
 					} else {
@@ -118,7 +148,7 @@ public class Author extends AbstractNode {
 		
 		// Format names to ensure consistency
 		format();
-		}
+	}
 
 	/**
 	 * Return true iff author is the same as other
@@ -126,8 +156,89 @@ public class Author extends AbstractNode {
 	 * @return boolean
 	 */
 	public boolean equals(Object other) {
-		return this.lastName.equalsIgnoreCase(((Author)other).lastName)
-			&& this.firstName.equalsIgnoreCase(((Author)other).firstName);
+		Author otherAuthor = (Author) other;
+		boolean isEqual = false, isEqualFirstName = false, isEqualLastName = false;
+		int distance = 0;
+		double similarity = 0;
+		// Incites
+		if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.INCITES) {
+			boolean isEqualInstitution = false;
+			isEqualLastName = this.lastName.equalsIgnoreCase(otherAuthor.lastName);
+			isEqualInstitution = this.institution.equalsIgnoreCase(otherAuthor.institution);
+			// Determine whether or not first names are equal
+			distance = Levenshtein.distance(this.firstName.toLowerCase(), otherAuthor.firstName.toLowerCase());
+			similarity = 1 - ((double) distance) / (Math.max(this.firstName.length(), otherAuthor.firstName.length()));
+			if (similarity >= 0.5) {
+				isEqualFirstName = true;
+				if (this.firstName.length() > otherAuthor.firstName.length()) {
+					otherAuthor.firstName = this.firstName;
+				}
+			} else {
+				if (isEqualLastName) {
+					boolean isSingleCharacter = false;
+					boolean isSameAsInitial = false;
+					if (this.firstName.length() < otherAuthor.firstName.length()) {
+						isSingleCharacter = this.firstName.length() == 1;
+						isSameAsInitial = this.firstName.equalsIgnoreCase(otherAuthor.firstInitial);
+					} else {
+						isSingleCharacter = otherAuthor.firstName.length() == 1;
+						isSameAsInitial = otherAuthor.firstName.equalsIgnoreCase(this.firstInitial);
+						if (isSingleCharacter && isSameAsInitial) {
+							otherAuthor.firstName = this.firstName;
+						}
+					}
+					// First name is only equal if it's a single character and is
+					// similar to the other author's first initial
+					isEqualFirstName = isSingleCharacter
+							&& isSameAsInitial;
+				}
+			}
+			isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
+		// Incites (~ Faculty)
+		} else if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) {
+			isEqualLastName = this.lastName.equalsIgnoreCase(otherAuthor.lastName);
+			// Determine whether or not first names are equal
+			distance = Levenshtein.distance(this.firstName.toLowerCase(), otherAuthor.firstName.toLowerCase());
+			similarity = 1 - ((double) distance) / (Math.max(this.firstName.length(), otherAuthor.firstName.length()));
+			if (similarity >= 0.5) {
+				isEqualFirstName = true;
+				if (this.firstName.length() > otherAuthor.firstName.length()) {
+					otherAuthor.firstName = this.firstName;
+				}
+			// If Levenshtein distance is too small, check to see if 
+			// if the first name is actually an initial i.e. 'V'
+			} else {
+				boolean isSingleCharacter = false;
+				boolean isSameAsInitial = false;
+				if (this.firstName.length() < otherAuthor.firstName.length()) {
+					isSingleCharacter = this.firstName.length() == 1;
+					isSameAsInitial = this.firstName.equalsIgnoreCase(otherAuthor.firstInitial);
+				} else {
+					isSingleCharacter = otherAuthor.firstName.length() == 1;
+					isSameAsInitial = otherAuthor.firstName.equalsIgnoreCase(this.firstInitial);
+					if (isSingleCharacter && isSameAsInitial) {
+						otherAuthor.firstName = this.firstName;
+					}
+				}
+				// First name is only equal if it's a single character and is
+				// similar to the other author's first initial
+				isEqualFirstName = isSingleCharacter
+						&& isSameAsInitial;
+			}
+			isEqual = isEqualLastName && isEqualFirstName;
+			// Check to see if the other author has been correctly ID'ed. If so, set his identification
+			// status to true.
+			if (isEqual) {
+				otherAuthor.setIdenfitication(true);
+			}
+		// Pubmed / Scopus
+		} else if (this.getOrigin() == Category.PUBMED && otherAuthor.getOrigin() == Category.PUBMED ||
+				   this.getOrigin() == Category.SCOPUS && otherAuthor.getOrigin() == Category.SCOPUS) {
+			isEqualLastName = this.lastName.equalsIgnoreCase(otherAuthor.lastName);
+			isEqualFirstName = this.getFirstInitial().equalsIgnoreCase(otherAuthor.getFirstInitial());
+			isEqual = isEqualFirstName && isEqualLastName;
+		}
+		return isEqual;
 	}
 
 	/**
@@ -210,80 +321,6 @@ public class Author extends AbstractNode {
 	public Map<String, Object> getNodeAttrMap() {
 		return this.nodeAttrMap;
 	}
-
-	/**
-	 * NOTE: As author identification becomes more refined it may be wise 
-	 * to make a few more adjustments to hashCode(). 
-	 */
-	
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result
-//				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
-//		result = prime * result
-//				+ ((firstName == null) ? 0 : firstName.hashCode());
-//		result = prime * result
-//				+ ((institution == null) ? 0 : institution.hashCode());
-//		result = prime * result
-//				+ ((lastName == null) ? 0 : lastName.hashCode());
-//		result = prime * result
-//				+ ((location == null) ? 0 : location.hashCode());
-//		result = prime * result
-//				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
-//		result = prime * result + totalPubs;
-//		return result;
-//	}
-
-	/**
-	 * NOTE: As author identification becomes more refined it may be wise 
-	 * to make a few more adjustments to equals(). 
-	 */
-	
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		Author other = (Author) obj;
-//		if (firstInitial == null) {
-//			if (other.firstInitial != null)
-//				return false;
-//		} else if (!firstInitial.equals(other.firstInitial))
-//			return false;
-//		if (firstName == null) {
-//			if (other.firstName != null)
-//				return false;
-//		} else if (!firstName.equals(other.firstName))
-//			return false;
-//		if (institution == null) {
-//			if (other.institution != null)
-//				return false;
-//		} else if (!institution.equals(other.institution))
-//			return false;
-//		if (lastName == null) {
-//			if (other.lastName != null)
-//				return false;
-//		} else if (!lastName.equals(other.lastName))
-//			return false;
-//		if (location == null) {
-//			if (other.location != null)
-//				return false;
-//		} else if (!location.equals(other.location))
-//			return false;
-//		if (middleInitial == null) {
-//			if (other.middleInitial != null)
-//				return false;
-//		} else if (!middleInitial.equals(other.middleInitial))
-//			return false;
-//		if (totalPubs != other.totalPubs)
-//			return false;
-//		return true;
-//	}
 	
 	/**
 	 * Get author's total number of citations
@@ -347,7 +384,7 @@ public class Author extends AbstractNode {
 			if (this.getInstitution().equalsIgnoreCase("N/A")) {
 				this.location = "N/A";
 			} else {
-				this.location = "Community";
+				this.location = "Other";
 			}
 		} else {
 			this.location = location;
@@ -375,14 +412,30 @@ public class Author extends AbstractNode {
 	
 	/**
 	 * Return a string representation of author in the format:
-	 * <br><b>Name:</b> <i>name</i>
-	 * <br><b>First Initial:</b> <i>firstInitial</i>
+	 * <br><b><i>Last Name, First Name</i></b>
 	 * @param null
 	 * @return String author
 	 */
 	public String toString() {
-		return "Name: " + lastName + "-" + firstName
-			+  "\nInstitution: " + institution + "\n\n";
+		return lastName + ", " + firstName;
+	}
+
+	/**
+	 * Get author's origin
+	 * @param null
+	 * @return int origin
+	 */
+	public int getOrigin() {
+		return origin;
+	}
+
+	/**
+	 * Set author's origin
+	 * @param int origin
+	 * @return null
+	 */
+	public void setOrigin(int origin) {
+		this.origin = origin;
 	}
  
 }

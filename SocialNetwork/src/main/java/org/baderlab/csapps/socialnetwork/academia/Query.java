@@ -64,6 +64,7 @@ public class Query {
 	 * @return null
 	 */
 	public Query(String rawQuery) {
+		rawQuery = rawQuery.replace(",", "");
 		rawQuery = rawQuery.replace("\\s", "+");
 		this.query = Query.augmentHistory(rawQuery);
 	}

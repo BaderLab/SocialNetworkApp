@@ -3,8 +3,6 @@ package main.java.org.baderlab.csapps.socialnetwork.panels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
@@ -12,10 +10,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
@@ -23,7 +22,7 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
 
 /**
- * Academia Panel factory. Also contains helper methods.
+ * Tools for building / working with the Academia Info-Panel
  * @author Victor Kofia
  */
 public class AcademiaPanel {
@@ -51,8 +50,7 @@ public class AcademiaPanel {
 	 */
 	public static JPanel createAcademiaInfoPanel() {
 		JPanel academiaInfoPanel = new JPanel();
-		academiaInfoPanel
-		.setLayout(new BorderLayout());
+		academiaInfoPanel.setLayout(new BorderLayout());
 		academiaInfoPanel.setName("Academia");
 	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
 		academiaInfoPanel.add(AcademiaPanel.createDatabaseInfoPanel(), 
@@ -61,19 +59,19 @@ public class AcademiaPanel {
 	}
 
 	/**
-	 * Create 'create network' button. Create network button 
+	 * Create 'create network button'. Create network button 
 	 * attempts to create a network out of a file specified
 	 * by the user.
 	 * @param null
 	 * @return JButton createNetworkButton
 	 */
-	public static JButton createCNB() {
+	public static JButton createNetworkButton() {
 		JButton createNetworkButton = new JButton("Create Network");
 		createNetworkButton.setToolTipText("Create network");
 		createNetworkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if (! Incites.getIncitesCheckBox().isSelected() &&
-						! Scopus.getScopusCheckBox().isSelected()) {
+				if (! Incites.getIncitesRadioButton().isSelected() &&
+						! Scopus.getScopusRadioButton().isSelected()) {
 					Cytoscape.notifyUser("Please select a database");
 				} else {
 					if (getSelectedFileRef() == null || 
@@ -129,7 +127,10 @@ public class AcademiaPanel {
 		databaseInfoPanel.add(createSpecifyNetworkNamePanel());
 	
 		// Add 'create network button' to panel
-		databaseInfoPanel.add(AcademiaPanel.createCNB());
+		// Button wrapper added for cosmetic reasons
+		JPanel buttonWrapper = new JPanel();
+		buttonWrapper.add(AcademiaPanel.createNetworkButton(), BorderLayout.CENTER);
+		databaseInfoPanel.add(buttonWrapper);
 	
 		return databaseInfoPanel;
 	}
@@ -147,39 +148,25 @@ public class AcademiaPanel {
 		databasePanel
 		.getContentPane().setLayout(new BoxLayout(databasePanel.getContentPane(), BoxLayout.X_AXIS));
 				
-		// Create Incites checkbox
-	    final JCheckBox incitesCheckBox = new JCheckBox("Incites", false);
-	    incitesCheckBox.setFocusable(false);
-	
-	    incitesCheckBox.addItemListener(new ItemListener() {
-	
-	        public void itemStateChanged(ItemEvent e) {
-	        	JCheckBox checkBox = (JCheckBox) e.getItem();
-				if (checkBox.isSelected() && Scopus.getScopusCheckBox().isSelected()) {
-					Scopus.getScopusCheckBox().setSelected(false);
-				}
-	        }
-	    });
+		// Create Incites radio button
+	    final JRadioButton incitesRadioButton = new JRadioButton("Incites", true);
+	    incitesRadioButton.setFocusable(true);
 	    
-	    Incites.setIncitesCheckBox(incitesCheckBox);
+	    Incites.setIncitesRadioButton(incitesRadioButton);
 	    
-	    // Create Scopus checkbox
-	    final JCheckBox scopusCheckBox = new JCheckBox("Scopus", false);
-	    scopusCheckBox.setFocusable(false);
+	    // Create Scopus radio button
+	    final JRadioButton scopusRadioButton = new JRadioButton("Scopus", false);
+	    scopusRadioButton.setFocusable(false);
+	
+	    Scopus.setScopusRadioButton(scopusRadioButton);
 	    
-	    scopusCheckBox.addItemListener(new ItemListener() {
-	        public void itemStateChanged(ItemEvent e) {
-	        	JCheckBox checkBox = (JCheckBox) e.getItem();
-				if (checkBox.isSelected() && Incites.getIncitesCheckBox().isSelected()) {
-					Incites.getIncitesCheckBox().setSelected(false);
-				}
-	        }
-	    });
+	    // Ensures that only one button is selected at a time
+	    ButtonGroup buttonGroup = new ButtonGroup();
+	    buttonGroup.add(incitesRadioButton);
+	    buttonGroup.add(scopusRadioButton);
 	
-	    Scopus.setScopusCheckBox(scopusCheckBox);
-	
-	    databasePanel.getContentPane().add(Incites.getIncitesCheckBox());
-	    databasePanel.getContentPane().add(Scopus.getScopusCheckBox());
+	    databasePanel.getContentPane().add(Incites.getIncitesRadioButton());
+	    databasePanel.getContentPane().add(Scopus.getScopusRadioButton());
 	    
 		return databasePanel;
 	
@@ -244,8 +231,7 @@ public class AcademiaPanel {
 		return loadDataPanel;
 	}
 
-	/**Create specify network name panel. The purpose of 
-	 * this panel should be fairly obvious.
+	/**Create specify network name panel. 
 	 * @param null
 	 * @return JPanel networkNamePanel
 	 */

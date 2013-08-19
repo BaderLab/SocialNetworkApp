@@ -14,6 +14,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Consortium identity tests
+ * @author Victor Kofia
+ */
 public class TestConsortium {
 	Author author1 = null;
 	Author author2 = null;
@@ -33,16 +37,31 @@ public class TestConsortium {
 	}
 
 	@Test
+	/**
+	 * Test whether or not two consortiums are 'equal' to each other.
+	 * NOTE: These consortiums differ only in node order 
+	 * (i.e. node1 is node2 and node2 is node1)
+	 */
 	public void testEquality() {
 		assertTrue(this.cons1.equals(this.cons2));
 	}
 	
 	@Test
+	/**
+	 * Test whether or not two consortiums have the same hash-code
+	 * NOTE: These consortiums differ only in node order 
+	 * (i.e. node1 is node2 and node2 is node1)
+	 */
 	public void testHashCode() {
 		assertTrue(this.cons1.hashCode() == this.cons2.hashCode());
 	}
 	
 	@Test
+	/**
+	 * Test whether or not one consortium (cons1) can be used to identify 
+	 * another (cons2) in a list
+	 * NOTE: cons1 and cons2 differ only in node order 
+	 */
 	public void testListRecognition() {
 		ArrayList<Consortium> consortiumList = new ArrayList<Consortium>();
 		consortiumList.add(cons1);
@@ -50,6 +69,11 @@ public class TestConsortium {
 	}
 	
 	@Test
+	/**
+	 * Test whether or not one consortium (cons1) can be used to identify
+	 * another (cons2) in a map
+	 * NOTE: cons1 and cons2 differ only in node order
+	 */
 	public void testMapRecognition() {
 		Map<Consortium, String> consortiumMap = new HashMap<Consortium, String>();
 		consortiumMap.put(cons2, "intro");

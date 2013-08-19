@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
@@ -33,30 +32,332 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Methods for manipulating Incites data
+ * Tools for manipulating Incites data
  * @author Victor Kofia
  */
 public class Incites {
+	
 	/**
-	 * Reference to Incites checkbox
+	 * Reference to Incites radio button
 	 */
-	public static JCheckBox incitesCheckBox = null;
+	public static JRadioButton incitesRadioButton = null;
+
 	/**
 	 * Author location map
 	 */
 	private static Map<String, String> locationMap = null;
+
 	/**
-	 * List of publications extracted from Incites data file
+	 * Tracks # of defective rows in Incites document
 	 */
-	private static ArrayList<Publication> pubList = null;
-	/**
-	 * Set of faculty members extracted from Incites data file
-	 */
-	private static HashSet<Author> facultySet = null;
+	private int defectiveRows = 0;
+
 	/**
 	 * Name of faculty extracted from Incites data file
 	 */
-	private static String facultyName = null;
+	private String facultyName = null;
+
+	/**
+	 * Set of faculty members extracted from Incites data file
+	 */
+	private HashSet<Author> facultySet = null;
+
+	/**
+	 * A list containing all identified faculty members
+	 */
+	private ArrayList<Author> identifiedFacultyList = null;
+
+	/**
+	 * Tracks # of ignored rows in Incites document
+	 * (not including the column titles)
+	 */
+	private int ignoredRows = -1;
+
+	/**
+	 * A list containing all the lone authors found in
+	 * the Incites document
+	 */
+	private ArrayList<Author> loneAuthorList = null;
+
+	/**
+	 * List of publications extracted from Incites data file
+	 */
+	private ArrayList<Publication> pubList = null;
+
+	/**
+	 * A list containing all unidentified faculty members
+	 */
+	private ArrayList<Author> unidentifiedFacultyList = null;
+
+
+	/**
+	 * Create new Incites using data file
+	 * @param File file
+	 */
+	public Incites(File file) {
+		this.loadFaculty(file);
+		this.loadPubList(file);
+		this.calcFacultyStats();
+	}
+
+	/**
+	 * Calculate faculty stats
+	 * i.e. which faculty members got identified?
+	 * @param null
+	 * @return null
+	 */
+	private void calcFacultyStats() {
+		ArrayList<Author> identifiedAuthors = new ArrayList<Author>();
+		ArrayList<Author> unidentifiedAuthors = new ArrayList<Author>();
+		Author author = null;
+		for (Object object : this.getFacultySet().toArray()) {
+			author = (Author) object;
+			if (author.isIdentified()) {
+				identifiedAuthors.add(author);
+			} else {
+				unidentifiedAuthors.add(author);
+			}
+		}
+		this.setIdentifiedFacultyList(identifiedAuthors);
+		this.setUnidentifiedFacultyList(unidentifiedAuthors);
+	}
+
+	/**
+	 * Get XLSX sheet parser
+	 * @param SharedStringsTable sst
+	 * @param int sheet
+	 * @return XMLReader parser
+	 * @throws SAXException
+	 */
+	private XMLReader fetchSheetParser(SharedStringsTable sst, 
+			                                 int sheet) throws SAXException {
+		XMLReader parser = XMLReaderFactory.createXMLReader();
+		switch (sheet) {
+			// Sheet#3: publication data
+			case 3:
+				parser.setContentHandler(new PubSheetHandler(sst, this));
+				break;
+			// Sheet#4: faculty data
+			case 4:
+				parser.setContentHandler(new FacultySheetHandler(sst, this));
+				break;
+		}
+		return parser;
+	}
+
+	/**
+	 * Handler for faculty spreadsheet (SAX parser)
+	 * @author Victor Kofia
+	 */
+	private static class FacultySheetHandler extends DefaultHandler {
+		private String cell = "", rowContents = "", id = "";
+		private Incites incites = null;
+		private SharedStringsTable sst = null;
+		
+		private FacultySheetHandler(SharedStringsTable sst, Incites incites) {
+			this.sst = sst;
+			this.incites = incites;
+		}
+		
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
+			id += new String(ch, start, length);
+		}
+		
+		public void endElement(String uri, String localName, String name)
+				throws SAXException {
+			
+			if(name.equals("v")) {
+				cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
+				rowContents += Incites.parseFacultyName(cell.trim().toLowerCase()) + ";";
+			}
+			
+			if (name.equals("row")) {
+				// Parse all row contents. Ignore the first row (i.e. last name, first name ... etc)
+				if (! rowContents.trim().isEmpty() && ! rowContents.contains("department")) {
+					incites.getFacultySet().add(new Author(rowContents, Category.FACULTY));
+					incites.setFacultyName(cell);
+				}
+			}
+		}
+		
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			
+			// Reset rowContents at each row
+			if (name.equals("row")) {
+				rowContents = "";
+			}
+			
+			if(name.equals("v")) {
+				id = "";
+			}
+		}
+		
+	}
+	
+	/**
+	 * Handler for publications spreadsheet
+	 * @author Victor Kofia
+	 */
+	private static class PubSheetHandler extends DefaultHandler {
+		List<Author> coauthorList = null;
+		private String[] columns = null;
+		private String id = "", cell = "", row = "";
+		private Incites incites = null;
+		private boolean isString = false;
+		Publication pub;
+		private SharedStringsTable sst = null;
+		String title, timesCited = null, expectedCitations = "0.00";
+		String year = null, subjectArea = null, authors = null;
+		private PubSheetHandler(SharedStringsTable sst, Incites incites) {
+			this.sst = sst;
+			this.incites = incites;
+		}
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
+			id += new String(ch, start, length);
+		}
+		public void endElement(String uri, String localName, String name)
+				throws SAXException {
+			if(name.equals("v")) {
+				if (isString) {
+					cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
+					isString = false;
+				} else {
+					cell = id;
+				}
+				row += cell + "\t";
+			}
+			if (name.equals("row") && ! row.trim().isEmpty()) {
+				columns = row.split("\t");
+				if (columns.length == 6 && ! columns[0].equalsIgnoreCase("Times Cited")) {
+					// Get publication info
+					timesCited = columns[0].trim().isEmpty() 
+							? "0" : columns[0].trim();
+					expectedCitations = columns[1].trim().isEmpty() 
+							? "0.00" : columns[1].trim();
+					year = columns[2].trim().isEmpty() 
+							? "0" : columns[2].trim();
+					subjectArea = columns[3];
+					authors = columns[4];
+					title = columns[5];
+					//						System.out.println("Times Cited: " + columns[0]
+					//				         + "\nExpected Citations: " + columns[1]
+					//				         + "\nYear: " + columns[2]
+					//				         + "\nSubject Area: " + columns[3]
+					//				         + "\nAuthors: " + columns[4]
+					//				         + "\nTitle: " + columns[5] + "\n\n");
+					// Get author list
+					try {
+						coauthorList = incites.parseAuthors(authors);
+						if (coauthorList.size() == 1) {
+							Author loneAuthor = coauthorList.get(0);
+							incites.getLoneAuthorList().add(loneAuthor);
+							coauthorList.add(loneAuthor);
+						}
+						// As soon as an infelicitous entry materializes
+						// , terminate parsing --> compromises entire file
+					} catch (UnableToParseAuthorException e) {
+						e.printStackTrace();
+						return;
+					}
+					// Set publication info
+					pub = new Publication(title, year, subjectArea, 
+							timesCited, expectedCitations, coauthorList);
+					incites.getPubList().add(pub);
+				} else if (columns.length == 5) {
+					incites.updateDefectiveRows();
+					// Get publication info
+					timesCited = columns[0].trim().isEmpty() 
+							? "0" : columns[0].trim();
+					expectedCitations = "0.00";
+					year = columns[1].trim().isEmpty() 
+							? "0" : columns[1].trim();
+					subjectArea = columns[2];
+					authors = columns[3];
+					title = columns[4];
+
+					try {
+						coauthorList = incites.parseAuthors(authors);
+						if (coauthorList.size() == 1) {
+							Author loneAuthor = coauthorList.get(0);
+							incites.getLoneAuthorList().add(loneAuthor);
+							coauthorList.add(loneAuthor);
+						}
+						// As soon as an erroneous entry materializes
+						// , terminate parsing --> compromises entire file
+					} catch (UnableToParseAuthorException e) {
+						e.printStackTrace();
+						return;
+					}
+					// Set publication info
+					pub = new Publication(title, year, subjectArea, 
+							timesCited, expectedCitations, coauthorList);
+					incites.getPubList().add(pub);
+
+					String info = "Times Cited: " + timesCited
+							+ "\nExpected Citations: " + expectedCitations
+							+ "\nYear: " + year
+							+ "\nSubject Area: " + subjectArea
+							+ "\nAuthors: " + authors 
+							+ "\nTitle: " + title + "\n\n";
+															
+				} else if (columns.length == 4) {
+					incites.updateDefectiveRows();
+					// Get publication info
+					timesCited = columns[0].trim().isEmpty() 
+							? "0" : columns[0].trim();
+					expectedCitations = "0.00";
+					year = columns[1].trim().isEmpty() 
+							? "0" : columns[1].trim();
+					subjectArea = "N/A";
+					authors = columns[2];
+					title = columns[3];
+
+					try {
+						coauthorList = incites.parseAuthors(authors);
+						if (coauthorList.size() == 1) {
+							Author loneAuthor = coauthorList.get(0);
+							incites.getLoneAuthorList().add(loneAuthor);
+							coauthorList.add(loneAuthor);
+						}
+						// As soon as an erroneous entry materializes
+						// , terminate parsing --> compromises entire file
+					} catch (UnableToParseAuthorException e) {
+						e.printStackTrace();
+						return;
+					}
+					// Set publication info
+					pub = new Publication(title, year, subjectArea, 
+							timesCited, expectedCitations, coauthorList);
+					incites.getPubList().add(pub);
+
+					String info = "Times Cited: " + timesCited
+							+ "\nExpected Citations: " + expectedCitations
+							+ "\nYear: " + year
+							+ "\nSubject Area: " + subjectArea
+							+ "\nAuthors: " + authors 
+							+ "\nTitle: " + title + "\n\n";
+										
+				} else {
+					incites.updateIgnoredRows();
+				}
+			}
+		}
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			if (name.equals("row")) {
+				row = "";
+			}
+			if(name.equals("c")) {
+				if (attributes.getValue("t") != null) {
+					isString = true;
+				}
+				id = "";
+			}
+		}
+	}
 	
 	/**
 	 * This exception is thrown when an author can't be parsed (i.e. 
@@ -66,79 +367,26 @@ public class Incites {
 	public static class UnableToParseAuthorException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}
-
+	
 	/**
-	 * Return true iff the provided line comes from an Incites data file
-	 * @param String line
+	 * Return true iff author is valid
+	 * @param Author author
 	 * @return boolean
 	 */
-	public static boolean checkIfValid(Scanner in) {
-		boolean isValid = false;
-		for (int i = 0; i < 5; i++) {
-			String line = in.nextLine().trim();
-			String[] contents = line.split("[\n\t]");
-			if (contents.length != 6) {
-				return false;
-			} else {
-				boolean hasTimesCited = false;
-				boolean hasExpectedCitations = false;
-				boolean hasPublicationYear = false;
-				boolean hasSubjectArea = false;
-				boolean hasAuthors = false;
-				boolean hasTitle = false;
-				String year = null;
-				String subjectArea = null;
-				String authors = null;
-				String title = null;
-				String timesCited = null;
-				String expectedCitations = "0.00";
-				List<Author> coauthorList = null;
-				Publication pub;
-				timesCited = contents[0].trim().isEmpty() ? "0" : contents[0].trim();
-				hasTimesCited = timesCited.matches("\\d+?") ? true : false;
-				expectedCitations = contents[1].trim().isEmpty() 
-						? "0.00" : contents[1].trim();
-				hasExpectedCitations = expectedCitations.matches
-						("(\\d+?)\\.?(\\d+?)") ? true : false;
-				year = contents[2].trim().isEmpty() ? "0" : contents[2].trim();
-				hasPublicationYear = year.matches("\\d+?") ? true : false;
-				subjectArea = contents[3];
-				hasSubjectArea = subjectArea.matches("[A-Z]+?") ? true : false;
-				authors = contents[4];
-				try {
-					coauthorList = Incites.parseAuthors(authors);
-					hasAuthors = true;
-				} catch (UnableToParseAuthorException e) {
-					hasAuthors = false;
-				}
-				// Difficult to identify an Incites specific title. Thus, true by default.
-				title = contents[5];
-				hasTitle = true;
-				// Consolidate
-				isValid = hasTimesCited && hasExpectedCitations 
-						&& hasPublicationYear && hasSubjectArea
-						&& hasAuthors && hasTitle;
-				if (isValid) {
-					pub = new Publication(title, year, subjectArea, timesCited, 
-							expectedCitations, coauthorList);
-					pubList.add(pub);
-				} else {
-					return ! isValid;
-				}
-			}
-		}
-		return ! isValid;
+	private static boolean checkIfAuthorValid(Author author) {
+		return ! (author.getFirstName().equalsIgnoreCase("N/A")
+			  && author.getLastName().equalsIgnoreCase("N/A"));
 	}
-
+	
 	/**
-	 * Get Incites checkbox
+	 * Get Incites radio button
 	 * @param null
-	 * @return JCheckBox incitesCheckBox
+	 * @return JRadioButton incitesRadioButton
 	 */
-	public static JCheckBox getIncitesCheckBox() {
-		return Incites.incitesCheckBox;
+	public static JRadioButton getIncitesRadioButton() {
+		return Incites.incitesRadioButton;
 	}
-
+	
 	/**
 	 * Get location map
 	 * @param null
@@ -163,555 +411,6 @@ public class Incites {
 		}
 		return Incites.locationMap;
 	}
-
-	/**
-	 * Parse data in TXT file and return an array containing
-	 * faculty attributes
-	 * @param File txtFile
-	 * @return Object[] {facultyName, facultySet}
-	 */
-	public static Object[] getTXTFacultyAttr(File txtFile) {	
-		HashSet<Author> facultySet = new HashSet<Author>();
-		String facultyName = "N/A";
-		try {
-			Scanner in = new Scanner(txtFile);
-			// Skip superfluous lines
-			in.nextLine();
-			in.nextLine();
-			facultySet = new HashSet<Author>();
-			String line = null;
-			String[] columns = null;
-			String[] names = new String[2];
-			String authorData = "";
-			// Add faculty members to hash-set
-			while (in.hasNext()) {
-				line = in.nextLine();
-				columns = line.split("\\t");
-				names[0] = Incites.matchName(columns[0]);
-				names[1] = Incites.matchName(columns[1]);
-				for (String name : names) {
-					authorData += name + ";";
-				}
-				facultySet.add(new Author(authorData, Category.FACULTY));
-				authorData = "";
-			}
-			facultyName = columns[columns.length - 1];
-			return new Object[] {facultyName, facultySet};
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			Cytoscape.notifyUser("Faculty file could not be found.\n" +
-					             "Faculty info will not be included" +
-					             " in final network.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Cytoscape.notifyUser("An error prevented the faculty file" +
-					             " from being loaded");
-		}
-		return new Object[] {facultyName, facultySet};
-	}
-
-	/**
-	 * Return all publications (as well as all associated author info) 
-	 * contained in text file.
-	 * Note that each publication serves as an edge and each author a node. 
-	 * Node info is embedded inside each edge.
-	 * @param File textFile
-	 * @return List pubList
-	 * @throws FileNotFoundException 
-	 */
-	public static List<Publication> getTXTPubList(File textFile) 
-			throws FileNotFoundException {
-		Scanner in = new Scanner(textFile);
-		String line;
-		String[] contents;
-		String year = null;
-		String subjectArea = null;
-		String authors = null;
-		String title = null;
-		String timesCited = null;
-		String expectedCitations = "0.00";
-		Publication pub;
-		boolean isValid = false;
-		List<Author> coauthorList = null;
-		Incites.pubList = new ArrayList<Publication>();
-		// Verify that file is in fact derived from Incites
-		if (! in.hasNext()) {
-			isValid = false;
-		} else {
-			isValid = Incites.checkIfValid(in);
-		}
-		// Read Incites data file
-		if (isValid) {
-			while (in.hasNext()) {
-				line = in.nextLine().trim();
-				contents = line.split("[\t\n]");
-				if (contents.length == 6) {
-					// Get publication info
-					timesCited = contents[0].trim().isEmpty() 
-							? "0" : contents[0].trim();
-					expectedCitations = contents[1].trim().isEmpty() 
-							? "0.00" : contents[1].trim();
-					year = contents[2].trim().isEmpty() 
-							? "0" : contents[2].trim();
-					subjectArea = contents[3];
-					authors = contents[4];
-					title = contents[5];
-					// Get author list
-					try {
-						coauthorList = Incites.parseAuthors(authors);
-					// As soon as an infelicitous entry materializes
-					// , terminate parsing --> compromises entire file
-					} catch (UnableToParseAuthorException e) {
-						e.printStackTrace();
-						return null;
-					}
-					// Set publication info
-					pub = new Publication(title, year, subjectArea, 
-							timesCited, expectedCitations, coauthorList);
-					//Add publication to overall list
-					Incites.pubList.add(pub);
-				} else {
-//					Cytoscape.notifyUser("The columns in this file do not align properly. This will compromise network accuracy.");
-					/**
-					 * DEAL WITH THIS PLS
-					 */
-//					System.out.println("The columns in this file do not align properly. "
-//					           + "This will compromise network accuracy.");
-				}
-			}
-			return Incites.pubList;
-		}
-		// If file is invalid, null will be returned
-		return null;
-	}
-
-//	/**
-//	 * Parse data in XLSX file and return an array containing
-//	 * faculty attributes
-//	 * @param File xlsxFile
-//	 * @return Object[] {facultyName, facultySet}
-//	 */
-//	public static Object[] getXLSXFacultySet(File xlsxFile) {	
-//		HashSet<Author> facultySet = null;
-//		String facultyName = "";
-//		try {
-//			FileInputStream fileInputStream = new FileInputStream(xlsxFile);
-//
-//			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
-//			XSSFSheet sheet = workbook.getSheetAt(3); //4th sheet from workbook
-//
-//			Iterator<Row> rowIterator = sheet.iterator();
-//			Iterator<Cell> cellIterator = null;
-//
-//			int j = 0;
-//			String authorAttr = "", cellValue = "";
-//			facultySet = new HashSet<Author>();
-//
-//			// Skip the first two rows
-//			Row row = rowIterator.next();
-//			rowIterator.next();
-//
-//			Cell cell = null;
-//
-//			// Get faculty data
-//			while(rowIterator.hasNext()) {
-//				row = rowIterator.next();
-//				cellIterator = row.cellIterator();
-//				j = 0;
-//				while(j < 2) {
-//					cell = cellIterator.next();
-//					cellValue = cell.getStringCellValue();
-//					if (cellValue.trim().isEmpty()) {
-//						return new Object[] {facultyName, facultySet};
-//					}
-//					authorAttr += cell.getStringCellValue().trim() + ";";
-//					j++;
-//				}
-//				facultySet.add(new Author(authorAttr, Category.FACULTY));
-//				authorAttr = "";
-//			}
-//
-//			// Get faculty name
-//			cell = cellIterator.next();
-//			facultyName = cell.getStringCellValue();
-//
-//			fileInputStream.close();
-//
-//		} catch (FileNotFoundException e) {
-//			Cytoscape.notifyUser("File cannot be located. Please verify that" +
-//		             " spreadsheet file has been loaded correctly.");
-//		} catch (IOException e) {
-//			Cytoscape.notifyUser("Cytoscape is unable to read the spreadsheet file." +
-//				     "This is an internal issue. Peruse FEI for troubleshooting tips.");
-//		}
-//
-//		return new Object[] {facultyName, facultySet};
-//	}
-	
-	/**
-	 * Handler for faculty spreadsheet (SAX parser)
-	 * @author Victor Kofia
-	 */
-	private static class FacultySheetHandler extends DefaultHandler {
-		private SharedStringsTable sst = null;
-		private String cell = "", row = "", id = "";
-		private FacultySheetHandler(SharedStringsTable sst) {
-			this.sst = sst;
-		}
-		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {
-			if (name.equals("row")) {
-				row = "";
-			}
-			if(name.equals("v")) {
-				id = "";
-			}
-		}
-		public void endElement(String uri, String localName, String name)
-				throws SAXException {
-			if(name.equals("v")) {
-				cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
-				row += Incites.parseFacultyName(cell.trim()) + ";";
-			}
-			if (name.equals("row")) {
-				if (! row.trim().isEmpty()) {
-					Incites.getFacultySet().add(new Author(row, Category.FACULTY));
-					Incites.setFacultyName(cell);
-				}
-			}
-		}
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
-			id += new String(ch, start, length);
-		}
-	}
-	
-	/**
-	 * Handler for publications spreadsheet
-	 * @author Victor Kofia
-	 */
-	private static class PubSheetHandler extends DefaultHandler {
-		private SharedStringsTable sst = null;
-		private String id = "", cell = "", row = "";
-		private String[] columns = null;
-		private boolean isString = false;
-		String year = null, subjectArea = null, authors = null;
-		String title, timesCited = null, expectedCitations = "0.00";
-		List<Author> coauthorList = null;
-		Publication pub;
-		private PubSheetHandler(SharedStringsTable sst) {
-			this.sst = sst;
-		}
-		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {
-			if (name.equals("row")) {
-				row = "";
-			}
-			if(name.equals("c")) {
-				if (attributes.getValue("t") != null) {
-					isString = true;
-				}
-				id = "";
-			}
-		}
-		public void endElement(String uri, String localName, String name)
-				throws SAXException {
-			if(name.equals("v")) {
-				if (isString) {
-					cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
-					isString = false;
-				} else {
-					cell = id;
-				}
-				row += cell.trim() + "\t";
-			}
-			if (name.equals("row") && ! row.trim().isEmpty()) {
-				columns = row.split("\t");
-				if (columns.length == 6) {
-					/**
-					 * PLEASE THINK OF A MORE ELEGANT SOLUTION TO THIS
-					 */
-					if (! columns[0].equalsIgnoreCase("Times Cited")) {
-						// Get publication info
-						timesCited = columns[0].trim().isEmpty() 
-								? "0" : columns[0].trim();
-						expectedCitations = columns[1].trim().isEmpty() 
-								? "0.00" : columns[1].trim();
-						year = columns[2].trim().isEmpty() 
-								? "0" : columns[2].trim();
-						subjectArea = columns[3];
-						authors = columns[4];
-						title = columns[5];
-//						System.out.println("Times Cited: " + columns[0]
-//				         + "\nExpected Citations: " + columns[1]
-//				         + "\nYear: " + columns[2]
-//				         + "\nSubject Area: " + columns[3]
-//				         + "\nAuthors: " + columns[4]
-//				         + "\nTitle: " + columns[5] + "\n\n");
-						// Get author list
-						try {
-							coauthorList = Incites.parseAuthors(authors);
-						// As soon as an infelicitous entry materializes
-						// , terminate parsing --> compromises entire file
-						} catch (UnableToParseAuthorException e) {
-							e.printStackTrace();
-							return;
-						}
-						// Set publication info
-						pub = new Publication(title, year, subjectArea, 
-								timesCited, expectedCitations, coauthorList);
-						Incites.getPubList().add(pub);
-					}
-				} else {
-//					Cytoscape.notifyUser("The columns in this file do not align properly. "
-//							           + "This will compromise network accuracy.");
-					/**
-					 * DEAL WITH THIS PLS
-					 */
-//					System.out.println("The columns in this file do not align properly. "
-//					           + "This will compromise network accuracy.");
-				}
-			}
-		}
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
-			id += new String(ch, start, length);
-		}
-	}
-
-	
-	/**
-	 * Get XLSX sheet parser
-	 * @param SharedStringsTable sst
-	 * @param int sheet
-	 * @return XMLReader parser
-	 * @throws SAXException
-	 */
-	public static XMLReader fetchSheetParser(SharedStringsTable sst, 
-			                                 int sheet) throws SAXException {
-		XMLReader parser = XMLReaderFactory.createXMLReader();
-		switch (sheet) {
-			// Sheet#3: publication data
-			case 3:
-				parser.setContentHandler(new PubSheetHandler(sst));
-				break;
-			// Sheet#4: faculty data
-			case 4:
-				parser.setContentHandler(new FacultySheetHandler(sst));
-				break;
-		}
-		return parser;
-	}
-
-	
-	/**
-	 * Get all publications (as well as all associated author info) 
-	 * contained in xlsx file.
-	 * Note that each publication serves as an edge and each author a node. 
-	 * Node info is embedded inside each edge.
-	 * <br> Faculty info not present
-	 * @param File file
-	 * @return ArrayList pubList
-	 */
-	public static ArrayList<Publication> getXLSXPubList(File file) {
-		try {
-			OPCPackage pkg = OPCPackage.open(file.getAbsolutePath());
-			XSSFReader r = new XSSFReader( pkg );
-			SharedStringsTable sst = r.getSharedStringsTable();
-			// Publication data is found in sheet#3 of spreadsheet
-			XMLReader parser = fetchSheetParser(sst, 3);
-			InputStream sheet = r.getSheet("rId3");
-			InputSource sheetSource = new InputSource(sheet);
-			parser.parse(sheetSource);
-			sheet.close();
-		// Users do not have to be notified about these exceptions
-		// but printed stack traces are useful (i.e. debugging)
-		} catch (IOException e) {
-			e.printStackTrace();
-			Incites.setPubList(null);
-		} catch (SAXException e) {
-			e.printStackTrace();
-			Incites.setPubList(null);
-		} catch (InvalidFormatException e) {
-			e.printStackTrace();
-			Incites.setPubList(null);
-		} catch (OpenXML4JException e) {
-			e.printStackTrace();
-			Incites.setPubList(null);
-		}
-		return Incites.getPubList();
-	}
-	
-	/**
-	 * Parse data in XLSX file and return an array containing
-	 * faculty attributes
-	 * @param File xlsxFile
-	 * @return Object[] {facultyName, facultySet}
-	 */
-	public static Object[] getXLSXFacultyAttr(File xlsxFile) {
-		try {
-			OPCPackage pkg = OPCPackage.open(xlsxFile.getAbsolutePath());
-			XSSFReader r = new XSSFReader( pkg );
-			SharedStringsTable sst = r.getSharedStringsTable();
-			// Faculty data found in sheet#4 of spreadsheet
-			XMLReader parser = fetchSheetParser(sst, 4);
-			InputStream sheet = r.getSheet("rId4");
-			InputSource sheetSource = new InputSource(sheet);
-			parser.parse(sheetSource);
-			sheet.close();
-		// Users do not have to be notified about these errors
-		// but printed stack traces are useful (i.e. debugging)
-		} catch (IOException e) {
-			e.printStackTrace();
-			Incites.setFacultyName("N/A");
-			Incites.setFacultySet(new HashSet<Author>());
-		} catch (OpenXML4JException e) {
-			e.printStackTrace();
-			Incites.setFacultyName("N/A");
-			Incites.setFacultySet(new HashSet<Author>());
-		} catch (SAXException e) {
-			e.printStackTrace();
-			Incites.setFacultyName("N/A");
-			Incites.setFacultySet(new HashSet<Author>());
-		}
-		return new Object[] {Incites.getFacultyName(), Incites.getFacultySet()};
-	}
-
-//	/**
-//	 * Load all publications (as well as all associated author info) 
-//	 * contained in xlsx file.
-//	 * Note that each publication serves as an edge and each author a node. 
-//	 * Node info is embedded inside each edge.
-//	 * <br> Faculty info not present
-//	 * @param File file
-//	 * @return null
-//	 */
-//	public static ArrayList<Publication> loadXLSXPubList(File file) {
-//		ArrayList<Publication> pubList = null;
-//		try {
-//			FileInputStream fileInputStream = new FileInputStream(file);
-//
-//			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
-//			XSSFSheet sheet = workbook.getSheetAt(2); //3rd sheet from workbook
-//			
-//			Iterator<Row> rowIterator = sheet.iterator();
-//			Iterator<Cell> cellIterator = null;
-//
-//			int j = 0;
-//			Publication pub = null;
-//			String[] pubAttr = new String[7];
-//			pubList = new ArrayList<Publication>();
-//
-//			Row row = rowIterator.next();
-//
-//			// Get publication and author data
-//			while(rowIterator.hasNext()) {
-//				row = rowIterator.next();
-//				//For each row, iterate through all the columns
-//				cellIterator = row.cellIterator();
-//				j = 0;
-//				while(cellIterator.hasNext()) {
-//					Cell cell = cellIterator.next();
-//					switch(cell.getCellType()) {
-//					case Cell.CELL_TYPE_NUMERIC:
-//						pubAttr[j] = String.format("%.2f%n", 
-//								 cell.getNumericCellValue());
-//						break;
-//					case Cell.CELL_TYPE_STRING:
-//						pubAttr[j] = cell.getStringCellValue();
-//						break;
-//					}
-//					j++;
-//				}
-//				String title = pubAttr[6];
-//				String year = Incites.toFloor(pubAttr[2]);
-//				String subjectArea = pubAttr[3];
-//				String timesCited = Incites.toFloor(pubAttr[0]);
-//				String expectedCitations = pubAttr[1];
-//				ArrayList<Author> authors = parseAuthors(pubAttr[4]);
-//				
-//				// If author list has a single author, add a duplicate
-//				// in order to ensure consistency
-//				// i.e. a consortium has to contain at minimum two authors
-//				if (authors.size() == 1) {
-//					authors.add(authors.get(0));
-//				}
-//				
-//				pub = new Publication(title, year, subjectArea, 
-//						timesCited, expectedCitations, authors);
-//				pubList.add(pub);
-//			}
-//			
-//			fileInputStream.close();
-//			
-//		} catch (FileNotFoundException e) {
-//			Cytoscape.notifyUser("File cannot be located. Please verify that" +
-//					             " spreadsheet file has been loaded correctly.");
-//		} catch (IOException e) {
-//			Cytoscape.notifyUser("Cytoscape is unable to read the spreadsheet file." +
-//					     "This is an internal issue. Peruse FEI for troubleshooting tips.");
-//		} catch (UnableToParseAuthorException e) {
-//			Cytoscape.notifyUser("File contains corrupt author data. Please use a valid" +
-//					"Incites spreadsheet.");
-//		}
-//		
-//		return pubList;
-//
-//	}
-
-	/**
-	 * Match author's canonical name (i.e. matches 'Bubbles' in string 'Bubbles PK.')
-	 * @param String rawLastName
-	 * @return String lastName
-	 */
-	private static String matchName(String rawName) {
-		Pattern pattern = Pattern.compile("^(.+?)\\s");
-		Matcher matcher = pattern.matcher(rawName);
-		if (matcher.find()) {
-			return matcher.group(1);
-		}
-		return rawName;
-	}
-
-	/**
-	 * Parse raw author text and return array list containing all authors
-	 * and their associated info
-	 * @param String rawAuthorText
-	 * @return ArrayList authorList
-	 */
-	public static ArrayList<Author> parseAuthors(String rawAuthorText) 
-			throws UnableToParseAuthorException {
-		String[] authors = rawAuthorText.split(";");
-		if (authors.length == 0) {
-			throw new UnableToParseAuthorException();
-		}
-		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
-		Author author = null;
-		for (String authorText : authors) {
-			author = new Author(authorText, Category.INCITES);
-			if (! pubAuthorList.contains(author) && Incites.checkIfAuthorValid(author)) {
-				pubAuthorList.add(author);
-			} else {
-				/**
-				 * KEEP RECORDS OF ALL AUTHORS THAT DIDN'T MAKE THE CUT
-				 * INFO WILL BE SHOWN TO USER UPON NETWORK COMPLETION
-				 */
-				System.out.println("\n\n" + author + "\n\n");
-			}
-		}
-		return pubAuthorList;
-	}
-	
-	/**
-	 * Return true iff author is valid
-	 * @param Author author
-	 * @return boolean
-	 */
-	private static boolean checkIfAuthorValid(Author author) {
-		return ! (author.getFirstName().equalsIgnoreCase("N/A")
-			  && author.getLastName().equalsIgnoreCase("N/A"));
-	}
 	
 	/**
 	 * Parse faculty name
@@ -726,14 +425,14 @@ public class Incites {
 		}
 		return "N/A";
 	}
-
+	
 	/**
 	 * Parse author's first name
 	 * @param String incitesText
 	 * @return String firstName
 	 */
 	public static String parseFirstName(String incitesText) {
-		Pattern firstNamePattern = Pattern.compile(",(.+?)(\\s|\\.|$)");
+		Pattern firstNamePattern = Pattern.compile(",(.+?)(\\s|\\.|$|\\()");
 		Matcher firstNameMatcher = firstNamePattern.matcher(incitesText.trim());
 		if (firstNameMatcher.find()) {
 			return firstNameMatcher.group(1).trim();
@@ -741,7 +440,7 @@ public class Incites {
 		System.out.println("CHECK: " + incitesText);
 		return "N/A";
 	}
-
+	
 	/**
 	 * Parse author's institution
 	 * @param String incitesText
@@ -755,7 +454,6 @@ public class Incites {
 		}
 		return "N/A";
 	}
-
 	/**
 	 * Parse author's last-name
 	 * @param String incitesText
@@ -785,12 +483,12 @@ public class Incites {
 	}
 
 	/**
-	 * Set Incites checkbox
-	 * @param JCheckBox incitesCheckBox
+	 * Set Incites radio button
+	 * @param JRadioButton incitesRadioButton
 	 * @return null
 	 */
-	public static void setIncitesCheckBox(JCheckBox incitesCheckBox) {
-		Incites.incitesCheckBox = incitesCheckBox;
+	public static void setIncitesRadioButton(JRadioButton incitesRadioButton) {
+		Incites.incitesRadioButton = incitesRadioButton;
 	}
 
 	/**
@@ -799,42 +497,25 @@ public class Incites {
 	 * @return null
 	 */
 	public static void setLocationMap(Map<String, String> locationMap) {
-		Incites.locationMap = locationMap;
+	Incites.locationMap = locationMap;
 	}
 
 	/**
-	 * Return the floor of the number contained in string
-	 * @param String num
-	 * @return String floor
-	 */
-	public static String toFloor(String floor) {
-		Pattern pattern = Pattern.compile("(\\d+?)\\.");
-		Matcher matcher = pattern.matcher(floor);
-		if (matcher.find()) {
-			return matcher.group(1);
-		}
-		return "N/A";
-	}
-
-	/**
-	 * Get faculty set
+	 * Get the # of defective rows
 	 * @param null
-	 * @return HashSet facultySet
+	 * @return int defectiveRows
 	 */
-	public static HashSet<Author> getFacultySet() {
-		if (Incites.facultySet == null) {
-			Incites.setFacultySet(new HashSet<Author>());
-		}
-		return Incites.facultySet;
+	public int getDefectiveRows() {
+		return this.defectiveRows;
 	}
 
 	/**
-	 * Set 'faculty set'
-	 * @param HashSet facultySet
-	 * @return null
+	 * Get list of faculty attributes
+	 * @param null
+	 * @return Object[] {faculty name, faculty set}
 	 */
-	public static void setFacultySet(HashSet<Author> facultySet) {
-		Incites.facultySet = facultySet;
+	public Object[] getFaculty() {
+		return new Object[] {this.getFacultyName(), this.getFacultySet()};
 	}
 
 	/**
@@ -842,17 +523,50 @@ public class Incites {
 	 * @param null
 	 * @return String facultyName
 	 */
-	public static String getFacultyName() {
-		return facultyName;
+	public String getFacultyName() {
+		return this.facultyName;
 	}
 
 	/**
-	 * Set faculty name
-	 * @param String facultyName
-	 * @return null
+	 * Get faculty set
+	 * @param null
+	 * @return HashSet facultySet
 	 */
-	public static void setFacultyName(String facultyName) {
-		Incites.facultyName = facultyName;
+	public HashSet<Author> getFacultySet() {
+		if (this.facultySet == null) {
+			this.setFacultySet(new HashSet<Author>());
+		}
+		return this.facultySet;
+	}
+
+	/**
+	 * Get identified faculty list
+	 * @param null
+	 * @return ArrayList identifiedFacultyList
+	 */
+	public ArrayList<Author> getIdentifiedFacultyList() {
+		return this.identifiedFacultyList;
+	}
+
+	/**
+	 * Get the # of ignored rows
+	 * @param null
+	 * @return int ignoredRows
+	 */
+	public int getIgnoredRows() {
+		return ignoredRows;
+	}
+
+	/**
+	 * Get lone author list
+	 * @param null
+	 * @return ArrayList loneAuthorList
+	 */
+	public ArrayList<Author> getLoneAuthorList() {
+		if (this.loneAuthorList == null) {
+			this.setLoneAuthorList(new ArrayList<Author>());
+		}
+		return loneAuthorList;
 	}
 	
 	/**
@@ -860,19 +574,197 @@ public class Incites {
 	 * @param null
 	 * @return ArrayList pubList
 	 */
-	private static ArrayList<Publication> getPubList() {
-		if (Incites.pubList == null) {
-			Incites.setPubList(new ArrayList<Publication>());
+	public ArrayList<Publication> getPubList() {
+		if (this.pubList == null) {
+			this.setPubList(new ArrayList<Publication>());
 		}
-		return Incites.pubList;
+		return this.pubList;
+	}
+
+	/**
+	 * Get unidentified faculty list
+	 * @return ArrayList unidentifiedFacultyList
+	 */
+	public ArrayList<Author> getUnidentifiedFacultyList() {
+		return unidentifiedFacultyList;
+	}
+
+	/**
+	 * Load all faculty contained in data file
+	 * @param File xlsxFile
+	 * @return null
+	 */
+	private void loadFaculty(File xlsxFile) {
+		try {
+			OPCPackage pkg = OPCPackage.open(xlsxFile.getAbsolutePath());
+			XSSFReader r = new XSSFReader( pkg );
+			SharedStringsTable sst = r.getSharedStringsTable();
+			// Faculty data found in sheet#4 of spreadsheet
+			XMLReader parser = fetchSheetParser(sst, 4);
+			InputStream sheet = r.getSheet("rId4");
+			InputSource sheetSource = new InputSource(sheet);
+			parser.parse(sheetSource);
+			sheet.close();
+		// Users do not have to be notified about these errors
+		// but printed stack traces are useful (i.e. debugging)
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.setFacultyName("N/A");
+			this.setFacultySet(new HashSet<Author>());
+		} catch (OpenXML4JException e) {
+			e.printStackTrace();
+			this.setFacultyName("N/A");
+			this.setFacultySet(new HashSet<Author>());
+		} catch (SAXException e) {
+			e.printStackTrace();
+			this.setFacultyName("N/A");
+			this.setFacultySet(new HashSet<Author>());
+		}
 	}
 	
+	/**
+	 * Load all publications (as well as all associated author info) 
+	 * contained in data file.
+	 * Note that each publication serves as an edge and each author a node. 
+	 * Node info is embedded inside each edge.
+	 * @param File xlsxFile
+	 * @return null
+	 */
+	private void loadPubList(File xlsxFile) {
+		try {
+			OPCPackage pkg = OPCPackage.open(xlsxFile.getAbsolutePath());
+			XSSFReader r = new XSSFReader( pkg );
+			SharedStringsTable sst = r.getSharedStringsTable();
+			// Publication data is found in sheet#3 of spreadsheet
+			XMLReader parser = fetchSheetParser(sst, 3);
+			InputStream sheet = r.getSheet("rId3");
+			InputSource sheetSource = new InputSource(sheet);
+			parser.parse(sheetSource);
+			sheet.close();
+		// Users do not have to be notified about these exceptions
+		// but printed stack traces are useful (i.e. debugging)
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.setPubList(null);
+		} catch (SAXException e) {
+			e.printStackTrace();
+			this.setPubList(null);
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+			this.setPubList(null);
+		} catch (OpenXML4JException e) {
+			e.printStackTrace();
+			this.setPubList(null);
+		}
+	}
+	
+	/**
+	 * Parse raw author text and return array list containing all authors
+	 * and their associated info
+	 * @param String rawAuthorText
+	 * @return ArrayList authorList
+	 */
+	private ArrayList<Author> parseAuthors(String rawAuthorText) 
+			throws UnableToParseAuthorException {
+		String[] authors = rawAuthorText.split(";");
+		if (authors.length == 0) {
+			throw new UnableToParseAuthorException();
+		}
+		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
+		Author author = null;
+		HashSet facultySet = this.getFacultySet();
+		String facultyName = this.getFacultyName();
+		for (String authorText : authors) {
+			author = new Author(authorText.trim(), Category.INCITES);
+			if (Incites.checkIfAuthorValid(author)) {
+				if (! pubAuthorList.contains(author)) {
+					if (facultySet.contains(author)) {
+						author.setFaculty(facultyName);
+					}
+					pubAuthorList.add(author);
+				}
+			} else {
+				// Authors whose first & last names could not be
+				// resolved properly for one reason or another (mostly formatting issues)
+				
+				// WIP (Work in Progress)
+				System.out.println(author);
+			}
+		}
+		return pubAuthorList;
+	}
+
+	/**
+	 * Set faculty name
+	 * @param String facultyName
+	 * @return null
+	 */
+	private void setFacultyName(String facultyName) {
+		this.facultyName = facultyName;
+	}
+
+	/**
+	 * Set 'faculty set'
+	 * @param HashSet facultySet
+	 * @return null
+	 */
+	private void setFacultySet(HashSet<Author> facultySet) {
+		this.facultySet = facultySet;
+	}
+
+	/**
+	 * Set identified faculty list
+	 * @param ArrayList identifiedFaculty
+	 * @return null
+	 */
+	public void setIdentifiedFacultyList(ArrayList<Author> identifiedFacultyList) {
+		this.identifiedFacultyList = identifiedFacultyList;
+	}
+
+	/**
+	 * Set lone author list
+	 * @param ArrayList loneAuthorList
+	 * @return null
+	 */
+	public void setLoneAuthorList(ArrayList<Author> loneAuthorList) {
+		this.loneAuthorList = loneAuthorList;
+	}
+
 	/**
 	 * Set publication list
 	 * @param ArrayList pubList
 	 * @return null
 	 */
-	private static void setPubList(ArrayList<Publication> pubList) {
-		Incites.pubList = pubList;
+	private void setPubList(ArrayList<Publication> pubList) {
+		this.pubList = pubList;
 	}
+
+	/**
+	 * Set unidentified faculty list
+	 * @param ArrayList unidentifiedFacultyList
+	 * @return null
+	 */
+	public void setUnidentifiedFacultyList(ArrayList<Author> unidentifiedFacultyList) {
+		this.unidentifiedFacultyList = unidentifiedFacultyList;
+	}
+
+	/**
+	 * Update the number of defective columns (add 1)
+	 * @param null
+	 * @return null
+	 */
+	private void updateDefectiveRows() {
+		this.defectiveRows++;
+	}
+
+	/**
+	 * Update the # of ignored rows (add 1)
+	 * @param int ignoredRows
+	 * @return null
+	 */
+	private void updateIgnoredRows() {
+		this.ignoredRows++;
+	}
+
+	
 }

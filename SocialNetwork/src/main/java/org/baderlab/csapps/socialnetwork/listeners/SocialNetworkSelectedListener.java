@@ -9,10 +9,14 @@ import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.model.CyNetwork;
 
 public class SocialNetworkSelectedListener implements SetSelectedNetworksListener {
+	/**
+	 * Updates UI
+	 */
 	public void handleEvent(SetSelectedNetworksEvent event) {
 		String name = null;
 		for (CyNetwork network : event.getNetworks()) {
 			name = Cytoscape.getNetworkName(network);
+			// Update UI iff a social network has been selected
 			if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
 				UserPanel.addNetworkVisualStyle(name);
 				SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);

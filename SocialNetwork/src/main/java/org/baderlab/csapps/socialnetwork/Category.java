@@ -257,8 +257,8 @@ public class Category {
 	public static TreeMap<String, Object> constructIncitesAttrMap(Author author) {
 		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
 		String lastName = author.getLastName();
-		String firstInitial = author.getFirstInitial();
-		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
+		String firstName = author.getFirstName();
+		nodeAttrMap.put("Label", firstName + "_" + lastName);
 		nodeAttrMap.put("Last Name", lastName);
 		nodeAttrMap.put("First Name", author.getFirstName());
 		nodeAttrMap.put("Times Cited", author.getTimesCited());

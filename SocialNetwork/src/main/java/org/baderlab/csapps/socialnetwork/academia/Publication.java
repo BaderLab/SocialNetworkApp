@@ -50,8 +50,9 @@ public class Publication extends AbstractEdge {
 	 * @param List coauthorList
 	 * @return null
 	 */
-	public Publication(String title, String pubDate, String journal, String timesCited, 
-			           String expectedCitations, List<Author> coauthorList) {
+	public Publication(String title, String pubDate, String journal, 
+			           String timesCited, String expectedCitations, 
+			           List<Author> coauthorList) {
 		this.pubDate = pubDate;
 		this.title = title;
 		this.journal = journal;
@@ -200,7 +201,7 @@ public class Publication extends AbstractEdge {
 	/**
 	 * Return a string representation of the publication in the format:
 	 * <br>Title: <i>title</i>
-	 * <br>PubDate: <i>pubdate</i>
+	 * <br>Pub-Date: <i>pubdate</i>
 	 * <br>Authors: <i>author</i>
 	 * @param null
 	 * @return String publication

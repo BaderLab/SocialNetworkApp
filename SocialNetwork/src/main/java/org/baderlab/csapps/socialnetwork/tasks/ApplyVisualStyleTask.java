@@ -151,6 +151,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyEdgeWidth(VisualStyle visualStyle) {
+		System.out.println(Cytoscape.getCurrentlySelectedSocialNetwork().getNetworkName());
 		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.EDGE_WIDTH);
@@ -233,8 +234,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		Map<String, HashMap<String, NodeShape>> nodeShapeMap = (Map<String, HashMap<String, NodeShape>>) tempVar[0];
 		for (Entry<String, HashMap<String, NodeShape>> colorMapEntry : nodeShapeMap.entrySet()) {
 			String colName = colorMapEntry.getKey();
-			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction
-                    (colName, String.class, BasicVisualLexicon.NODE_SHAPE);
+			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef
+					.createVisualMappingFunction(colName, String.class, BasicVisualLexicon.NODE_SHAPE);
 			for (Entry<String, NodeShape> attrMapEntry : colorMapEntry.getValue().entrySet()) {
 				mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
 			}
@@ -260,7 +261,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
                                        .getVisualStyleMap()
                                        .get(BasicVisualLexicon.EDGE_WIDTH);
-        // BRVs are used to set limits on edge transparency (min edge transparency = 100; max edge transparency = 300)
+        // BRVs are used to set limits on edge transparency 
+		// (min edge transparency = 100; max edge transparency = 300)
         BoundaryRangeValues bv0 = new BoundaryRangeValues(100, 100, 100);
         BoundaryRangeValues bv1 = new BoundaryRangeValues(300, 300, 300);
 		// Adjust handle position

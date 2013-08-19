@@ -10,7 +10,7 @@ import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 
 /**
- * A co-publication
+ * A co-publication. Used primarily in Academia networks.
  * @author Victor Kofia
  */
 public class Copublications extends AbstractEdge {
@@ -53,7 +53,7 @@ public class Copublications extends AbstractEdge {
 	}
  	
 	/**
-	 * Create a new co-publications tracker for consortium.
+	 * Create new Copublications tracker
 	 *@param Consortium consortium
 	 *@param Publication publication
 	 *@return null
@@ -107,7 +107,7 @@ public class Copublications extends AbstractEdge {
 	}
 
 	/**
-	 * NON-FUNCTIONAL ATAVISM. DO NOT USE.
+	 * NON-FUNCTIONAL. DO NOT USE.
 	 * @param null
 	 * @return null
 	 */

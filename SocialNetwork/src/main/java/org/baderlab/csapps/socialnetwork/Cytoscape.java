@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -41,7 +40,6 @@ import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
  * @author Victor Kofia
  */
 public class Cytoscape {
-	
 	/**
 	 * A reference to the 'apply visual style' task factory
 	 */
@@ -162,7 +160,7 @@ public class Cytoscape {
 		}
 		// Change mouse cursor
 		Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		// Initialize boilerplate variables
+		// Initialize variables
 		List<? extends Publication> pubList = null;
 		Object[] facultyAttr = null;
 		HashSet<Author> facultySet = null;
@@ -170,48 +168,24 @@ public class Cytoscape {
 		SocialNetwork socialNetwork = null;
 		String facultyName = null;
 		// Create network out of Incites data
-		if (Incites.getIncitesCheckBox().isSelected()) {
+		if (Incites.getIncitesRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
 			// Load data from text file
-			if (extension.trim().equalsIgnoreCase("txt")) {
-				pubList = Incites.getTXTPubList(networkFile);
-				// Notify user that file type is invalid
-				if (pubList == null) {
-					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Cytoscape.notifyUser("Invalid file\nPlease load a valid Incites data file");
-					return;
+			if (extension.trim().equalsIgnoreCase("xlsx")) {
+				socialNetwork = new SocialNetwork(Category.INCITES);
+				Incites incites = new Incites(networkFile);
+				if (incites.getIgnoredRows() >= 1) {
+					Cytoscape.notifyUser("Some rows could not be parsed.");
 				}
-				Object[] options = { "Yes", "No" };
-				// Ask user about faculty data
-				// NOTE: Incites network-data files lack faculty information
-				int userAction = JOptionPane.showOptionDialog(null, 
-						"You are loading this network from a text file.\n" +
-								"To specify faculty information you will need to" +
-								" provide an extra data file.\n" +
-								"Do you want to load the faculty data file now?", 
-								"Faculty Data Missing",
-								JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-								null, options, options[0]);
-				if (userAction == 0) {
-					JFileChooser chooser = new JFileChooser();
-					chooser.setCurrentDirectory(new File(""));
-					chooser.setDialogTitle("Select Faculty File");
-					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					int check = chooser.showDialog(null, "OK");
-					// Load faculty data
-					if (check == JFileChooser.APPROVE_OPTION) {
-						facultyAttr = Incites.getTXTFacultyAttr(chooser.getSelectedFile());
-					} else {
-						facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
-					}
-				} else if (userAction == 1) {
-					facultyAttr = new Object[] {"N/A", new HashSet<Author>()};
+				if (incites.getIdentifiedFacultyList().size() == 0) {
+					Cytoscape.notifyUser("Unable to identify faculty" 
+							          +  "\nPlease verify that Incites data file is valid");
 				}
-			// Load data from excel spreadsheet
-			} else if (extension.trim().equalsIgnoreCase("xlsx")) {
-				pubList = Incites.getXLSXPubList(networkFile);
-				// Get faculty set
-				facultyAttr = Incites.getXLSXFacultyAttr(networkFile);
+				socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
+				socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
+				pubList = incites.getPubList();
+				// Get faculty attributes
+				facultyAttr = incites.getFaculty();
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					Cytoscape.notifyUser("Invalid file\nThis Incites file is corrupt.");
@@ -226,14 +200,14 @@ public class Cytoscape {
 			}
 			facultyName = (String) facultyAttr[0];
 			facultySet = (HashSet<Author>) facultyAttr[1];
-			// Add faculty name to social network map
-			socialNetwork = new SocialNetwork(Category.INCITES);
+			// Add info to social network map(s)
 			socialNetwork.getAttrMap().put("Faculty Name", facultyName);
 		// Create network out of Scopus data
-		} else if (Scopus.getScopusCheckBox().isSelected()) {
+		} else if (Scopus.getScopusRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
+			Scopus scopus = new Scopus();
 			if (extension.trim().equalsIgnoreCase("csv")) {
-				pubList = Scopus.getScopusPubList(networkFile);
+				pubList = scopus.getScopusPubList(networkFile);
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					return;
@@ -246,8 +220,10 @@ public class Cytoscape {
 				return;
 			}
 		}
+		// Create interaction
+		Interaction interaction = new Interaction(pubList, Category.ACADEMIA);
 		// Create map
-		Map<Consortium, ArrayList<AbstractEdge>> map = Interaction.getAcademiaMap(pubList, facultyName, facultySet);
+		Map<Consortium, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
 		if (map.size() == 0) {
 			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
@@ -289,20 +265,18 @@ public class Cytoscape {
 			return;
 		}
 		Map<Consortium, ArrayList<AbstractEdge>> map = null;
+		Interaction interaction = null;
 		switch (category) {
 			case Category.ACADEMIA:
-				// Create new map using results
-				map = Interaction.getAcademiaMap(results, null, null);
-				/**
-				 * TEMPORARY
-				 */
 				// Change category (to Pubmed)
 				category = Category.PUBMED;
+				interaction = new Interaction(results, category);
+				// Create new map using results
+				map = interaction.getAbstractMap();
 				break;
 		}
 		Cytoscape.setNetworkName(searchTerm);
-		Cytoscape.getSocialNetworkMap().put(searchTerm, 
-				new SocialNetwork(category));
+		Cytoscape.getSocialNetworkMap().put(searchTerm, new SocialNetwork(category));
 		// Transfer map to Cytoscape's map variable
 		Cytoscape.setMap(map);
 		// Create network using map
