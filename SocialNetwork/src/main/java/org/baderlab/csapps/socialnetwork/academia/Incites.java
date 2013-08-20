@@ -741,7 +741,7 @@ public class Incites {
 		}
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
-		HashSet facultySet = this.getFacultySet();
+		HashSet<Author> facultySet = this.getFacultySet();
 		String facultyName = this.getFacultyName();
 		for (String authorText : authors) {
 			author = new Author(authorText.trim(), Category.INCITES);

@@ -560,12 +560,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				JComboBox jcmbType = (JComboBox) e.getSource();
 				String visualStyle = (String) jcmbType.getSelectedItem();
 				int visualStyleID = Category.getVisualStyleID(visualStyle);
-				// Only apply visual style if selected visual style is distinct from
-				// current
-				if (! (UserPanel.getSelectedVisualStyle() == visualStyleID)) {
-					UserPanel.setSelectedVisualStyle(visualStyleID);
-					Cytoscape.applyVisualStyle(visualStyle);
-				}
+				UserPanel.setSelectedVisualStyle(visualStyleID);
+				Cytoscape.applyVisualStyle(visualStyle);
 			}
 		});
 		return visualStyleSelector;

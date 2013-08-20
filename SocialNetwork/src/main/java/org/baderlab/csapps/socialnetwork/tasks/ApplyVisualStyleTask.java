@@ -161,8 +161,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
 				                                this.continuousMappingFactoryServiceRef
 		.createVisualMappingFunction(colName, Integer.class, BasicVisualLexicon.EDGE_WIDTH);
         // BRVs are used to set limits on edge width (max edge width = 10; min edge width = 1)
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(1, 1, 1);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(10, 10, 10);
+        BoundaryRangeValues bv0 = new BoundaryRangeValues(1.0, 1.0, 1.0);
+        BoundaryRangeValues bv1 = new BoundaryRangeValues(10.0, 10.0, 10.0);
         // Adjust handle position
 		int min = (Integer) attributes[1];
         int max = (Integer) attributes[2];
@@ -187,8 +187,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
 				                                this.continuousMappingFactoryServiceRef
 		.createVisualMappingFunction(colName, Integer.class, BasicVisualLexicon.NODE_SIZE);
         // BRVs are used to set limits on node size (max size = 50; min size = 10)
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(10, 10, 10);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(50, 50, 50);
+        BoundaryRangeValues bv0 = new BoundaryRangeValues(10.0, 10.0, 10.0);
+        BoundaryRangeValues bv1 = new BoundaryRangeValues(50.0, 50.0, 50.0);
 		// Adjust handle position
 		int min = (Integer) attributes[1];
         int max = (Integer) attributes[2];
@@ -263,8 +263,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
                                        .get(BasicVisualLexicon.EDGE_WIDTH);
         // BRVs are used to set limits on edge transparency 
 		// (min edge transparency = 100; max edge transparency = 300)
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(100, 100, 100);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(300, 300, 300);
+        BoundaryRangeValues bv0 = new BoundaryRangeValues(100.0, 100.0, 100.0);
+        BoundaryRangeValues bv1 = new BoundaryRangeValues(300.0, 300.0, 300.0);
 		// Adjust handle position
 		Integer min = (Integer) attributes[1];
         Integer max = (Integer) attributes[2];

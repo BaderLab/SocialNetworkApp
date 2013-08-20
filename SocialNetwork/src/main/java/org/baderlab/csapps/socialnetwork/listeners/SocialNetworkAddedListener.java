@@ -27,7 +27,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 	 * Get smallest value given cutoff
 	 * @param List list
 	 * @param Double cutoff
-	 * @return value
+	 * @return Integer value
 	 */
 	private int getSmallestInCutoff(ArrayList<Integer> list, Double cutoff) {
 		Collections.sort(list);
@@ -49,7 +49,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 	 * point
 	 * @param List list
 	 * @param Double cutoff
-	 * @return value
+	 * @return Integer value
 	 */
 	private int getLargestInCutoff(ArrayList<Integer> list, Double cutoff) {
 		Collections.sort(list);
@@ -140,7 +140,6 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					shapeAttrMap.put("Faculty", facultyMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, 
                             new Object[] {shapeAttrMap});
-					socialNetwork.showStats();
 					break;
 				case Category.SCOPUS:
 					// Specify NODE_LABEL

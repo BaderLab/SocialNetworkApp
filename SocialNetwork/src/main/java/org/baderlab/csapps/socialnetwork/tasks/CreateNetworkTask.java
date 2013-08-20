@@ -211,16 +211,16 @@ public class CreateNetworkTask extends AbstractTask {
 			
 			// Load network
 			CyNetwork network = loadNetwork(map);
-			
+						
 			if (network == null) {
 				return;
 			}
-			
+						
 			networkManager.addNetwork(network);
 			
 			final Collection<CyNetworkView> views = networkViewManager
 					                                .getNetworkViews(network);
-			
+						
 			this.monitor.setProgress(0.75);
 			this.monitor.setStatusMessage("Complete: 75%");
 			CyNetworkView networkView = null;

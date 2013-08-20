@@ -118,8 +118,6 @@ public class Pubmed {
 			else {
 				// Use newly discovered queryKey and webEnv to build a tag
 				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
-						"/eutils/esummary.fcgi?db=pubmed" + tag );
 				// Load all publications at once
 				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
 					"/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
