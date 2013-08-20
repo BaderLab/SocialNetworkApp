@@ -31,12 +31,13 @@ public class UserPanelAction extends AbstractCyAction {
 	
 	/**
 	 * Create new Cytoscape action.
-	 * @param configProps
-	 * @param cyApplicationManagerServiceRef
-	 * @param cyNetworkViewManagerServiceRef
-	 * @param cySwingApplicationServiceRef
-	 * @param cyServiceRegistrarRef
-	 * @param userPanel
+	 * @param Map configProps
+	 * @param CyApplicationManager cyApplicationManagerServiceRef
+	 * @param CyNetworkViewManager cyNetworkViewManagerServiceRef
+	 * @param CySwingApplication cySwingApplicationServiceRef
+	 * @param CyServiceRegistrar cyServiceRegistrarRef
+	 * @param UserPanel userPanel
+	 * @return null
 	 */
 	public UserPanelAction(Map<String,String> configProps, CyApplicationManager cyApplicationManagerServiceRef, 
 						  CyNetworkViewManager cyNetworkViewManagerServiceRef, CySwingApplication cySwingApplicationServiceRef,
@@ -51,7 +52,7 @@ public class UserPanelAction extends AbstractCyAction {
 	
 	/**
 	 * Display / Hide the main panel
-	 * @param null
+	 * @param ActionEvent event
 	 * @return null
 	 */
     public void actionPerformed(ActionEvent event) {	

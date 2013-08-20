@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.panels;
+package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -18,14 +18,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
+import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
 
 /**
  * Tools for building / working with the Academia Info-Panel
  * @author Victor Kofia
  */
-public class AcademiaPanel {
+public class AcademiaFactory {
 
 	/**
 	 * A reference to the faculty text field. Used to verify correct faculty input.
@@ -53,7 +52,7 @@ public class AcademiaPanel {
 		academiaInfoPanel.setLayout(new BorderLayout());
 		academiaInfoPanel.setName("Academia");
 	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-		academiaInfoPanel.add(AcademiaPanel.createDatabaseInfoPanel(), 
+		academiaInfoPanel.add(AcademiaFactory.createDatabaseInfoPanel(), 
 				              BorderLayout.NORTH);
 		return academiaInfoPanel;
 	}
@@ -79,7 +78,7 @@ public class AcademiaPanel {
 						Cytoscape.notifyUser("Please select a file and/or specify network name.");
 					} else { 
 						if (! getSelectedFileRef().getAbsolutePath().trim()
-								.equalsIgnoreCase(AcademiaPanel.getPathTextFieldRef()
+								.equalsIgnoreCase(AcademiaFactory.getPathTextFieldRef()
 										.getText().trim())) {
 							Cytoscape.notifyUser("Please select a file.");
 						} else if (getFacultyTextFieldRef().getText().trim()
@@ -90,7 +89,7 @@ public class AcademiaPanel {
 								// Create network
 								Cytoscape.createNetwork(getSelectedFileRef());						
 							} catch (FileNotFoundException e) {
-								Cytoscape.notifyUser(AcademiaPanel.getPathTextFieldRef().getText()
+								Cytoscape.notifyUser(AcademiaFactory.getPathTextFieldRef().getText()
 										+ " does not exist");
 							}
 						}
@@ -129,7 +128,7 @@ public class AcademiaPanel {
 		// Add 'create network button' to panel
 		// Button wrapper added for cosmetic reasons
 		JPanel buttonWrapper = new JPanel();
-		buttonWrapper.add(AcademiaPanel.createNetworkButton(), BorderLayout.CENTER);
+		buttonWrapper.add(AcademiaFactory.createNetworkButton(), BorderLayout.CENTER);
 		databaseInfoPanel.add(buttonWrapper);
 	
 		return databaseInfoPanel;
@@ -198,12 +197,12 @@ public class AcademiaPanel {
 				// Only attempt to read data file if user clicks "OK"
 				if (check == JFileChooser.APPROVE_OPTION) {
 					File textFile = chooser.getSelectedFile();
-					AcademiaPanel.setDataFile(textFile);
-					AcademiaPanel.getPathTextFieldRef().setText(textFile.getAbsolutePath());
-					getFacultyTextFieldRef().setText(AcademiaPanel.parseFileName(textFile.getAbsolutePath()));
+					AcademiaFactory.setDataFile(textFile);
+					AcademiaFactory.getPathTextFieldRef().setText(textFile.getAbsolutePath());
+					getFacultyTextFieldRef().setText(AcademiaFactory.parseFileName(textFile.getAbsolutePath()));
 				} else {
-					AcademiaPanel.setDataFile(null);
-					AcademiaPanel.getPathTextFieldRef().setText(null);
+					AcademiaFactory.setDataFile(null);
+					AcademiaFactory.getPathTextFieldRef().setText(null);
 				}
 			}
 		});
@@ -222,12 +221,12 @@ public class AcademiaPanel {
 		loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaPanel.setLoadTextField(new JTextField());
-		AcademiaPanel.getPathTextFieldRef().setEditable(true);
+		AcademiaFactory.setLoadTextField(new JTextField());
+		AcademiaFactory.getPathTextFieldRef().setEditable(true);
 		// Add text field 
-		loadDataPanel.add(AcademiaPanel.getPathTextFieldRef());
+		loadDataPanel.add(AcademiaFactory.getPathTextFieldRef());
 		// Add load data button 
-		loadDataPanel.add(AcademiaPanel.createLoadButton());
+		loadDataPanel.add(AcademiaFactory.createLoadButton());
 		return loadDataPanel;
 	}
 
@@ -241,7 +240,7 @@ public class AcademiaPanel {
 		specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaPanel.setFacultyTextFieldRef(new JTextField());
+		AcademiaFactory.setFacultyTextFieldRef(new JTextField());
 		getFacultyTextFieldRef().setEditable(true);
 		// Add text field 
 		specifyNetworkNamePanel.add(getFacultyTextFieldRef());
@@ -254,7 +253,7 @@ public class AcademiaPanel {
 	 * @return JTextField facultyTextField
 	 */
 	public static JTextField getFacultyTextFieldRef() {
-		return AcademiaPanel.facultyTextFieldRef;
+		return AcademiaFactory.facultyTextFieldRef;
 	}
 
 	/**
@@ -263,7 +262,7 @@ public class AcademiaPanel {
 	 * @return JTextField pathTextField
 	 */
 	public static JTextField getPathTextFieldRef() {
-		return AcademiaPanel.pathTextFieldRef;
+		return AcademiaFactory.pathTextFieldRef;
 	}
 
 	/**
@@ -272,7 +271,7 @@ public class AcademiaPanel {
 	 * @return File selectedFile
 	 */
 	public static File getSelectedFileRef() {
-		return AcademiaPanel.selectedFileRef;
+		return AcademiaFactory.selectedFileRef;
 	}
 	/**
 	 * Extract filename from path
@@ -293,7 +292,7 @@ public class AcademiaPanel {
 	 * @return null
 	 */
 	public static void setDataFile(File selectedFile) {
-		AcademiaPanel.selectedFileRef = selectedFile;
+		AcademiaFactory.selectedFileRef = selectedFile;
 	}
 
 	/**
@@ -302,7 +301,7 @@ public class AcademiaPanel {
 	 * @return null
 	 */
 	public static void setFacultyTextFieldRef(JTextField facultyTextField) {
-		AcademiaPanel.facultyTextFieldRef = facultyTextField;
+		AcademiaFactory.facultyTextFieldRef = facultyTextField;
 	}
 	
 	/**
@@ -311,7 +310,7 @@ public class AcademiaPanel {
 	 * @return null
 	 */
 	public static void setLoadTextField(JTextField pathTextField) {
-		AcademiaPanel.pathTextFieldRef = pathTextField;
+		AcademiaFactory.pathTextFieldRef = pathTextField;
 	}
 
 }

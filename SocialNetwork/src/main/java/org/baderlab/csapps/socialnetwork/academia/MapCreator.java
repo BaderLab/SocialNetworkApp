@@ -23,7 +23,7 @@ public class MapCreator {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File a = new File("/Users/viktorkofia/Desktop/Ontario.txt");
+		File a = new File("--INSERT PATH--");
 		Scanner in = new Scanner(a);
 		String line = "";
 		String[] line_array = null;
@@ -39,7 +39,7 @@ public class MapCreator {
 			locationMap.put(institution, "Ontario");
 		}
 		
-		a = new File("/Users/viktorkofia/Desktop/United States.txt");
+		a = new File("--INSERT PATH--");
 		in = new Scanner(a);
 		line = "";
 		line_array = null;
@@ -54,7 +54,7 @@ public class MapCreator {
 			locationMap.put(institution, "United States");
 		}
 		
-		a = new File("/Users/viktorkofia/Desktop/International.txt");
+		a = new File("--INSERT PATH--");
 		in = new Scanner(a);
 		line = "";
 		line_array = null;
@@ -71,7 +71,7 @@ public class MapCreator {
 
 		locationMap.put("UNIV TORONTO", "UNIV TORONTO");
 		
-		FileOutputStream fout = new FileOutputStream("/Users/viktorkofia/Desktop/map.sn");
+		FileOutputStream fout = new FileOutputStream("--INSERT PATH--");
 		ObjectOutputStream oos = new ObjectOutputStream(fout);   
 		oos.writeObject(locationMap);
 		oos.close();

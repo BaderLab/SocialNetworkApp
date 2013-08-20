@@ -36,7 +36,7 @@ public class TestIncites {
 	 * dealt with accordingly.
 	 */
 	public void testDefectiveRowsExist() {
-		File defectiveRowsExistFile = new File("src/test/resources/incites/data/defective_rows.xlsx");
+		File defectiveRowsExistFile = new File("src/test/resources/incites/data/defective_rows_exist.xlsx");
 		Incites incites = new Incites(defectiveRowsExistFile);
 		assertTrue(incites.getDefectiveRows() == 7);
 	}
@@ -60,7 +60,7 @@ public class TestIncites {
 	 * Ideally, there should be ZERO ignored rows after parsing a data file. 
 	 */
 	public void testIgnoredRowsNonExistent() {
-		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/ignored_rows.xlsx");
+		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/no_ignored_rows.xlsx");
 		Incites incites = new Incites(ignoredRowsNotExistFile);
 		assertTrue(incites.getIgnoredRows() == 0);
 	}
@@ -70,7 +70,7 @@ public class TestIncites {
 	 * Confirm correct identification of missing faculty
 	 */
 	public void testUnidentifiedFaculty() {
-		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/identified_faculty.xlsx");
+		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
 		Incites incites = new Incites(ignoredRowsNotExistFile);
 		ArrayList<Author> unidentifiedFacultyList = incites.getUnidentifiedFacultyList();
 		assertTrue(unidentifiedFacultyList.size() == 13);
@@ -81,7 +81,7 @@ public class TestIncites {
 	 * Confirm correct identification of existing faculty
 	 */
 	public void testIdentifiedFaculty() {
-		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/identified_faculty.xlsx");
+		File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
 		Incites incites = new Incites(ignoredRowsNotExistFile);
 		ArrayList<Author> identifiedFacultyList = incites.getIdentifiedFacultyList();
 		assertTrue(identifiedFacultyList.size() == 14);
@@ -90,9 +90,11 @@ public class TestIncites {
 	@Test
 	/**
 	 * Confirm correct identification of lone author
+	 * NOTE: A lone author is one who has only published 
+	 * once and whose sole publication is a solo effort
 	 */
 	public void testLoneAuthor() {
-		File loneAuthorFile = new File("src/test/resources/incites/data/lone_author.xlsx");
+		File loneAuthorFile = new File("src/test/resources/incites/data/lone_author_exists.xlsx");
 		Incites incites = new Incites(loneAuthorFile);
 		ArrayList<Author> loneAuthorList = incites.getIdentifiedFacultyList();
 		assertTrue(loneAuthorList.size() == 1);

@@ -13,12 +13,12 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import main.java.org.baderlab.csapps.socialnetwork.academia.AcademiaFactory;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
-import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -152,7 +152,7 @@ public class Cytoscape {
 	 */	
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
 		// Verify that network name is valid
-		String networkName = AcademiaPanel.getFacultyTextFieldRef().getText().trim();
+		String networkName = AcademiaFactory.getFacultyTextFieldRef().getText().trim();
 		if (! Cytoscape.isNameValid(networkName)) {
 			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
 					           + " Please enter a new name.");

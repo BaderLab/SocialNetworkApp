@@ -7,11 +7,11 @@ package main.java.org.baderlab.csapps.socialnetwork;
  */
 public class Consortium {
 	/**
-	 * A node (designated node1 to distinguish from node2)
+	 * A node (~ node1)
 	 */
 	private AbstractNode node1 = null;
 	/**
-	 * A node (designated node2 to distinguish from node1)
+	 * A node (~ node2)
 	 */
 	private AbstractNode node2 = null;
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
   
 /**
- * Methods and fields for manipulating Scopus data
+ * Tools for manipulating Scopus data
  * @author Victor Kofia
  */
 public class Scopus {
@@ -36,7 +37,7 @@ public class Scopus {
 	 * Match year. Used for verifying validity of 
 	 * Scopus data file.
 	 * @param String rawText
-	 * @return boolean
+	 * @return boolean bool
 	 */
 	private static boolean matchYear(String rawText) {
 		Pattern pattern = Pattern.compile("^\\d{4}$");
@@ -106,6 +107,22 @@ public class Scopus {
 		             " a valid file and try again.");
 		}
 		return pubList;
+	}
+
+	/**
+	 * Construct Scopus attribute map.
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static TreeMap<String, Object> constructScopusAttrMap(Author author) {
+		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
+		String lastName = author.getLastName();
+		String firstInitial = author.getFirstInitial();
+		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
+		nodeAttrMap.put("Last Name", lastName);
+		nodeAttrMap.put("First Initial", firstInitial);
+		nodeAttrMap.put("Times Cited", author.getTimesCited());
+		return nodeAttrMap;
 	}
 
 	/**

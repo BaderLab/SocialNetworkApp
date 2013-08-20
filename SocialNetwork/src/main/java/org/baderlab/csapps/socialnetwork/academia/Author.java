@@ -96,7 +96,7 @@ public class Author extends AbstractNode {
 					this.middleInitial = scopusNames[2];
 				}
 				// Set Scopus attributes
-				this.setNodeAttrMap(Category.constructScopusAttrMap(this));
+				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
 				break;
 			case Category.PUBMED:
 				String[] pubmedNames = rawAuthorText.split("\\s");
@@ -120,7 +120,7 @@ public class Author extends AbstractNode {
 				}
 				// Use Scopus attribute map to set map for Pubmed map 
 				// (both are similar)
-				this.setNodeAttrMap(Category.constructScopusAttrMap(this));
+				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
 				break;
 			case Category.INCITES:
 				this.firstName = Incites.parseFirstName(rawAuthorText);
@@ -131,7 +131,7 @@ public class Author extends AbstractNode {
 				this.lastName = Incites.parseLastName(rawAuthorText);
 				this.institution = Incites.parseInstitution(rawAuthorText);
 				this.setLocation(Incites.getLocationMap().get(institution));
-				this.setNodeAttrMap(Category.constructIncitesAttrMap(this));
+				this.setNodeAttrMap(Incites.constructIncitesAttrMap(this));
 				break;
 			case Category.FACULTY:
 				String[] authorAttr = rawAuthorText.split(";");

@@ -2,9 +2,7 @@ package main.java.org.baderlab.csapps.socialnetwork;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -64,13 +62,7 @@ public class Category {
 	 *<br> key: String representation of category
 	 *<br> value: category ID
 	 */
-	private static Map<String, Integer> categoryMapA = null;
-	/**
-	 * A category map 
-	 * <br> key: category ID 
-	 * <br> value: String representation of category
-	 */
-	private static Map<Integer, String> categoryMapB = null;
+	private static Map<String, Integer> categoryMap = null;
 	/**
 	 * A visual style map
 	 * <br> key: String representation of visual style
@@ -131,18 +123,18 @@ public class Category {
 	 * @return int categoryID
 	 */
 	public static int getCategoryID(String category) {
-		if (Category.categoryMapA == null) {
-			Category.categoryMapA = new HashMap<String, Integer>();
-			categoryMapA.put("--SELECT CATEGORY--", DEFAULT);
-			categoryMapA.put("Academia", ACADEMIA);
-			categoryMapA.put("Twitter", TWITTER);
-			categoryMapA.put("LinkedIn", LINKEDIN);
-			categoryMapA.put("Youtube", YOUTUBE);
-			categoryMapA.put("Incites", INCITES);
-			categoryMapA.put("Scopus", SCOPUS);
-			categoryMapA.put("Pubmed", PUBMED);
+		if (Category.categoryMap == null) {
+			Category.categoryMap = new HashMap<String, Integer>();
+			categoryMap.put("--SELECT CATEGORY--", DEFAULT);
+			categoryMap.put("Academia", ACADEMIA);
+			categoryMap.put("Twitter", TWITTER);
+			categoryMap.put("LinkedIn", LINKEDIN);
+			categoryMap.put("Youtube", YOUTUBE);
+			categoryMap.put("Incites", INCITES);
+			categoryMap.put("Scopus", SCOPUS);
+			categoryMap.put("Pubmed", PUBMED);
 		}
-		return categoryMapA.get(category);
+		return categoryMap.get(category);
 	}
 
 	/**
@@ -151,7 +143,6 @@ public class Category {
 	 * @return List categoryList
 	 */
 	public static String[] getCategoryList() {
-//		String[] categoryList = { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube"};
 		String[] categoryList = {"Academia"};
 		return categoryList;
 	}
@@ -235,53 +226,34 @@ public class Category {
 	 * @return String category
 	 */
 	public static String toString(int categoryID) {
-		if (Category.categoryMapB == null) {
-			Category.categoryMapB = new HashMap<Integer, String>();
-			categoryMapB.put(DEFAULT, "--SELECT CATEGORY--");
-			categoryMapB.put(ACADEMIA, "Academia");
-			categoryMapB.put(TWITTER, "Twitter");
-			categoryMapB.put(LINKEDIN, "LinkedIn");
-			categoryMapB.put(YOUTUBE, "Youtube");
-			categoryMapB.put(INCITES, "Incites");
-			categoryMapB.put(SCOPUS, "Scopus");
-			categoryMapB.put(PUBMED, "Pubmed");
+		String category = null;
+		switch (categoryID) {
+			case Category.DEFAULT:
+				category = "--SELECT CATEGORY--";
+				break;
+			case Category.ACADEMIA:
+				category = "Academia";
+				break;
+			case Category.TWITTER:
+				category = "Twitter";
+				break;
+			case Category.LINKEDIN:
+				category = "LinkedIn";
+				break;
+			case Category.YOUTUBE:
+				category = "Youtube";
+				break;
+			case Category.INCITES:
+				category = "Incites";
+				break;
+			case Category.SCOPUS:
+				category = "Scopus";
+				break;
+			case Category.PUBMED:
+				category = "Pubmed";
+				break;
 		}
-		return categoryMapB.get(categoryID);
-	}
-	
-	/**
-	 * Construct Incites attribute map
-	 * @param null
-	 * @return Map nodeAttrMap
-	 */
-	public static TreeMap<String, Object> constructIncitesAttrMap(Author author) {
-		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
-		String lastName = author.getLastName();
-		String firstName = author.getFirstName();
-		nodeAttrMap.put("Label", firstName + "_" + lastName);
-		nodeAttrMap.put("Last Name", lastName);
-		nodeAttrMap.put("First Name", author.getFirstName());
-		nodeAttrMap.put("Times Cited", author.getTimesCited());
-		nodeAttrMap.put("Institution", author.getInstitution());
-		nodeAttrMap.put("Location", author.getLocation());
-		nodeAttrMap.put("Faculty", author.getFaculty());
-		return nodeAttrMap;
-	}
-	
-	/**
-	 * Construct Scopus attribute map.
-	 * @param null
-	 * @return Map nodeAttrMap
-	 */
-	public static TreeMap<String, Object> constructScopusAttrMap(Author author) {
-		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
-		String lastName = author.getLastName();
-		String firstInitial = author.getFirstInitial();
-		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
-		nodeAttrMap.put("Last Name", lastName);
-		nodeAttrMap.put("First Initial", firstInitial);
-		nodeAttrMap.put("Times Cited", author.getTimesCited());
-		return nodeAttrMap;
+		return category;
 	}
 
 }

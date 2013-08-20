@@ -17,8 +17,19 @@ import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
  */
 public class Interaction {
 	
+	/**
+	 * Abstract map
+	 * <br>Key: <i>Consortium</i>
+	 * <br>Value: <i>Interaction</i>
+	 */
 	private Map<Consortium, ArrayList<AbstractEdge>> map = null;
 	
+	/**
+	 * Create new interaction
+	 * @param List<AbstractEdge> edgeList
+	 * @param Integer type
+	 * @return null
+	 */
 	public Interaction(List<? extends AbstractEdge> edgeList, int type) {
 		switch(type) {
 			case Category.PUBMED:

@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.academia.AcademiaFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -106,7 +107,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400,200));
 		
-		// An 'Academia' flavored UI has been set as default
+		// An 'Academia' flavored UI has been set as the default
 		UserPanel.setSelectedCategory(Category.ACADEMIA);
 			
 		// Add top panel
@@ -114,7 +115,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
 		
 		// Add the default info panel (Academia)
-		this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
+		this.setSelectedInfoPanel(AcademiaFactory.createAcademiaInfoPanel());
 		this.add(UserPanel.infoPanelRef, BorderLayout.CENTER);
 		
 		// Add bottom panel
@@ -848,7 +849,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 					this.setSelectedInfoPanel(Category.createDefaultInfoPanel());
 					break;
 				case Category.ACADEMIA: 
-					this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
+					this.setSelectedInfoPanel(AcademiaFactory.createAcademiaInfoPanel());
 					break;
 				case Category.TWITTER:
 					this.setSelectedInfoPanel(Category.createTwitterInfoPanel());

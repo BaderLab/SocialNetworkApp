@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public class Incites {
 	private static Map<String, String> locationMap = null;
 
 	/**
-	 * Tracks # of defective rows in Incites document
+	 * # of defective rows in Incites document
 	 */
 	private int defectiveRows = 0;
 
@@ -63,19 +64,21 @@ public class Incites {
 	private HashSet<Author> facultySet = null;
 
 	/**
-	 * A list containing all identified faculty members
+	 * List of all identified faculty members
 	 */
 	private ArrayList<Author> identifiedFacultyList = null;
 
 	/**
-	 * Tracks # of ignored rows in Incites document
+	 * # of ignored rows in Incites document
 	 * (not including the column titles)
 	 */
 	private int ignoredRows = -1;
 
 	/**
-	 * A list containing all the lone authors found in
-	 * the Incites document
+	 * List containing all lone authors found in
+	 * Incites document. A lone author is one 
+	 * who has only published once and whose sole
+	 * publication is a solo effort
 	 */
 	private ArrayList<Author> loneAuthorList = null;
 
@@ -85,7 +88,7 @@ public class Incites {
 	private ArrayList<Publication> pubList = null;
 
 	/**
-	 * A list containing all unidentified faculty members
+	 * List of all unidentified faculty members
 	 */
 	private ArrayList<Author> unidentifiedFacultyList = null;
 
@@ -93,6 +96,7 @@ public class Incites {
 	/**
 	 * Create new Incites using data file
 	 * @param File file
+	 * @return null
 	 */
 	public Incites(File file) {
 		this.loadFaculty(file);
@@ -103,6 +107,7 @@ public class Incites {
 	/**
 	 * Calculate faculty stats
 	 * i.e. which faculty members got identified?
+	 * <br> which ones didn't?
 	 * @param null
 	 * @return null
 	 */
@@ -129,8 +134,7 @@ public class Incites {
 	 * @return XMLReader parser
 	 * @throws SAXException
 	 */
-	private XMLReader fetchSheetParser(SharedStringsTable sst, 
-			                                 int sheet) throws SAXException {
+	private XMLReader fetchSheetParser(SharedStringsTable sst, int sheet) throws SAXException {
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		switch (sheet) {
 			// Sheet#3: publication data
@@ -150,87 +154,171 @@ public class Incites {
 	 * @author Victor Kofia
 	 */
 	private static class FacultySheetHandler extends DefaultHandler {
-		private String cell = "", rowContents = "", id = "";
+		/**
+		 * XML parsing variables. Used to store data temporarily. 
+		 */
+		private String cellContents = "", rowContents = "", cellID = "";
+		/**
+		 * Reference to Incites object
+		 */
 		private Incites incites = null;
+		/**
+		 * Reference to XLSX table. Necessary for extracting cell 
+		 * contents (cell IDs are used to extract cell contents)
+		 */
 		private SharedStringsTable sst = null;
 		
+		/**
+		 * Create new faculty sheet handler
+		 * @param SharedStringsTable sst
+		 * @param Incites incites
+		 * @return null
+		 */
 		private FacultySheetHandler(SharedStringsTable sst, Incites incites) {
 			this.sst = sst;
 			this.incites = incites;
 		}
 		
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			
+			// Reset row contents
+			if (name.equals("row")) {
+				rowContents = "";
+			}
+			
+			// Reset cell id
+			if(name.equals("v")) {
+				cellID = "";
+			}
+			
+		}
+
+		// Collect tag contents
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
-			id += new String(ch, start, length);
+			cellID += new String(ch, start, length);
 		}
 		
 		public void endElement(String uri, String localName, String name)
 				throws SAXException {
 			
 			if(name.equals("v")) {
-				cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
-				rowContents += Incites.parseFacultyName(cell.trim().toLowerCase()) + ";";
+				// Extract cell contents
+				cellContents = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(cellID))).toString();
+				// Add to row
+				rowContents += Incites.parseFacultyName(cellContents.trim().toLowerCase()) + ";";
 			}
 			
 			if (name.equals("row")) {
-				// Parse all row contents. Ignore the first row (i.e. last name, first name ... etc)
+				// Parse all row contents. Ignore the first row (i.e. last name, first name, department ... etc)
 				if (! rowContents.trim().isEmpty() && ! rowContents.contains("department")) {
 					incites.getFacultySet().add(new Author(rowContents, Category.FACULTY));
-					incites.setFacultyName(cell);
+					incites.setFacultyName(cellContents);
 				}
 			}
-		}
-		
-		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {
 			
-			// Reset rowContents at each row
-			if (name.equals("row")) {
-				rowContents = "";
-			}
-			
-			if(name.equals("v")) {
-				id = "";
-			}
 		}
 		
 	}
 	
 	/**
-	 * Handler for publications spreadsheet
+	 * Handler for publications spreadsheet (SAX Parser)
 	 * @author Victor Kofia
 	 */
 	private static class PubSheetHandler extends DefaultHandler {
+		/**
+		 * List of authors in each publication
+		 */
 		List<Author> coauthorList = null;
+		/**
+		 * The columns of a row.
+		 */
 		private String[] columns = null;
-		private String id = "", cell = "", row = "";
+		/**
+		 * XML Parsing variables. Used to store data temporarily.
+		 */
+		private String cellID = "", cellContents = "", rowContents = "";
+		/**
+		 * Reference to Incites object
+		 */
 		private Incites incites = null;
 		private boolean isString = false;
+		/**
+		 * Reference to individual publication
+		 */
 		Publication pub;
+		/**
+		 * Reference to XLSX table. Necessary for extracting cell 
+		 * contents (cell IDs are used to extract cell contents)
+		 */
 		private SharedStringsTable sst = null;
+		/**
+		 * Publication attributes. 
+		 */
 		String title, timesCited = null, expectedCitations = "0.00";
 		String year = null, subjectArea = null, authors = null;
+		
+		/**
+		 * Create new pub sheet handler
+		 * @param SharedStringsTable sst
+		 * @param Incites incites
+		 * @return null
+		 */
 		private PubSheetHandler(SharedStringsTable sst, Incites incites) {
 			this.sst = sst;
 			this.incites = incites;
 		}
+		
+		public void startElement(String uri, String localName, String name,
+				Attributes attributes) throws SAXException {
+			// Reset row contents
+			if (name.equals("row")) {
+				rowContents = "";
+			}
+			
+			// Reset cell id
+			if(name.equals("c")) {
+				// If the 't' tag is not empty this means that
+				// 'c' holds a reference to a cell that contains
+				// a string value
+				if (attributes.getValue("t") != null) {
+					isString = true;
+				}
+				// If the 't' tag is empty this means that
+				// 'c' contains a cell value and not a reference to
+				// a cell
+				cellID = "";
+			}
+		}
+
+		// Collect tag contents
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
-			id += new String(ch, start, length);
+			cellID += new String(ch, start, length);
 		}
+		
 		public void endElement(String uri, String localName, String name)
 				throws SAXException {
+			
+			// Extract cell contents
 			if(name.equals("v")) {
+				// Use cellID to get the cell contents (if applicable)
 				if (isString) {
-					cell = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(id))).toString();
+					cellContents = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(cellID))).toString();
 					isString = false;
+				// Set the cell contents to cellID if cellID holds an actual value
 				} else {
-					cell = id;
+					cellContents = cellID;
 				}
-				row += cell + "\t";
+				rowContents += cellContents + "\t";
 			}
-			if (name.equals("row") && ! row.trim().isEmpty()) {
-				columns = row.split("\t");
+			
+			if (name.equals("row") && ! rowContents.trim().isEmpty()) {
+				columns = rowContents.split("\t");
+				// Column length varies. As of right now, the app only supports rows with 
+				// column #s erring between 4-6. Any row that deviates from this range will 
+				// be ignored and the user will be notified of this.
 				if (columns.length == 6 && ! columns[0].equalsIgnoreCase("Times Cited")) {
 					// Get publication info
 					timesCited = columns[0].trim().isEmpty() 
@@ -242,22 +330,21 @@ public class Incites {
 					subjectArea = columns[3];
 					authors = columns[4];
 					title = columns[5];
-					//						System.out.println("Times Cited: " + columns[0]
-					//				         + "\nExpected Citations: " + columns[1]
-					//				         + "\nYear: " + columns[2]
-					//				         + "\nSubject Area: " + columns[3]
-					//				         + "\nAuthors: " + columns[4]
-					//				         + "\nTitle: " + columns[5] + "\n\n");
 					// Get author list
 					try {
 						coauthorList = incites.parseAuthors(authors);
+						// If the # of authors in pub is only one, 
+						// duplicate the author so that the pub now
+						// contains two authors.
+						// NOTE: The interaction map needs two authors
+						// per pub AT MINIMUM to function adequately
 						if (coauthorList.size() == 1) {
 							Author loneAuthor = coauthorList.get(0);
 							incites.getLoneAuthorList().add(loneAuthor);
 							coauthorList.add(loneAuthor);
 						}
-						// As soon as an infelicitous entry materializes
-						// , terminate parsing --> compromises entire file
+					// As soon as an erroneous entry materializes
+					// , terminate parsing --> compromises entire file
 					} catch (UnableToParseAuthorException e) {
 						e.printStackTrace();
 						return;
@@ -280,6 +367,11 @@ public class Incites {
 
 					try {
 						coauthorList = incites.parseAuthors(authors);
+						// If the # of authors in pub is only one, 
+						// duplicate the author so that the pub now
+						// contains two authors.
+						// NOTE: The interaction map needs two authors
+						// per pub AT MINIMUM to function adequately
 						if (coauthorList.size() == 1) {
 							Author loneAuthor = coauthorList.get(0);
 							incites.getLoneAuthorList().add(loneAuthor);
@@ -295,14 +387,6 @@ public class Incites {
 					pub = new Publication(title, year, subjectArea, 
 							timesCited, expectedCitations, coauthorList);
 					incites.getPubList().add(pub);
-
-					String info = "Times Cited: " + timesCited
-							+ "\nExpected Citations: " + expectedCitations
-							+ "\nYear: " + year
-							+ "\nSubject Area: " + subjectArea
-							+ "\nAuthors: " + authors 
-							+ "\nTitle: " + title + "\n\n";
-															
 				} else if (columns.length == 4) {
 					incites.updateDefectiveRows();
 					// Get publication info
@@ -317,6 +401,11 @@ public class Incites {
 
 					try {
 						coauthorList = incites.parseAuthors(authors);
+						// If the # of authors in pub is only one, 
+						// duplicate the author so that the pub now
+						// contains two authors.
+						// NOTE: The interaction map needs two authors
+						// per pub AT MINIMUM to function adequately
 						if (coauthorList.size() == 1) {
 							Author loneAuthor = coauthorList.get(0);
 							incites.getLoneAuthorList().add(loneAuthor);
@@ -331,30 +420,10 @@ public class Incites {
 					// Set publication info
 					pub = new Publication(title, year, subjectArea, 
 							timesCited, expectedCitations, coauthorList);
-					incites.getPubList().add(pub);
-
-					String info = "Times Cited: " + timesCited
-							+ "\nExpected Citations: " + expectedCitations
-							+ "\nYear: " + year
-							+ "\nSubject Area: " + subjectArea
-							+ "\nAuthors: " + authors 
-							+ "\nTitle: " + title + "\n\n";
-										
+					incites.getPubList().add(pub);										
 				} else {
 					incites.updateIgnoredRows();
 				}
-			}
-		}
-		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {
-			if (name.equals("row")) {
-				row = "";
-			}
-			if(name.equals("c")) {
-				if (attributes.getValue("t") != null) {
-					isString = true;
-				}
-				id = "";
 			}
 		}
 	}
@@ -764,6 +833,25 @@ public class Incites {
 	 */
 	private void updateIgnoredRows() {
 		this.ignoredRows++;
+	}
+
+	/**
+	 * Construct Incites attribute map
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static TreeMap<String, Object> constructIncitesAttrMap(Author author) {
+		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
+		String lastName = author.getLastName();
+		String firstName = author.getFirstName();
+		nodeAttrMap.put("Label", firstName + "_" + lastName);
+		nodeAttrMap.put("Last Name", lastName);
+		nodeAttrMap.put("First Name", author.getFirstName());
+		nodeAttrMap.put("Times Cited", author.getTimesCited());
+		nodeAttrMap.put("Institution", author.getInstitution());
+		nodeAttrMap.put("Location", author.getLocation());
+		nodeAttrMap.put("Faculty", author.getFaculty());
+		return nodeAttrMap;
 	}
 
 	

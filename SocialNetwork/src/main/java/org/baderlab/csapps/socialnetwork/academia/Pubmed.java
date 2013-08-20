@@ -21,8 +21,8 @@ import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
  */
 public class Pubmed {
 	/**
-	 * The author of a specific publication. Globally referenced to allow for 
-	 * multiple additions in to publication
+	 * The author of a specific publication. This variable is globally referenced to allow for 
+	 * multiple additions in to a publication
 	 */
 	private Author author = null;
 	/**
@@ -82,10 +82,8 @@ public class Pubmed {
 			// Create new SAXParser
 			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 			// Get Query Key & Web Env
-			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
-					"/eutils/esearch.fcgi?db=pubmed&term=" + query);
 			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez" +
-	    "/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
+	        "/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
@@ -114,7 +112,8 @@ public class Pubmed {
 			if (Integer.parseInt(totalPubs) > 500) {
 				// WIP (Work In Progress)
 				// On the event that a search yields 500+ publications, these publications will
-				// need to be accessed incrementally as pubmed places sanctions on large requests
+				// need to be accessed incrementally as pubmed places sanctions on users with
+				// extremely large requests
 			}
 			else {
 				// Use newly discovered queryKey and webEnv to build a tag
@@ -157,18 +156,42 @@ public class Pubmed {
 	 */
 	public DefaultHandler getPublicationHandler() {
 		DefaultHandler publicationHandler = new DefaultHandler() {
+			
+			/**
+			 * XML Parsing variables. Used to temporarily store data.
+			 */
 			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, 
 					isTimesCited = false;
+			
+			// Reset variable contents
+			public void startElement(String uri, String localName, String qName, Attributes attributes) 
+					                                                              throws SAXException {
+				if (contains(attributes, "Author")) {
+					isAuthor = true;
+				}
+				if (contains(attributes, "FullJournalName")) {
+					isJournal = true;
+				}
+				if (contains(attributes, "PubDate")) {
+					isPubDate = true;
+				}
+				if (contains(attributes, "Title")) {
+					isTitle = true;
+				}
+				if (contains(attributes, "PmcRefCount")) {
+					isTimesCited = true;
+				}
+			}
+			
+			// Collect tag contents (if applicable)
 			public void characters(char ch[], int start, int length) throws SAXException {
-				// start and length give both the starting index and the length (respectively)
-				// of the chunk of characters inside the character array that are not elements
 				if (isPubDate) {
 					pubDate = new String(ch, start, length);
 					isPubDate = false;
 				}
 				if (isAuthor) {
 					author = new Author(new String(ch, start, length), Category.PUBMED);
-					// add author to publication author list
+					// Add author to publication author list
 					if (! pubAuthorList.contains(author)) {						
 						pubAuthorList.add(author);
 					}
@@ -187,11 +210,20 @@ public class Pubmed {
 					isTimesCited = false;
 				}
 			}
+			
+			// Create new publication and add it to overall publist
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (qName.equalsIgnoreCase("DocSum")) {
+					pubList.add(new Publication(title, pubDate, journal, timesCited, null, pubAuthorList));
+					pubAuthorList.clear();
+				}
+			}
+			
 			/**
 			 * Returns true iff attributes contains the specified  text
 			 * @param Attribute attributes
 			 * @param String text
-			 * @return
+			 * @return Boolean bool
 			 */
 			public boolean contains(Attributes attributes, String text) {
 				for (int i = 0; i < attributes.getLength(); i++) {
@@ -201,34 +233,10 @@ public class Pubmed {
 				}
 				return false;
 			}
-			public void endElement(String uri, String localName, String qName) throws SAXException {
-				// qName stores the element's actual designation
-				if (qName.equalsIgnoreCase("DocSum")) {
-					pubList.add(new Publication(title, pubDate, journal, timesCited, null, pubAuthorList));
-					pubAuthorList.clear();
-				}
-			}
-			public void startElement(String uri, String localName, String qName, Attributes attributes) 
-					                                                              throws SAXException {
-				// qName stores the element's actual designation
-				if (contains(attributes, "Author")) {
-					isAuthor = true;
-				}
-				if (contains(attributes, "FullJournalName")) {
-					isJournal = true;
-				}
-				if (contains(attributes, "PubDate")) {
-					isPubDate = true;
-				}
-				if (contains(attributes, "Title")) {
-					isTitle = true;
-				}
-				if (contains(attributes, "PmcRefCount")) {
-					isTimesCited = true;
-				}
-			}
 		};
+		
 		return publicationHandler;
+		
 	}
 	
 	/**
@@ -240,12 +248,31 @@ public class Pubmed {
 	                                                IOException, 
 	                                                ParserConfigurationException {
 		DefaultHandler searchHandler = new DefaultHandler() {
+			
+			/**
+			 * XML Parsing variables. Used to temporarily store data. 
+			 */
 			boolean isQueryKey = false, isWebEnv = false, isTotalPubs = false;
+			
+			// Reset XML variables
+			public void startElement(String uri, 
+									 String localName, 
+									 String qName, 
+					                 Attributes attributes) throws SAXException {
+				if (qName.equalsIgnoreCase("Count")) {
+					isTotalPubs = true;
+				}
+				if (qName.equalsIgnoreCase("QueryKey")) {
+					isQueryKey = true;
+				}
+				if (qName.equalsIgnoreCase("WebEnv")) {
+					isWebEnv = true;
+				}
+			}
+
+			// Collect tag contents (if applicable)
 			public void characters(char ch[], int start, int length) 
 					                                         throws SAXException {
-				// start and length give both the starting index and the length
-				// (respectively)
-				// of the chunk of characters inside the character array that are not elements
 				if (isTotalPubs) {
 					totalPubs = new String(ch, start, length);
 					isTotalPubs = false;
@@ -259,29 +286,19 @@ public class Pubmed {
 					isWebEnv = false;
 				}
 			}
+			
 			public void endElement(String uri, 
 					               String localName, 
 					               String qName) throws SAXException {
 			
 			}
-			public void startElement(String uri, 
-									 String localName, 
-									 String qName, 
-					                 Attributes attributes) throws SAXException {
-				// Only the first count tag is useful for our purposes.
-				if (qName.equalsIgnoreCase("Count")) {
-					isTotalPubs = true;
-				}
-				if (qName.equalsIgnoreCase("QueryKey")) {
-					isQueryKey = true;
-				}
-				if (qName.equalsIgnoreCase("WebEnv")) {
-					isWebEnv = true;
-				}
-			}
+			
 		};
+		
 		return searchHandler;
+		
 	}
+	
 	/**
  	 * Return total # of publications yielded from search.
  	 * @param null
@@ -294,4 +311,5 @@ public class Pubmed {
  			return Integer.parseInt(this.totalPubs);
  		}
  	}
+ 	
 }
