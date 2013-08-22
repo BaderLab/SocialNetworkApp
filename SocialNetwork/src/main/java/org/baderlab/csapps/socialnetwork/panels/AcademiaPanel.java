@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -18,13 +18,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.panels.CollapsiblePanel;
+import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
 
 /**
  * Tools for building / working with the Academia Info-Panel
  * @author Victor Kofia
  */
-public class AcademiaFactory {
+public class AcademiaPanel {
 
 	/**
 	 * A reference to the faculty text field. Used to verify correct faculty input.
@@ -52,9 +54,33 @@ public class AcademiaFactory {
 		academiaInfoPanel.setLayout(new BorderLayout());
 		academiaInfoPanel.setName("Academia");
 	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-		academiaInfoPanel.add(AcademiaFactory.createDatabaseInfoPanel(), 
+		academiaInfoPanel.add(AcademiaPanel.createDatabaseInfoPanel(), 
 				              BorderLayout.NORTH);
+		// Set a reference to this panel for later access
+		AcademiaPanel.setAcademiaInfoPanelRef(academiaInfoPanel);
 		return academiaInfoPanel;
+	}
+	
+	/**
+	 * Create academia network stats panel. This panel will display to users
+	 * critical bits of information peculiar to academia networks. Such info
+	 * includes the number of identified faculty, the number of duplicates ...
+	 * and more.
+	 * @param String networkName
+	 * @return JPanel networkStatsPanel
+	 */
+	public static JPanel createNetworkStatsPanel(String networkName) {
+		if (networkName.length() >= 10) {
+			networkName = networkName.substring(0, 9) + "...";
+		}
+		JPanel networkStatsPanel = new JPanel();
+		
+	    networkStatsPanel.setBorder(BorderFactory.createTitledBorder(networkName + " Network Stats"));
+		
+		// Organize panel horizontally.
+		networkStatsPanel.setLayout(new BoxLayout(networkStatsPanel, BoxLayout.X_AXIS));
+		
+		return networkStatsPanel;
 	}
 
 	/**
@@ -78,7 +104,7 @@ public class AcademiaFactory {
 						Cytoscape.notifyUser("Please select a file and/or specify network name.");
 					} else { 
 						if (! getSelectedFileRef().getAbsolutePath().trim()
-								.equalsIgnoreCase(AcademiaFactory.getPathTextFieldRef()
+								.equalsIgnoreCase(AcademiaPanel.getPathTextFieldRef()
 										.getText().trim())) {
 							Cytoscape.notifyUser("Please select a file.");
 						} else if (getFacultyTextFieldRef().getText().trim()
@@ -89,7 +115,7 @@ public class AcademiaFactory {
 								// Create network
 								Cytoscape.createNetwork(getSelectedFileRef());						
 							} catch (FileNotFoundException e) {
-								Cytoscape.notifyUser(AcademiaFactory.getPathTextFieldRef().getText()
+								Cytoscape.notifyUser(AcademiaPanel.getPathTextFieldRef().getText()
 										+ " does not exist");
 							}
 						}
@@ -102,7 +128,7 @@ public class AcademiaFactory {
 
 	/**
 	 * Create Database info panel.
-	 * Allows user to load Incites or Scopus derived text files
+	 * Allows user to load Incites or Scopus derived data files
 	 * @param null
 	 * @return JPanel databaseInfoPanel
 	 */
@@ -128,7 +154,7 @@ public class AcademiaFactory {
 		// Add 'create network button' to panel
 		// Button wrapper added for cosmetic reasons
 		JPanel buttonWrapper = new JPanel();
-		buttonWrapper.add(AcademiaFactory.createNetworkButton(), BorderLayout.CENTER);
+		buttonWrapper.add(AcademiaPanel.createNetworkButton(), BorderLayout.CENTER);
 		databaseInfoPanel.add(buttonWrapper);
 	
 		return databaseInfoPanel;
@@ -197,12 +223,12 @@ public class AcademiaFactory {
 				// Only attempt to read data file if user clicks "OK"
 				if (check == JFileChooser.APPROVE_OPTION) {
 					File textFile = chooser.getSelectedFile();
-					AcademiaFactory.setDataFile(textFile);
-					AcademiaFactory.getPathTextFieldRef().setText(textFile.getAbsolutePath());
-					getFacultyTextFieldRef().setText(AcademiaFactory.parseFileName(textFile.getAbsolutePath()));
+					AcademiaPanel.setDataFile(textFile);
+					AcademiaPanel.getPathTextFieldRef().setText(textFile.getAbsolutePath());
+					getFacultyTextFieldRef().setText(AcademiaPanel.parseFileName(textFile.getAbsolutePath()));
 				} else {
-					AcademiaFactory.setDataFile(null);
-					AcademiaFactory.getPathTextFieldRef().setText(null);
+					AcademiaPanel.setDataFile(null);
+					AcademiaPanel.getPathTextFieldRef().setText(null);
 				}
 			}
 		});
@@ -221,12 +247,12 @@ public class AcademiaFactory {
 		loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaFactory.setLoadTextField(new JTextField());
-		AcademiaFactory.getPathTextFieldRef().setEditable(true);
+		AcademiaPanel.setLoadTextField(new JTextField());
+		AcademiaPanel.getPathTextFieldRef().setEditable(true);
 		// Add text field 
-		loadDataPanel.add(AcademiaFactory.getPathTextFieldRef());
+		loadDataPanel.add(AcademiaPanel.getPathTextFieldRef());
 		// Add load data button 
-		loadDataPanel.add(AcademiaFactory.createLoadButton());
+		loadDataPanel.add(AcademiaPanel.createLoadButton());
 		return loadDataPanel;
 	}
 
@@ -240,7 +266,7 @@ public class AcademiaFactory {
 		specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaFactory.setFacultyTextFieldRef(new JTextField());
+		AcademiaPanel.setFacultyTextFieldRef(new JTextField());
 		getFacultyTextFieldRef().setEditable(true);
 		// Add text field 
 		specifyNetworkNamePanel.add(getFacultyTextFieldRef());
@@ -253,7 +279,7 @@ public class AcademiaFactory {
 	 * @return JTextField facultyTextField
 	 */
 	public static JTextField getFacultyTextFieldRef() {
-		return AcademiaFactory.facultyTextFieldRef;
+		return AcademiaPanel.facultyTextFieldRef;
 	}
 
 	/**
@@ -262,7 +288,7 @@ public class AcademiaFactory {
 	 * @return JTextField pathTextField
 	 */
 	public static JTextField getPathTextFieldRef() {
-		return AcademiaFactory.pathTextFieldRef;
+		return AcademiaPanel.pathTextFieldRef;
 	}
 
 	/**
@@ -271,7 +297,7 @@ public class AcademiaFactory {
 	 * @return File selectedFile
 	 */
 	public static File getSelectedFileRef() {
-		return AcademiaFactory.selectedFileRef;
+		return AcademiaPanel.selectedFileRef;
 	}
 	/**
 	 * Extract filename from path
@@ -292,7 +318,7 @@ public class AcademiaFactory {
 	 * @return null
 	 */
 	public static void setDataFile(File selectedFile) {
-		AcademiaFactory.selectedFileRef = selectedFile;
+		AcademiaPanel.selectedFileRef = selectedFile;
 	}
 
 	/**
@@ -301,7 +327,7 @@ public class AcademiaFactory {
 	 * @return null
 	 */
 	public static void setFacultyTextFieldRef(JTextField facultyTextField) {
-		AcademiaFactory.facultyTextFieldRef = facultyTextField;
+		AcademiaPanel.facultyTextFieldRef = facultyTextField;
 	}
 	
 	/**
@@ -310,7 +336,77 @@ public class AcademiaFactory {
 	 * @return null
 	 */
 	public static void setLoadTextField(JTextField pathTextField) {
-		AcademiaFactory.pathTextFieldRef = pathTextField;
+		AcademiaPanel.pathTextFieldRef = pathTextField;
 	}
+
+	/**
+	 * Reference to network stats panel
+	 */
+	private static JPanel networkStatsPanelRef = null;
+	
+	/**
+	 * Set network stats panel reference
+	 * @param JPanel networkStatsPanel
+	 * @return null
+	 */
+	public static void setNetworkStatsPanelRef(JPanel networkStatsPanel) {
+		AcademiaPanel.networkStatsPanelRef = networkStatsPanel;
+	}
+	
+	/**
+	 * Get network stats panel reference
+	 * @param null
+	 * @return JPanel networkStatsPanel
+	 */
+	public static JPanel getNetworkStatsPanelRef() {
+		return AcademiaPanel.networkStatsPanelRef;
+	}
+	
+	/**
+	 * Get academia info panel reference
+	 * @param null
+	 * @return JPanel academiaInfoPanelRef
+	 */
+	public static JPanel getAcademiaInfoPanelRef() {
+		return AcademiaPanel.academiaInfoPanelRef;
+	}
+
+	/**
+	 * Set academia info panel reference
+	 * @param JPanel academiaInfoPanelRef
+	 * @return null
+	 */
+	public static void setAcademiaInfoPanelRef(JPanel academiaInfoPanelRef) {
+		AcademiaPanel.academiaInfoPanelRef = academiaInfoPanelRef;
+	}
+
+	/**
+	 * Reference to academia info panel
+	 */
+	private static JPanel academiaInfoPanelRef = null;
+	
+	/**
+	 * Update network stats panel (for Academia networks only)
+	 * @param SocialNetwork socialNetwork
+	 * @return null
+	 */
+	public static void updateNetworkStatsPanel(SocialNetwork socialNetwork) {
+		AcademiaPanel.setNetworkStatsPanelRef(AcademiaPanel.createNetworkStatsPanel(socialNetwork.getNetworkName()));
+		AcademiaPanel.getAcademiaInfoPanelRef()
+		.add(AcademiaPanel.getNetworkStatsPanelRef(), BorderLayout.CENTER);
+	}
+	
+	/**
+	 * Clear network stats panel (for Academia networks only)
+	 * @param null
+	 * @return null
+	 */
+	public static void clearNetworkStatsPanel() {
+		AcademiaPanel.getAcademiaInfoPanelRef().remove(AcademiaPanel.getNetworkStatsPanelRef());
+		AcademiaPanel.setNetworkStatsPanelRef(null);
+		AcademiaPanel.getAcademiaInfoPanelRef().revalidate();
+		AcademiaPanel.getAcademiaInfoPanelRef().repaint();
+	}
+	
 
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -96,7 +97,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 			int minEdgeWidth = 0;
 			int maxEdgeWidth = 0;
 			switch (networkID) {
-				case Category.INCITES:			
+				case Category.INCITES:
+					AcademiaPanel.updateNetworkStatsPanel(socialNetwork);
 					// Specify NODE_LABEL
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, 
 							new Object[] {"Label"});
@@ -142,6 +144,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                             new Object[] {shapeAttrMap});
 					break;
 				case Category.SCOPUS:
+					AcademiaPanel.updateNetworkStatsPanel(socialNetwork);
 					// Specify NODE_LABEL
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, 
 							new Object[] {"Label"});
@@ -166,6 +169,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 							                                     new Object[] {"# of copubs"});
 					break;
 				case Category.PUBMED:
+					AcademiaPanel.updateNetworkStatsPanel(socialNetwork);
 					// Specify NODE_LABEL
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, 
 							new Object[] {"Label"});

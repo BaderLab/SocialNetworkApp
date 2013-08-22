@@ -13,12 +13,12 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.AcademiaFactory;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -104,6 +104,25 @@ public class Cytoscape {
 	 * Currently selected visual style ID
 	 */
 	private static int visualStyleID = Category.DEFAULT;
+	/**
+	 * Set of all visual styles currently supported by app
+	 */
+	private static HashSet<String> visualStyleSet = null;
+	
+	/**
+	 * Return true iff visual style is currently supported
+	 * by app
+	 * @param String visualStyleName
+	 * @return boolean bool
+	 */
+	public static boolean isValidVisualStyle(String visualStyleName) {
+		if (visualStyleSet == null) {
+			Cytoscape.visualStyleSet = new HashSet<String>();
+			Cytoscape.visualStyleSet.add("Chipped");
+			Cytoscape.visualStyleSet.add("Vanue");
+		}
+		return Cytoscape.visualStyleSet.contains(visualStyleName);
+	}
 	
 	/**
 	 * Apply visual style to network
@@ -152,7 +171,7 @@ public class Cytoscape {
 	 */	
 	public static void createNetwork(File networkFile) throws FileNotFoundException {
 		// Verify that network name is valid
-		String networkName = AcademiaFactory.getFacultyTextFieldRef().getText().trim();
+		String networkName = AcademiaPanel.getFacultyTextFieldRef().getText().trim();
 		if (! Cytoscape.isNameValid(networkName)) {
 			Cytoscape.notifyUser("Network " + networkName + " already exists in Cytoscape."
 					           + " Please enter a new name.");
@@ -172,14 +191,14 @@ public class Cytoscape {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
 			// Load data from text file
 			if (extension.trim().equalsIgnoreCase("xlsx")) {
-				socialNetwork = new SocialNetwork(Category.INCITES);
+				socialNetwork = new SocialNetwork(networkName, Category.INCITES);
 				Incites incites = new Incites(networkFile);
 				if (incites.getIgnoredRows() >= 1) {
 					Cytoscape.notifyUser("Some rows could not be parsed.");
 				}
 				if (incites.getIdentifiedFacultyList().size() == 0) {
-					Cytoscape.notifyUser("Unable to identify faculty" 
-							          +  "\nPlease verify that Incites data file is valid");
+					Cytoscape.notifyUser("Unable to identify faculty." 
+							          +  "Please verify that Incites data file is valid");
 				}
 				socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
 				socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
@@ -188,13 +207,13 @@ public class Cytoscape {
 				facultyAttr = incites.getFaculty();
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Cytoscape.notifyUser("Invalid file\nThis Incites file is corrupt.");
+					Cytoscape.notifyUser("Invalid file. This Incites file is corrupt.");
 					return;
 				}
 			// Notify user of inappropriate file type
 			} else {
 				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				Cytoscape.notifyUser("Invalid file\nIncite data files either have to be excel " +
+				Cytoscape.notifyUser("Invalid file. Incite data files either have to be excel " +
 						             "spreadsheets or text files.");
 				return;
 			}
@@ -212,10 +231,10 @@ public class Cytoscape {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					return;
 				}
-				socialNetwork = new SocialNetwork(Category.SCOPUS);
+				socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
 			} else {
 				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				Cytoscape.notifyUser("Invalid file\nScopus data files have to be csv " +
+				Cytoscape.notifyUser("Invalid file. Scopus data files have to be csv " +
 						             "spreadsheets");
 				return;
 			}
@@ -276,7 +295,7 @@ public class Cytoscape {
 				break;
 		}
 		Cytoscape.setNetworkName(searchTerm);
-		Cytoscape.getSocialNetworkMap().put(searchTerm, new SocialNetwork(category));
+		Cytoscape.getSocialNetworkMap().put(searchTerm, new SocialNetwork(searchTerm, category));
 		// Transfer map to Cytoscape's map variable
 		Cytoscape.setMap(map);
 		// Create network using map
@@ -402,14 +421,14 @@ public class Cytoscape {
 	 * Get social network map
 	 * @param null
 	 * @return Map social networks
-	 * <br><i>Key: network name</i> 
-	 * <br><i>Value: {CyNetwork, Category, CyNetworkView}</i>
+	 * <br><i>key: network name</i> 
+	 * <br><i>value: {CyNetwork, Category, CyNetworkView}</i>
 	 */
 	public static Map<String, SocialNetwork> getSocialNetworkMap() {
 		if (Cytoscape.socialNetworkMap == null) {
 			Cytoscape.setSocialNetworkMap(new HashMap<String, SocialNetwork>());
 			Cytoscape.socialNetworkMap.put("DEFAULT", 
-					                       new SocialNetwork(Category.DEFAULT));
+					                       new SocialNetwork("DEFAULT", Category.DEFAULT));
 		}
 		return Cytoscape.socialNetworkMap;
 	}
@@ -466,7 +485,7 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void notifyUser(String message) {
-		JOptionPane.showMessageDialog(new JPanel(), message);
+		JOptionPane.showMessageDialog(new JPanel(), "<html><body style='width: 200px'>" + message);
 	}
 	
 	/**

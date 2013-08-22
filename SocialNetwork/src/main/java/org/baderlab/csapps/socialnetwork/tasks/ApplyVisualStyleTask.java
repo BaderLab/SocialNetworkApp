@@ -88,7 +88,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
-	 * Create new apply visual style taskk
+	 * Create new apply visual style task
 	 * @param visualStyleFactoryServiceRef
 	 * @param vmmServiceRef
 	 * @param passthroughMappingFactoryServiceRef
@@ -330,6 +330,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 				vmmServiceRef.setCurrentVisualStyle(this.getVanueVisualStyle());
 				break;
 		}
+		return;
 	}
 
 }

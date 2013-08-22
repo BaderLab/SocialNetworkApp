@@ -1,5 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
+import main.java.org.baderlab.csapps.socialnetwork.actions.IncitesAction;
 import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
 import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
@@ -84,8 +85,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
 		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener();
-		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
-		
+		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());		
 		
 		// Create and register task factories
 		ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = 
@@ -109,11 +109,10 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
 		
 		
-		// Create & register main user panel
+		// Create & register new menu item (for opening /closing main app panel)
 		UserPanel userPanel = new UserPanel();
 		
-		Map<String, String> serviceProperties;
-		serviceProperties = new HashMap<String, String>();
+		Map<String, String> serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
 		serviceProperties.put("preferredMenu", "Apps.Social Network");
 		UserPanelAction userPanelAction = new UserPanelAction(serviceProperties, 
@@ -122,7 +121,17 @@ public class CyActivator extends AbstractCyActivator {
 				                                              cySwingApplicationServiceRef, 
 				                                              cyServiceRegistrarRef, userPanel);		
 		
-		registerService(bc, userPanelAction, CyAction.class, new Properties());		
+		registerService(bc, userPanelAction, CyAction.class, new Properties());	
+		
+		// Create and register new menu item (for adding institutions)
+		serviceProperties = new HashMap<String, String>();
+		serviceProperties.put("inMenuBar", "true");
+		serviceProperties.put("preferredMenu", "Tools.Incites");
+		IncitesAction incitesAction = new IncitesAction(serviceProperties, 
+														cyApplicationManagerServiceRef, 
+														cyNetworkViewManagerServiceRef);
+		
+		registerService(bc, incitesAction, CyAction.class, new Properties());	
 		
 		
 		// Add dependencies to class Cytoscape

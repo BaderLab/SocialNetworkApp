@@ -19,7 +19,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -29,7 +31,6 @@ import javax.swing.JTextField;
 
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.academia.AcademiaFactory;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -85,6 +86,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static JPanel topPanelRef = null;
 	/**
+	 * Reference to help button
+	 */
+	private static JButton helpButton = null;
+	/**
 	 * Reference to visual style panel
 	 */
 	private static JPanel visualStylePanel = null;
@@ -107,7 +112,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400,200));
 		
-		// An 'Academia' flavored UI has been set as the default
+		// NOTE: An 'Academia' flavored UI has been set as the default
 		UserPanel.setSelectedCategory(Category.ACADEMIA);
 			
 		// Add top panel
@@ -115,7 +120,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.add(UserPanel.topPanelRef, BorderLayout.NORTH);
 		
 		// Add the default info panel (Academia)
-		this.setSelectedInfoPanel(AcademiaFactory.createAcademiaInfoPanel());
+		this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
 		this.add(UserPanel.infoPanelRef, BorderLayout.CENTER);
 		
 		// Add bottom panel
@@ -141,14 +146,89 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			// selector. Not doing this will cause random & seemingly untraceable
 			// errors to occur.
 			UserPanel.setVisualStyleSelectorType(networkType);
+			Cytoscape.setVisualStyleID(networkType);
 			UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector
 					                        (networkType));
 			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
+			UserPanel.setVisualStyleHelpButton(UserPanel.createHelpButton());
+			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleHelpButton());
 			UserPanel.getNetworkPanelRef().add(UserPanel.getVisualStylePanel(), 
 			BorderLayout.CENTER);
 		} else {
 			UserPanel.changeNetworkVisualStyle(networkName);
 		}	
+	}
+	
+	/**
+	 * Present help information to user in a pop-up dialog
+	 * box
+	 * @param String dialogTitle
+	 * @param String helpInfo
+	 * @return null
+	 */
+	private static void help(String dialogTitle, String helpInfo) {
+		String formatting = "<html><body style='width: 300px'>";
+		JFrame frame = new JFrame();
+		JOptionPane.showMessageDialog(frame, formatting + helpInfo, dialogTitle, JOptionPane.QUESTION_MESSAGE);
+	}
+	
+	/**
+	 * Create help button
+	 * @param null
+	 * @return JButton helpButton
+	 */
+	private static JButton createHelpButton() {
+		URL iconURL = UserPanel.class.getClassLoader().getResource("help.png");
+		ImageIcon iconSearch = new ImageIcon(iconURL);
+		JButton helpButton = new JButton(iconSearch);
+	    helpButton.setBorder(null);
+	    helpButton.setContentAreaFilled(false);
+		helpButton.setToolTipText("Visual Style Help");
+		helpButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				switch (Cytoscape.getVisualStyleID()) {
+					case Category.DEFAULT:
+						UserPanel.help("Default visual style", 
+								"The default visual style is the bas" +
+								"e visual style. It makes use of no n" +
+								"etwork attributes and is for all in" +
+								"tents and purposes non-essential.");
+						break;
+					case Category.CHIPPED:
+						UserPanel.help("Chipped Visual Style", 
+								"The Chipped visual style is designe" +
+								"d for fully annotated networks. Thes" +
+								"e are networks that are assumed to " +
+								"contain reasonably accurate institu" +
+								"tion information. Institutions are m" +
+								"atched to their respective location" +
+								"s, which are color matched. Institut" +
+								"ions for which no location has been" +
+								" found are classified as 'other' (p" +
+								"urple). Color matching is determined" +
+								" by a local map and as such may or " +
+								"may not be adequate. Manually adding" +
+								" an institution and its correspondi" +
+								"ng location can be done by navigati" +
+								"ng to: <b>Apps</b> - <b>SocialNetwo" +
+								"rkApp</b> - <b>Incites</b> - <b>Add" +
+								" institution</b>");
+						break;
+					case Category.VANUE:
+						UserPanel.help("Vanue Visual Style",
+								"The Vanue visual style is designed " +
+								"for academia networks that lack ins" +
+								"titution information.. Node size is d" +
+								"etermined by times cited value and " +
+								"edge width varies depending on how " +
+								"many publications two individual no" +
+								"des (authors) have co-authored."
+);
+						break;
+				}
+			}
+		});
+		return helpButton;
 	}
 
 	/**
@@ -180,11 +260,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 					         (Integer) network.getEdgeCount(), Category.toString(networkType)});
 					
 			// Set table reference
-			setNetworkTableRef(networkTable);
+			UserPanel.setNetworkTableRef(networkTable);
 			
 			// Context menu. Displayed to user on the event of a click (on the network table)
 			final JPopupMenu destroyNetworkContextMenu = new JPopupMenu();
-			destroyNetworkContextMenu.add(createDestroyNetworkMenuItem());
+			destroyNetworkContextMenu.add(UserPanel.createDestroyNetworkMenuItem());
 		    
 			networkTable.addMouseListener(new MouseAdapter() {
 		        public void mousePressed(MouseEvent e) {
@@ -196,7 +276,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		                int row = target.getSelectedRow();
 		                
 		                // Get selected network name
-		                String networkName = (String) getNetworkTableRef().getModel()
+		                String networkName = (String) UserPanel.getNetworkTableRef().getModel()
 		                		                        .getValueAt
 		                		                        (row, 0);
 		                UserPanel.setSelectedNetwork(networkName);
@@ -209,14 +289,14 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		        	// the destroy network context menu
 					if (e.getButton() == MouseEvent.BUTTON3) {
 						// Display context menu to user with all associated options.
-						destroyNetworkContextMenu.show(getNetworkTableRef(), e.getX(), e.getY());
+						destroyNetworkContextMenu.show(UserPanel.getNetworkTableRef(), e.getX(), e.getY());
 					} 
 		        }
 		    });
 	
-			JScrollPane networkTablePane = new JScrollPane(getNetworkTableRef());
+			JScrollPane networkTablePane = new JScrollPane(UserPanel.getNetworkTableRef());
 			networkTablePane.setPreferredSize(new Dimension(200, 100));
-			getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
+			UserPanel.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
 	
 		// Add network info to table
 		} else {
@@ -787,10 +867,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	public static void swapVisualStyleSelector(int visualStyleSelectorType) {
 		if (UserPanel.getVisualStyleSelectorType() != visualStyleSelectorType) {
 			UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());
+			UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleHelpButton());
 			UserPanel.setVisualStyleSelectorType(visualStyleSelectorType);
+			Cytoscape.setVisualStyleID(visualStyleSelectorType);
 			UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector(UserPanel
 					                                  .getVisualStyleSelectorType()));
 			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
+			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleHelpButton());
 		}
 	}
 
@@ -845,7 +928,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 					this.setSelectedInfoPanel(Category.createDefaultInfoPanel());
 					break;
 				case Category.ACADEMIA: 
-					this.setSelectedInfoPanel(AcademiaFactory.createAcademiaInfoPanel());
+					this.setSelectedInfoPanel(AcademiaPanel.createAcademiaInfoPanel());
 					break;
 				case Category.TWITTER:
 					this.setSelectedInfoPanel(Category.createTwitterInfoPanel());
@@ -871,6 +954,24 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private void setSelectedInfoPanel(JPanel infoPanel) {
 		UserPanel.infoPanelRef = infoPanel;
+	}
+
+	/**
+	 * Get visual style help button
+	 * @param null
+	 * @return JButton visualStyleHelpButton
+	 */
+	public static JButton getVisualStyleHelpButton() {
+		return helpButton;
+	}
+
+	/**
+	 * Set visual style help button
+	 * @param JButton visualStyleHelpButton
+	 * @return null
+	 */
+	public static void setVisualStyleHelpButton(JButton visualStyleHelpButton) {
+		UserPanel.helpButton = visualStyleHelpButton;
 	}
 
 }
