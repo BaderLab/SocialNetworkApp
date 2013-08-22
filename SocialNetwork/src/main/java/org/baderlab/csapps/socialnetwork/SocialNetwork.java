@@ -53,10 +53,12 @@ public class SocialNetwork {
 	
 	/**
 	 * Create a new social network
+	 * @param String networkName
 	 * @param int networkType
 	 * @return null
 	 */
-	public SocialNetwork(int networkType) {
+	public SocialNetwork(String networkName, int networkType) {
+		this.setNetworkName(networkName);
 		this.setNetworkType(networkType);
 		// Set default visual styles
 		switch(networkType) {
