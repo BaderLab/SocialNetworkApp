@@ -99,7 +99,7 @@ public class IncitesAction extends AbstractCyAction {
 						} else {
 							institution = institution.toUpperCase();
 							// Format location (in case casing was done improperly)
-							// united states -> 'United States'
+							// i.e. united states becomes 'United States'
 							String[] words = location.split("\\s");
 							location = "";
 							for (String word : words) {
