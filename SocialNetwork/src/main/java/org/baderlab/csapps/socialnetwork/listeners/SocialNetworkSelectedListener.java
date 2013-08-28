@@ -18,13 +18,15 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 			name = Cytoscape.getNetworkName(network);
 			// Update UI iff a social network has been selected
 			if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
-				UserPanel.addNetworkVisualStyle(name);
 				SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
+				UserPanel.updateNetworkStatsPanel(socialNetwork);
+				UserPanel.addNetworkVisualStyle(socialNetwork);
 				Cytoscape.setCurrentlySelectedSocialNetwork(socialNetwork);
 				return;
 			}
 		}
 		Cytoscape.setCurrentlySelectedSocialNetwork(null);
-		UserPanel.addNetworkVisualStyle("DEFAULT");
+		UserPanel.addNetworkVisualStyle(null);
+		UserPanel.updateNetworkStatsPanel(null);
 	}
 }

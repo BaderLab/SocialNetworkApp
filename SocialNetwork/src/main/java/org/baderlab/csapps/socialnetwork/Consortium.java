@@ -86,4 +86,8 @@ public class Consortium {
 			return false;
 		return true;
 	}
+	
+	public String toString() {
+		return "Node#1: " + node1.toString() +"\nNode#2: " + node2.toString() + "\n\n";
+	}
 }

@@ -3,6 +3,7 @@ package main.java.org.baderlab.csapps.socialnetwork.academia;
 import java.util.Map;
 
 import org.apache.xmlbeans.impl.common.Levenshtein;
+import org.cytoscape.model.CyNode;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Category;
@@ -84,16 +85,22 @@ public class Author extends AbstractNode {
 		this.setOrigin(origin);
 		switch (origin) {
 			case Category.SCOPUS:
-				String[] scopusNames = rawAuthorText.split("\\s|\\.");
+				String[] scopusNames = rawAuthorText.split("\\s");
 				if (scopusNames.length == 1) {
 					this.lastName = scopusNames[0];
-				} else if (scopusNames.length == 2) {
+				} else  {
 					this.lastName = scopusNames[0];
-					this.firstInitial = scopusNames[1];
-				} else if (scopusNames.length >= 3) {
-					this.lastName = scopusNames[0];
-					this.firstInitial = scopusNames[1];
-					this.middleInitial = scopusNames[2];
+					int i = 1;
+					for (i = 1; i < scopusNames.length - 1; i++) {
+						this.lastName += " " + scopusNames[i];
+					}
+					String[] initials = scopusNames[i].split("\\.");
+					if (initials.length == 1) {
+						this.firstInitial = initials[0];
+					} else if (initials.length > 1) {
+						this.firstInitial = initials[0];
+						this.middleInitial = initials[1];
+					}
 				}
 				// Set Scopus attributes
 				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
@@ -168,7 +175,7 @@ public class Author extends AbstractNode {
 			// Determine whether or not first names are equal
 			distance = Levenshtein.distance(this.firstName.toLowerCase(), otherAuthor.firstName.toLowerCase());
 			similarity = 1 - ((double) distance) / (Math.max(this.firstName.length(), otherAuthor.firstName.length()));
-			if (similarity >= 0.5) {
+			if (similarity >= 0.8) {
 				isEqualFirstName = true;
 				if (this.firstName.length() > otherAuthor.firstName.length()) {
 					otherAuthor.firstName = this.firstName;
@@ -194,6 +201,9 @@ public class Author extends AbstractNode {
 				}
 			}
 			isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
+			if (isEqualLastName && isEqualFirstName && ! isEqualInstitution) {
+				this.isGrouped = true;
+			}
 		// Incites (~ Faculty)
 		} else if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) {
 			isEqualLastName = this.lastName.equalsIgnoreCase(otherAuthor.lastName);
@@ -436,6 +446,68 @@ public class Author extends AbstractNode {
 	 */
 	public void setOrigin(int origin) {
 		this.origin = origin;
+	}
+
+//	/**
+//	 * Get node's group. If node doesn't belong to a
+//	 * group null will be returned.
+//	 * @param null
+//	 * @return AbstractGroup group
+//	 */
+//	public Group getGroup() {
+//		return this.group;
+//	}
+//
+//	/**
+//	 * Set node's group
+//	 * @param Group group
+//	 * @return null
+//	 */
+//	public void setGroup(Group group) {
+//		this.group = group;
+//	}
+
+	/**
+	 * Get CyNode
+	 * @param null
+	 * @return CyNode cyNode
+	 */
+	public CyNode getCyNode() {
+		return this.cyNode;
+	}
+
+	/**
+	 * Set CyNode
+	 * @param CyNode cyNode
+	 * @return null
+	 */
+	public void setCyNode(CyNode cyNode) {
+		this.cyNode = cyNode;
+	}
+	
+	/**
+	 * Add times cited
+	 * @param Publication publication
+	 * @return null
+	 */
+	public void addTimesCited(Publication publication) {
+		// Only update times cited value if publication was not authored by
+		// a single author. 
+		// NOTE: In lone author publications, the lone author is represented
+		// twice
+//		System.out.println(publication.getTitle());
+//		System.out.println(publication.isSingleAuthored());
+		int currentTimesCited = this.getTimesCited();
+		if (publication.isSingleAuthored()) {
+			if (currentTimesCited == 0) {
+				this.setTimesCited(publication.getTimesCited());
+//				System.out.println("I just added " + Integer.toString(publication.getTimesCited()) + " to " + Integer.toString(this.timesCited));
+			}
+		} else {
+			this.setTimesCited(currentTimesCited + publication.getTimesCited());
+//			System.out.println("I just added " + Integer.toString(publication.getTimesCited()) + " to " + Integer.toString(this.timesCited));
+		}
+//		System.out.println("\n\n");
 	}
  
 }

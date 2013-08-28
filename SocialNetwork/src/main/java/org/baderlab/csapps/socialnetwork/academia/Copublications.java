@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyEdge;
+
 import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
@@ -113,6 +115,16 @@ public class Copublications extends AbstractEdge {
 	 */
 	public List<? extends AbstractNode> getNodes() {
 		return null;
+	}
+
+	@Override
+	public CyEdge getCyEdge() {
+		return this.cyEdge;
+	}
+
+	@Override
+	public void setCyEdge(CyEdge cyEdge) {
+		this.cyEdge = cyEdge;
 	}
 
 }

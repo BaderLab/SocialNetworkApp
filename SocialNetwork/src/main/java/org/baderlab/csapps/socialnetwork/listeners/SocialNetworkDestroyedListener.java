@@ -4,10 +4,8 @@ import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
-import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.CyNetworkManager;
@@ -44,27 +42,15 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 	public void handleEvent(NetworkAboutToBeDestroyedEvent event) {
 		String name = Cytoscape.getNetworkName(event.getNetwork());
 		if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
-			// Perform clean-up if necessary
-			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
-			switch (socialNetwork.getNetworkType()) {
-				case Category.INCITES:
-					AcademiaPanel.clearNetworkStatsPanel();
-					break;
-				case Category.PUBMED:
-					AcademiaPanel.clearNetworkStatsPanel();
-					break;
-				case Category.SCOPUS:
-					AcademiaPanel.clearNetworkStatsPanel();
-					break;
-			}
- 			// Remove network from table
+  			// Remove network from table
 			DefaultTableModel model = (DefaultTableModel) UserPanel.getNetworkTableRef().getModel();
 			model.removeRow(getRow(model, name));
 			Map<String, SocialNetwork> map = Cytoscape.getSocialNetworkMap();
 			map.remove(name);
 			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
 				Cytoscape.setCurrentlySelectedSocialNetwork(null);
-				UserPanel.addNetworkVisualStyle("DEFAULT");
+				UserPanel.addNetworkVisualStyle(null);
+				UserPanel.updateNetworkStatsPanel(null);
 			}
 		}
 	}

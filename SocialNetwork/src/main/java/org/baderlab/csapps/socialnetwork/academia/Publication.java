@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyEdge;
+
 import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 
@@ -210,4 +212,29 @@ public class Publication extends AbstractEdge {
 		return "Title: " + title
 			+  "\nTimes Cited: " + timesCited;
 	}
+
+
+	@Override
+	public CyEdge getCyEdge() {
+		// TODO Auto-generated method stub
+		return this.cyEdge;
+	}
+
+
+	@Override
+	public void setCyEdge(CyEdge cyEdge) {
+		this.cyEdge = cyEdge;
+	}
+	
+	/**
+	 * Return true iff publication was authored by a single
+	 * individual
+	 * @param null
+	 * @return boolean bool
+	 */
+	public boolean isSingleAuthored() {
+		return this.authorList.size() == 2 &&
+			   this.authorList.get(0).equals(this.authorList.get(1));
+	}
+	
 }

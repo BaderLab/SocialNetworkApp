@@ -77,14 +77,13 @@
 						<!-- <Embed-Dependency>commons-math;groupId=org.apache.commons;inline=false</Embed-Dependency> -->
 						<!-- <Embed-Dependency>poi;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
 						<!-- <Embed-Dependency>poi-ooxml;groupId=org.apache.poi;inline=false</Embed-Dependency> -->
-						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!junit|swing-app-api|swing-application-api|layout-api|org.osgi.core|session-api|service-api|work-api|application-api</Embed-Dependency>
+						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!junit|swing-app-api|swing-application-api|layout-api|org.osgi.core|session-api|service-api|work-api|application-api|group-api</Embed-Dependency>
 						<Import-Package>*;resolution:=optional</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 
 	<dependencies>
 		<dependency>
@@ -169,6 +168,12 @@
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>group-api</artifactId>
+			<version>3.0.1</version>
+			<type>bundle</type>
 		</dependency>
 	</dependencies>
 	<packaging>bundle</packaging>

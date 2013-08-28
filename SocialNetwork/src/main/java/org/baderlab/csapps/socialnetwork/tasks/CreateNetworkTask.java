@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.Group;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
@@ -75,7 +76,7 @@ public class CreateNetworkTask extends AbstractTask {
 	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) {
 		try {
 			// Create an empty network 
-			CyNetwork myNet = cyNetworkFactoryServiceRef.createNetwork();
+			CyNetwork myNet = this.cyNetworkFactoryServiceRef.createNetwork();
 			// Get network node table
 			CyTable nodeTable = null;
 			// Get network edge table
@@ -127,6 +128,8 @@ public class CreateNetworkTask extends AbstractTask {
 			CyNode nodeRef = null;
 
 			Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
+			Map<Integer, Group> groupMap = new HashMap<Integer, Group>();
+
 
 			// Get all consortiums and their corresponding edges
 			for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
@@ -136,10 +139,11 @@ public class CreateNetworkTask extends AbstractTask {
 				// Get nodes
 				node1 = consortium.getNode1();
 				node2 = consortium.getNode2();
-
+				
 				// Check for nodes in nodeMap
 				if (! nodeMap.containsKey(node1)) {
 					nodeRef = myNet.addNode();
+					node1.setCyNode(nodeRef);
 					// Add each node attribute to its respective column
 					for (Entry<String, Object> attr : node1.getNodeAttrMap().entrySet()) {
 						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
@@ -150,25 +154,82 @@ public class CreateNetworkTask extends AbstractTask {
 
 				if (! nodeMap.containsKey(node2)) {
 					nodeRef = myNet.addNode();
+					node2.setCyNode(nodeRef);
 					// Add each node attribute to its respective column
 					for (Entry<String, Object> attr : node2.getNodeAttrMap().entrySet()) {
 						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
-								attr.getValue());
+								         attr.getValue());
 					}
 					nodeMap.put(node2, nodeRef);
 				}
 
 				for (AbstractEdge edge : edgeArray) {
-					edgeRef = myNet.addEdge(nodeMap.get(node1), nodeMap.get(node2), false);
+					edgeRef = myNet.addEdge(nodeMap.get(node1), 
+							                nodeMap.get(node2), false);
+					edge.setCyEdge(edgeRef);
 					// Add each edge attribute to it's respective column
 					for (Entry<String, Object> attr : edge.getEdgeAttrMap().entrySet()) {
 						edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
-								attr.getValue());
+								         attr.getValue());
 					}
 				}
-
+				
+				int networkType = Cytoscape.getSocialNetworkMap().get(Cytoscape.getNetworkName()).getNetworkType();
+				int groupID = 0;
+				Group group = null;
+				
+				if (node1.isGrouped) {
+					groupID = node1.hashCode();
+					group = null;
+					if (groupMap.containsKey(groupID)) {
+						group = groupMap.get(groupID);
+						group.addNode(node1);
+					} else {
+						group = new Group(myNet, networkType);
+						group.addNode(node1);
+						groupMap.put(groupID, group);
+					}
+				}
+				
+				if (node2.isGrouped) {
+					groupID = node2.hashCode();
+					group = null;
+					if (groupMap.containsKey(groupID)) {
+						group = groupMap.get(groupID);
+						group.addNode(node2);
+					} else {
+						group = new Group(myNet, networkType);
+						group.addNode(node2);
+						groupMap.put(groupID, group);
+					}
+				}	
+				
 				updateProgress();
-
+				
+			}
+			
+			for (Group group : groupMap.values()) {
+				
+				Long row = null;
+				String column = null;
+				Object[] table = null;
+				
+				// Add node attributes (Cytoscape groups can only have a single node)
+				for (Entry<Object[], Object> attr : group.getNodeAttrMap().entrySet()) {
+					table = attr.getKey();
+					row = (Long) table[0];
+					column = (String) table[1];
+					nodeTable.getRow(row).set(column, attr.getValue());
+				}
+				
+//				// Add edge attributes (Cytoscape groups can have multiple edges)
+//				for (Entry<Object[], Object> attr : group.getEdgeAttrMap().entrySet()) {
+//					table = attr.getKey();
+//					row = (Long) table[0];
+//					column = (String) table[1];
+//					nodeTable.getRow(row).set(column, attr.getValue());
+//				}
+				
 			}
 
 			this.monitor.setTitle("Creating network view");
@@ -192,8 +253,8 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @return null
 	 */
 	public void run(TaskMonitor monitor) throws Exception {
-		CyNetworkManager networkManager = cyNetworkManagerServiceRef;
-		CyNetworkViewManager networkViewManager = cyNetworkViewManagerServiceRef;
+		CyNetworkManager networkManager = this.cyNetworkManagerServiceRef;
+		CyNetworkViewManager networkViewManager = this.cyNetworkViewManagerServiceRef;
 		
 		// Get map
 		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
@@ -229,7 +290,7 @@ public class CreateNetworkTask extends AbstractTask {
 			}
 			if (networkView == null) {
 				// Create a new view for my network
-				networkView = cyNetworkViewFactoryServiceRef
+				networkView = this.cyNetworkViewFactoryServiceRef
 						      .createNetworkView(network);
 				networkViewManager.addNetworkView(networkView);
 			} else {
@@ -246,11 +307,11 @@ public class CreateNetworkTask extends AbstractTask {
 			
 			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap()
 					                              .get(Cytoscape.getNetworkName());
-			socialNetwork.setNetworkRef(network);
+			socialNetwork.setCyNetwork(network);
 			socialNetwork.setNetworkView(networkView);
 			
 			// Auto apply visual style and layout
-			CyLayoutAlgorithm layout = cyLayoutManagerServiceRef
+			CyLayoutAlgorithm layout = this.cyLayoutManagerServiceRef
 					                   .getLayout("force-directed");
 			String layoutAttribute = null;
 			TaskIterator layoutTaskIterator = layout.createTaskIterator

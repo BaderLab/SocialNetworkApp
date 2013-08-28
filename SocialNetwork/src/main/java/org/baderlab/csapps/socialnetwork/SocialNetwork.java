@@ -26,7 +26,7 @@ public class SocialNetwork {
 	/**
 	 * The network's CyNetwork reference
 	 */
-	private CyNetwork networkRef = null;
+	private CyNetwork cyNetwork = null;
 	/**
 	 * The network's type
 	 */
@@ -49,6 +49,10 @@ public class SocialNetwork {
 	 * The network's stat map (stores network issues)
 	 */
 	private Map<String, Object> statMap = null;
+	/**
+	 * The network's stats (various important details (i.e. # of unique edges .. etc)
+	 */
+	private String stats = null;
 	
 	
 	/**
@@ -84,12 +88,12 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * Get network reference
+	 * Get CyNetwork reference
 	 * @param null
-	 * @return CyNetwork networkRef
+	 * @return CyNetwork cyNetwork
 	 */
-	public CyNetwork getNetworkRef() {
-		return networkRef;
+	public CyNetwork getCyNetwork() {
+		return this.cyNetwork;
 	}
 
 	/**
@@ -132,12 +136,12 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * Set network reference
-	 * @param CyNetwork networkRef
+	 * Set CyNetwork reference
+	 * @param CyNetwork cyNetwork
 	 * @return null
 	 */
-	public void setNetworkRef(CyNetwork networkRef) {
-		this.networkRef = networkRef;
+	public void setCyNetwork(CyNetwork cyNetwork) {
+		this.cyNetwork = cyNetwork;
 	}
 
 	/**
@@ -239,6 +243,31 @@ public class SocialNetwork {
 			message += entry.getKey() + ": " + Integer.toString((Integer)entry.getValue()) + "\n";
 		}
 		JOptionPane.showMessageDialog(new JPanel(), message);
+	}
+
+	/**
+	 * Get network stats
+	 * @param null
+	 * @return String stats
+	 */
+	public String getStats() {
+		if (this.stats == null) {
+			String info = "<html>";
+			for (Entry<String, Object> entry : this.getStatMap().entrySet()) {
+				info += entry.getKey() + ": " + Integer.toString((Integer)entry.getValue()) + "<br>";
+			}
+			this.stats = info + "</html>";
+		}
+		return this.stats;
+	}
+
+	/**
+	 * Set network stats
+	 * @param String stats
+	 * @return null
+	 */
+	public void setStats(String stats) {
+		this.stats = stats;
 	}
 	
 		

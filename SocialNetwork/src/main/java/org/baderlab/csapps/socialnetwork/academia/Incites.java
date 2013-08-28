@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -464,7 +465,18 @@ public class Incites {
 	public static Map<String, String> getLocationMap() {
 		if (Incites.locationMap == null) {
 			try {
-				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				File folder = new File("Apps/SocialNetworkApp/");
+				File file = new File("Apps/SocialNetworkApp/map.sn");
+				InputStream in = null;
+				if (folder.exists()) {
+					if (file.exists()) {
+						in = new FileInputStream(file.getAbsolutePath());
+					} else {
+						in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+					}
+				} else {
+					in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				}
 				ObjectInputStream ois = new ObjectInputStream(in);
 				Incites.setLocationMap((Map<String, String>) ois.readObject());
 			} catch (FileNotFoundException e) {
@@ -728,6 +740,22 @@ public class Incites {
 	}
 	
 	/**
+	 * Return true iff author in authorList
+	 * @param List authorList
+	 * @param Author author
+	 * @return boolean bool
+	 */
+	public static boolean authorInList(ArrayList<Author> authorList, Author author) {
+		for (Author unknown : authorList) {
+			if (author.getLastName().equalsIgnoreCase(unknown.getLastName()) &&
+				author.getFirstName().equalsIgnoreCase(unknown.getFirstName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Parse raw author text and return array list containing all authors
 	 * and their associated info
 	 * @param String rawAuthorText
@@ -746,7 +774,7 @@ public class Incites {
 		for (String authorText : authors) {
 			author = new Author(authorText.trim(), Category.INCITES);
 			if (Incites.checkIfAuthorValid(author)) {
-				if (! pubAuthorList.contains(author)) {
+				if (! Incites.authorInList(pubAuthorList,  author)) {
 					if (facultySet.contains(author)) {
 						author.setFaculty(facultyName);
 					}

@@ -3,11 +3,18 @@ package main.java.org.baderlab.csapps.socialnetwork;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyEdge;
+
 /**
  * A Cytoscape edge
  * @author Victor Kofia
  */
 public abstract class AbstractEdge {
+	
+	/**
+	 * CyEdge reference
+	 */
+	protected CyEdge cyEdge;
 	
 	/**
 	 * A map containing all of edge's attributes
@@ -34,5 +41,20 @@ public abstract class AbstractEdge {
 	 * @return List nodes
 	 */
 	public abstract List<? extends AbstractNode> getNodes();
+	
+	/**
+	 * Get CyEdge
+	 * @param null
+	 * @return CyEdge cyEdge
+	 */
+	public abstract CyEdge getCyEdge();
+	
+	/**
+	 * Set CyEdge
+	 * @param CyEdge cyEdge
+	 * @return null
+	 */
+	public abstract void setCyEdge(CyEdge cyEdge); 
+
 	
 }

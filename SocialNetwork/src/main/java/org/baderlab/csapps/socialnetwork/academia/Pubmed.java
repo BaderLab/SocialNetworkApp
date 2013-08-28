@@ -84,6 +84,8 @@ public class Pubmed {
 			// Get Query Key & Web Env
 			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez" +
 	        "/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
+			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
+	        "/eutils/esearch.fcgi?db=pubmed&term=" + query);
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
@@ -121,6 +123,8 @@ public class Pubmed {
 				// Load all publications at once
 				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
 					"/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
+				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
+					"/esummary.fcgi?db=pubmed" + tag);
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

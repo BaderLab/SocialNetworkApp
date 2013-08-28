@@ -189,10 +189,11 @@ public class Cytoscape {
 		// Create network out of Incites data
 		if (Incites.getIncitesRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
+			Incites incites = null;
 			// Load data from text file
 			if (extension.trim().equalsIgnoreCase("xlsx")) {
 				socialNetwork = new SocialNetwork(networkName, Category.INCITES);
-				Incites incites = new Incites(networkFile);
+				incites = new Incites(networkFile);
 				if (incites.getIgnoredRows() >= 1) {
 					Cytoscape.notifyUser("Some rows could not be parsed.");
 				}
@@ -200,6 +201,7 @@ public class Cytoscape {
 					Cytoscape.notifyUser("Unable to identify faculty." 
 							          +  "Please verify that Incites data file is valid");
 				}
+				socialNetwork.getStatMap().put("# of publications", incites.getPubList().size());
 				socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
 				socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
 				pubList = incites.getPubList();
@@ -217,6 +219,9 @@ public class Cytoscape {
 						             "spreadsheets or text files.");
 				return;
 			}
+			socialNetwork.getStatMap().put("# of publications", incites.getPubList().size());
+			socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
+			socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
 			facultyName = (String) facultyAttr[0];
 			facultySet = (HashSet<Author>) facultyAttr[1];
 			// Add info to social network map(s)

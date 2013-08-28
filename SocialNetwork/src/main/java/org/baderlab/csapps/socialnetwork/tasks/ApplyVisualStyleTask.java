@@ -151,7 +151,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyEdgeWidth(VisualStyle visualStyle) {
-		System.out.println(Cytoscape.getCurrentlySelectedSocialNetwork().getNetworkName());
 		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.EDGE_WIDTH);

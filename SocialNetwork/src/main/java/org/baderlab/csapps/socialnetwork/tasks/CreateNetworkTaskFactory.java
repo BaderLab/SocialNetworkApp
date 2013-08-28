@@ -1,6 +1,7 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
 
+import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.session.CyNetworkNaming;

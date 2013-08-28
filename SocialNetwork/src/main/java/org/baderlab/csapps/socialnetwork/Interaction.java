@@ -74,10 +74,10 @@ public class Interaction {
 	 * @return Map abstractMap
 	 */
 	private Map<Consortium, ArrayList<AbstractEdge>> 
-	     loadAbstractMap(List<? extends AbstractEdge> abstractEdgeList) {
+	    loadAbstractMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
 		Map<Consortium, ArrayList<AbstractEdge>> abstractMap = new 
-				          HashMap<Consortium, ArrayList<AbstractEdge>>();
+				        HashMap<Consortium, ArrayList<AbstractEdge>>();
 		// Iterate through each edge
 		for (AbstractEdge edge : abstractEdgeList) {
 			int i = 0, j = 0;
@@ -144,9 +144,9 @@ public class Interaction {
 				if (authorMap.get(author1) == null) {
 					authorMap.put(author1, author1);
 				} 
-				// Get author#1 from map and update his / her times cited value
-				authorMap.get(author1).setTimesCited(authorMap.get(author1).getTimesCited() 
-						 + (publication.getTimesCited()));
+				// Get author#1 from map and update his / her times cited value with
+				// the one registered in publication
+				authorMap.get(author1).addTimesCited(publication);
 				j = i + 1;
 				while (j < publication.getNodes().size()) {
 					// Add author#2 to map if he / she is not present
@@ -159,9 +159,9 @@ public class Interaction {
 					// Check for consortium's existence before it's entered into map
 					if (! academiaMap.containsKey(consortium)) {
 						copublications = new Copublications(consortium, (Publication) publication);
-						ArrayList<AbstractEdge> list = new ArrayList<AbstractEdge>();
-						list.add(copublications);
-						academiaMap.put(consortium, list);
+						ArrayList<AbstractEdge> edgeList = new ArrayList<AbstractEdge>();
+						edgeList.add(copublications);
+						academiaMap.put(consortium, edgeList);
 					} else {
 						ArrayList<AbstractEdge> array = academiaMap.get(consortium);
 						copublications = (Copublications) array.get(0);
