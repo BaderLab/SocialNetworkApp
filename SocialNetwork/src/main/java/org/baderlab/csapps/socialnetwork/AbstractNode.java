@@ -16,9 +16,9 @@ public abstract class AbstractNode {
 	protected CyNode cyNode;
 	
 	/**
-	 * True iff node is in a group
+	 * CyNode label
 	 */
-	public boolean isGrouped;
+	protected String label;
 	
 	/**
 	 * A map containing all of node's attributes
@@ -39,21 +39,6 @@ public abstract class AbstractNode {
 	 */
 	public abstract void setNodeAttrMap(Map<String, Object> attrMap);
 
-//	/**
-//	 * Get node's group. If node doesn't belong to a
-//	 * group null will be returned.
-//	 * @param null
-//	 * @return AbstractGroup group
-//	 */
-//	public abstract Group getGroup();
-//
-//	/**
-//	 * Set node's group
-//	 * @param Group group
-//	 * @return null
-//	 */
-//	public abstract void setGroup(Group group);
-	
 	/**
 	 * Get CyNode
 	 * @param null
@@ -67,5 +52,19 @@ public abstract class AbstractNode {
 	 * @return null
 	 */
 	public abstract void setCyNode(CyNode cyNode); 
+	
+	/**
+	 * Get label
+	 * @param null
+	 * @return String label
+	 */
+	public abstract String getLabel();
+	
+	/**
+	 * Set label
+	 * @param String label
+	 * @return null
+	 */
+	public abstract void setLabel(String label);
 	
 }

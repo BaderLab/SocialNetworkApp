@@ -125,14 +125,16 @@ public class Category {
 	public static int getCategoryID(String category) {
 		if (Category.categoryMap == null) {
 			Category.categoryMap = new HashMap<String, Integer>();
-			categoryMap.put("--SELECT CATEGORY--", DEFAULT);
-			categoryMap.put("Academia", ACADEMIA);
-			categoryMap.put("Twitter", TWITTER);
-			categoryMap.put("LinkedIn", LINKEDIN);
-			categoryMap.put("Youtube", YOUTUBE);
-			categoryMap.put("Incites", INCITES);
-			categoryMap.put("Scopus", SCOPUS);
-			categoryMap.put("Pubmed", PUBMED);
+			String[] columns = new String[] {"--SELECT CATEGORY--",
+										     "Academia", "Twitter", 
+											 "LinkedIn", "Youtube", 
+											 "Incites", "Scopus", 
+											 "Pubmed"};
+			int[] ids = new int[] {DEFAULT, ACADEMIA, TWITTER, LINKEDIN, 
+					               YOUTUBE, INCITES, SCOPUS, PUBMED};
+			for (int i = 0; i < 7; i++) {
+				categoryMap.put(columns[i], ids[i]);
+			}
 		}
 		return categoryMap.get(category);
 	}

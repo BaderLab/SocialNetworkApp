@@ -14,7 +14,6 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -45,9 +44,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		// Acquire services
 		CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
-		
-		CyGroupFactory cyGroupFactoryServiceRef = getService(bc, CyGroupFactory.class);
-				
+						
 		CySwingApplication cySwingApplicationServiceRef = getService(bc,CySwingApplication.class);
 		
 		CyNetworkNaming cyNetworkNamingServiceRef = getService(bc,CyNetworkNaming.class);
@@ -154,10 +151,6 @@ public class CyActivator extends AbstractCyActivator {
 		Cytoscape.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
 
 		Cytoscape.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
-		
-		// Add dependencies to class Group
-		// NOTE: Using setters violates dependency injection
-		Group.setCyGroupFactoryService(cyGroupFactoryServiceRef);
-		
+				
 	}
 }

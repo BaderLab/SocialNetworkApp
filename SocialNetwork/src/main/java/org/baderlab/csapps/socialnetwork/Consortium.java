@@ -2,7 +2,7 @@ package main.java.org.baderlab.csapps.socialnetwork;
 
 
 /**
- * Two nodes
+ * Two nodes that share interactions
  * @author Victor Kofia
  */
 public class Consortium {

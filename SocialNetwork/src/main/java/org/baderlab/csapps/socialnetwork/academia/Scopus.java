@@ -3,8 +3,8 @@ package main.java.org.baderlab.csapps.socialnetwork.academia;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,22 +110,6 @@ public class Scopus {
 	}
 
 	/**
-	 * Construct Scopus attribute map.
-	 * @param null
-	 * @return Map nodeAttrMap
-	 */
-	public static TreeMap<String, Object> constructScopusAttrMap(Author author) {
-		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
-		String lastName = author.getLastName();
-		String firstInitial = author.getFirstInitial();
-		nodeAttrMap.put("Label", firstInitial + "_" + lastName);
-		nodeAttrMap.put("Last Name", lastName);
-		nodeAttrMap.put("First Initial", firstInitial);
-		nodeAttrMap.put("Times Cited", author.getTimesCited());
-		return nodeAttrMap;
-	}
-
-	/**
 	 * Return authors
 	 * @param String authors
 	 * @return ArrayList authorList
@@ -146,6 +130,21 @@ public class Scopus {
 	 */
 	public static void setScopusRadioButton(JRadioButton scopusRadioButton) {
 		Scopus.scopusRadioButton = scopusRadioButton;
+	}
+	
+	/**
+	 * Construct Scopus attribute map
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static HashMap<String, Object> constructScopusAttrMap(Author author) {
+		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
+		String[] columns = new String[] {"Label", "Last Name", "First Name",
+				                         "Times Cited"};
+		for (String col : columns) {
+			nodeAttrMap.put(col, "");
+		}
+		return nodeAttrMap;
 	}
  
 }

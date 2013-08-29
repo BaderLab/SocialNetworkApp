@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.Group;
 import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
 import main.java.org.baderlab.csapps.socialnetwork.Consortium;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
@@ -127,7 +126,6 @@ public class CreateNetworkTask extends AbstractTask {
 			CyNode nodeRef = null;
 
 			Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
-			Map<Integer, Group> groupMap = new HashMap<Integer, Group>();
 
 			// Set 'Load Network' progress monitor
 			this.setProgressMonitor(taskMonitor, "Loading Network", map.size());
@@ -148,7 +146,7 @@ public class CreateNetworkTask extends AbstractTask {
 					// Add each node attribute to its respective column
 					for (Entry<String, Object> attr : node1.getNodeAttrMap().entrySet()) {
 						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
-								attr.getValue());
+								         attr.getValue());
 					}
 					nodeMap.put(node1, nodeRef);
 				}
@@ -173,68 +171,9 @@ public class CreateNetworkTask extends AbstractTask {
 						edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
 								         attr.getValue());
 					}
-				}
-				
-				int networkType = Cytoscape.getSocialNetworkMap().get(Cytoscape.getNetworkName()).getNetworkType();
-				int groupID = 0;
-				Group group = null;
-				
-				if (node1.isGrouped) {
-					groupID = node1.hashCode();
-					group = null;
-					if (groupMap.containsKey(groupID)) {
-						group = groupMap.get(groupID);
-						group.addNode(node1);
-					} else {
-						group = new Group(myNet, networkType);
-						group.addNode(node1);
-						groupMap.put(groupID, group);
-					}
-				}
-				
-				if (node2.isGrouped) {
-					groupID = node2.hashCode();
-					group = null;
-					if (groupMap.containsKey(groupID)) {
-						group = groupMap.get(groupID);
-						group.addNode(node2);
-					} else {
-						group = new Group(myNet, networkType);
-						group.addNode(node2);
-						groupMap.put(groupID, group);
-					}
 				}	
 				
 				updateProgress(taskMonitor);
-				
-			}
-			
-			// Set 'Fix Duplicates' progress monitor
-			this.setProgressMonitor(taskMonitor, "Fixing Duplicates ...", groupMap.values().size());
-			
-			for (Group group : groupMap.values()) {
-				
-				Long row = null;
-				String column = null;
-				Object[] table = null;
-				
-				// Add node attributes (Cytoscape groups can only have a single node)
-				for (Entry<Object[], Object> attr : group.getNodeAttrMap().entrySet()) {
-					table = attr.getKey();
-					row = (Long) table[0];
-					column = (String) table[1];
-					nodeTable.getRow(row).set(column, attr.getValue());
-				}
-				
-//				// Add edge attributes (Cytoscape groups can have multiple edges)
-//				for (Entry<Object[], Object> attr : group.getEdgeAttrMap().entrySet()) {
-//					table = attr.getKey();
-//					row = (Long) table[0];
-//					column = (String) table[1];
-//					nodeTable.getRow(row).set(column, attr.getValue());
-//				}
-				
-				this.updateProgress(taskMonitor);
 				
 			}
 

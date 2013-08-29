@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +47,13 @@ public class Incites {
 	 * Author location map
 	 */
 	private static Map<String, String> locationMap = null;
+
+	/**
+	 * Location ranking map.
+	 * <br> key: <i>location</i>
+	 * <br> value: <i>rank</i>
+	 */
+	private static Map<String, Integer> locationRankingMap = null;
 
 	/**
 	 * # of defective rows in Incites document
@@ -96,8 +103,7 @@ public class Incites {
 	 * String representation of all unidentified faculty
 	 */
 	private String unidentifiedFacultyString = null;
-
-
+	
 	/**
 	 * Create new Incites using data file
 	 * @param File file
@@ -860,25 +866,6 @@ public class Incites {
 	}
 
 	/**
-	 * Construct Incites attribute map
-	 * @param null
-	 * @return Map nodeAttrMap
-	 */
-	public static TreeMap<String, Object> constructIncitesAttrMap(Author author) {
-		TreeMap<String, Object> nodeAttrMap = new TreeMap<String, Object>();
-		String lastName = author.getLastName();
-		String firstName = author.getFirstName();
-		nodeAttrMap.put("Label", firstName + "_" + lastName);
-		nodeAttrMap.put("Last Name", lastName);
-		nodeAttrMap.put("First Name", author.getFirstName());
-		nodeAttrMap.put("Times Cited", author.getTimesCited());
-		nodeAttrMap.put("Institution", author.getInstitution());
-		nodeAttrMap.put("Location", author.getLocation());
-		nodeAttrMap.put("Faculty", author.getFaculty());
-		return nodeAttrMap;
-	}
-
-	/**
 	 * Get unidentified faculty string
 	 * <br>last name, first name
 	 * @param null
@@ -897,6 +884,50 @@ public class Incites {
 	public void setUnidentifiedFacultyString(String unidentifiedFacultyString) {
 		this.unidentifiedFacultyString = unidentifiedFacultyString;
 	}
-
 	
+	/**
+	 * Set location ranking map
+	 * @param Map locationRankingMap
+	 * @return null
+	 */
+	private static void setLocationRankingMap(Map<String, Integer> map) {
+		Incites.locationRankingMap = map;
+	}
+	
+	/**
+	 * Get location ranking map
+	 * @param null
+	 * @return Map locationRankingMap
+	 */
+	public static Map<String, Integer> getLocationRankingMap() {
+		if (Incites.locationRankingMap == null) {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			String[] locations = new String[] {"univ toronto", "ontario", "canada", 
+                                                 "united states", "int'l", "other"};
+			for (int i = 1; i < 7; i++) {
+				map.put(locations[i - 1], i);
+			}
+			Incites.setLocationRankingMap(map);
+		}
+		return Incites.locationRankingMap;
+	}
+	
+	/**
+	 * Construct Incites attribute map
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static HashMap<String, Object> constructIncitesAttrMap(Author author) {
+		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
+		String[] columns = new String[] {"Label", "Last Name", "First Name",
+				                         "Institution", "Location", "Faculty",
+				                         "Times Cited"};
+		int i = 0;
+		for (i = 0; i < 6; i++) {
+			nodeAttrMap.put(columns[i], "");
+		}
+		nodeAttrMap.put(columns[i], 0);
+		return nodeAttrMap;
+	}
+
 }
