@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.cytoscape.model.CyEdge;
 
-import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.Consortium;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
 
 /**
  * A co-publication. Used primarily in Academia networks.
@@ -56,11 +56,11 @@ public class Copublications extends AbstractEdge {
  	
 	/**
 	 * Create new Copublications tracker
-	 *@param Consortium consortium
+	 *@param Collaboration consortium
 	 *@param Publication publication
 	 *@return null
 	 */
-	public Copublications(Consortium consortium, Publication publication) {
+	public Copublications(Collaboration consortium, Publication publication) {
 		this.setPubList(new ArrayList<Publication>());
 		this.getPubList().add(publication);
 		this.constructEdgeAttrMap();

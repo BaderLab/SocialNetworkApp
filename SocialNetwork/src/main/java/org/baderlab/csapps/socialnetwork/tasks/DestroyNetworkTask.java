@@ -1,6 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork.tasks;
 
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.work.AbstractTask;

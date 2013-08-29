@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 import java.awt.Cursor;
 import java.io.File;
@@ -13,11 +13,13 @@ import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
-import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Scopus;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import main.java.org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
@@ -33,7 +35,6 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
 
-import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
 
 /**
  * Cytoscape
@@ -66,7 +67,7 @@ public class Cytoscape {
 	 * A map containing the nodes and edges that will eventually be used
 	 * to form a network
 	 */
-	private static Map<Consortium, ArrayList<AbstractEdge>> map = null;
+	private static Map<Collaboration, ArrayList<AbstractEdge>> map = null;
 	/**
 	 * Name of network
 	 */
@@ -94,7 +95,7 @@ public class Cytoscape {
 	 * A reference to user panel action. Controls panel actions (viewing,
 	 * closing ... etc)
 	 */
-	private static UserPanelAction userPanelAction = null;
+	private static ShowUserPanelAction userPanelAction = null;
 	/**
 	 * A reference to the app's user panel. User will interact with app primarily through
 	 * this panel.
@@ -189,21 +190,21 @@ public class Cytoscape {
 		// Create network out of Incites data
 		if (Incites.getIncitesRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
-			Incites incites = null;
+			IncitesParser incitesParser = null;
 			// Load data from text file
 			if (extension.trim().equalsIgnoreCase("xlsx")) {
 				socialNetwork = new SocialNetwork(networkName, Category.INCITES);
-				incites = new Incites(networkFile);
-				if (incites.getIgnoredRows() >= 1) {
+				incitesParser = new IncitesParser(networkFile);
+				if (incitesParser.getIgnoredRows() >= 1) {
 					Cytoscape.notifyUser("Some rows could not be parsed.");
 				}
-				if (incites.getIdentifiedFacultyList().size() == 0) {
+				if (incitesParser.getIdentifiedFacultyList().size() == 0) {
 					Cytoscape.notifyUser("Unable to identify faculty." 
 							          +  "Please verify that Incites data file is valid");
 				}
-				pubList = incites.getPubList();
+				pubList = incitesParser.getPubList();
 				// Get faculty attributes
-				facultyAttr = incites.getFaculty();
+				facultyAttr = incitesParser.getFaculty();
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					Cytoscape.notifyUser("Invalid file. This Incites file is corrupt.");
@@ -216,9 +217,10 @@ public class Cytoscape {
 						             "spreadsheets or text files.");
 				return;
 			}
-			socialNetwork.getSummaryList().add(new Object[] {"Total # of publications: ", Integer.toString(incites.getPubList().size())});
-			socialNetwork.getSummaryList().add(new Object[] {"Total # of unidentified faculty: ", Integer.toString(incites.getUnidentifiedFacultyList().size())});
-			socialNetwork.getSummaryList().add(new Object[] {"<hr><br>UNIDENTIFIED FACULTY", incites.getUnidentifiedFacultyString()});
+			socialNetwork.getSummaryList().add(new String[] {"Total # of publications: ", Integer.toString(incitesParser.getPubList().size())});
+			socialNetwork.getSummaryList().add(new String[] {"Total # of faculty: ", Integer.toString(incitesParser.getFacultySet().size())});
+			socialNetwork.getSummaryList().add(new String[] {"Total # of unidentified faculty: ", Integer.toString(incitesParser.getUnidentifiedFacultyList().size())});
+			socialNetwork.getSummaryList().add(new String[] {"<hr><br>UNIDENTIFIED FACULTY", incitesParser.getUnidentifiedFacultyString()});
 			facultyName = (String) facultyAttr[0];
 			facultySet = (HashSet<Author>) facultyAttr[1];
 			// Add info to social network map(s)
@@ -244,7 +246,7 @@ public class Cytoscape {
 		// Create interaction
 		Interaction interaction = new Interaction(pubList, Category.ACADEMIA);
 		// Create map
-		Map<Consortium, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
+		Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
 		if (map.size() == 0) {
 			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			Cytoscape.notifyUser("Network couldn't be loaded. File is corrupt.");
@@ -285,12 +287,13 @@ public class Cytoscape {
 			Cytoscape.notifyUser("Search did not yield any results");
 			return;
 		}
-		Map<Consortium, ArrayList<AbstractEdge>> map = null;
+		Map<Collaboration, ArrayList<AbstractEdge>> map = null;
 		Interaction interaction = null;
 		SocialNetwork socialNetwork = null;
 		switch (category) {
 			case Category.ACADEMIA:
 				// Change category (to Pubmed)
+				// This is only temporary ~
 				category = Category.PUBMED;
 				interaction = new Interaction(results, category);
 				socialNetwork = new SocialNetwork(searchTerm, category);
@@ -360,7 +363,7 @@ public class Cytoscape {
 	 * @param null
 	 * @return Map map
 	 */
-	public static Map<Consortium, ArrayList<AbstractEdge>> getMap() {
+	public static Map<Collaboration, ArrayList<AbstractEdge>> getMap() {
 		return Cytoscape.map;
 	}
 
@@ -453,7 +456,7 @@ public class Cytoscape {
 	 * @param null
 	 * @return UserPanelAction userPanelAction
 	 */
-	public static UserPanelAction getUserPanelAction() {
+	public static ShowUserPanelAction getUserPanelAction() {
 		return Cytoscape.userPanelAction;
 	}
 
@@ -551,7 +554,7 @@ public class Cytoscape {
 	 * @param Map map
 	 * @return null
 	 */
-	public static void setMap(Map<Consortium, ArrayList<AbstractEdge>> map) {
+	public static void setMap(Map<Collaboration, ArrayList<AbstractEdge>> map) {
 		Cytoscape.map = map;
 	}
 	
@@ -614,10 +617,10 @@ public class Cytoscape {
 
 	/**
 	 * Set user panel action
-	 * @param UserPanelAction userPanelAction
+	 * @param ShowUserPanelAction userPanelAction
 	 * @return null
 	 */
-	public static void setUserPanelAction(UserPanelAction userPanelAction) {
+	public static void setUserPanelAction(ShowUserPanelAction userPanelAction) {
 		Cytoscape.userPanelAction = userPanelAction;
 	}
 

@@ -19,10 +19,10 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkViewManager;
 		
 /**
- * Allows user to display / hide main app panel
+ * Display or hide the main app panel
  * @author Victor Kofia
  */
-public class UserPanelAction extends AbstractCyAction {
+public class ShowUserPanelAction extends AbstractCyAction {
 	
 	private static final long serialVersionUID = -4717114252027573487L;
 	private CyServiceRegistrar cyServiceRegistrarRef = null;
@@ -39,7 +39,7 @@ public class UserPanelAction extends AbstractCyAction {
 	 * @param UserPanel userPanel
 	 * @return null
 	 */
-	public UserPanelAction(Map<String,String> configProps, CyApplicationManager cyApplicationManagerServiceRef, 
+	public ShowUserPanelAction(Map<String,String> configProps, CyApplicationManager cyApplicationManagerServiceRef, 
 						  CyNetworkViewManager cyNetworkViewManagerServiceRef, CySwingApplication cySwingApplicationServiceRef,
 						    CyServiceRegistrar cyServiceRegistrarRef, UserPanel userPanel) {
 		

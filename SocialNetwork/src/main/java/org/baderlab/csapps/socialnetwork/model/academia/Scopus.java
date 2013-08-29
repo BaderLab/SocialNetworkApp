@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JRadioButton;
 
-import main.java.org.baderlab.csapps.socialnetwork.Category;
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
   
 /**
  * Tools for manipulating Scopus data

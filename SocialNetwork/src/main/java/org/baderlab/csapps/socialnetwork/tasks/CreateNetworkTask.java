@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.Consortium;
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.cytoscape.model.CyEdge;
@@ -71,7 +71,7 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @param Map map
 	 * @return CyNetwork network
 	 */
-	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map, TaskMonitor taskMonitor) {
+	public CyNetwork loadNetwork(Map<Collaboration, ArrayList<AbstractEdge>> map, TaskMonitor taskMonitor) {
 		try {
 			// Create an empty network 
 			CyNetwork myNet = this.cyNetworkFactoryServiceRef.createNetwork();
@@ -83,7 +83,7 @@ public class CreateNetworkTask extends AbstractTask {
 			// Add all columns to node table
 			nodeTable = myNet.getDefaultNodeTable();
 			Object[] keys = map.keySet().toArray();
-			AbstractNode key = ((Consortium) keys[0]).getNode1();
+			AbstractNode key = ((Collaboration) keys[0]).getNode1();
 			for (Entry<String, Object> attr : key.getNodeAttrMap().entrySet()) {
 				String attrName = attr.getKey();
 				Object attrType = attr.getValue();
@@ -118,7 +118,7 @@ public class CreateNetworkTask extends AbstractTask {
 					(Cytoscape.getNetworkName()));
 
 			// Build network
-			Consortium consortium = null;
+			Collaboration consortium = null;
 			AbstractNode node1 = null;
 			AbstractNode node2 = null;
 			List<? extends AbstractEdge> edgeArray = null;
@@ -131,7 +131,7 @@ public class CreateNetworkTask extends AbstractTask {
 			this.setProgressMonitor(taskMonitor, "Loading Network", map.size());
 
 			// Get all consortiums and their corresponding edges
-			for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
+			for (Entry<Collaboration, ArrayList<AbstractEdge>> entry : map.entrySet()) {
 				consortium = entry.getKey();
 				edgeArray= entry.getValue();
 
@@ -199,7 +199,7 @@ public class CreateNetworkTask extends AbstractTask {
 		CyNetworkViewManager networkViewManager = this.cyNetworkViewManagerServiceRef;
 		
 		// Get map
-		Map<Consortium, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
+		Map<Collaboration, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
 				
 		if (map == null) {
 			Cytoscape.notifyUser

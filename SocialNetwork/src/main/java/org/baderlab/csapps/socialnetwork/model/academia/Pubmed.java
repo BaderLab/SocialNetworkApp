@@ -1,9 +1,8 @@
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import main.java.org.baderlab.csapps.socialnetwork.Category;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -13,7 +12,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 
 /**
  * Methods & fields for manipulating PubMed data

@@ -1,9 +1,8 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -46,7 +45,7 @@ public class SocialNetwork {
 	/**
 	 * The network's summary list
 	 */
-	private ArrayList<Object[]> summaryList = null;
+	private ArrayList<String[]> summaryList = null;
 	/**
 	 * The network summary (outlines network issues)
 	 */
@@ -214,9 +213,9 @@ public class SocialNetwork {
 	 * @param null
 	 * @return ArrayList summaryList
 	 */
-	public ArrayList<Object[]> getSummaryList() {
+	public ArrayList<String[]> getSummaryList() {
 		if (this.summaryList == null) {
-			this.setSummaryList(new ArrayList<Object[]>());
+			this.setSummaryList(new ArrayList<String[]>());
 		}
 		return summaryList;
 	}
@@ -226,8 +225,8 @@ public class SocialNetwork {
 	 * @param ArrayList summaryList
 	 * @return null 
 	 */
-	private void setSummaryList(ArrayList<Object[]> summary) {
-		this.summaryList = summary;
+	private void setSummaryList(ArrayList<String[]> summaryList) {
+		this.summaryList = summaryList;
 	}
 
 	/**
@@ -238,9 +237,9 @@ public class SocialNetwork {
 	public String getSummary() {
 		if (this.networkSummary == null) {
 			String info = "<html>", key = null, value = null;
-			for (Object[] summary : this.getSummaryList()) {
-				key = (String) summary[0];
-				value = (String) summary[1];
+			for (String[] summary : this.getSummaryList()) {
+				key = summary[0];
+				value = summary[1];
 				info += key + ": " + value + "<br>";
 			}
 			this.networkSummary = info + "</html>";

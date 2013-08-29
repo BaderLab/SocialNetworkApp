@@ -1,10 +1,11 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
-import main.java.org.baderlab.csapps.socialnetwork.actions.IncitesAction;
-import main.java.org.baderlab.csapps.socialnetwork.actions.UserPanelAction;
+import main.java.org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
+import main.java.org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -115,7 +116,7 @@ public class CyActivator extends AbstractCyActivator {
 		Map<String, String> serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
 		serviceProperties.put("preferredMenu", "Apps.Social Network");
-		UserPanelAction userPanelAction = new UserPanelAction(serviceProperties, 
+		ShowUserPanelAction userPanelAction = new ShowUserPanelAction(serviceProperties, 
 				                                              cyApplicationManagerServiceRef, 
 				                                              cyNetworkViewManagerServiceRef, 
 				                                              cySwingApplicationServiceRef, 
@@ -127,7 +128,7 @@ public class CyActivator extends AbstractCyActivator {
 		serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
 		serviceProperties.put("preferredMenu", "Tools.Incites");
-		IncitesAction incitesAction = new IncitesAction(serviceProperties, 
+		AddInstitutionAction incitesAction = new AddInstitutionAction(serviceProperties, 
 														cyApplicationManagerServiceRef, 
 														cyNetworkViewManagerServiceRef);
 		

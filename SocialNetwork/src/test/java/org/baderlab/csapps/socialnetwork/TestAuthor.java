@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
 
 import org.junit.After;
 import org.junit.Before;
@@ -92,7 +92,7 @@ public class TestAuthor {
 	 */
 	public void testIdentifyAuthorWithDefectiveFirstName() {
 		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES);
-		Author author2 = new Author("Kofia, Vica (UNIV TORONTO)", Category.INCITES);
+		Author author2 = new Author("Kofia, Victro (UNIV TORONTO)", Category.INCITES);
 		Author author3 = null;
 		HashMap<Author, Author> authorMap = new HashMap<Author, Author>();
 		authorMap.put(author2, author2);
@@ -196,7 +196,7 @@ public class TestAuthor {
 	 * Verify that nothing will happen to an author's first name if it is valid
 	 */
 	public void testVerifyFirstNameA() {
-		Author author1 = new Author("Kofia, Vica (UNIV TORONTO)", Category.INCITES);
+		Author author1 = new Author("Kofia, Victro (UNIV TORONTO)", Category.INCITES);
 		Author author2 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES);
 		Author author3 = null;
 		HashMap<Author, Author> authorMap = new HashMap<Author, Author>();

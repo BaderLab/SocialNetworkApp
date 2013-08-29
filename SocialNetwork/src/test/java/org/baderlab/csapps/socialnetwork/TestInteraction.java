@@ -6,12 +6,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.Category;
-import main.java.org.baderlab.csapps.socialnetwork.Consortium;
-import main.java.org.baderlab.csapps.socialnetwork.Interaction;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
+import main.java.org.baderlab.csapps.socialnetwork.model.Interaction;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,10 +38,10 @@ public class TestInteraction {
 	 */
 	public void testTimesCitedSinglePub() {
 		File timesCitedFile = new File("src/test/resources/incites/data/times_cited_single_pub.xlsx");
-		Incites incites = new Incites(timesCitedFile);
-		Interaction interaction = new Interaction(incites.getPubList(), Category.ACADEMIA);
-		Map<Consortium, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
-		Consortium cons = (Consortium) map.keySet().toArray()[0];
+		IncitesParser incitesParser = new IncitesParser(timesCitedFile);
+		Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA);
+		Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
+		Collaboration cons = (Collaboration) map.keySet().toArray()[0];
 		Author authorA = (Author) cons.getNode1();
 		Author authorB = (Author) cons.getNode2();
 		assertTrue(authorA.getTimesCited() == 2 && authorB.getTimesCited() == 2);
@@ -53,10 +53,10 @@ public class TestInteraction {
 	 */
 	public void testTimesCitedMultiplePub() {
 		File timesCitedFile = new File("src/test/resources/incites/data/times_cited_multiple_pub.xlsx");
-		Incites incites = new Incites(timesCitedFile);
-		Interaction interaction = new Interaction(incites.getPubList(), Category.ACADEMIA);
-		Map<Consortium, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
-		Consortium cons = (Consortium) map.keySet().toArray()[0];
+		IncitesParser incitesParser = new IncitesParser(timesCitedFile);
+		Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA);
+		Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
+		Collaboration cons = (Collaboration) map.keySet().toArray()[0];
 		Author authorA = (Author) cons.getNode1();
 		Author authorB = (Author) cons.getNode2();
 		assertTrue(authorA.getTimesCited() == 9 && authorB.getTimesCited() == 7);

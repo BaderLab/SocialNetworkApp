@@ -29,9 +29,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
-import main.java.org.baderlab.csapps.socialnetwork.Category;
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -1006,8 +1006,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				networkName = networkName.substring(0, 9) + " ...";
 			}
 			networkSummary = socialNetwork.getSummary();
-		}
-				
+		}	
 		UserPanel.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
 		UserPanel.getNetworkSummaryPaneRef().setText(networkSummary);
 		UserPanel.getNetworkSummaryPanelRef().revalidate();

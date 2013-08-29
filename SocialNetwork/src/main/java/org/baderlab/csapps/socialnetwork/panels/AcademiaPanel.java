@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Scopus;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 
 /**
  * Tools for building / working with the Academia Info-Panel

@@ -1,5 +1,5 @@
 
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.cytoscape.model.CyEdge;
 
-import main.java.org.baderlab.csapps.socialnetwork.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
 
 /**
  * A publication (article, review, scientific paper)

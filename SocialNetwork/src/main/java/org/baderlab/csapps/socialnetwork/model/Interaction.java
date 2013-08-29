@@ -1,13 +1,13 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Copublications;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Publication;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Copublications;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 /**
  * This class is used to create maps that will
@@ -22,7 +22,7 @@ public class Interaction {
 	 * <br>Key: <i>Consortium</i>
 	 * <br>Value: <i>Interaction</i>
 	 */
-	private Map<Consortium, ArrayList<AbstractEdge>> map = null;
+	private Map<Collaboration, ArrayList<AbstractEdge>> map = null;
 	
 	/**
 	 * Create new interaction
@@ -50,7 +50,7 @@ public class Interaction {
 	 * @param null
 	 * @return Map abstractMap
 	 */
-	public Map<Consortium, ArrayList<AbstractEdge>> getAbstractMap() {
+	public Map<Collaboration, ArrayList<AbstractEdge>> getAbstractMap() {
 		return this.map;
 	}
 	
@@ -63,7 +63,7 @@ public class Interaction {
 	 * @param null
 	 * @return Map abstractMap
 	 */
-	private void setAbstractMap(Map<Consortium, ArrayList<AbstractEdge>> abstractMap) {
+	private void setAbstractMap(Map<Collaboration, ArrayList<AbstractEdge>> abstractMap) {
 		this.map = abstractMap;
 	}
 		
@@ -73,15 +73,15 @@ public class Interaction {
 	 * @param ArrayList abstractEdgeList
 	 * @return Map abstractMap
 	 */
-	private Map<Consortium, ArrayList<AbstractEdge>> 
+	private Map<Collaboration, ArrayList<AbstractEdge>> 
 	    loadAbstractMap(List<? extends AbstractEdge> abstractEdgeList) {
 		// Create new map
-		Map<Consortium, ArrayList<AbstractEdge>> abstractMap = new 
-				        HashMap<Consortium, ArrayList<AbstractEdge>>();
+		Map<Collaboration, ArrayList<AbstractEdge>> abstractMap = new 
+				        HashMap<Collaboration, ArrayList<AbstractEdge>>();
 		// Iterate through each edge
 		for (AbstractEdge edge : abstractEdgeList) {
 			int i = 0, j = 0;
-			Consortium consortium = null;
+			Collaboration consortium = null;
 			ArrayList<AbstractEdge> edgeList = null;
 			AbstractNode node1 = null;
 			AbstractNode node2 = null;
@@ -92,7 +92,7 @@ public class Interaction {
 				j = i + 1;
 				while (j < edge.getNodes().size()) {
 					node2 = edge.getNodes().get(j);
-					consortium = new Consortium(node1, node2);
+					consortium = new Collaboration(node1, node2);
 					// Check for consortium's existence before 
 					// it's entered into map
 					if (! abstractMap.containsKey(consortium)) {
@@ -116,16 +116,16 @@ public class Interaction {
 	 * @param ArrayList abstractEdgeList
 	 * @return Map academiaMap
 	 */
-	private Map<Consortium, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends AbstractEdge> results) {		
+	private Map<Collaboration, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends AbstractEdge> results) {		
 		// Create new academia map
-		Map<Consortium, ArrayList<AbstractEdge>> academiaMap = 
-				      new HashMap<Consortium, ArrayList<AbstractEdge>>();
+		Map<Collaboration, ArrayList<AbstractEdge>> academiaMap = 
+				      new HashMap<Collaboration, ArrayList<AbstractEdge>>();
 		// Create new author map 
 		// Key: author's facsimile
 		// Value: actual author
 		Map<Author, Author> authorMap = new HashMap<Author, Author>();
 		int h = 0, i = 0, j = 0;
-		Consortium consortium = null;
+		Collaboration consortium = null;
 		Author author1 = null, author2 = null;
 		Copublications copublications = null;
 		Publication publication = null;
@@ -155,7 +155,7 @@ public class Interaction {
 						authorMap.put(author2, author2);
 					}
 					// Create consortium out of both authors
-					consortium = new Consortium(authorMap.get(author1), authorMap.get(author2));
+					consortium = new Collaboration(authorMap.get(author1), authorMap.get(author2));
 					// Check for consortium's existence before it's entered into map
 					if (! academiaMap.containsKey(consortium)) {
 						copublications = new Copublications(consortium, (Publication) publication);
@@ -170,6 +170,12 @@ public class Interaction {
 					j++;
 				}
 				i++;
+			}
+			if (publication.isSingleAuthored()) {
+				// AlreadyCounted variable has to be set to false
+				// to allow author's future citations to be 
+				// properly registered
+				authorMap.get(author1).setAlreadyBeenCounted(false);
 			}
 			h++;
 		}

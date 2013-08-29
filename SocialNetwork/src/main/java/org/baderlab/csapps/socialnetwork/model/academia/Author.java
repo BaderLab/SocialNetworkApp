@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.academia;
+package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,8 +7,9 @@ import java.util.Random;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.cytoscape.model.CyNode;
 
-import main.java.org.baderlab.csapps.socialnetwork.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 
 /**
  * An author for an article, journal review, or scientific paper
@@ -55,6 +56,11 @@ public class Author extends AbstractNode {
 	 * True iff author has been identified as faculty
 	 */
 	private boolean identified = false;
+	/**
+	 * True iff author's citations for a given publication
+	 * have already been counted
+	 */
+	private boolean alreadyBeenCounted = false;
 	
 	/**
 	 * Set identification
@@ -137,14 +143,14 @@ public class Author extends AbstractNode {
 			case Category.INCITES:
 				// Initialize attribute map for Incites author
 				this.setNodeAttrMap(Incites.constructIncitesAttrMap(this));
-				this.setFirstName(Incites.parseFirstName(rawAuthorText));
+				this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
 				if (! this.getFirstName().equalsIgnoreCase("N/A")) {
 					this.setFirstInitial(this.getFirstName().substring(0,1));
 				}
-				this.setMiddleInitial(Incites.parseMiddleInitial(rawAuthorText));
-				this.setLastName(Incites.parseLastName(rawAuthorText));
+				this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
+				this.setLastName(IncitesParser.parseLastName(rawAuthorText));
 				this.setLabel(this.getFirstName() + "_" + this.getLastName());
-				this.setInstitution(Incites.parseInstitution(rawAuthorText));
+				this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
 				this.setLocation(Incites.getLocationMap().get(this.getInstitution()));
 				break;
 			case Category.FACULTY:
@@ -195,10 +201,7 @@ public class Author extends AbstractNode {
 				if (isEqualLastName) {
 					boolean isSingleCharacter = false;
 					boolean isSameAsInitial = false;
-//					if (this.firstName.length() < otherAuthor.firstName.length()) {
-//						isSingleCharacter = this.firstName.length() == 1;
-//						isSameAsInitial = this.firstName.equalsIgnoreCase(otherAuthor.firstInitial);
-//					} 
+					// Verify that the first initials are not the same for either author
 					if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
 						isSingleCharacter = otherAuthor.getFirstName().length() == 1;
 						isSameAsInitial = otherAuthor.getFirstName().equalsIgnoreCase(this.getFirstInitial());
@@ -207,6 +210,10 @@ public class Author extends AbstractNode {
 							otherAuthor.setLabel(this.getFirstName() + "_" 
 							                     + otherAuthor.getLastName());
 						}
+					}
+					if (this.getFirstName().length() < otherAuthor.getFirstName().length()) {
+						isSingleCharacter = this.getFirstName().length() == 1;
+						isSameAsInitial = this.getFirstName().equalsIgnoreCase(otherAuthor.getFirstInitial());
 					}
 					// First name is only equal if it's a single character and is
 					// similar to the other author's first initial
@@ -222,23 +229,25 @@ public class Author extends AbstractNode {
 				String otherLocation = otherAuthor.getLocation();
 				Map<String, Integer> rankMap = Incites.getLocationRankingMap();
 				// Initialize myRank and otherRank to a low rank
-				// NOTE: Highest rank is 1 and lowest rank is 6
-				int myRank = 7;
+				// NOTE: Highest rank is 6 and lowest rank is 1
+				int myRank = 0, otherRank = 0;
 				if (rankMap.containsKey(myLocation)) {
 					myRank = rankMap.get(myLocation);
 				}
-				int otherRank = 7;
 				if (rankMap.containsKey(otherLocation)) {
 					otherRank = rankMap.get(otherLocation);
 				}
-				if (myRank < otherRank) {
+				if (myRank > otherRank) {
 					otherAuthor.setInstitution(this.getInstitution());
 					otherAuthor.setLocation(this.getLocation());
 				} else if (myRank == otherRank) {
-					String[] randomArray = new String[] {myInstitution, otherInstitution};
+					Author[] randomAuthorArray = new Author[] {this, otherAuthor};
 					Random rand = new Random();
 				    int i = rand.nextInt((1 - 0) + 1) + 0;
-			        otherAuthor.setInstitution(randomArray[i]);
+				    String randomInstitution = randomAuthorArray[i].getInstitution();
+				    String randomLocation = randomAuthorArray[i].getLocation();
+			        otherAuthor.setInstitution(randomInstitution);
+					otherAuthor.setLocation(randomLocation);
 				}
 				isEqualInstitution = true;
 			}
@@ -432,7 +441,8 @@ public class Author extends AbstractNode {
 		this.firstInitial = firstInitial;
 	}
 
-	/**Set author's location. If no location is found on the
+	/**
+	 * Set author's location. If no location is found on the
 	 * map then it is assumed that author's not in academia
 	 * @param String location
 	 * @return null
@@ -527,8 +537,9 @@ public class Author extends AbstractNode {
 		// twice
 		int currentTimesCited = this.getTimesCited();
 		if (publication.isSingleAuthored()) {
-			if (currentTimesCited == 0) {
-				this.setTimesCited(publication.getTimesCited());
+			if (! this.hasAlreadyBeenCounted()) {
+				this.setTimesCited(currentTimesCited + publication.getTimesCited());
+				this.setAlreadyBeenCounted(true);
 			}
 		} else {
 			this.setTimesCited(currentTimesCited + publication.getTimesCited());
@@ -601,5 +612,24 @@ public class Author extends AbstractNode {
 		this.label = label;
 		this.getNodeAttrMap().put("Label", label);
 	}
- 
+
+	/**
+	 * Return true iff author's citations for
+	 * a given publication have already been counted
+	 * @param null
+	 * @return Boolean alreadyBeenCounted
+	 */
+	public boolean hasAlreadyBeenCounted() {
+		return this.alreadyBeenCounted;
+	}
+
+	/**
+	 * Set author's citation count status
+	 * @param Boolean alreadyBeenCounted 
+	 * @return null
+	 */
+	public void setAlreadyBeenCounted(boolean alreadyBeenCounted) {
+		this.alreadyBeenCounted = alreadyBeenCounted;
+	}
+	 
 }

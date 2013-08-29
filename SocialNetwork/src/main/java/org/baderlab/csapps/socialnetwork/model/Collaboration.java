@@ -1,11 +1,12 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 
 /**
- * Two nodes that share interactions
+ * Two nodes that share an interaction
+ * (or interactions)
  * @author Victor Kofia
  */
-public class Consortium {
+public class Collaboration {
 	/**
 	 * A node (~ node1)
 	 */
@@ -16,11 +17,11 @@ public class Consortium {
 	private AbstractNode node2 = null;
 
 	/**
-	 * Create a new consortium composed of node1 and node2
+	 * Create a new Collaboration object composed of node1 and node2
 	 * @param AbstractNode node1
 	 * @param AbstractNode node2
 	 */
-	public Consortium(AbstractNode node1, AbstractNode node2) {
+	public Collaboration(AbstractNode node1, AbstractNode node2) {
 		this.node1 = node1;
 		this.node2 = node2;
 	}
@@ -45,10 +46,10 @@ public class Consortium {
 	}
 
 	/**
-	 * Return Consortium hash code. Used to determine a consortium's identity. 
-	 * Current system considers consortiums with the same nodes but different 
-	 * ordering (i.e. Victor stored in node2 instead of node1) to be one and 
-	 * the same.
+	 * Return Collaboration hash code. Used to determine a collaboration's identity. 
+	 * Current system considers collaborations holding the exact same nodes but in 
+	 * a different ordering (i.e. Victor stored in node2 instead of node1) to be one
+	 * and the same.
 	 * @param null
 	 * @return int hashCode
 	 */
@@ -60,8 +61,8 @@ public class Consortium {
 	}
 
 	/**
-	 * Return true iff consortium is equal to other.
-	 * @param Object Consortium
+	 * Return true iff collaboration is equal to other.
+	 * @param Object Collaboration
 	 * @return boolean 
 	 */
 	public boolean equals(Object obj) {
@@ -71,11 +72,11 @@ public class Consortium {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Consortium other = (Consortium) obj;
+		Collaboration other = (Collaboration) obj;
 		if (node1 == null) {
 			if (other.node1 != null)
 				return false;
-		// Consortiums are considered equal regardless of order (i.e. node1 and node2
+		// Collaborations are considered equal regardless of order (i.e. node1 and node2
 		// are interchangeable).
 		} else if (! (node1.equals(other.node1) | node1.equals(other.node2)) )
 			return false;
@@ -87,6 +88,13 @@ public class Consortium {
 		return true;
 	}
 	
+	/**
+	 * Return string representation of collaboration in the format:
+	 * <br> Node#1: <i>node</i>
+	 * <br> Node#2: <i>node</i>
+	 * @param null
+	 * @return String collaboration
+	 */
 	public String toString() {
 		return "Node#1: " + node1.toString() +"\nNode#2: " + node2.toString() + "\n\n";
 	}

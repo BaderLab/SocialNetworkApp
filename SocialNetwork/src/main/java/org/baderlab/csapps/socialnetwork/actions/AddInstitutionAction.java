@@ -19,14 +19,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.academia.Incites;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
-public class IncitesAction extends AbstractCyAction {
+/**
+ * Add a new institution to the location map
+ * @author Victor Kofia
+ */
+public class AddInstitutionAction extends AbstractCyAction {
 	
 	/**
 	 * Set of all accepted locations
@@ -51,7 +55,7 @@ public class IncitesAction extends AbstractCyAction {
 		return this.locationSet;
 	}
 
-	public IncitesAction(Map<String, String> configProps,
+	public AddInstitutionAction(Map<String, String> configProps,
 			CyApplicationManager applicationManager,
 			CyNetworkViewManager networkViewManager) {
 		super(configProps, applicationManager, networkViewManager);

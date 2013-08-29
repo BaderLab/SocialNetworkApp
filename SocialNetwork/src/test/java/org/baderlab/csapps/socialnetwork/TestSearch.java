@@ -2,9 +2,9 @@ package test.java.org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
-import main.java.org.baderlab.csapps.socialnetwork.Category;
-import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.Search;
+import main.java.org.baderlab.csapps.socialnetwork.model.Category;
+import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.Search;
 import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.junit.After;

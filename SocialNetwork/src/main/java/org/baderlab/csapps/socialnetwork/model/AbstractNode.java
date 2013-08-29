@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package main.java.org.baderlab.csapps.socialnetwork.model;
 
 import java.awt.Cursor;
 import java.util.List;
 
-import main.java.org.baderlab.csapps.socialnetwork.academia.Pubmed;
+import main.java.org.baderlab.csapps.socialnetwork.model.academia.Pubmed;
 
 /**
  * A search session
