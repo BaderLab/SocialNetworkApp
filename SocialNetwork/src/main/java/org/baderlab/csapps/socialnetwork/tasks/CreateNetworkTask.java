@@ -45,7 +45,6 @@ public class CreateNetworkTask extends AbstractTask {
 	private CyNetworkNaming cyNetworkNamingServiceRef;
 	private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
 	private CyNetworkViewManager cyNetworkViewManagerServiceRef;
-	private TaskMonitor monitor = null;
 	private double progress = 0.0;
 	private int totalSteps = 0;
 	
@@ -73,7 +72,7 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @param Map map
 	 * @return CyNetwork network
 	 */
-	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map) {
+	public CyNetwork loadNetwork(Map<Consortium, ArrayList<AbstractEdge>> map, TaskMonitor taskMonitor) {
 		try {
 			// Create an empty network 
 			CyNetwork myNet = this.cyNetworkFactoryServiceRef.createNetwork();
@@ -130,6 +129,8 @@ public class CreateNetworkTask extends AbstractTask {
 			Map<AbstractNode, CyNode> nodeMap  = new HashMap<AbstractNode, CyNode>();
 			Map<Integer, Group> groupMap = new HashMap<Integer, Group>();
 
+			// Set 'Load Network' progress monitor
+			this.setProgressMonitor(taskMonitor, "Loading Network", map.size());
 
 			// Get all consortiums and their corresponding edges
 			for (Entry<Consortium, ArrayList<AbstractEdge>> entry : map.entrySet()) {
@@ -204,9 +205,12 @@ public class CreateNetworkTask extends AbstractTask {
 					}
 				}	
 				
-				updateProgress();
+				updateProgress(taskMonitor);
 				
 			}
+			
+			// Set 'Fix Duplicates' progress monitor
+			this.setProgressMonitor(taskMonitor, "Fixing Duplicates ...", groupMap.values().size());
 			
 			for (Group group : groupMap.values()) {
 				
@@ -230,11 +234,10 @@ public class CreateNetworkTask extends AbstractTask {
 //					nodeTable.getRow(row).set(column, attr.getValue());
 //				}
 				
+				this.updateProgress(taskMonitor);
+				
 			}
 
-			this.monitor.setTitle("Creating network view");
-			this.monitor.setProgress(0.25);
-			this.monitor.setStatusMessage("Complete 25%");
 			return myNet;
 		} catch (ArrayIndexOutOfBoundsException exception) {
 			exception.printStackTrace();
@@ -242,7 +245,7 @@ public class CreateNetworkTask extends AbstractTask {
 			Cytoscape.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
 			Cytoscape.getSocialNetworkMap().remove(Cytoscape.getNetworkName());
 			Cytoscape.setNetworkName(null);
-			this.monitor = null;
+			taskMonitor = null;
 			return null;
 		}
 	}
@@ -263,27 +266,21 @@ public class CreateNetworkTask extends AbstractTask {
 			Cytoscape.notifyUser
 			("Network could not be loaded. Cytoscape network map could not be accessed.");
 		} else {
-			
-			//Set monitor parameters
-			this.monitor = monitor;
-			this.monitor.setTitle("Loading Network");
-			this.monitor.setProgress(0.0);
-			this.totalSteps = map.size();
-			
+									
 			// Load network
-			CyNetwork network = loadNetwork(map);
+			CyNetwork network = loadNetwork(map, monitor);
 						
 			if (network == null) {
 				return;
 			}
+			
+			this.setProgressMonitor(monitor, "Loading Network View ...", -1);
 						
 			networkManager.addNetwork(network);
 			
 			final Collection<CyNetworkView> views = networkViewManager
 					                                .getNetworkViews(network);
 						
-			this.monitor.setProgress(0.75);
-			this.monitor.setStatusMessage("Complete: 75%");
 			CyNetworkView networkView = null;
 			if(views.size() != 0) {
 				networkView = views.iterator().next();
@@ -307,7 +304,6 @@ public class CreateNetworkTask extends AbstractTask {
 			
 			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap()
 					                              .get(Cytoscape.getNetworkName());
-			socialNetwork.setCyNetwork(network);
 			socialNetwork.setNetworkView(networkView);
 			
 			// Auto apply visual style and layout
@@ -349,11 +345,27 @@ public class CreateNetworkTask extends AbstractTask {
 	 * @param int currentSteps
 	 * @return null
 	 */
-	private void updateProgress() {
+	private void updateProgress(TaskMonitor taskMonitor) {
 		this.currentSteps += 1;
 		this.progress = (double)this.currentSteps / this.totalSteps;
-		this.monitor.setStatusMessage("Complete: " + toPercent(this.progress));
-		this.monitor.setProgress(this.progress);
+		taskMonitor.setStatusMessage("Complete: " + toPercent(this.progress));
+		taskMonitor.setProgress(this.progress);
+	}
+	
+	/**
+	 * Set progress monitor 
+	 * @param TaskMonitor taskMonitor
+	 * @param String taskName
+	 * @param int totalSteps
+	 * @return null
+	 */
+	private void setProgressMonitor(TaskMonitor taskMonitor, 
+			                        String taskName, 
+			                        int totalSteps) {
+		taskMonitor.setTitle(taskName);
+		taskMonitor.setProgress(0.0);
+		this.currentSteps = 0;
+		this.totalSteps = totalSteps;
 	}
 	
 }

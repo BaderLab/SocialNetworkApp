@@ -50,7 +50,7 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
 				Cytoscape.setCurrentlySelectedSocialNetwork(null);
 				UserPanel.addNetworkVisualStyle(null);
-				UserPanel.updateNetworkStatsPanel(null);
+				UserPanel.updateNetworkSummaryPanel(null);
 			}
 		}
 	}

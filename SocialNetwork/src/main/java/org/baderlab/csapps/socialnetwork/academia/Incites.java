@@ -1,7 +1,6 @@
 package main.java.org.baderlab.csapps.socialnetwork.academia;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,6 +91,11 @@ public class Incites {
 	 * List of all unidentified faculty members
 	 */
 	private ArrayList<Author> unidentifiedFacultyList = null;
+	
+	/**
+	 * String representation of all unidentified faculty
+	 */
+	private String unidentifiedFacultyString = null;
 
 
 	/**
@@ -102,30 +106,33 @@ public class Incites {
 	public Incites(File file) {
 		this.loadFaculty(file);
 		this.loadPubList(file);
-		this.calcFacultyStats();
+		this.calculateFacultySummary();
 	}
 
 	/**
-	 * Calculate faculty stats
+	 * Calculate faculty summary
 	 * i.e. which faculty members got identified?
 	 * <br> which ones didn't?
 	 * @param null
 	 * @return null
 	 */
-	private void calcFacultyStats() {
-		ArrayList<Author> identifiedAuthors = new ArrayList<Author>();
-		ArrayList<Author> unidentifiedAuthors = new ArrayList<Author>();
+	private void calculateFacultySummary() {
+		ArrayList<Author> identifiedAuthorsList = new ArrayList<Author>();
+		ArrayList<Author> unidentifiedAuthorsList = new ArrayList<Author>();
+		String unidentifiedAuthorsString = "<ol>";
 		Author author = null;
 		for (Object object : this.getFacultySet().toArray()) {
 			author = (Author) object;
 			if (author.isIdentified()) {
-				identifiedAuthors.add(author);
+				identifiedAuthorsList.add(author);
 			} else {
-				unidentifiedAuthors.add(author);
+				unidentifiedAuthorsList.add(author);
+				unidentifiedAuthorsString += "<li>" + author.toString() + "</li>";
 			}
 		}
-		this.setIdentifiedFacultyList(identifiedAuthors);
-		this.setUnidentifiedFacultyList(unidentifiedAuthors);
+		this.setIdentifiedFacultyList(identifiedAuthorsList);
+		this.setUnidentifiedFacultyList(unidentifiedAuthorsList);
+		this.setUnidentifiedFacultyString(unidentifiedAuthorsString + "</ol>");
 	}
 
 	/**
@@ -465,18 +472,7 @@ public class Incites {
 	public static Map<String, String> getLocationMap() {
 		if (Incites.locationMap == null) {
 			try {
-				File folder = new File("Apps/SocialNetworkApp/");
-				File file = new File("Apps/SocialNetworkApp/map.sn");
-				InputStream in = null;
-				if (folder.exists()) {
-					if (file.exists()) {
-						in = new FileInputStream(file.getAbsolutePath());
-					} else {
-						in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
-					}
-				} else {
-					in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
-				}
+				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
 				ObjectInputStream ois = new ObjectInputStream(in);
 				Incites.setLocationMap((Map<String, String>) ois.readObject());
 			} catch (FileNotFoundException e) {
@@ -880,6 +876,26 @@ public class Incites {
 		nodeAttrMap.put("Location", author.getLocation());
 		nodeAttrMap.put("Faculty", author.getFaculty());
 		return nodeAttrMap;
+	}
+
+	/**
+	 * Get unidentified faculty string
+	 * <br>last name, first name
+	 * @param null
+	 * @return String unidentifiedFacultyString
+	 */
+	public String getUnidentifiedFacultyString() {
+		return unidentifiedFacultyString;
+	}
+
+	/**
+	 * Set unidentified faculty string
+	 * <br>last name, first name
+	 * @param String unidentifiedFacultyString
+	 * @return null
+	 */
+	public void setUnidentifiedFacultyString(String unidentifiedFacultyString) {
+		this.unidentifiedFacultyString = unidentifiedFacultyString;
 	}
 
 	

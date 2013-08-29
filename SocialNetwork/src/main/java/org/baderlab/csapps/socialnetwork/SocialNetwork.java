@@ -1,11 +1,9 @@
 package main.java.org.baderlab.csapps.socialnetwork;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -46,13 +44,13 @@ public class SocialNetwork {
 	 */
 	private Map<String, Object> attrMap = null;
 	/**
-	 * The network's stat map (stores network issues)
+	 * The network's summary list
 	 */
-	private Map<String, Object> statMap = null;
+	private ArrayList<Object[]> summaryList = null;
 	/**
-	 * The network's stats (various important details (i.e. # of unique edges .. etc)
+	 * The network summary (outlines network issues)
 	 */
-	private String stats = null;
+	private String networkSummary = null;
 	
 	
 	/**
@@ -212,62 +210,51 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * Get stat map
+	 * Get summary list
 	 * @param null
-	 * @return Map statMap
+	 * @return ArrayList summaryList
 	 */
-	public Map<String, Object> getStatMap() {
-		if (this.statMap == null) {
-			this.setStatMap(new HashMap<String, Object>());
+	public ArrayList<Object[]> getSummaryList() {
+		if (this.summaryList == null) {
+			this.setSummaryList(new ArrayList<Object[]>());
 		}
-		return statMap;
+		return summaryList;
 	}
 
 	/**
-	 * Set stat map
-	 * @param Map statMap
+	 * Set summary
+	 * @param ArrayList summaryList
 	 * @return null 
 	 */
-	private void setStatMap(Map<String, Object> statMap) {
-		this.statMap = statMap;
-	}
-	
-	/**
-	 * Show user network stats
-	 * @param null
-	 * @return null
-	 */
-	public void showStats() {
-		String message = "";
-		for ( Entry<String, Object> entry  : this.getStatMap().entrySet()) {
-			message += entry.getKey() + ": " + Integer.toString((Integer)entry.getValue()) + "\n";
-		}
-		JOptionPane.showMessageDialog(new JPanel(), message);
+	private void setSummaryList(ArrayList<Object[]> summary) {
+		this.summaryList = summary;
 	}
 
 	/**
-	 * Get network stats
+	 * Get network summary
 	 * @param null
-	 * @return String stats
+	 * @return String summary
 	 */
-	public String getStats() {
-		if (this.stats == null) {
-			String info = "<html>";
-			for (Entry<String, Object> entry : this.getStatMap().entrySet()) {
-				info += entry.getKey() + ": " + Integer.toString((Integer)entry.getValue()) + "<br>";
+	public String getSummary() {
+		if (this.networkSummary == null) {
+			String info = "<html>", key = null, value = null;
+			for (Object[] summary : this.getSummaryList()) {
+				key = (String) summary[0];
+				value = (String) summary[1];
+				info += key + ": " + value + "<br>";
 			}
-			this.stats = info + "</html>";
+			this.networkSummary = info + "</html>";
 		}
-		return this.stats;
+		return this.networkSummary;
 	}
 
 	/**
-	 * Set network stats
-	 * @param String stats
+	 * Set network summary
+	 * @param String summary
 	 * @return null
 	 */
-	public void setStats(String stats) {
-		this.stats = stats;
+	public void setSummary(String summary) {
+		this.networkSummary = summary;
 	}
 	
 		

@@ -29,7 +29,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
-
 import main.java.org.baderlab.csapps.socialnetwork.Category;
 import main.java.org.baderlab.csapps.socialnetwork.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.SocialNetwork;
@@ -104,13 +103,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private static int visualStyleSelectorType = Category.DEFAULT;
 	/**
-	 * Reference to network stats panel
+	 * Reference to network summary panel
 	 */
-	private static JPanel networkStatsPanelRef = null;
+	private static JPanel networkSummaryPanelRef = null;
 	/**
-	 * Reference to network stats pane
+	 * Reference to network summary pane
 	 */
-	private static JTextPane networkStatsPaneRef = null;
+	private static JTextPane networkSummaryPaneRef = null;
 	
 	/**
 	 * Create a new panel
@@ -199,40 +198,39 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				switch (Cytoscape.getVisualStyleID()) {
 					case Category.DEFAULT:
 						UserPanel.help("Default visual style", 
-								"The default visual style is the bas" +
-								"e visual style. It makes use of no n" +
-								"etwork attributes and is for all in" +
-								"tents and purposes non-essential.");
+								"The default visual style is the base" +
+								" visual style. It makes use of no ne" +
+								"twork attributes..");
 						break;
 					case Category.CHIPPED:
 						UserPanel.help("Chipped Visual Style", 
 								"The Chipped visual style is designe" +
-								"d for fully annotated networks. Thes" +
-								"e are networks that are assumed to " +
-								"contain reasonably accurate institu" +
-								"tion information. Institutions are m" +
-								"atched to their respective location" +
-								"s, which are color matched. Institut" +
-								"ions for which no location has been" +
-								" found are classified as 'other' (p" +
-								"urple). Color matching is determined" +
+								"d for fully annotated Academia netw" +
+								"orks. These are networks that are a" +
+								"ssumed to contain reasonably accura" +
+								"te institution information. Institu" +
+								"tions are matched to their respecti" +
+								"ve locations, and the locations are" +
+								" then color-coded. Institutions for" +
+								" which no location has been found w" +
+								"ill be classified as 'other' (purpl" +
+								"e). Location matching is determined" +
 								" by a local map and as such may or " +
-								"may not be adequate. Manually adding" +
-								" an institution and its correspondi" +
-								"ng location can be done by navigati" +
-								"ng to: <b>Apps</b> - <b>SocialNetwo" +
-								"rkApp</b> - <b>Incites</b> - <b>Add" +
-								" institution</b>");
-						break;
+								"may not be adequate. To add an inst" +
+								"itution and it's associated locatio" +
+								"n go to:<br> <b>Tools</b> - <b>Inci" +
+								"tes</b> - <b>Add institution</b>."
+);						
+							break;
 					case Category.VANUE:
 						UserPanel.help("Vanue Visual Style",
 								"The Vanue visual style is designed " +
-								"for academia networks that lack ins" +
-								"titution information.. Node size is d" +
-								"etermined by times cited value and " +
-								"edge width varies depending on how " +
-								"many publications two individual no" +
-								"des (authors) have co-authored."
+								"for Academia networks that lack ins" +
+								"titution information. Node size is " +
+								"determined by times cited value. Ed" +
+								"ge width varies depending on how ma" +
+								"ny publications two individual node" +
+								"s (authors) have co-authored."
 );
 						break;
 				}
@@ -307,8 +305,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			networkTablePane.setPreferredSize(new Dimension(200, 100));
 			UserPanel.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
 			
-			UserPanel.setNetworkStatsPanelRef(UserPanel.createNetworkStatsPanel(socialNetwork));
-			UserPanel.getNetworkPanelRef().add(UserPanel.getNetworkStatsPanelRef(), BorderLayout.CENTER);
+			UserPanel.setNetworkSummaryPanelRef(UserPanel.createNetworkSummaryPanel(socialNetwork));
+			UserPanel.getNetworkPanelRef().add(UserPanel.getNetworkSummaryPanelRef(), BorderLayout.CENTER);
 	
 		// Add network info to table
 		} else {
@@ -320,7 +318,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		}
 		
 		
-		UserPanel.updateNetworkStatsPanel(socialNetwork);
+		UserPanel.updateNetworkSummaryPanel(socialNetwork);
 		
 		// Add network visual styles
 		UserPanel.addNetworkVisualStyle(socialNetwork);
@@ -972,65 +970,66 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 
 	/**
-	 * Create stats panel for network
+	 * Create network summary panel
 	 * @param SocialNetwork socialNetwork
-	 * @return JPanel networkStatsPanel
+	 * @return JPanel networkSummaryPanel
 	 */
-	public static JPanel createNetworkStatsPanel(SocialNetwork socialNetwork) {
-		// Create network stats 'panel'
-		JPanel networkStatsPanel = new JPanel();
-	    networkStatsPanel.setLayout(new BorderLayout());
+	public static JPanel createNetworkSummaryPanel(SocialNetwork socialNetwork) {
+		// Create network summary panel
+		JPanel networkSummaryPanel = new JPanel();
+	    networkSummaryPanel.setLayout(new BorderLayout());
 	    
-	    //Create network stats 'pane'
-	    JTextPane networkStatsPane = new JTextPane();
-		networkStatsPane.setContentType("text/html");
-		networkStatsPane.setEditable(false);
-		networkStatsPane.setAutoscrolls(true);
-	    UserPanel.setNetworkStatsPaneRef(networkStatsPane);
+	    //Create network summary pane
+	    JTextPane networkSummaryPane = new JTextPane();
+		networkSummaryPane.setContentType("text/html");
+		networkSummaryPane.setEditable(false);
+		networkSummaryPane.setAutoscrolls(true);
+	    UserPanel.setNetworkSummaryPaneRef(networkSummaryPane);
 	    JScrollPane wrapperPane = new JScrollPane();
-		wrapperPane.getViewport().add(networkStatsPane);
-		wrapperPane.setPreferredSize(new Dimension(50,50));
-	    networkStatsPanel.add(wrapperPane, BorderLayout.NORTH);
+		wrapperPane.getViewport().add(networkSummaryPane);
+		wrapperPane.setPreferredSize(new Dimension(50,100));
+	    networkSummaryPanel.add(wrapperPane, BorderLayout.NORTH);
 	    
-		return networkStatsPanel;
+		return networkSummaryPanel;
 	}
 
 	/**
-	 * Update network stats panel (for Academia networks only)
+	 * Update network summary panel (for Academia networks only)
 	 * @param SocialNetwork socialNetwork
 	 * @return null
 	 */
-	public static void updateNetworkStatsPanel(SocialNetwork socialNetwork) {
-		String networkName = "DEFAULT", networkStats = "N/A";
+	public static void updateNetworkSummaryPanel(SocialNetwork socialNetwork) {
+		String networkName = "DEFAULT", networkSummary = "N/A";
 		if (socialNetwork != null) {
 			networkName = socialNetwork.getNetworkName();
 			if (networkName.length() >= 10) {
 				networkName = networkName.substring(0, 9) + " ...";
 			}
-			networkStats = socialNetwork.getStats();
+			networkSummary = socialNetwork.getSummary();
 		}
-		UserPanel.getNetworkStatsPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
-		UserPanel.getNetworkStatsPaneRef().setText(networkStats);
-		UserPanel.getNetworkStatsPanelRef().revalidate();
-		UserPanel.getNetworkStatsPanelRef().repaint();
+				
+		UserPanel.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
+		UserPanel.getNetworkSummaryPaneRef().setText(networkSummary);
+		UserPanel.getNetworkSummaryPanelRef().revalidate();
+		UserPanel.getNetworkSummaryPanelRef().repaint();
 	}
 
 	/**
-	 * Set network stats panel reference
-	 * @param JPanel networkStatsPanel
+	 * Set network summary panel reference
+	 * @param JPanel networkSummaryPanel
 	 * @return null
 	 */
-	private static void setNetworkStatsPanelRef(JPanel networkStatsPanel) {
-		UserPanel.networkStatsPanelRef = networkStatsPanel;
+	private static void setNetworkSummaryPanelRef(JPanel networkSummaryPanel) {
+		UserPanel.networkSummaryPanelRef = networkSummaryPanel;
 	}
 
 	/**
-	 * Get network stats panel reference
+	 * Get network summary panel reference
 	 * @param null
-	 * @return JPanel networkStatsPanel
+	 * @return JPanel networkSummaryPanel
 	 */
-	private static JPanel getNetworkStatsPanelRef() {
-		return UserPanel.networkStatsPanelRef;
+	private static JPanel getNetworkSummaryPanelRef() {
+		return UserPanel.networkSummaryPanelRef;
 	}
 
 	/**
@@ -1052,21 +1051,21 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	}
 
 	/**
-	 * Get network stats pane reference
+	 * Get network summary pane reference
 	 * @param null
-	 * @return JTextPane networkStatsPaneRef
+	 * @return JTextPane networkSummaryPaneRef
 	 */
-	public static JTextPane getNetworkStatsPaneRef() {
-		return UserPanel.networkStatsPaneRef;
+	public static JTextPane getNetworkSummaryPaneRef() {
+		return UserPanel.networkSummaryPaneRef;
 	}
 
 	/**
-	 * Set network stats pane reference
-	 * @param JTextPane networkStatsPaneRef
+	 * Set network summary pane reference
+	 * @param JTextPane networkSummaryPaneRef
 	 * @return null
 	 */
-	public static void setNetworkStatsPaneRef(JTextPane networkStatsPaneRef) {
-		UserPanel.networkStatsPaneRef = networkStatsPaneRef;
+	public static void setNetworkSummaryPaneRef(JTextPane networkSummaryPaneRef) {
+		UserPanel.networkSummaryPaneRef = networkSummaryPaneRef;
 	}
 
 }

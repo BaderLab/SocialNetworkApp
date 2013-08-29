@@ -201,9 +201,6 @@ public class Cytoscape {
 					Cytoscape.notifyUser("Unable to identify faculty." 
 							          +  "Please verify that Incites data file is valid");
 				}
-				socialNetwork.getStatMap().put("# of publications", incites.getPubList().size());
-				socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
-				socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
 				pubList = incites.getPubList();
 				// Get faculty attributes
 				facultyAttr = incites.getFaculty();
@@ -219,9 +216,9 @@ public class Cytoscape {
 						             "spreadsheets or text files.");
 				return;
 			}
-			socialNetwork.getStatMap().put("# of publications", incites.getPubList().size());
-			socialNetwork.getStatMap().put("# of identified faculty", incites.getIdentifiedFacultyList().size());
-			socialNetwork.getStatMap().put("# of unidentified faculty", incites.getUnidentifiedFacultyList().size());
+			socialNetwork.getSummaryList().add(new Object[] {"Total # of publications: ", Integer.toString(incites.getPubList().size())});
+			socialNetwork.getSummaryList().add(new Object[] {"Total # of unidentified faculty: ", Integer.toString(incites.getUnidentifiedFacultyList().size())});
+			socialNetwork.getSummaryList().add(new Object[] {"<hr><br>UNIDENTIFIED FACULTY", incites.getUnidentifiedFacultyString()});
 			facultyName = (String) facultyAttr[0];
 			facultySet = (HashSet<Author>) facultyAttr[1];
 			// Add info to social network map(s)
@@ -290,17 +287,21 @@ public class Cytoscape {
 		}
 		Map<Consortium, ArrayList<AbstractEdge>> map = null;
 		Interaction interaction = null;
+		SocialNetwork socialNetwork = null;
 		switch (category) {
 			case Category.ACADEMIA:
 				// Change category (to Pubmed)
 				category = Category.PUBMED;
 				interaction = new Interaction(results, category);
+				socialNetwork = new SocialNetwork(searchTerm, category);
 				// Create new map using results
 				map = interaction.getAbstractMap();
+				// Set social network attributes
+				// ??
 				break;
 		}
 		Cytoscape.setNetworkName(searchTerm);
-		Cytoscape.getSocialNetworkMap().put(searchTerm, new SocialNetwork(searchTerm, category));
+		Cytoscape.getSocialNetworkMap().put(searchTerm, socialNetwork);
 		// Transfer map to Cytoscape's map variable
 		Cytoscape.setMap(map);
 		// Create network using map

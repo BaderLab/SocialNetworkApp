@@ -19,7 +19,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 			// Update UI iff a social network has been selected
 			if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
 				SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
-				UserPanel.updateNetworkStatsPanel(socialNetwork);
+				UserPanel.updateNetworkSummaryPanel(socialNetwork);
 				UserPanel.addNetworkVisualStyle(socialNetwork);
 				Cytoscape.setCurrentlySelectedSocialNetwork(socialNetwork);
 				return;
@@ -27,6 +27,6 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 		}
 		Cytoscape.setCurrentlySelectedSocialNetwork(null);
 		UserPanel.addNetworkVisualStyle(null);
-		UserPanel.updateNetworkStatsPanel(null);
+		UserPanel.updateNetworkSummaryPanel(null);
 	}
 }
