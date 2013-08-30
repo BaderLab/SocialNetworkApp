@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.JRadioButton;
 
@@ -33,17 +34,6 @@ public class Incites {
 	 * <br> value: <i>rank</i>
 	 */
 	private static Map<String, Integer> locationRankingMap = null;
-	
-//	/**
-//	 * Create new Incites using data file
-//	 * @param File file
-//	 * @return null
-//	 */
-//	public Incites(File file) {
-//		this.loadFaculty(file);
-//		this.loadPubList(file);
-//		this.calculateFacultySummary();
-//	}
 	
 	/**
 	 * Get Incites radio button
@@ -140,6 +130,41 @@ public class Incites {
 		}
 		nodeAttrMap.put(columns[i], 0);
 		return nodeAttrMap;
+	}
+	
+	/**
+	 * Validate institution for both author1 and author2.
+	 * Assumes that author and otherAuthor are the same
+	 * individual but otherAuthor is the active reference.
+	 * @param Author author
+	 * @param Author other
+	 * @return null
+	 */
+	public static void validateInstitution(Author author, Author otherAuthor) {
+		String location = author.getLocation();
+		String otherLocation = otherAuthor.getLocation();
+		Map<String, Integer> rankMap = Incites.getLocationRankingMap();
+		// Initialize rank and otherRank to a low rank
+		// NOTE: Highest rank is 6 and lowest rank is 1
+		int rank = 0, otherRank = 0;
+		if (rankMap.containsKey(location)) {
+			rank = rankMap.get(location);
+		}
+		if (rankMap.containsKey(otherLocation)) {
+			otherRank = rankMap.get(otherLocation);
+		}
+		if (rank > otherRank) {
+			otherAuthor.setInstitution(author.getInstitution());
+			otherAuthor.setLocation(author.getLocation());
+		} else if (rank == otherRank) {
+			Author[] randomAuthorArray = new Author[] {author, otherAuthor};
+			Random rand = new Random();
+		    int i = rand.nextInt((1 - 0) + 1) + 0;
+		    String randomInstitution = randomAuthorArray[i].getInstitution();
+		    String randomLocation = randomAuthorArray[i].getLocation();
+	        otherAuthor.setInstitution(randomInstitution);
+			otherAuthor.setLocation(randomLocation);
+		}
 	}
 
 }

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,7 +98,7 @@ public class IncitesParser {
 		for (Author unknown : authorList) {
 			if (author.getLastName().equalsIgnoreCase(unknown.getLastName()) &&
 				author.getFirstName().equalsIgnoreCase(unknown.getFirstName())) {
-
+				Incites.validateInstitution(author, unknown);
 				return true;
 			}
 		}

@@ -2,8 +2,6 @@ package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.cytoscape.model.CyNode;
 
@@ -192,7 +190,7 @@ public class Author extends AbstractNode {
 					   otherAuthor.getFirstName().toLowerCase());
 			similarity = 1 - ((double) distance) / (Math.max(this.getFirstName().length(), 
 					   otherAuthor.getFirstName().length()));
-			if (similarity >= 0.8) {
+			if (similarity >= 0.75) {
 				isEqualFirstName = true;
 				if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
 					otherAuthor.setFirstName(this.getFirstName());
@@ -225,30 +223,7 @@ public class Author extends AbstractNode {
 			String myInstitution = this.getInstitution(), otherInstitution = otherAuthor.getInstitution();
 			isEqualInstitution = myInstitution.equalsIgnoreCase(otherInstitution);
 			if (isEqualLastName && isEqualFirstName && ! isEqualInstitution) {
-				String myLocation = this.getLocation();
-				String otherLocation = otherAuthor.getLocation();
-				Map<String, Integer> rankMap = Incites.getLocationRankingMap();
-				// Initialize myRank and otherRank to a low rank
-				// NOTE: Highest rank is 6 and lowest rank is 1
-				int myRank = 0, otherRank = 0;
-				if (rankMap.containsKey(myLocation)) {
-					myRank = rankMap.get(myLocation);
-				}
-				if (rankMap.containsKey(otherLocation)) {
-					otherRank = rankMap.get(otherLocation);
-				}
-				if (myRank > otherRank) {
-					otherAuthor.setInstitution(this.getInstitution());
-					otherAuthor.setLocation(this.getLocation());
-				} else if (myRank == otherRank) {
-					Author[] randomAuthorArray = new Author[] {this, otherAuthor};
-					Random rand = new Random();
-				    int i = rand.nextInt((1 - 0) + 1) + 0;
-				    String randomInstitution = randomAuthorArray[i].getInstitution();
-				    String randomLocation = randomAuthorArray[i].getLocation();
-			        otherAuthor.setInstitution(randomInstitution);
-					otherAuthor.setLocation(randomLocation);
-				}
+				Incites.validateInstitution(this, otherAuthor);
 				isEqualInstitution = true;
 			}
 			isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
@@ -260,7 +235,7 @@ public class Author extends AbstractNode {
 					                        otherAuthor.getFirstName().toLowerCase());
 			similarity = 1 - ((double) distance) / (Math.max(this.getFirstName().length(), 
 					                        otherAuthor.getFirstName().length()));
-			if (similarity >= 0.5) {
+			if (similarity >= 0.75) {
 				isEqualFirstName = true;
 				if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
 					otherAuthor.setFirstName(this.getFirstName());
@@ -551,7 +526,7 @@ public class Author extends AbstractNode {
 	 * @param String institution
 	 * @return null
 	 */
-	private void setInstitution(String institution) {
+	public void setInstitution(String institution) {
 		this.institution = institution;
 		this.getNodeAttrMap().put("Institution", institution);
 	}
