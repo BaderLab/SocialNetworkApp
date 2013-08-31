@@ -32,6 +32,7 @@ import javax.swing.JTextPane;
 import main.java.org.baderlab.csapps.socialnetwork.model.Category;
 import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import main.java.org.baderlab.csapps.socialnetwork.model.VisualStyles;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -198,40 +199,19 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 				switch (Cytoscape.getVisualStyleID()) {
 					case Category.DEFAULT:
 						UserPanel.help("Default visual style", 
-								"The default visual style is the base" +
-								" visual style. It makes use of no ne" +
-								"twork attributes..");
+								       VisualStyles.DEFAULT_VISUAL_STYLE_HELP);
 						break;
-					case Category.CHIPPED:
-						UserPanel.help("Chipped Visual Style", 
-								"The Chipped visual style is designe" +
-								"d for fully annotated Academia netw" +
-								"orks. These are networks that are a" +
-								"ssumed to contain reasonably accura" +
-								"te institution information. Institu" +
-								"tions are matched to their respecti" +
-								"ve locations, and the locations are" +
-								" then color-coded. Institutions for" +
-								" which no location has been found w" +
-								"ill be classified as 'other' (purpl" +
-								"e). Location matching is determined" +
-								" by a local map and as such may or " +
-								"may not be adequate. To add an inst" +
-								"itution and it's associated locatio" +
-								"n go to:<br> <b>Tools</b> - <b>Inci" +
-								"tes</b> - <b>Add institution</b>."
-);						
+					case VisualStyles.INCITES_LITE_VISUAL_STYLE:
+						UserPanel.help("Incites 'Lite' Visual Style",
+								       VisualStyles.INCITES_LITE_VISUAL_STYLE_HELP);						
 							break;
-					case Category.VANUE:
-						UserPanel.help("Vanue Visual Style",
-								"The Vanue visual style is designed " +
-								"for Academia networks that lack ins" +
-								"titution information. Node size is " +
-								"determined by times cited value. Ed" +
-								"ge width varies depending on how ma" +
-								"ny publications two individual node" +
-								"s (authors) have co-authored."
-);
+					case VisualStyles.PUBMED_LITE_VISUAL_STYLE:
+						UserPanel.help("Pubmed 'Lite' Visual Style",
+								       VisualStyles.PUBMED_LITE_VISUAL_STYLE_HELP);
+						break;
+					case VisualStyles.SCOPUS_LITE_VISUAL_STYLE:
+						UserPanel.help("Pubmed 'Lite' Visual Style",
+								       VisualStyles.SCOPUS_LITE_VISUAL_STYLE_HELP);
 						break;
 				}
 			}
@@ -600,8 +580,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		searchPanel.add(UserPanel.createSearchButton());
 		
 		// Add search filter to panel
-		UserPanel.setSearchFilter(UserPanel.createSearchFilter());
-		searchPanel.add(UserPanel.getSearchFilter());
+		/**
+		 * NOTE: DISABLED TEMPORARILY
+		 */
+//		UserPanel.setSearchFilter(UserPanel.createSearchFilter());
+//		searchPanel.add(UserPanel.getSearchFilter());
 		
 		return searchPanel;
 	}
@@ -618,7 +601,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		JPanel topPanel = new JPanel();
 		
 		topPanel.setLayout(new BorderLayout());
-		topPanel.add(UserPanel.createCategoryPanel(), BorderLayout.NORTH);
+		/**
+		 * NOTE: DISABLED TEMPORARILY
+		 */
+//		topPanel.add(UserPanel.createCategoryPanel(), BorderLayout.NORTH);
 		topPanel.add(UserPanel.createSearchPanel(), BorderLayout.SOUTH);
 		
 		return topPanel;
@@ -645,14 +631,14 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return JComboBox visualStyleSelector
 	 */
 	public static JComboBox createVisualStyleSelector(int visualStyleSelectorType) {
-		JComboBox visualStyleSelector = new JComboBox(Category.getVisualStyleList(visualStyleSelectorType));
+		JComboBox visualStyleSelector = new JComboBox(VisualStyles.getVisualStyleList(visualStyleSelectorType));
 		visualStyleSelector.setEditable(false);
 		visualStyleSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
 		visualStyleSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox jcmbType = (JComboBox) e.getSource();
 				String visualStyle = (String) jcmbType.getSelectedItem();
-				int visualStyleID = Category.getVisualStyleID(visualStyle);
+				int visualStyleID = VisualStyles.getVisualStyleID(visualStyle);
 				UserPanel.setSelectedVisualStyle(visualStyleID);
 				Cytoscape.applyVisualStyle(visualStyle);
 			}

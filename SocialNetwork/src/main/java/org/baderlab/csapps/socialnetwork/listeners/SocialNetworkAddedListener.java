@@ -124,7 +124,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
 					HashMap<String, Color> locationsMap = new HashMap<String, Color>();
 					locationsMap.put("Ontario", new Color(255,137,41));
-					locationsMap.put("Canada", new Color(255,13,35));
+					locationsMap.put("Canada", new Color(235,235,52));
 					locationsMap.put("United States", new Color(42,78,222));
 					locationsMap.put("International", new Color(42,230,246));
 					locationsMap.put("Other", new Color(211, 3, 253));

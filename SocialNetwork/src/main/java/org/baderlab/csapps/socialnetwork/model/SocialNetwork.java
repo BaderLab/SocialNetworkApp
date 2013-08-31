@@ -47,7 +47,8 @@ public class SocialNetwork {
 	 */
 	private ArrayList<String[]> summaryList = null;
 	/**
-	 * The network summary (outlines network issues)
+	 * The network summary (outlines network's salient attributes
+	 * and any issues)
 	 */
 	private String networkSummary = null;
 	
@@ -64,13 +65,13 @@ public class SocialNetwork {
 		// Set default visual styles
 		switch(networkType) {
 			case Category.INCITES:
-				this.setDefaultVisualStyle(Category.CHIPPED);
+				this.setDefaultVisualStyle(VisualStyles.INCITES_LITE_VISUAL_STYLE);
 				break;
 			case Category.SCOPUS:
-				this.setDefaultVisualStyle(Category.VANUE);
+				this.setDefaultVisualStyle(VisualStyles.PUBMED_LITE_VISUAL_STYLE);
 				break;
 			case Category.PUBMED:
-				this.setDefaultVisualStyle(Category.VANUE);
+				this.setDefaultVisualStyle(VisualStyles.PUBMED_LITE_VISUAL_STYLE);
 				break;
 		}
 	}

@@ -1,6 +1,8 @@
 package main.java.org.baderlab.csapps.socialnetwork.model.academia;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.cytoscape.model.CyNode;
@@ -15,9 +17,9 @@ import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incite
  */
 public class Author extends AbstractNode {
 	/**
-	 * Author's faculty
+	 * Author's department
 	 */
-	private String faculty = "N/A";
+	private String department = "N/A";
 	/**
 	 * Author's first initial
 	 */
@@ -58,7 +60,11 @@ public class Author extends AbstractNode {
 	 * True iff author's citations for a given publication
 	 * have already been counted
 	 */
-	private boolean alreadyBeenCounted = false;
+	private boolean alreadyBeenAdded = false;
+	/**
+	 * List of all publications author has authored / co-authored
+	 */
+	private List<String> pubList = null;
 	
 	/**
 	 * Set identification
@@ -105,13 +111,15 @@ public class Author extends AbstractNode {
 					this.setLastName(lastName);
 					String[] initials = scopusNames[i].split("\\.");
 					if (initials.length == 1) {
+						this.setFirstName(initials[0]);
 						this.setFirstInitial(initials[0]);
 					} else if (initials.length > 1) {
+						this.setFirstName(initials[0]);
 						this.setFirstInitial(initials[0]);
 						this.setMiddleInitial(initials[1]);
 					}
 				}
-				this.setLabel(this.getFirstInitial() + "_" + this.getLastName());
+				this.setLabel(this.getFirstInitial() + " " + this.getLastName());
 				break;
 			case Category.PUBMED:
 				// Initialize attribute map for Pubmed author (~ same as Scopus)
@@ -135,7 +143,7 @@ public class Author extends AbstractNode {
 						// as unknown
 						this.setFirstInitial(pubmedNames[i]);
 					}
-					this.setLabel(this.getFirstInitial() + "_" + this.getLastName());
+					this.setLabel(this.getFirstInitial() + " " + this.getLastName());
 				}
 				break;
 			case Category.INCITES:
@@ -147,7 +155,7 @@ public class Author extends AbstractNode {
 				}
 				this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
 				this.setLastName(IncitesParser.parseLastName(rawAuthorText));
-				this.setLabel(this.getFirstName() + "_" + this.getLastName());
+				this.setLabel(this.getFirstName() + " " + this.getLastName());
 				this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
 				this.setLocation(Incites.getLocationMap().get(this.getInstitution()));
 				break;
@@ -298,12 +306,12 @@ public class Author extends AbstractNode {
 	}
 
 	/**
-	 * Get author's faculty
+	 * Get author's department
 	 * @param null
-	 * @return String faculty
+	 * @return String department
 	 */
-	public String getFaculty() {
-		return faculty;
+	public String getDepartment() {
+		return this.department;
 	}
 
 	/**
@@ -359,7 +367,7 @@ public class Author extends AbstractNode {
 	 */
 	public Map<String, Object> getNodeAttrMap() {
 		if (this.nodeAttrMap == null) {
-			this.setNodeAttrMap(new HashMap<String, Object>());
+			this.nodeAttrMap = new HashMap<String, Object>();
 		}
 		return this.nodeAttrMap;
 	}
@@ -398,13 +406,13 @@ public class Author extends AbstractNode {
 	}
 
 	/**
-	 * Set author's faculty
-	 * @param String faculty
+	 * Set author's department
+	 * @param String department
 	 * @return null
 	 */
-	public void setFaculty(String faculty) {
-		this.faculty = faculty;
-		this.getNodeAttrMap().put("Faculty", faculty);
+	public void setFaculty(String department) {
+		this.department = department;
+		this.getNodeAttrMap().put("Department", department);
 	}
 
 	/**
@@ -501,23 +509,30 @@ public class Author extends AbstractNode {
 	}
 	
 	/**
-	 * Add times cited
+	 * Add publication
 	 * @param Publication publication
 	 * @return null
 	 */
-	public void addTimesCited(Publication publication) {
-		// Only update times cited value if publication was not authored by
+	public void addPublication(Publication publication) {
+		// Only add publication if publication was not authored by
 		// a single author. 
 		// NOTE: In lone author publications, the lone author is represented
 		// twice
-		int currentTimesCited = this.getTimesCited();
+		int timesCited = this.getTimesCited();
+		ArrayList<String> pubList = (ArrayList<String>) this.getPubList();
 		if (publication.isSingleAuthored()) {
-			if (! this.hasAlreadyBeenCounted()) {
-				this.setTimesCited(currentTimesCited + publication.getTimesCited());
-				this.setAlreadyBeenCounted(true);
+			if (! this.hasAlreadyBeenAdded()) {
+				this.setTimesCited(timesCited + publication.getTimesCited());
+				pubList.add(publication.getTitle());
+				this.setPubList(pubList);
+				this.setAlreadyBeenAdded(true);
+			} else {
+				this.setAlreadyBeenAdded(false);
 			}
 		} else {
-			this.setTimesCited(currentTimesCited + publication.getTimesCited());
+			this.setTimesCited(timesCited + publication.getTimesCited());
+			pubList.add(publication.getTitle());
+			this.setPubList(pubList);
 		}
 	}
 	
@@ -589,22 +604,47 @@ public class Author extends AbstractNode {
 	}
 
 	/**
-	 * Return true iff author's citations for
-	 * a given publication have already been counted
+	 * True iff publication has 
+	 * already been added
 	 * @param null
-	 * @return Boolean alreadyBeenCounted
+	 * @return Boolean alreadyBeenAdded
 	 */
-	public boolean hasAlreadyBeenCounted() {
-		return this.alreadyBeenCounted;
+	public boolean hasAlreadyBeenAdded() {
+		return this.alreadyBeenAdded;
 	}
 
 	/**
-	 * Set author's citation count status
-	 * @param Boolean alreadyBeenCounted 
+	 * Set value for alreadyBeenAdded
+	 * <br>NOTE: alreadyBeenAdded should be
+	 * false unless a lone author publication
+	 * is being parsed
+	 * @param Boolean alreadyBeenAdded 
 	 * @return null
 	 */
-	public void setAlreadyBeenCounted(boolean alreadyBeenCounted) {
-		this.alreadyBeenCounted = alreadyBeenCounted;
+	public void setAlreadyBeenAdded(boolean alreadyBeenAdded) {
+		this.alreadyBeenAdded = alreadyBeenAdded;
+	}
+
+	/**
+	 * Get author publist
+	 * @param null
+	 * @return ArrayList pubList
+	 */
+	public List<String> getPubList() {
+		if (this.pubList == null) {
+			this.pubList = new ArrayList<String>();
+		}
+		return this.pubList;
+	}
+
+	/**
+	 * Set author publist
+	 * @param ArrayList pubList
+	 * @return null
+	 */
+	public void setPubList(List<String> pubList) {
+		this.pubList = pubList;
+		this.getNodeAttrMap().put("Publications", pubList);
 	}
 	 
 }

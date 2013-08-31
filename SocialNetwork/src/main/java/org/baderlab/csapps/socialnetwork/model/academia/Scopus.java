@@ -22,7 +22,21 @@ public class Scopus {
 	/**
 	 * Reference to Scopus radio button
 	 */
-	public static JRadioButton scopusRadioButton = null;
+	private static JRadioButton scopusRadioButton = null;
+	
+	/**
+	 * Reference to Scopus publication list
+	 */
+	private ArrayList<Publication> pubList = null;
+	
+	/**
+	 * Create new Scopus object
+	 * @param File csv
+	 * @return null
+	 */
+	public Scopus(File csv) {
+		this.parseScopusPubList(csv);
+	}
 
 	/**
 	 * Get Scopus radio button
@@ -39,7 +53,7 @@ public class Scopus {
 	 * @param String rawText
 	 * @return boolean bool
 	 */
-	private static boolean matchYear(String rawText) {
+	private boolean matchYear(String rawText) {
 		Pattern pattern = Pattern.compile("^\\d{4}$");
 		Matcher matcher = pattern.matcher(rawText.trim());
 		return matcher.find();
@@ -56,14 +70,11 @@ public class Scopus {
 	
 	/**
 	 * Get Scopus publication list
-	 * @param File scopusDataFile
-	 * @return ArrayList pubList
+	 * @param null
 	 */
-	public ArrayList<Publication> getScopusPubList(File scopusDataFile) {
-		ArrayList<Publication> pubList = null;
+	private void parseScopusPubList(File csv) {
 		try {
-			pubList = new ArrayList<Publication>();
-			Scanner in = new Scanner(scopusDataFile);
+			Scanner in = new Scanner(csv);
 			// Skip column headers
 			in.nextLine();
 			String line = null, authors = null, year = null;
@@ -78,10 +89,10 @@ public class Scopus {
 				line = in.nextLine();
 				columns = line.split("\",|,\"");
 				authors = columns[0].substring(1);
-				coauthorList = Scopus.parseAuthors(authors);
+				coauthorList = this.parseAuthors(authors);
 				title = columns[1].substring(1);
 				year = columns[2];
-				if (! Scopus.matchYear(year)) {
+				if (! this.matchYear(year)) {
 					throw new UnableToParseYearException();
 				}
 				subjectArea = columns[3];
@@ -94,19 +105,18 @@ public class Scopus {
 				}
 				pub = new Publication(title, year, subjectArea, 
 						timesCited, null, coauthorList);
-				pubList.add(pub);
+				this.getPubList().add(pub);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			Cytoscape.notifyUser("Unable to locate Scopus data file.\nPlease re-load" +
 					             " file and try again.");
 		} catch (UnableToParseYearException e) {
-			pubList = null;
+			this.setPubList(null);
 			e.printStackTrace();
 			Cytoscape.notifyUser("Scopus data file is corrupt.\nPlease load" +
 		             " a valid file and try again.");
 		}
-		return pubList;
 	}
 
 	/**
@@ -114,7 +124,7 @@ public class Scopus {
 	 * @param String authors
 	 * @return ArrayList authorList
 	 */
-	private static ArrayList<Author> parseAuthors(String authors) {
+	private ArrayList<Author> parseAuthors(String authors) {
 		ArrayList<Author> authorList = new ArrayList<Author>();
 		String[] contents = authors.split(",");
 		for (String authorInfo : contents) {
@@ -140,11 +150,35 @@ public class Scopus {
 	public static HashMap<String, Object> constructScopusAttrMap(Author author) {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
 		String[] columns = new String[] {"Label", "Last Name", "First Name",
-				                         "Times Cited"};
-		for (String col : columns) {
-			nodeAttrMap.put(col, "");
+				                         "Times Cited", "Publications"};
+		int i = 0;
+		for (i = 0; i < 4; i++) {
+			nodeAttrMap.put(columns[i], "");
 		}
+		// Initialize Publications attribute (~ ArrayList)
+		nodeAttrMap.put(columns[i], new ArrayList<String>());
 		return nodeAttrMap;
+	}
+
+	/**
+	 * Get publication list
+	 * @param null
+	 * @return ArrayList pubList
+	 */
+	public ArrayList<Publication> getPubList() {
+		if (this.pubList == null) {
+			this.pubList = new ArrayList<Publication>();
+		}
+		return this.pubList;
+	}
+
+	/**
+	 * Set publication list
+	 * @param Publication pubList
+	 * @return null
+	 */
+	private void setPubList(ArrayList<Publication> pubList) {
+		this.pubList = pubList;
 	}
  
 }

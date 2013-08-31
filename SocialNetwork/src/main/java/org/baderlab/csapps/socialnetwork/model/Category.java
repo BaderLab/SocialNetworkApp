@@ -3,12 +3,17 @@ package main.java.org.baderlab.csapps.socialnetwork.model;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 /**
- * Categories
+ * All the categories currently supported
+ * by the Social Network App. 
+ * <br>NOTE: IPs are merely used to identify 
+ * each attribute. They do not have a 
+ * hidden significance.
+ * Values can therefore be changed without
+ *  compromising functionality.
  * @author Victor Kofia
  */
 public class Category {
@@ -16,10 +21,6 @@ public class Category {
 	 * Academia (IP = 74.125.226.112)
 	 */
 	final public static int ACADEMIA = (74 << 24) + (125 << 16) + (226 << 8) + 112;
-	/**
-	 * Chipped network view
-	 */
-	final public static int CHIPPED = -100;
 	/**
 	 * Default category
 	 */
@@ -49,11 +50,6 @@ public class Category {
 	 */
 	final public static int TWITTER = (199 << 24) + (59 << 16) + (150 << 8) + 39;
 	/**
-	 * Vanue network view
-	 */
-	final public static int VANUE = -101;
-	
-	/**
 	 * Youtube (IP = 74.125.226.101)
 	 */
 	final public static int YOUTUBE = (74 << 24) + (125 << 16) + (226 << 8) + 101;
@@ -63,13 +59,7 @@ public class Category {
 	 *<br> value: category ID
 	 */
 	private static Map<String, Integer> categoryMap = null;
-	/**
-	 * A visual style map
-	 * <br> key: String representation of visual style
-	 * <br> value: visual style ID
-	 */
-	private static Map<String, Integer> visualStyleMap = null;
-
+	
 	/**
 	 * Create default info panel
 	 * @param null
@@ -164,64 +154,10 @@ public class Category {
 			case Category.ACADEMIA:
 				searchFilterList = new String[] {"Authors"};
 				break;
-			case Category.TWITTER:
-				searchFilterList = new String[] { "--SELECT FILTER--", "Users", "HashTags"};
-				break;
-			case Category.LINKEDIN:
-				searchFilterList = new String[] { "--SELECT FILTER--", "Users", "Groups", "Companies"};
-				break;
-			case Category.YOUTUBE:
-				searchFilterList = new String[] { "--SELECT FILTER--", "Videos", "Channels"};
-				break;
 		}
 		return searchFilterList;
 	}
 
-	/**
-	 * Get unique id (numeral) associated with visual style
-	 * @param String visualStyle
-	 * @return int visualStyleID
-	 */
-	public static int getVisualStyleID(String visualStyle) {
-		if (Category.visualStyleMap == null) {
-			Category.visualStyleMap = new HashMap<String, Integer>();
-			Category.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
-			Category.visualStyleMap.put("Chipped", Category.CHIPPED);
-			Category.visualStyleMap.put("Vanue", Category.VANUE);
-		}
-		return Category.visualStyleMap.get(visualStyle);
-	}
-
-	/**
-	 * Get visual style list of a certain type
-	 * @param int visualStyleSelectorType
-	 * @return String[] visualStyleList
-	 */
-	public static String[] getVisualStyleList(int visualStyleSelectorType) {
-		String[] visualStyleList = null;
-		switch(visualStyleSelectorType) {
-			case Category.ACADEMIA:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
-				break;
-			case Category.DEFAULT:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
-				break;
-			case Category.INCITES:
-				visualStyleList = new String[] {"Chipped"};
-				break;
-			case Category.PUBMED:
-				visualStyleList = new String[] {"Vanue"};
-				break;
-			case Category.SCOPUS:
-				visualStyleList = new String[] {"Vanue"};
-				break;
-			case Category.TWITTER:
-				visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--", "TwitterVerse", "IndigoWave" };
-				break;
-		}
-		return visualStyleList;
-	}
-	
 	/**
 	 * Return string representation of category
 	 * @param int categoryID
@@ -235,15 +171,6 @@ public class Category {
 				break;
 			case Category.ACADEMIA:
 				category = "Academia";
-				break;
-			case Category.TWITTER:
-				category = "Twitter";
-				break;
-			case Category.LINKEDIN:
-				category = "LinkedIn";
-				break;
-			case Category.YOUTUBE:
-				category = "Youtube";
 				break;
 			case Category.INCITES:
 				category = "Incites";

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -122,13 +123,16 @@ public class Incites {
 	public static HashMap<String, Object> constructIncitesAttrMap(Author author) {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
 		String[] columns = new String[] {"Label", "Last Name", "First Name",
-				                         "Institution", "Location", "Faculty",
-				                         "Times Cited"};
+				                         "Institution", "Location", "Department",
+				                         "Times Cited", "Publications"};
 		int i = 0;
 		for (i = 0; i < 6; i++) {
 			nodeAttrMap.put(columns[i], "");
 		}
+		// Initialize Times Cited attribute (~ Integer)
 		nodeAttrMap.put(columns[i], 0);
+		// Initialize Publications attribute (~ ArrayList)
+		nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
 		return nodeAttrMap;
 	}
 	

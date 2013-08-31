@@ -131,7 +131,7 @@ public class Cytoscape {
 	 * @return null
 	 */
 	public static void applyVisualStyle(String visualStyle) {
-		Cytoscape.setVisualStyleID(Category.getVisualStyleID(visualStyle));
+		Cytoscape.setVisualStyleID(VisualStyles.getVisualStyleID(visualStyle));
 		Cytoscape.getTaskManager().execute(Cytoscape.getApplyVisualStyleTaskFactoryRef()
 				                                    .createTaskIterator());
 	}
@@ -217,6 +217,7 @@ public class Cytoscape {
 						             "spreadsheets or text files.");
 				return;
 			}
+			// Add summary attributes
 			socialNetwork.getSummaryList().add(new String[] {"Total # of publications: ", Integer.toString(incitesParser.getPubList().size())});
 			socialNetwork.getSummaryList().add(new String[] {"Total # of faculty: ", Integer.toString(incitesParser.getFacultySet().size())});
 			socialNetwork.getSummaryList().add(new String[] {"Total # of unidentified faculty: ", Integer.toString(incitesParser.getUnidentifiedFacultyList().size())});
@@ -228,14 +229,16 @@ public class Cytoscape {
 		// Create network out of Scopus data
 		} else if (Scopus.getScopusRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
-			Scopus scopus = new Scopus();
+			Scopus scopus = null;
 			if (extension.trim().equalsIgnoreCase("csv")) {
-				pubList = scopus.getScopusPubList(networkFile);
+				socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
+				scopus = new Scopus(networkFile);
+				pubList = scopus.getPubList();
+				socialNetwork.getSummaryList().add(new String[] {"Total # of publications: ", Integer.toString(scopus.getPubList().size())});
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					return;
 				}
-				socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
 			} else {
 				Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				Cytoscape.notifyUser("Invalid file. Scopus data files have to be csv " +
@@ -297,6 +300,7 @@ public class Cytoscape {
 				category = Category.PUBMED;
 				interaction = new Interaction(results, category);
 				socialNetwork = new SocialNetwork(searchTerm, category);
+				socialNetwork.getSummaryList().add(new String[] {"Total # of publications: ", Integer.toString(search.getTotalHits())});
 				// Create new map using results
 				map = interaction.getAbstractMap();
 				// Set social network attributes
