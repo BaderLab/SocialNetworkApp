@@ -37,7 +37,7 @@ public class SocialNetwork {
 	/**
 	 * The network's default visual style
 	 */
-	private int defaultVisualStyle = Category.DEFAULT;
+	private int defaultVisualStyle = VisualStyles.DEFAULT_VISUAL_STYLE;
 	/**
 	 * The network's attribute map (stores all network table attr)
 	 */
@@ -68,7 +68,7 @@ public class SocialNetwork {
 				this.setDefaultVisualStyle(VisualStyles.INCITES_LITE_VISUAL_STYLE);
 				break;
 			case Category.SCOPUS:
-				this.setDefaultVisualStyle(VisualStyles.PUBMED_LITE_VISUAL_STYLE);
+				this.setDefaultVisualStyle(VisualStyles.SCOPUS_LITE_VISUAL_STYLE);
 				break;
 			case Category.PUBMED:
 				this.setDefaultVisualStyle(VisualStyles.PUBMED_LITE_VISUAL_STYLE);

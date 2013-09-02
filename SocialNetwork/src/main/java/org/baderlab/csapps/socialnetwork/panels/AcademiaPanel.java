@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.cytoscape.util.swing.FileUtil;
+
 import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.model.academia.Scopus;
@@ -105,12 +107,13 @@ public class AcademiaPanel {
 	 * @return JPanel databasePanel
 	 */
 	static JPanel createDatabasePanel() {
-		CollapsiblePanel databasePanel = new CollapsiblePanel("Select Database");
-		databasePanel.setCollapsed(false);
+		JPanel databasePanel = new JPanel();
+		
+		// Set bordered title
+		databasePanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
 		
 		// Organize panel horizontally.
-		databasePanel
-		.getContentPane().setLayout(new BoxLayout(databasePanel.getContentPane(), BoxLayout.X_AXIS));
+		databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
 				
 		// Create Incites radio button
 	    final JRadioButton incitesRadioButton = new JRadioButton("Incites", true);
@@ -129,8 +132,8 @@ public class AcademiaPanel {
 	    buttonGroup.add(incitesRadioButton);
 	    buttonGroup.add(scopusRadioButton);
 	
-	    databasePanel.getContentPane().add(Incites.getIncitesRadioButton());
-	    databasePanel.getContentPane().add(Scopus.getScopusRadioButton());
+	    databasePanel.add(Incites.getIncitesRadioButton());
+	    databasePanel.add(Scopus.getScopusRadioButton());
 	    
 		return databasePanel;
 	
@@ -154,7 +157,7 @@ public class AcademiaPanel {
 				// Ask user to select the appropriate data file.
 				JFileChooser chooser = new JFileChooser();
 				// Initialize the chooser dialog box to desktop
-				File directory = new File("~/Desktop");
+				File directory = new File(FileUtil.LAST_DIRECTORY);
 				chooser.setCurrentDirectory(directory);
 				chooser.setDialogTitle("Data Selection");
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

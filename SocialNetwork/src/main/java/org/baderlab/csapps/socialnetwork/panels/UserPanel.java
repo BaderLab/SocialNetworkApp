@@ -147,18 +147,24 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void addNetworkVisualStyle(SocialNetwork socialNetwork) {
-		int networkType = (socialNetwork == null) ? Category.DEFAULT : socialNetwork.getNetworkType();
-		String networkName = (socialNetwork == null) ? "DEFAULT" : socialNetwork.getNetworkName();
+//		int networkType = (socialNetwork == null) ? Category.DEFAULT : socialNetwork.getNetworkType();
+//		int visualStyleType = (socialNetwork == null) ? VisualStyles.DEFAULT_VISUAL_STYLE : socialNetwork.getDefaultVisualStyle();
+//		String networkName = (socialNetwork == null) ? "DEFAULT" : socialNetwork.getNetworkName();
+		int visualStyleType = VisualStyles.DEFAULT_VISUAL_STYLE;
+		String networkName = "DEFAULT";
+		if (socialNetwork != null) {
+			visualStyleType = socialNetwork.getDefaultVisualStyle();
+			networkName = socialNetwork.getNetworkName();
+		}
 		if (UserPanel.getVisualStylePanel()  == null) {
 			// Create new visual style panel
 			UserPanel.setVisualStylePanel(UserPanel.createVisualStylePanel(networkName));
 			// It is imperative that visual selector type be set before the visual
 			// selector. Not doing this will cause random & seemingly untraceable
 			// errors to occur.
-			UserPanel.setVisualStyleSelectorType(networkType);
-			Cytoscape.setVisualStyleID(networkType);
+			UserPanel.setVisualStyleSelectorType(visualStyleType);
 			UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector
-					                        (networkType));
+					                        (visualStyleType));
 			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());
 			UserPanel.setVisualStyleHelpButton(UserPanel.createHelpButton());
 			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleHelpButton());
@@ -196,8 +202,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		helpButton.setToolTipText("Visual Style Help");
 		helpButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				switch (Cytoscape.getVisualStyleID()) {
-					case Category.DEFAULT:
+				System.out.println(UserPanel.getVisualStyleSelectorType());
+				switch (UserPanel.getVisualStyleSelectorType()) {
+					case VisualStyles.DEFAULT_VISUAL_STYLE:
 						UserPanel.help("Default visual style", 
 								       VisualStyles.DEFAULT_VISUAL_STYLE_HELP);
 						break;
@@ -297,14 +304,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			
 		}
 		
-		
 		UserPanel.updateNetworkSummaryPanel(socialNetwork);
-		
-		// Add network visual styles
 		UserPanel.addNetworkVisualStyle(socialNetwork);
-	
-		getNetworkPanelRef().revalidate();
-		getNetworkPanelRef().repaint();
+		
+		UserPanel.getNetworkPanelRef().revalidate();
+		UserPanel.getNetworkPanelRef().repaint();
 	
 	}
 	
@@ -316,15 +320,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @return null
 	 */
 	public static void changeNetworkVisualStyle(String networkName) {
-		int networkType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)
-				                             .getNetworkType();
+		int visualStyleType = (Integer) Cytoscape.getSocialNetworkMap().get(networkName)
+				                             .getDefaultVisualStyle();
 		TitledBorder visualStylePanelBorder = (TitledBorder) UserPanel.getVisualStylePanel()
 				                                                      .getBorder();
 		if (networkName.length() >= 35) {
 			networkName = networkName.substring(0, 34) + "...";
 		}
 		visualStylePanelBorder.setTitle(networkName + " Visual Styles");
-		UserPanel.swapVisualStyleSelector(networkType);
+		UserPanel.swapVisualStyleSelector(visualStyleType);
 		UserPanel.getVisualStylePanel().revalidate();
 		UserPanel.getVisualStylePanel().repaint();
 	}
@@ -570,7 +574,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		searchPanel
 		.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 		
-		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
+		searchPanel.setBorder(BorderFactory.createTitledBorder("Pubmed Search"));
 		
 		// Add search box to panel
 		UserPanel.setSearchBox(UserPanel.createSearchBox());
@@ -868,7 +872,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleSelector());
 			UserPanel.getVisualStylePanel().remove(UserPanel.getVisualStyleHelpButton());
 			UserPanel.setVisualStyleSelectorType(visualStyleSelectorType);
-			Cytoscape.setVisualStyleID(visualStyleSelectorType);
 			UserPanel.setVisualStyleSelector(UserPanel.createVisualStyleSelector(UserPanel
 					                                  .getVisualStyleSelectorType()));
 			UserPanel.getVisualStylePanel().add(UserPanel.getVisualStyleSelector());

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import main.java.org.baderlab.csapps.socialnetwork.model.Category;
 import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import main.java.org.baderlab.csapps.socialnetwork.model.VisualStyles;
 
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.values.NodeShape;
@@ -27,8 +28,9 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-	private VisualStyle chippedVisualStyle;
-	private VisualStyle vanueVisualStyle;
+	private VisualStyle incitesLiteVisualStyle;
+	private VisualStyle pubmedLiteVisualStyle;
+	private VisualStyle scopusLiteVisualStyle;
 	private VisualStyle defaultVisualStyle;
 	private TaskMonitor taskMonitor;
 	
@@ -51,27 +53,39 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
-	 * Get Chipped visual style
+	 * Get Incites 'Lite' visual style
 	 * @param null
-	 * @return VisualStyle chippedVisualStyle
+	 * @return VisualStyle incitesLiteVisualStyle
 	 */
-	private VisualStyle getChippedVisualStyle() {
-		if (this.chippedVisualStyle == null) {
-			this.chippedVisualStyle = this.createChippedVisualStyle();
+	private VisualStyle getIncitesLiteVisualStyle() {
+		if (this.incitesLiteVisualStyle == null) {
+			this.incitesLiteVisualStyle = this.createIncitesLiteVisualStyle();
 		}
-		return this.chippedVisualStyle;
+		return this.incitesLiteVisualStyle;
 	}
 	
 	/**
-	 * Get Vanue visual style
+	 * Get Pubmed 'Lite' visual style
 	 * @param null
-	 * @return VisualStyle vanueVisualStyle
+	 * @return VisualStyle pubmedLiteVisualStyle
 	 */
-	private VisualStyle getVanueVisualStyle() {
-		if (this.vanueVisualStyle == null) {
-			this.vanueVisualStyle = this.createVanueVisualStyle();
+	private VisualStyle getPubmedLiteVisualStyle() {
+		if (this.pubmedLiteVisualStyle == null) {
+			this.pubmedLiteVisualStyle = this.createPubmedLiteVisualStyle();
 		}
-		return this.vanueVisualStyle;
+		return this.pubmedLiteVisualStyle;
+	}
+	
+	/**
+	 * Get Scopus 'Lite' visual style
+	 * @param null
+	 * @return VisualStyle scopusLiteVisualStyle
+	 */
+	private VisualStyle getScopusLiteVisualStyle() {
+		if (this.scopusLiteVisualStyle == null) {
+			this.scopusLiteVisualStyle = this.createScopusLiteVisualStyle();
+		}
+		return this.scopusLiteVisualStyle;
 	}
 	
 	/**
@@ -111,7 +125,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Add a label to each node
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle addNodeLabels(VisualStyle visualStyle) {
@@ -129,7 +143,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Add a label to each edge
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle addEdgeLabels(VisualStyle visualStyle) {
@@ -147,7 +161,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Modify edge width
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyEdgeWidth(VisualStyle visualStyle) {
@@ -173,7 +187,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Modify node size
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyNodeSize(VisualStyle visualStyle) {
@@ -199,7 +213,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Modify node color
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyNodeColor(VisualStyle visualStyle) {
@@ -222,7 +236,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Modify node shape
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyNodeShape(VisualStyle visualStyle) {
@@ -245,7 +259,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	
 	/**
 	 * Modify edge opacity
-	 * @param VisualStyle visualStyle
+	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyEdgeOpacity(VisualStyle visualStyle) {
@@ -274,35 +288,50 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
-	 * Create Chipped visual style
+	 * Create Incites 'Lite' visual style
 	 * @param null
-	 * @return VisualStyle chippedVisualStyle
+	 * @return VisualStyle incitesLiteVisualStyle
 	 */
-	private VisualStyle createChippedVisualStyle() {
-		VisualStyle chippedVisualStyle = visualStyleFactoryServiceRef
-				                         .createVisualStyle("Chipped");
-		addNodeLabels(chippedVisualStyle);
-		modifyEdgeWidth(chippedVisualStyle);
-		modifyNodeSize(chippedVisualStyle);
-		modifyEdgeOpacity(chippedVisualStyle);
-		modifyNodeColor(chippedVisualStyle);
-		modifyNodeShape(chippedVisualStyle);
-		return chippedVisualStyle;
+	private VisualStyle createIncitesLiteVisualStyle() {
+		VisualStyle incitesLiteVisualStyle = visualStyleFactoryServiceRef
+				                         .createVisualStyle("Incites 'Lite'");
+		addNodeLabels(incitesLiteVisualStyle);
+		modifyEdgeWidth(incitesLiteVisualStyle);
+		modifyNodeSize(incitesLiteVisualStyle);
+		modifyEdgeOpacity(incitesLiteVisualStyle);
+		modifyNodeColor(incitesLiteVisualStyle);
+		modifyNodeShape(incitesLiteVisualStyle);
+		return incitesLiteVisualStyle;
 	}
 	
 	/**
-	 * Create Vanue visual style
+	 * Create Pubmed 'Lite' visual style
 	 * @param null
-	 * @return VisualStyle vanueVisualStyle 
+	 * @return VisualStyle pubmedLiteVisualStyle 
 	 */
-	private VisualStyle createVanueVisualStyle() {
-		VisualStyle vanueVisualStyle = visualStyleFactoryServiceRef
-                .createVisualStyle("Vanue");
-		addNodeLabels(vanueVisualStyle);
-		modifyNodeSize(vanueVisualStyle);
-		modifyEdgeWidth(vanueVisualStyle);
-		modifyEdgeOpacity(vanueVisualStyle);
-		return vanueVisualStyle;
+	private VisualStyle createPubmedLiteVisualStyle() {
+		VisualStyle pubmedLiteVisualStyle = visualStyleFactoryServiceRef
+                .createVisualStyle("Pubmed 'Lite'");
+		addNodeLabels(pubmedLiteVisualStyle);
+		modifyNodeSize(pubmedLiteVisualStyle);
+		modifyEdgeWidth(pubmedLiteVisualStyle);
+		modifyEdgeOpacity(pubmedLiteVisualStyle);
+		return pubmedLiteVisualStyle;
+	}
+	
+	/**
+	 * Create Scopus 'Lite' visual style
+	 * @param null
+	 * @return VisualStyle scopusLiteVisualStyle 
+	 */
+	private VisualStyle createScopusLiteVisualStyle() {
+		VisualStyle scopusLiteVisualStyle = visualStyleFactoryServiceRef
+                .createVisualStyle("Scopus 'Lite'");
+		addNodeLabels(scopusLiteVisualStyle);
+		modifyNodeSize(scopusLiteVisualStyle);
+		modifyEdgeWidth(scopusLiteVisualStyle);
+		modifyEdgeOpacity(scopusLiteVisualStyle);
+		return scopusLiteVisualStyle;
 	}
 
 	/**
@@ -316,17 +345,23 @@ public class ApplyVisualStyleTask extends AbstractTask {
 			case Category.DEFAULT:
 				vmmServiceRef.setCurrentVisualStyle(this.getDefaultVisualStyle());
 				break;
-			case Category.CHIPPED:
-				this.getTaskMonitor().setTitle("Loading Chipped Visual Style ... ");
+			case VisualStyles.INCITES_LITE_VISUAL_STYLE:
+				this.getTaskMonitor().setTitle("Loading Incites Lite Visual Style ... ");
 				this.getTaskMonitor().setProgress(0.0);
 				this.getTaskMonitor().setStatusMessage("");
-				vmmServiceRef.setCurrentVisualStyle(this.getChippedVisualStyle());
+				vmmServiceRef.setCurrentVisualStyle(this.getIncitesLiteVisualStyle());
 				break;
-			case Category.VANUE:
-				this.getTaskMonitor().setTitle("Loading Vanue Visual Style ... ");
+			case VisualStyles.PUBMED_LITE_VISUAL_STYLE:
+				this.getTaskMonitor().setTitle("Loading Pubmed Lite Visual Style ... ");
 				this.getTaskMonitor().setProgress(0.0);
 				this.getTaskMonitor().setStatusMessage("");
-				vmmServiceRef.setCurrentVisualStyle(this.getVanueVisualStyle());
+				vmmServiceRef.setCurrentVisualStyle(this.getPubmedLiteVisualStyle());
+				break;
+			case VisualStyles.SCOPUS_LITE_VISUAL_STYLE:
+				this.getTaskMonitor().setTitle("Loading Scopus Lite Visual Style ... ");
+				this.getTaskMonitor().setProgress(0.0);
+				this.getTaskMonitor().setStatusMessage("");
+				vmmServiceRef.setCurrentVisualStyle(this.getScopusLiteVisualStyle());
 				break;
 		}
 		return;

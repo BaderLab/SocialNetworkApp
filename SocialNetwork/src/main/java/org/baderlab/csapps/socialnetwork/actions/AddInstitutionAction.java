@@ -2,7 +2,7 @@ package main.java.org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,11 +62,30 @@ public class AddInstitutionAction extends AbstractCyAction {
 		putValue(Action.NAME, "Add Institution");
 		HashSet<String> set = new HashSet<String>();
 		String[] locations = new String[] {"univ toronto", "ontario", "canada", 
-				                           "united states", "int'l", "other"};
+				                           "united states", "international", "other"};
 		for (String location : locations) {
 			set.add(location);
 		}
 		this.setLocationSet(set);
+	}
+	
+	/**
+	 * Save map to file
+	 * @param File file
+	 * @return null
+	 */
+	private void saveMap(File file, Map<String, String> map) {
+		// Save map (to Cytoscape directory)
+		try {
+			FileOutputStream fout = new FileOutputStream(file.getAbsolutePath());
+			ObjectOutputStream oos = new ObjectOutputStream(fout);   
+			oos.writeObject(map);
+			oos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -119,44 +138,12 @@ public class AddInstitutionAction extends AbstractCyAction {
 		
 		if (! institution.trim().isEmpty() && ! location.trim().isEmpty()) {
 			try {
-				File folder = new File("Apps/SocialNetworkApp/");
-				File file = new File("Apps/SocialNetworkApp/map.sn");
-				HashMap<String, String> map = null;
-				ObjectInputStream ois = null;
-				InputStream in = null;
-				boolean canBeSaved = true;
-				if (folder.exists()) {
-					if (file.exists()) {
-						// Get map file in Cytoscape directory
-						in = new FileInputStream(file.getAbsolutePath());
-						ois = new ObjectInputStream(in);
-						map = (HashMap<String, String>) ois.readObject();
-					} else {
-						in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
-						ois = new ObjectInputStream(in);
-						map = (HashMap<String, String>) ois.readObject();
-						canBeSaved = folder.mkdirs();
-					}
-				} else {
-					// Get map file in jar
-					in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
-					ois = new ObjectInputStream(in);
-					map = (HashMap<String, String>) ois.readObject();
-					canBeSaved = folder.mkdirs();
-				}
+				// Get map file in jar
+				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				ObjectInputStream ois = new ObjectInputStream(in);
+				Map<String, String> map = (HashMap<String, String>) ois.readObject();
 				// Add insitution / location info to map
 				map.put(institution, location);
-				System.out.println(folder.getAbsolutePath());
-				System.out.println(canBeSaved);
-				if (canBeSaved) {
-					// Save map (to Cytoscape directory)
-					FileOutputStream fout = new FileOutputStream(file.getAbsolutePath());
-					ObjectOutputStream oos = new ObjectOutputStream(fout);   
-					oos.writeObject(map);
-					oos.close();
-				} else {
-					
-				}
 				// Update map being used by Incites
 				Incites.setLocationMap(map);
 			} catch (IOException e) {

@@ -35,7 +35,6 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
 
-
 /**
  * Cytoscape
  * @author Victor Kofia
@@ -104,7 +103,7 @@ public class Cytoscape {
 	/**
 	 * Currently selected visual style ID
 	 */
-	private static int visualStyleID = Category.DEFAULT;
+	private static int visualStyleID = VisualStyles.DEFAULT_VISUAL_STYLE;
 	/**
 	 * Set of all visual styles currently supported by app
 	 */

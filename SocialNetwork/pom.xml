@@ -171,6 +171,12 @@
 			<version>3.0.1</version>
 			<type>bundle</type>
 		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>swing-util-api</artifactId>
+			<version>3.0.1</version>
+			<type>bundle</type>
+		</dependency>
 	</dependencies>
 	
 	<packaging>bundle</packaging>

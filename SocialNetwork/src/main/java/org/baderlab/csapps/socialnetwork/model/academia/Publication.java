@@ -214,14 +214,21 @@ public class Publication extends AbstractEdge {
 	}
 
 
-	@Override
+	/**
+	 * Get CyEdge
+	 * @param null
+	 * @return CyEdge cyEdge
+	 */
 	public CyEdge getCyEdge() {
-		// TODO Auto-generated method stub
 		return this.cyEdge;
 	}
 
 
-	@Override
+	/**
+	 * Set CyEdge
+	 * @param CyEdge cyEdge
+	 * @return null
+	 */
 	public void setCyEdge(CyEdge cyEdge) {
 		this.cyEdge = cyEdge;
 	}

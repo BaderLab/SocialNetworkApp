@@ -91,6 +91,8 @@ public class CreateNetworkTask extends AbstractTask {
 					nodeTable.createColumn(attrName, String.class, false);
 				} else if (attrType instanceof Integer) {
 					nodeTable.createColumn(attrName, Integer.class, false);
+				} else if (attrType instanceof List) {
+					nodeTable.createListColumn(attrName, String.class, false);
 				}
 			}
 
