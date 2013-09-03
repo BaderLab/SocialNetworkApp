@@ -34,9 +34,9 @@ public class IncitesParser {
 	private int defectiveRows = 0;
 
 	/**
-	 * Name of faculty extracted from Incites data file
+	 * Name of department extracted from Incites data file
 	 */
-	private String facultyName = null;
+	private String departmentName = null;
 
 	/**
 	 * Set of faculty members extracted from Incites data file
@@ -173,21 +173,12 @@ public class IncitesParser {
 	}
 
 	/**
-	 * Get list of faculty attributes
+	 * Get department name
 	 * @param null
-	 * @return Object[] {faculty name, faculty set}
+	 * @return String departmentName
 	 */
-	public Object[] getFaculty() {
-		return new Object[] {this.getFacultyName(), this.getFacultySet()};
-	}
-
-	/**
-	 * Get faculty name
-	 * @param null
-	 * @return String facultyName
-	 */
-	public String getFacultyName() {
-		return this.facultyName;
+	public String getDepartmentName() {
+		return this.departmentName;
 	}
 
 	/**
@@ -277,7 +268,7 @@ public class IncitesParser {
 		ArrayList<Author> pubAuthorList = new ArrayList<Author>();
 		Author author = null;
 		HashSet<Author> facultySet = this.getFacultySet();
-		String facultyName = this.getFacultyName();
+		String facultyName = this.getDepartmentName();
 		for (String authorText : authors) {
 			author = new Author(authorText.trim(), Category.INCITES);
 			if (this.checkIfAuthorValid(author)) {
@@ -318,15 +309,15 @@ public class IncitesParser {
 		// but printed stack traces are useful (i.e. debugging)
 		} catch (IOException e) {
 			e.printStackTrace();
-			this.setFacultyName("N/A");
+			this.setDepartmentName("N/A");
 			this.setFacultySet(new HashSet<Author>());
 		} catch (OpenXML4JException e) {
 			e.printStackTrace();
-			this.setFacultyName("N/A");
+			this.setDepartmentName("N/A");
 			this.setFacultySet(new HashSet<Author>());
 		} catch (SAXException e) {
 			e.printStackTrace();
-			this.setFacultyName("N/A");
+			this.setDepartmentName("N/A");
 			this.setFacultySet(new HashSet<Author>());
 		}
 	}
@@ -440,12 +431,12 @@ public class IncitesParser {
 	}
 	
 	/**
-	 * Set faculty name
-	 * @param String facultyName
+	 * Set department name
+	 * @param String departmentName
 	 * @return null
 	 */
-	public void setFacultyName(String facultyName) {
-		this.facultyName = facultyName;
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 	
 	/**

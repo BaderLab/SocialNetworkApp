@@ -47,9 +47,11 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 			model.removeRow(getRow(model, name));
 			Map<String, SocialNetwork> map = Cytoscape.getSocialNetworkMap();
 			map.remove(name);
-			Cytoscape.setCurrentlySelectedSocialNetwork(null);
-			UserPanel.addNetworkVisualStyle(null);
-			UserPanel.updateNetworkSummaryPanel(null);
+			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
+				Cytoscape.setCurrentlySelectedSocialNetwork(null);
+				UserPanel.addNetworkVisualStyle(null);
+				UserPanel.updateNetworkSummaryPanel(null);
+			}
 		}
 	}
 	

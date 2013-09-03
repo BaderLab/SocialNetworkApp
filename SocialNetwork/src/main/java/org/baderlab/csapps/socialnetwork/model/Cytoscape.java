@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 
 import main.java.org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
 import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
 import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import main.java.org.baderlab.csapps.socialnetwork.model.academia.Scopus;
@@ -181,11 +180,9 @@ public class Cytoscape {
 		Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		// Initialize variables
 		List<? extends Publication> pubList = null;
-		Object[] facultyAttr = null;
-		HashSet<Author> facultySet = null;
 		String extension = null;
 		SocialNetwork socialNetwork = null;
-		String facultyName = null;
+		String departmentName = null;
 		// Create network out of Incites data
 		if (Incites.getIncitesRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());
@@ -202,8 +199,7 @@ public class Cytoscape {
 							          +  "Please verify that Incites data file is valid");
 				}
 				pubList = incitesParser.getPubList();
-				// Get faculty attributes
-				facultyAttr = incitesParser.getFaculty();
+				departmentName = incitesParser.getDepartmentName();
 				if (pubList == null) {
 					Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					Cytoscape.notifyUser("Invalid file. This Incites file is corrupt.");
@@ -221,10 +217,8 @@ public class Cytoscape {
 			socialNetwork.getSummaryList().add(new String[] {"Total # of faculty: ", Integer.toString(incitesParser.getFacultySet().size())});
 			socialNetwork.getSummaryList().add(new String[] {"Total # of unidentified faculty: ", Integer.toString(incitesParser.getUnidentifiedFacultyList().size())});
 			socialNetwork.getSummaryList().add(new String[] {"<hr><br>UNIDENTIFIED FACULTY", incitesParser.getUnidentifiedFacultyString()});
-			facultyName = (String) facultyAttr[0];
-			facultySet = (HashSet<Author>) facultyAttr[1];
 			// Add info to social network map(s)
-			socialNetwork.getAttrMap().put("Faculty Name", facultyName);
+			socialNetwork.getAttrMap().put("Department", departmentName);
 		// Create network out of Scopus data
 		} else if (Scopus.getScopusRadioButton().isSelected()) {
 			extension = FilenameUtils.getExtension(networkFile.getPath());

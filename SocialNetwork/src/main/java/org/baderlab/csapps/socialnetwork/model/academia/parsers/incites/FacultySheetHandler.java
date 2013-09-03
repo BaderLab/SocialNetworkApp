@@ -74,7 +74,7 @@ public class FacultySheetHandler extends DefaultHandler {
 			// Parse all row contents. Ignore the first row (i.e. last name, first name, department ... etc)
 			if (! rowContents.trim().isEmpty() && ! rowContents.contains("department")) {
 				incitesParser.getFacultySet().add(new Author(rowContents, Category.FACULTY));
-				incitesParser.setFacultyName(cellContents);
+				incitesParser.setDepartmentName(cellContents);
 			}
 		}
 		

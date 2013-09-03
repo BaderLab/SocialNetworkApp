@@ -134,10 +134,10 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 						                              new Object[] {colorAttrMap});
 					// Specify NODE_SHAPE
 					Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
-					HashMap<String, NodeShape> facultyMap = new HashMap<String, NodeShape>();
-					facultyMap.put((String) (socialNetwork.getAttrMap().get("Faculty Name")), NodeShapeVisualProperty.TRIANGLE);
-					facultyMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
-					shapeAttrMap.put("Faculty", facultyMap);
+					HashMap<String, NodeShape> departmentMap = new HashMap<String, NodeShape>();
+					departmentMap.put((String) (socialNetwork.getAttrMap().get("Department")), NodeShapeVisualProperty.TRIANGLE);
+					departmentMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
+					shapeAttrMap.put("Department", departmentMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, 
                             new Object[] {shapeAttrMap});
 					break;
