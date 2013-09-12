@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.xml.sax.Attributes;
@@ -108,7 +109,7 @@ public class PubSheetHandler extends DefaultHandler {
 			// Column length varies. As of right now, the app only supports rows with 
 			// column #s erring between 4-6. Any row that deviates from this range will 
 			// be ignored and the user will be notified of this.
-			if (columns.length == 6 && ! columns[0].equalsIgnoreCase("Times Cited")) {
+			if (columns.length == 6 && ! columns[0].equalsIgnoreCase(BasicSocialNetworkVisualstyle.nodeattr_timescited)) {
 				// Get publication info
 				timesCited = columns[0].trim().isEmpty() 
 						? "0" : columns[0].trim();

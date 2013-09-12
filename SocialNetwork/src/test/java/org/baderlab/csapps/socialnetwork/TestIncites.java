@@ -1,4 +1,4 @@
-package test.java.org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 

@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.model.CyNode;
 
@@ -65,6 +69,11 @@ public class Author extends AbstractNode {
 	 * List of all publications author has authored / co-authored
 	 */
 	private List<String> pubList = null;
+	
+	/*
+	 * location Map 
+	 */
+	private Incites_InstitutionLocationMap locationMap = null;
 	
 	/**
 	 * Set identification
@@ -145,20 +154,7 @@ public class Author extends AbstractNode {
 					}
 					this.setLabel(this.getFirstInitial() + " " + this.getLastName());
 				}
-				break;
-			case Category.INCITES:
-				// Initialize attribute map for Incites author
-				this.setNodeAttrMap(constructIncitesAttrMap());
-				this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
-				if (! this.getFirstName().equalsIgnoreCase("N/A")) {
-					this.setFirstInitial(this.getFirstName().substring(0,1));
-				}
-				this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
-				this.setLastName(IncitesParser.parseLastName(rawAuthorText));
-				this.setLabel(this.getFirstName() + " " + this.getLastName());
-				this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
-				this.setLocation(Incites.getLocationMap().get(this.getInstitution()));
-				break;
+				break;			
 			case Category.FACULTY:
 				String[] authorAttr = rawAuthorText.split(";");
 				// Since faculty authors are facsimiles, only a bare
@@ -172,6 +168,33 @@ public class Author extends AbstractNode {
 				// trying to put data in non-existent columns
 				this.setNodeAttrMap(null);
 				break;
+		}
+		
+		// Format names to ensure consistency
+		format();
+	}
+	/*
+	 * Constructor specific to incites as the location map is required to build an incites author object
+	 */
+	public Author(String rawAuthorText, int origin, Incites_InstitutionLocationMap locationMap) {
+		this.setOrigin(origin);
+			switch (origin) {
+			
+			case Category.INCITES:
+				this.locationMap = locationMap;
+				// Initialize attribute map for Incites author
+				this.setNodeAttrMap(constructIncitesAttrMap());
+				this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
+				if (! this.getFirstName().equalsIgnoreCase("N/A")) {
+					this.setFirstInitial(this.getFirstName().substring(0,1));
+				}
+				this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
+				this.setLastName(IncitesParser.parseLastName(rawAuthorText));
+				this.setLabel(this.getFirstName() + " " + this.getLastName());
+				this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
+				this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
+				break;
+			
 		}
 		
 		// Format names to ensure consistency
@@ -231,12 +254,13 @@ public class Author extends AbstractNode {
 			String myInstitution = this.getInstitution(), otherInstitution = otherAuthor.getInstitution();
 			isEqualInstitution = myInstitution.equalsIgnoreCase(otherInstitution);
 			if (isEqualLastName && isEqualFirstName && ! isEqualInstitution) {
-				Incites.validateInstitution(this, otherAuthor);
+				prioritizeInstitution(this, otherAuthor);
 				isEqualInstitution = true;
 			}
 			isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
 		// Incites (~ Faculty)
-		} else if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) {
+		} else if ((this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) || 
+				(this.getOrigin() == Category.FACULTY && otherAuthor.getOrigin() == Category.INCITES)){
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
 			// Determine whether or not first names are equal
 			distance = Levenshtein.distance(this.getFirstName().toLowerCase(), 
@@ -283,7 +307,43 @@ public class Author extends AbstractNode {
 		}
 		return isEqual;
 	}
-
+	
+	/**
+	 * Modify institution for both author1 and author2 (who are assumed to be the same).
+	 * Set institution to the higher priority as defined in the app locationMap
+	 * Assumes that author and otherAuthor are the same
+	 * individual but otherAuthor is the active reference.
+	 * @param Author author
+	 * @param Author other
+	 * @return null
+	 */
+	public  void prioritizeInstitution(Author author, Author otherAuthor) {
+		String location = author.getLocation();
+		String otherLocation = otherAuthor.getLocation();
+		Map<String, Integer> rankMap = this.locationMap.getLocationRankingMap();
+		// Initialize rank and otherRank to a low rank
+		// NOTE: Highest rank is 6 and lowest rank is 1
+		int rank = 0, otherRank = 0;
+		if (rankMap.containsKey(location)) {
+			rank = rankMap.get(location);
+		}
+		if (rankMap.containsKey(otherLocation)) {
+			otherRank = rankMap.get(otherLocation);
+		}
+		if (rank > otherRank) {
+			otherAuthor.setInstitution(author.getInstitution());
+			otherAuthor.setLocation(author.getLocation());
+		} else if (rank == otherRank) {
+			Author[] randomAuthorArray = new Author[] {author, otherAuthor};
+			Random rand = new Random();
+		    int i = rand.nextInt((1 - 0) + 1) + 0;
+		    String randomInstitution = randomAuthorArray[i].getInstitution();
+		    String randomLocation = randomAuthorArray[i].getLocation();
+	        otherAuthor.setInstitution(randomInstitution);
+			otherAuthor.setLocation(randomLocation);
+		}
+	}
+	
 	/**
 	 * Capitalize the first letter of string and return. If string is 
 	 * a single character letter, it will be capitalized. Empty strings 
@@ -412,7 +472,7 @@ public class Author extends AbstractNode {
 	 */
 	public void setFaculty(String department) {
 		this.department = department;
-		this.getNodeAttrMap().put("Department", department);
+		this.getNodeAttrMap().put(IncitesVisualStyle.nodeattr_dept, department);
 	}
 
 	/**
@@ -459,7 +519,7 @@ public class Author extends AbstractNode {
 	 */
 	public void setTimesCited(int timesCited) {
 		this.timesCited = timesCited;
-		this.getNodeAttrMap().put("Times Cited", timesCited);
+		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_timescited, timesCited);
 	}
 	
 	/**
@@ -543,7 +603,7 @@ public class Author extends AbstractNode {
 	 */
 	public void setInstitution(String institution) {
 		this.institution = institution;
-		this.getNodeAttrMap().put("Institution", institution);
+		this.getNodeAttrMap().put(IncitesVisualStyle.nodeattr_inst, institution);
 	}
 	
 	/**
@@ -553,7 +613,7 @@ public class Author extends AbstractNode {
 	 */
 	private void setFirstName(String firstName) {
 		this.firstName = firstName;
-		this.getNodeAttrMap().put("First Name", firstName);
+		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_fname, firstName);
 	}
 	
 	/**
@@ -600,7 +660,7 @@ public class Author extends AbstractNode {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
-		this.getNodeAttrMap().put("Label", label);
+		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_label, label);
 	}
 
 	/**
@@ -644,7 +704,7 @@ public class Author extends AbstractNode {
 	 */
 	public void setPubList(List<String> pubList) {
 		this.pubList = pubList;
-		this.getNodeAttrMap().put("Publications", pubList);
+		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, pubList);
 	}
 	
 	/**
@@ -654,9 +714,9 @@ public class Author extends AbstractNode {
 	 */
 	public static HashMap<String, Object> constructIncitesAttrMap() {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-		String[] columns = new String[] {"Label", "Last Name", "First Name",
-				                         "Institution", "Location", "Department",
-				                         "Times Cited", "Publications"};
+		String[] columns = new String[] {BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname, BasicSocialNetworkVisualstyle.nodeattr_fname,
+				                         IncitesVisualStyle.nodeattr_inst, IncitesVisualStyle.nodeattr_location, IncitesVisualStyle.nodeattr_dept,
+				                         BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_pub};
 		int i = 0;
 		for (i = 0; i < 6; i++) {
 			nodeAttrMap.put(columns[i], "");

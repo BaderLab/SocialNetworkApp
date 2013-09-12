@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -140,13 +140,15 @@ public class AddInstitutionAction extends AbstractCyAction {
 		if (! institution.trim().isEmpty() && ! location.trim().isEmpty()) {
 			try {
 				// Get map file in jar
-				InputStream in = Incites.class.getClassLoader().getResourceAsStream("map.sn");
+				InputStream in = Incites_InstitutionLocationMap.class.getClassLoader().getResourceAsStream("map.sn");
 				ObjectInputStream ois = new ObjectInputStream(in);
 				Map<String, String> map = (HashMap<String, String>) ois.readObject();
 				// Add insitution / location info to map
 				map.put(institution, location);
+				
+				//TODO: update file dynamically - store a local version that we check as well.
 				// Update map being used by Incites
-				Incites.setLocationMap(map);
+				//Incites_InstitutionLocationMap.setLocationMap(map);
 			} catch (IOException e) {
 				e.printStackTrace();
 				CytoscapeUtilities.notifyUser("Location map could not be accessed.");

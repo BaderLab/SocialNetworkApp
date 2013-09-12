@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.cytoscape.model.CyEdge;
 
 
@@ -74,7 +75,7 @@ public class Publication extends AbstractEdge {
 	 */
 	public void constructEdgeAttrMap() {
 		edgeAttrMap = new HashMap<String, Object>();
-		edgeAttrMap.put("Times Cited", this.timesCited);
+		edgeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, this.timesCited);
 		edgeAttrMap.put("Pub Date", this.pubDate);
 		edgeAttrMap.put("Journal", this.journal);
 		edgeAttrMap.put("Title", this.title);

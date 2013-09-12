@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.cytoscape.util.swing.FileUtil;
 

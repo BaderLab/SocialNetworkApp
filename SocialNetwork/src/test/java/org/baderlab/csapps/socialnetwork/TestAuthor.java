@@ -1,4 +1,4 @@
-package test.java.org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -234,7 +235,10 @@ public class TestAuthor {
 	 * Test whether or not an author can be identified correctly as faculty
 	 */
 	public void testFacultyIdentificationInSet() {
-		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES);
+		/*need the location map to instantiate an incites author*/
+		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+		
+		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
 		Author author2 = new Author("Kofia;Victor", Category.FACULTY);
 		HashSet<Author> authorSet = new HashSet<Author>();
 		authorSet.add(author2);
@@ -247,7 +251,10 @@ public class TestAuthor {
 	 * can be identified correctly as faculty
 	 */
 	public void testFacultyIdentificationInSetWhenIdentifierIsDefective() {
-		Author author1 = new Author("Kofia, Vic (UNIV TORONTO)", Category.INCITES);
+		/*need the location map to instantiate an incites author*/
+		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+		
+		Author author1 = new Author("Kofia, Vic (UNIV TORONTO)", Category.INCITES, locmap);
 		Author author2 = new Author("Kofia;Victor", Category.FACULTY);
 		HashSet<Author> authorSet = new HashSet<Author>();
 		authorSet.add(author2);
@@ -260,7 +267,10 @@ public class TestAuthor {
 	 * faculty designation is slightly defective
 	 */
 	public void testFacultyIdentificationInSetWhenIdentifiedIsDefective() {
-		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES);
+		/*need the location map to instantiate an incites author*/
+		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+		
+		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
 		Author author2 = new Author("Kofia;Vic", Category.FACULTY);
 		HashSet<Author> authorSet = new HashSet<Author>();
 		authorSet.add(author2);

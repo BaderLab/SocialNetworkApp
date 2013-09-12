@@ -1,15 +1,19 @@
 git.branch=release
-git.commit.id.describe=9dd7c0d-dirty
+git.commit.id.describe=3fec5a2-dirty
 git.build.user.name=risserlin
 git.build.user.email=ruth.isserlin@utoronto.ca
-git.build.time=11.09.2013 @ 14:21:34 EDT
-git.commit.id=9dd7c0d5a5a64a9052d61e760003597afd0d29cf
-git.commit.id.abbrev=9dd7c0d
-git.commit.message.full=Fixed issue that was preventing faculty members from being correctly identified.
+git.build.time=12.09.2013 @ 15:59:53 EDT
+git.commit.id=3fec5a2de69632d6424adea1cf6a6bb41c5d39ed
+git.commit.id.abbrev=3fec5a2
+git.commit.message.full=changed package naming so that it is part of org.baderlab instead of main.java
+got rid of a lot of the static references by instanciates the classes and storing the objects in a main SocialNetowrkAppManager class (used to cytoscape.java)
+Added revision history to the jar (using git plugin for maven)
+Added a basic about box that shows the revision information
+Changed the canada nodes back to red and NA to gray
 
-git.commit.message.short=Fixed issue that was preventing faculty members from being correctly identified.
+git.commit.message.short=changed package naming so that it is part of org.baderlab instead of main.java got rid of a lot of the static references by instanciates the classes and storing the objects in a main SocialNetowrkAppManager class (used to cytoscape.java) Added revision history to the jar (using git plugin for maven) Added a basic about box that shows the revision information Changed the canada nodes back to red and NA to gray
 build.user=risserlin
-build.timestamp=1378923694045
+build.timestamp=${timestamp}
 build.os=Mac OS X
 build.java_version=1.6.0_51
-build.number=55
+build.number=${buildNumber}

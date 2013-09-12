@@ -1,11 +1,11 @@
-package test.java.org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
 
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.Cytoscape;
 import org.baderlab.csapps.socialnetwork.model.Search;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +31,7 @@ public class TestSearch {
 	 * to the total number of results returned by search
 	 */
 	public void testPubmedSearch() {
-		Cytoscape appManager = new Cytoscape();
+		SocialNetworkAppManager appManager = new SocialNetworkAppManager ();
 		appManager.setUserPanelRef(new UserPanel(appManager));
 		Search search = new Search("emili a", Category.ACADEMIA,appManager);
 		int hits = search.getTotalHits();

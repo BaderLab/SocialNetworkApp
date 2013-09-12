@@ -15,7 +15,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,6 +76,10 @@ public class IncitesParser {
 	 */
 	private String unidentifiedFacultyString = null;
 
+	/*
+	 * object representing all the institution to location mapping needed by incites
+	 */
+	private Incites_InstitutionLocationMap locationMap = null;
 	
 	/**
 	 * Create new Incites parser object
@@ -83,6 +87,10 @@ public class IncitesParser {
 	 * @return null
 	 */
 	public IncitesParser(File xlsx) {
+		
+		//instantiate an instance of institution to location maping
+		this.locationMap = new Incites_InstitutionLocationMap();
+		
 		this.parseFaculty(xlsx);
 		this.parsePublications(xlsx);
 		this.calculateSummary();
@@ -98,7 +106,7 @@ public class IncitesParser {
 		for (Author unknown : authorList) {
 			if (author.getLastName().equalsIgnoreCase(unknown.getLastName()) &&
 				author.getFirstName().equalsIgnoreCase(unknown.getFirstName())) {
-				Incites.validateInstitution(author, unknown);
+				author.prioritizeInstitution(author, unknown);
 				return true;
 			}
 		}
@@ -270,7 +278,7 @@ public class IncitesParser {
 		HashSet<Author> facultySet = this.getFacultySet();
 		String facultyName = this.getDepartmentName();
 		for (String authorText : authors) {
-			author = new Author(authorText.trim(), Category.INCITES);
+			author = new Author(authorText.trim(), Category.INCITES, this.locationMap);
 			if (this.checkIfAuthorValid(author)) {
 				if (! this.authorInList(pubAuthorList,  author)) {
 					if (facultySet.contains(author)) {

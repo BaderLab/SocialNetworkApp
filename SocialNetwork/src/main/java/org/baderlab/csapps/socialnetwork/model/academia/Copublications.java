@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.cytoscape.model.CyEdge;
 
@@ -73,8 +74,8 @@ public class Copublications extends AbstractEdge {
 	 */
 	public void addPublication(Publication publication) {
 		this.getPubList().add(publication);
-		this.getEdgeAttrMap().put("# of copubs", this.getPubList().size());
-		((ArrayList<String>) this.getEdgeAttrMap().get("publications")).add(publication.getTitle());
+		this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.edgeattr_numcopubs, this.getPubList().size());
+		((ArrayList<String>) this.getEdgeAttrMap().get(BasicSocialNetworkVisualstyle.nodeattr_pub)).add(publication.getTitle());
 	}
 
 	/**
@@ -102,10 +103,10 @@ public class Copublications extends AbstractEdge {
 	 */
 	public void constructEdgeAttrMap() {
 		this.setEdgeAttrMap(new HashMap<String, Object>());
-		this.getEdgeAttrMap().put("# of copubs", this.getPubList().size());
+		this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.edgeattr_numcopubs, this.getPubList().size());
 		ArrayList<String> titles = new ArrayList<String>();
 		titles.add(this.getPubList().get(0).getTitle());
-		this.getEdgeAttrMap().put("publications", titles);
+		this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, titles);
 	}
 
 	/**
