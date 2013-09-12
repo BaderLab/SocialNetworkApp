@@ -1,21 +1,24 @@
-package main.java.org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork;
 
-import main.java.org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
-import main.java.org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
-import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
-import main.java.org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import main.java.org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
-import main.java.org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
-import main.java.org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 
+
+import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
+import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
+import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -62,6 +65,10 @@ public class CyActivator extends AbstractCyActivator {
 		
 		VisualStyleFactory visualStyleFactoryServiceRef = getService(bc,VisualStyleFactory.class);
 		
+		//open browser used by about  panel,
+		OpenBrowser openBrowserRef = getService(bc, OpenBrowser.class);
+
+		
 		VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService
 				(bc,VisualMappingFunctionFactory.class,"(mapping.type=passthrough)");
 		
@@ -77,15 +84,21 @@ public class CyActivator extends AbstractCyActivator {
 		
 		CyServiceRegistrar cyServiceRegistrarRef = getService(bc, CyServiceRegistrar.class);
 		
+		//Create a new Cytoscape object to manage everything
+		//TODO:Change name of class 
+		SocialNetworkAppManager appManager = new SocialNetworkAppManager();
+		
+		//instantiate an instance of CytoscapeUtilities (to populate static fields with version information)
+		CytoscapeUtilities utils = new CytoscapeUtilities();
 		
 		// Create and register listeners
-		SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener();
+		SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
 		registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 		
-		SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef);
+		SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef,appManager);
 		registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
-		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener();
+		SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager);
 		registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());		
 		
 		// Create and register task factories
@@ -94,7 +107,7 @@ public class CyActivator extends AbstractCyActivator {
 				                    		                          vmmServiceRef, 
 				                    		                          passthroughMappingFactoryServiceRef, 
 						                                              continuousMappingFactoryServiceRef, 
-						                                              discreteMappingFactoryServiceRef);
+						                                              discreteMappingFactoryServiceRef,appManager);
 		registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
 		
 		
@@ -103,15 +116,29 @@ public class CyActivator extends AbstractCyActivator {
 				                                                                      cyNetworkManagerServiceRef, 
 																                      cyNetworkViewFactoryServiceRef, 
 																                      cyNetworkViewManagerServiceRef, 
-																                      cyLayoutManagerServiceRef);
+																                      cyLayoutManagerServiceRef,appManager);
 		registerService(bc,networkTaskFactoryRef,TaskFactory.class, new Properties());
 		
-		DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef);
+		DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef,appManager);
 		registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
 		
+		// Add dependencies to class Cytoscape
+		// NOTE: Using setters violates dependency injection		
+				
+		appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
+								
+		appManager.setServiceRegistrar(cyServiceRegistrarRef);
+				
+		appManager.setTaskManager(taskManager);
+				
+		appManager.setApplyVisualStyleTaskFactoryRef(applyVisualStyleTaskFactoryRef);
+				
+		appManager.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
+
+		appManager.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
 		
 		// Create & register new menu item (for opening /closing main app panel)
-		UserPanel userPanel = new UserPanel();
+		UserPanel userPanel = new UserPanel(appManager);
 		
 		Map<String, String> serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
@@ -124,6 +151,20 @@ public class CyActivator extends AbstractCyActivator {
 		
 		registerService(bc, userPanelAction, CyAction.class, new Properties());	
 		
+		//add panel and action to the manager
+		appManager.setUserPanelRef(userPanel);		
+		appManager.setUserPanelAction(userPanelAction);
+		
+		
+		//About Action
+		serviceProperties = new HashMap<String, String>();
+		serviceProperties.put("inMenuBar", "true");
+		serviceProperties.put("preferredMenu", "Apps.Social Network");
+		ShowAboutPanelAction aboutAction = new ShowAboutPanelAction(serviceProperties,cyApplicationManagerServiceRef ,cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, openBrowserRef);		
+
+		//register the services
+		registerService(bc, aboutAction, CyAction.class,new Properties());
+		
 		// Create and register new menu item (for adding institutions)
 		serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
@@ -135,23 +176,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc, incitesAction, CyAction.class, new Properties());	
 		
 		
-		// Add dependencies to class Cytoscape
-		// NOTE: Using setters violates dependency injection
-		Cytoscape.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 		
-		Cytoscape.setUserPanelRef(userPanel);
-		
-		Cytoscape.setUserPanelAction(userPanelAction);
-		
-		Cytoscape.setServiceRegistrar(cyServiceRegistrarRef);
-		
-		Cytoscape.setTaskManager(taskManager);
-		
-		Cytoscape.setApplyVisualStyleTaskFactoryRef(applyVisualStyleTaskFactoryRef);
-		
-		Cytoscape.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
-
-		Cytoscape.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
 				
 	}
 }

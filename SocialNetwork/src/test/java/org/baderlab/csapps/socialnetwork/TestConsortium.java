@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
 
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

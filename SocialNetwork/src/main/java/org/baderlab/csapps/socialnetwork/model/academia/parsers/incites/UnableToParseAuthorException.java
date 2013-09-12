@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
+package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 /**
  * This exception is thrown when an author can't be parsed (i.e. 

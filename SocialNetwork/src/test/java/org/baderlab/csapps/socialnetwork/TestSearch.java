@@ -2,11 +2,11 @@ package test.java.org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.Search;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import org.baderlab.csapps.socialnetwork.model.Search;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +31,9 @@ public class TestSearch {
 	 * to the total number of results returned by search
 	 */
 	public void testPubmedSearch() {
-		Cytoscape.setUserPanelRef(new UserPanel());
-		Search search = new Search("emili a", Category.ACADEMIA);
+		Cytoscape appManager = new Cytoscape();
+		appManager.setUserPanelRef(new UserPanel(appManager));
+		Search search = new Search("emili a", Category.ACADEMIA,appManager);
 		int hits = search.getTotalHits();
 		int results = search.getResults().size();
 		assertTrue(hits == results);

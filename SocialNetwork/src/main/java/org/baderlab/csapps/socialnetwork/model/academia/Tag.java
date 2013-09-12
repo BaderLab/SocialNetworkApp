@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 /**
  * A PubMed Entrez tag 

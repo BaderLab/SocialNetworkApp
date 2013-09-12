@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.actions;
+package org.baderlab.csapps.socialnetwork.actions;
 		
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Properties;
 
 import javax.swing.Action;
 
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;

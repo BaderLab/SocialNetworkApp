@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,7 +11,9 @@ import java.util.Random;
 
 import javax.swing.JRadioButton;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+
 
 /**
  * Tools for manipulating Incites data
@@ -19,11 +21,6 @@ import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
  */
 public class Incites {
 	
-	/**
-	 * Reference to Incites radio button
-	 */
-	public static JRadioButton incitesRadioButton = null;
-
 	/**
 	 * Author location map
 	 */
@@ -35,16 +32,7 @@ public class Incites {
 	 * <br> value: <i>rank</i>
 	 */
 	private static Map<String, Integer> locationRankingMap = null;
-	
-	/**
-	 * Get Incites radio button
-	 * @param null
-	 * @return JRadioButton incitesRadioButton
-	 */
-	public static JRadioButton getIncitesRadioButton() {
-		return Incites.incitesRadioButton;
-	}
-	
+		
 	/**
 	 * Get location map
 	 * @param null
@@ -58,26 +46,18 @@ public class Incites {
 				Incites.setLocationMap((Map<String, String>) ois.readObject());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				Cytoscape.notifyUser("Failed to load location map. FileNotFoundException.");
+				CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
 			} catch (IOException e) {
 				e.printStackTrace();
-				Cytoscape.notifyUser("Failed to load location map. IOException.");
+				CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-				Cytoscape.notifyUser("Failed to load location map. ClassNotFoundException.");
+				CytoscapeUtilities.notifyUser("Failed to load location map. ClassNotFoundException.");
 			}
 		}
 		return Incites.locationMap;
 	}
-	
-	/**
-	 * Set Incites radio button
-	 * @param JRadioButton incitesRadioButton
-	 * @return null
-	 */
-	public static void setIncitesRadioButton(JRadioButton incitesRadioButton) {
-		Incites.incitesRadioButton = incitesRadioButton;
-	}
+		
 
 	/**
 	 * Set location map
@@ -85,7 +65,7 @@ public class Incites {
 	 * @return null
 	 */
 	public static void setLocationMap(Map<String, String> locationMap) {
-	Incites.locationMap = locationMap;
+		Incites.locationMap = locationMap;
 	}
 	
 	/**
@@ -114,28 +94,7 @@ public class Incites {
 		}
 		return Incites.locationRankingMap;
 	}
-	
-	/**
-	 * Construct Incites attribute map
-	 * @param null
-	 * @return Map nodeAttrMap
-	 */
-	public static HashMap<String, Object> constructIncitesAttrMap(Author author) {
-		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-		String[] columns = new String[] {"Label", "Last Name", "First Name",
-				                         "Institution", "Location", "Department",
-				                         "Times Cited", "Publications"};
-		int i = 0;
-		for (i = 0; i < 6; i++) {
-			nodeAttrMap.put(columns[i], "");
-		}
-		// Initialize Times Cited attribute (~ Integer)
-		nodeAttrMap.put(columns[i], 0);
-		// Initialize Publications attribute (~ ArrayList)
-		nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
-		return nodeAttrMap;
-	}
-	
+		
 	/**
 	 * Validate institution for both author1 and author2.
 	 * Assumes that author and otherAuthor are the same

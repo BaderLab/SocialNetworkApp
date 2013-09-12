@@ -6,13 +6,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
-import main.java.org.baderlab.csapps.socialnetwork.model.Interaction;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 
+import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.Interaction;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.junit.After;
 import org.junit.Before;
 

@@ -1,14 +1,14 @@
-package main.java.org.baderlab.csapps.socialnetwork.tasks;
+package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.VisualStyles;
 
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -33,6 +33,11 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	private VisualStyle scopusLiteVisualStyle;
 	private VisualStyle defaultVisualStyle;
 	private TaskMonitor taskMonitor;
+	
+	/*
+	 * main app manager 
+	 */
+	SocialNetworkAppManager appManager = null;
 	
 	/**
 	 * Get task monitor
@@ -115,12 +120,13 @@ public class ApplyVisualStyleTask extends AbstractTask {
 			                    VisualMappingManager vmmServiceRef, 
 			                    VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
 			                    VisualMappingFunctionFactory continuousMappingFactoryServiceRef, 
-			                    VisualMappingFunctionFactory discreteMappingFactoryServiceRef)  {
+			                    VisualMappingFunctionFactory discreteMappingFactoryServiceRef, SocialNetworkAppManager appManager)  {
 		this.vmmServiceRef = vmmServiceRef;
 		this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
 		this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
 		this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
 		this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
+		this.appManager = appManager;
 	}
 	
 	/**
@@ -130,7 +136,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	private VisualStyle addNodeLabels(VisualStyle visualStyle) {
 		// Get column name
-		String colName = (String) Cytoscape.getCurrentlySelectedSocialNetwork()
+		String colName = (String) this.appManager.getCurrentlySelectedSocialNetwork()
 				                             .getVisualStyleMap()
 				                             .get(BasicVisualLexicon.NODE_LABEL)[0];
 		// Assign node label filter to column
@@ -148,7 +154,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	private VisualStyle addEdgeLabels(VisualStyle visualStyle) {
 		// Get column name
-		String colName = (String) Cytoscape.getCurrentlySelectedSocialNetwork()
+		String colName = (String) this.appManager.getCurrentlySelectedSocialNetwork()
                                              .getVisualStyleMap()
                                              .get(BasicVisualLexicon.EDGE_LABEL)[0];
 		// Assign edge label filter to column
@@ -165,7 +171,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyEdgeWidth(VisualStyle visualStyle) {
-		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
+		Object[] attributes = this.appManager.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.EDGE_WIDTH);
 		// Get column name
@@ -191,7 +197,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyNodeSize(VisualStyle visualStyle) {
-		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
+		Object[] attributes = this.appManager.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.NODE_SIZE);
 		// Get column name
@@ -218,7 +224,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	private VisualStyle modifyNodeColor(VisualStyle visualStyle) {
 		DiscreteMapping mapping = null;
-		Object[] tempVar = Cytoscape.getCurrentlySelectedSocialNetwork()
+		Object[] tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
                                      .getVisualStyleMap()
                                      .get(BasicVisualLexicon.NODE_FILL_COLOR);
 		Map<String, HashMap<String, Color>> colorMap = (Map<String, HashMap<String, Color>>) tempVar[0];
@@ -241,7 +247,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	private VisualStyle modifyNodeShape(VisualStyle visualStyle) {
 		DiscreteMapping mapping = null;
-		Object[] tempVar = Cytoscape.getCurrentlySelectedSocialNetwork()
+		Object[] tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
                                      .getVisualStyleMap()
                                      .get(BasicVisualLexicon.NODE_SHAPE);
 		Map<String, HashMap<String, NodeShape>> nodeShapeMap = (Map<String, HashMap<String, NodeShape>>) tempVar[0];
@@ -264,14 +270,14 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	private VisualStyle modifyEdgeOpacity(VisualStyle visualStyle) {
 		// Get column name
-		String colName = (String) Cytoscape.getCurrentlySelectedSocialNetwork()
+		String colName = (String) this.appManager.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.EDGE_TRANSPARENCY)[0];
 		ContinuousMapping<Integer, ?> mapping = (ContinuousMapping<Integer, ?>) 
 				                        this.continuousMappingFactoryServiceRef
 		.createVisualMappingFunction(colName, Integer.class, 
 				                     BasicVisualLexicon.EDGE_TRANSPARENCY);
-		Object[] attributes = Cytoscape.getCurrentlySelectedSocialNetwork()
+		Object[] attributes = this.appManager.getCurrentlySelectedSocialNetwork()
                                        .getVisualStyleMap()
                                        .get(BasicVisualLexicon.EDGE_WIDTH);
         // BRVs are used to set limits on edge transparency 
@@ -341,7 +347,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 */
 	public void run(TaskMonitor taskMonitor) throws Exception {
 		this.setTaskMonitor(taskMonitor);
-		switch(Cytoscape.getVisualStyleID()) {
+		switch(this.appManager.getVisualStyleID()) {
 			case Category.DEFAULT:
 				vmmServiceRef.setCurrentVisualStyle(this.getDefaultVisualStyle());
 				break;

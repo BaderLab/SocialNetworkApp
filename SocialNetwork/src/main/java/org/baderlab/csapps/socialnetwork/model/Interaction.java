@@ -1,13 +1,14 @@
-package main.java.org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Copublications;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.Copublications;
+import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+
 
 /**
  * This class is used to create maps that will

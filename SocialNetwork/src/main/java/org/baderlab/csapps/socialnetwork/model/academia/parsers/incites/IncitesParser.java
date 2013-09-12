@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
+package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,15 +13,15 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 /**
  * For parsing Incites' xlsx spreadsheets

@@ -1,5 +1,7 @@
-package main.java.org.baderlab.csapps.socialnetwork.tasks;
+package org.baderlab.csapps.socialnetwork.tasks;
 
+
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
@@ -12,17 +14,19 @@ public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
 	private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
 	private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
+	private SocialNetworkAppManager appManager;
 	
 	public ApplyVisualStyleTaskFactory(VisualStyleFactory visualStyleFactoryServiceRef, 
 			                           VisualMappingManager vmmServiceRef, 
 			                           VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
 			                           VisualMappingFunctionFactory continuousMappingFactoryServiceRef, 
-			                           VisualMappingFunctionFactory discreteMappingFactoryServiceRef)  {
+			                           VisualMappingFunctionFactory discreteMappingFactoryServiceRef, SocialNetworkAppManager appManager)  {
 		this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
 		this.vmmServiceRef = vmmServiceRef;
 		this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
 		this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
 		this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
+		this.appManager = appManager;
 	}
 	
 	public TaskIterator createTaskIterator() {
@@ -30,7 +34,7 @@ public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
 				                                         vmmServiceRef, 
 				                                         passthroughMappingFactoryServiceRef, 
 				                                         continuousMappingFactoryServiceRef, 
-				                                         discreteMappingFactoryServiceRef));
+				                                         discreteMappingFactoryServiceRef,appManager));
 	}
 
 }

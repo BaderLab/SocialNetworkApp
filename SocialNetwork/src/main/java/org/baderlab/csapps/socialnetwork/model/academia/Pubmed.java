@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,12 +8,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
 
 /**
  * Methods & fields for manipulating PubMed data
@@ -90,15 +91,15 @@ public class Pubmed {
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
 		} catch (SAXException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
 		} catch (IOException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
+			CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " +
 		             "internet connection.");
 		}
 	}
@@ -128,15 +129,15 @@ public class Pubmed {
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 					             "try again some other time.");
 		} catch (SAXException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Encountered temporary server issues. Please " +
+			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 					             "try again some other time.");
 		} catch (IOException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Unable to connect to PubMed. Please check your " +
+			CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " +
 					             "internet connection.");
 		}
 	}

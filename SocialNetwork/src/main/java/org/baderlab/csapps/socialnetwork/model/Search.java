@@ -1,9 +1,11 @@
-package main.java.org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model;
 
 import java.awt.Cursor;
 import java.util.List;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Pubmed;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.academia.Pubmed;
+
 
 /**
  * A search session
@@ -25,11 +27,11 @@ public class Search {
 	 * @param int website
 	 * @return null
 	 */
-	public Search(String searchTerm, int website) {
-        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	public Search(String searchTerm, int website, SocialNetworkAppManager appManager) {
+        appManager.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		switch (website) {
 			case Category.DEFAULT:
-				Cytoscape.notifyUser("Click --SELECT CATEGORY-- to select a category");
+				CytoscapeUtilities.notifyUser("Click --SELECT CATEGORY-- to select a category");
 				break;
 			case Category.ACADEMIA:
 				Pubmed pubmed = new Pubmed(searchTerm);

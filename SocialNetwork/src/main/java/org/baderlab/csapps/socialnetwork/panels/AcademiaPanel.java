@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.panels;
+package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -17,11 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.cytoscape.util.swing.FileUtil;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 
 /**
  * Tools for building / working with the Academia Info-Panel
@@ -32,22 +33,37 @@ public class AcademiaPanel {
 	/**
 	 * Reference to academia info panel
 	 */
-	private static JPanel academiaInfoPanelRef = null;
+	private  JPanel academiaInfoPanelRef = null;
 
 	/**
 	 * A reference to the faculty text field. Used to verify correct faculty input.
 	 */
-	public static JTextField facultyTextFieldRef = new JTextField();
+	private  JTextField facultyTextFieldRef = new JTextField();
 
 	/**
 	 * A reference to the load data text field. Used to verify correct file path.
 	 */
-	public static JTextField pathTextFieldRef = new JTextField();
+	private  JTextField pathTextFieldRef = new JTextField();
+	
+	private JRadioButton incitesRadioButton =null;
+	private JRadioButton scopusRadioButton =null;
 	
 	/**
 	 * A reference to a data file. Used to verify correct file path.
 	 */
-	public static File selectedFileRef = null;
+	private  File selectedFileRef = null;
+	
+	/**
+	 * A reference to the app Manager
+	 */
+	private SocialNetworkAppManager appManager = null;
+	
+	
+	
+	public AcademiaPanel(SocialNetworkAppManager appManager) {
+		super();
+		this.appManager = appManager;
+	}
 
 	/**
 	 * Create academia info panel. In addition to Pubmed specific features, 
@@ -55,15 +71,15 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel academiaInfoPanel
 	 */
-	public static JPanel createAcademiaInfoPanel() {
+	public  JPanel createAcademiaInfoPanel() {
 		JPanel academiaInfoPanel = new JPanel();
 		academiaInfoPanel.setLayout(new BorderLayout());
 		academiaInfoPanel.setName("Academia");
 	    academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-		academiaInfoPanel.add(AcademiaPanel.createDatabaseInfoPanel(), 
+		academiaInfoPanel.add(this.createDatabaseInfoPanel(), 
 				              BorderLayout.NORTH);
 		// Set a reference to this panel for later access
-		AcademiaPanel.setAcademiaInfoPanelRef(academiaInfoPanel);
+		this.setAcademiaInfoPanelRef(academiaInfoPanel);
 		return academiaInfoPanel;
 	}
 
@@ -73,7 +89,7 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel databaseInfoPanel
 	 */
-	public static JPanel createDatabaseInfoPanel() {
+	public  JPanel createDatabaseInfoPanel() {
 	
 		// Create new Database info panel.
 		JPanel databaseInfoPanel = new JPanel();
@@ -95,7 +111,7 @@ public class AcademiaPanel {
 		// Add 'create network button' to panel
 		// Button wrapper added for cosmetic reasons
 		JPanel buttonWrapper = new JPanel();
-		buttonWrapper.add(AcademiaPanel.createNetworkButton(), BorderLayout.CENTER);
+		buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
 		databaseInfoPanel.add(buttonWrapper);
 	
 		return databaseInfoPanel;
@@ -106,7 +122,7 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel databasePanel
 	 */
-	static JPanel createDatabasePanel() {
+	 public JPanel createDatabasePanel() {
 		JPanel databasePanel = new JPanel();
 		
 		// Set bordered title
@@ -116,24 +132,20 @@ public class AcademiaPanel {
 		databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
 				
 		// Create Incites radio button
-	    final JRadioButton incitesRadioButton = new JRadioButton("Incites", true);
-	    incitesRadioButton.setFocusable(true);
-	    
-	    Incites.setIncitesRadioButton(incitesRadioButton);
+	    this.incitesRadioButton = new JRadioButton("Incites", true);
+	    incitesRadioButton.setFocusable(true);	   
 	    
 	    // Create Scopus radio button
-	    final JRadioButton scopusRadioButton = new JRadioButton("Scopus", false);
+	    this.scopusRadioButton = new JRadioButton("Scopus", false);
 	    scopusRadioButton.setFocusable(false);
-	
-	    Scopus.setScopusRadioButton(scopusRadioButton);
 	    
 	    // Ensures that only one button is selected at a time
 	    ButtonGroup buttonGroup = new ButtonGroup();
 	    buttonGroup.add(incitesRadioButton);
 	    buttonGroup.add(scopusRadioButton);
 	
-	    databasePanel.add(Incites.getIncitesRadioButton());
-	    databasePanel.add(Scopus.getScopusRadioButton());
+	    databasePanel.add(incitesRadioButton);
+	    databasePanel.add(scopusRadioButton);
 	    
 		return databasePanel;
 	
@@ -144,7 +156,7 @@ public class AcademiaPanel {
 	 *@param null
 	 *@return JButton load
 	 */
-	public static JButton createLoadButton() {
+	public  JButton createLoadButton() {
 	
 		JButton loadButton = new JButton("...");
 		loadButton.setToolTipText("Load Incites / Scopus data");
@@ -165,12 +177,12 @@ public class AcademiaPanel {
 				// Only attempt to read data file if user clicks "OK"
 				if (check == JFileChooser.APPROVE_OPTION) {
 					File textFile = chooser.getSelectedFile();
-					AcademiaPanel.setDataFile(textFile);
-					AcademiaPanel.getPathTextFieldRef().setText(textFile.getAbsolutePath());
-					getFacultyTextFieldRef().setText(AcademiaPanel.parseFileName(textFile.getAbsolutePath()));
+					setDataFile(textFile);
+					getPathTextFieldRef().setText(textFile.getAbsolutePath());
+					getFacultyTextFieldRef().setText(parseFileName(textFile.getAbsolutePath()));
 				} else {
-					AcademiaPanel.setDataFile(null);
-					AcademiaPanel.getPathTextFieldRef().setText(null);
+					setDataFile(null);
+					getPathTextFieldRef().setText(null);
 				}
 			}
 		});
@@ -183,18 +195,18 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel loadDataPanel
 	 */
-	public static JPanel createLoadDataPanel() {
+	public  JPanel createLoadDataPanel() {
 		JPanel loadDataPanel = new JPanel();
 		loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
 		loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaPanel.setLoadTextField(new JTextField());
-		AcademiaPanel.getPathTextFieldRef().setEditable(true);
+		this.setLoadTextField(new JTextField());
+		this.getPathTextFieldRef().setEditable(true);
 		// Add text field 
-		loadDataPanel.add(AcademiaPanel.getPathTextFieldRef());
+		loadDataPanel.add(this.getPathTextFieldRef());
 		// Add load data button 
-		loadDataPanel.add(AcademiaPanel.createLoadButton());
+		loadDataPanel.add(this.createLoadButton());
 		return loadDataPanel;
 	}
 
@@ -205,32 +217,39 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JButton createNetworkButton
 	 */
-	public static JButton createNetworkButton() {
+	public  JButton createNetworkButton() {
 		JButton createNetworkButton = new JButton("Create Network");
 		createNetworkButton.setToolTipText("Create network");
 		createNetworkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				if (! Incites.getIncitesRadioButton().isSelected() &&
-						! Scopus.getScopusRadioButton().isSelected()) {
-					Cytoscape.notifyUser("Please select a database");
+
+				//check to see which analysis type is selected
+				if(incitesRadioButton.isSelected())
+					appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
+				if(scopusRadioButton.isSelected())
+					appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
+				
+				if (!incitesRadioButton.isSelected() &&
+						! scopusRadioButton.isSelected()) {
+					CytoscapeUtilities.notifyUser("Please select a database");
 				} else {
 					if (getSelectedFileRef() == null || 
 							getFacultyTextFieldRef().getText() == null) {
-						Cytoscape.notifyUser("Please select a file and/or specify network name.");
+						CytoscapeUtilities.notifyUser("Please select a file and/or specify network name.");
 					} else { 
 						if (! getSelectedFileRef().getAbsolutePath().trim()
-								.equalsIgnoreCase(AcademiaPanel.getPathTextFieldRef()
+								.equalsIgnoreCase(getPathTextFieldRef()
 										.getText().trim())) {
-							Cytoscape.notifyUser("Please select a file.");
+							CytoscapeUtilities.notifyUser("Please select a file.");
 						} else if (getFacultyTextFieldRef().getText().trim()
 								.isEmpty()) {
-							Cytoscape.notifyUser("Please specify network name.");
+							CytoscapeUtilities.notifyUser("Please specify network name.");
 						} else {
 							try {
 								// Create network
-								Cytoscape.createNetwork(getSelectedFileRef());						
+								appManager.createNetwork(getSelectedFileRef());						
 							} catch (FileNotFoundException e) {
-								Cytoscape.notifyUser(AcademiaPanel.getPathTextFieldRef().getText()
+								CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText()
 										+ " does not exist");
 							}
 						}
@@ -245,13 +264,13 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel networkNamePanel
 	 */
-	public static JPanel createSpecifyNetworkNamePanel() {
+	public  JPanel createSpecifyNetworkNamePanel() {
 		JPanel specifyNetworkNamePanel = new JPanel();
 		specifyNetworkNamePanel.setBorder(BorderFactory.createTitledBorder("Specify Network Name"));
 		specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
 		// Create new text field and set reference. Reference will be used later on to verify
 		// correct file path
-		AcademiaPanel.setFacultyTextFieldRef(new JTextField());
+		this.setFacultyTextFieldRef(new JTextField());
 		getFacultyTextFieldRef().setEditable(true);
 		// Add text field 
 		specifyNetworkNamePanel.add(getFacultyTextFieldRef());
@@ -262,16 +281,16 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JPanel academiaInfoPanelRef
 	 */
-	public static JPanel getAcademiaInfoPanelRef() {
-		return AcademiaPanel.academiaInfoPanelRef;
+	public  JPanel getAcademiaInfoPanelRef() {
+		return this.academiaInfoPanelRef;
 	}
 	/**
 	 * Get faculty text field
 	 * @param null
 	 * @return JTextField facultyTextField
 	 */
-	public static JTextField getFacultyTextFieldRef() {
-		return AcademiaPanel.facultyTextFieldRef;
+	public  JTextField getFacultyTextFieldRef() {
+		return this.facultyTextFieldRef;
 	}
 
 	/**
@@ -279,8 +298,8 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return JTextField pathTextField
 	 */
-	public static JTextField getPathTextFieldRef() {
-		return AcademiaPanel.pathTextFieldRef;
+	public  JTextField getPathTextFieldRef() {
+		return this.pathTextFieldRef;
 	}
 
 	/**
@@ -288,8 +307,8 @@ public class AcademiaPanel {
 	 * @param null
 	 * @return File selectedFile
 	 */
-	public static File getSelectedFileRef() {
-		return AcademiaPanel.selectedFileRef;
+	public  File getSelectedFileRef() {
+		return this.selectedFileRef;
 	}
 	
 	/**
@@ -297,7 +316,7 @@ public class AcademiaPanel {
 	 * @param String path
 	 * @return String filename
 	 */
-	public static String parseFileName(String path) {
+	public  String parseFileName(String path) {
 		Pattern pattern = Pattern.compile("([^\\\\/]+?)(\\.xlsx|\\.txt|\\.csv)$");
 		Matcher matcher = pattern.matcher(path);
 		if (matcher.find()) {
@@ -311,8 +330,8 @@ public class AcademiaPanel {
 	 * @param JPanel academiaInfoPanelRef
 	 * @return null
 	 */
-	public static void setAcademiaInfoPanelRef(JPanel academiaInfoPanelRef) {
-		AcademiaPanel.academiaInfoPanelRef = academiaInfoPanelRef;
+	public  void setAcademiaInfoPanelRef(JPanel academiaInfoPanelRef) {
+		this.academiaInfoPanelRef = academiaInfoPanelRef;
 	}
 	
 	/**
@@ -320,8 +339,8 @@ public class AcademiaPanel {
 	 * @param File data
 	 * @return null
 	 */
-	public static void setDataFile(File selectedFile) {
-		AcademiaPanel.selectedFileRef = selectedFile;
+	public  void setDataFile(File selectedFile) {
+		this.selectedFileRef = selectedFile;
 	}
 
 	/**
@@ -329,8 +348,8 @@ public class AcademiaPanel {
 	 * @param JTextField facultyTextField
 	 * @return null
 	 */
-	public static void setFacultyTextFieldRef(JTextField facultyTextField) {
-		AcademiaPanel.facultyTextFieldRef = facultyTextField;
+	public  void setFacultyTextFieldRef(JTextField facultyTextField) {
+		this.facultyTextFieldRef = facultyTextField;
 	}
 
 	/**
@@ -338,8 +357,8 @@ public class AcademiaPanel {
 	 * @param JTextField pathTextField
 	 * @return null
 	 */
-	public static void setLoadTextField(JTextField pathTextField) {
-		AcademiaPanel.pathTextFieldRef = pathTextField;
+	public  void setLoadTextField(JTextField pathTextField) {
+		this.pathTextFieldRef = pathTextField;
 	}
 	
 

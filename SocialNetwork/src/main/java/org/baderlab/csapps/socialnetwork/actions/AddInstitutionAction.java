@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.actions;
+package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -19,9 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Incites;
 
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.Incites;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -109,15 +110,15 @@ public class AddInstitutionAction extends AbstractCyAction {
 				institution = institutionTextField.getText().trim();
 				location = locationTextField.getText().trim();
 				if (institution.trim().isEmpty() && location.trim().isEmpty()) {
-					Cytoscape.notifyUser("Please specify both an institution and a location");
+					CytoscapeUtilities.notifyUser("Please specify both an institution and a location");
 				} else {
 					if (institution.trim().isEmpty()) {
-						Cytoscape.notifyUser("Please specify an institution");
+						CytoscapeUtilities.notifyUser("Please specify an institution");
 					} else if (location.trim().isEmpty()) {
-						Cytoscape.notifyUser("Please specify a location");
+						CytoscapeUtilities.notifyUser("Please specify a location");
 					} else {
 						if (! this.getLocationSet().contains(location.toLowerCase())) {
-							Cytoscape.notifyUser("Location does not exist. Please enter a valid location.");
+							CytoscapeUtilities.notifyUser("Location does not exist. Please enter a valid location.");
 						} else {
 							institution = institution.toUpperCase();
 							// Format location (in case casing was done improperly)
@@ -148,10 +149,10 @@ public class AddInstitutionAction extends AbstractCyAction {
 				Incites.setLocationMap(map);
 			} catch (IOException e) {
 				e.printStackTrace();
-				Cytoscape.notifyUser("Location map could not be accessed.");
+				CytoscapeUtilities.notifyUser("Location map could not be accessed.");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-				Cytoscape.notifyUser("Location map could not be accessed.");
+				CytoscapeUtilities.notifyUser("Location map could not be accessed.");
 			}
 
 		}

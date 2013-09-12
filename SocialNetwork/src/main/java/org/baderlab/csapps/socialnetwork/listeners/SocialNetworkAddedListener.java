@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.listeners;
+package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.events.NetworkAddedEvent;
@@ -23,6 +23,16 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
 
 public class SocialNetworkAddedListener implements NetworkAddedListener {
 	
+	
+	private SocialNetworkAppManager appManager = null;
+	
+	
+	
+	public SocialNetworkAddedListener(SocialNetworkAppManager appManager) {
+		super();
+		this.appManager = appManager;
+	}
+
 	/**
 	 * Get smallest value given cutoff
 	 * @param List list
@@ -74,16 +84,16 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 	 */
 	public void handleEvent(NetworkAddedEvent event) {
 		// Set mouse cursor to default (network's already been loaded)
-        Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		String name = Cytoscape.getNetworkName(event.getNetwork());
+        this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		String name = this.appManager.getNetworkName(event.getNetwork());
 		// If the network being added is a social network, then
 		// add it to network table
-		if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
+		if (this.appManager.getSocialNetworkMap().containsKey(name)) {
 			
 			// Add to network table
-			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
+			SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
 			socialNetwork.setCyNetwork(event.getNetwork());
-			UserPanel.addNetworkToNetworkPanel(socialNetwork);
+			this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
 			int networkID = socialNetwork.getNetworkType();
 			// Node table reference
 			CyTable nodeTable = null;
@@ -124,11 +134,13 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 					Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
 					HashMap<String, Color> locationsMap = new HashMap<String, Color>();
 					locationsMap.put("Ontario", new Color(255,137,41));
-					locationsMap.put("Canada", new Color(235,235,52));
+					//locationsMap.put("Canada", new Color(235,235,52));
+					locationsMap.put("Canada", Color.red);
 					locationsMap.put("United States", new Color(42,78,222));
 					locationsMap.put("International", new Color(42,230,246));
 					locationsMap.put("Other", new Color(211, 3, 253));
 					locationsMap.put("UNIV TORONTO", new Color(20, 253, 3));
+					locationsMap.put("N/A", Color.gray);
 					colorAttrMap.put("Location", locationsMap);
 					socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, 
 						                              new Object[] {colorAttrMap});
@@ -190,7 +202,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
 							                                     new Object[] {"# of copubs"});
 					break;
 			}
-			Cytoscape.setCurrentlySelectedSocialNetwork(socialNetwork);
+			this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
 		}
 	}
 }

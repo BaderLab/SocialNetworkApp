@@ -1,32 +1,44 @@
-package main.java.org.baderlab.csapps.socialnetwork.listeners;
+package org.baderlab.csapps.socialnetwork.listeners;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.model.CyNetwork;
 
 public class SocialNetworkSelectedListener implements SetSelectedNetworksListener {
+
+	private SocialNetworkAppManager appManager;
+	private UserPanel userPanel;
+	
+	
+	
+	public SocialNetworkSelectedListener(SocialNetworkAppManager appManager) {
+		super();
+		this.appManager = appManager;
+		this.userPanel = this.appManager.getUserPanelRef();
+	}
+
 	/**
 	 * Updates UI
 	 */
 	public void handleEvent(SetSelectedNetworksEvent event) {
 		String name = null;
 		for (CyNetwork network : event.getNetworks()) {
-			name = Cytoscape.getNetworkName(network);
+			name = this.appManager.getNetworkName(network);
 			// Update UI iff a social network has been selected
-			if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
-				SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap().get(name);
-				UserPanel.updateNetworkSummaryPanel(socialNetwork);
-				UserPanel.addNetworkVisualStyle(socialNetwork);
-				Cytoscape.setCurrentlySelectedSocialNetwork(socialNetwork);
+			if (this.appManager.getSocialNetworkMap().containsKey(name)) {
+				SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
+				this.userPanel.updateNetworkSummaryPanel(socialNetwork);
+				this.userPanel.addNetworkVisualStyle(socialNetwork);
+				this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
 				return;
 			}
 		}
-		Cytoscape.setCurrentlySelectedSocialNetwork(null);
-		UserPanel.addNetworkVisualStyle(null);
-		UserPanel.updateNetworkSummaryPanel(null);
+		this.appManager.setCurrentlySelectedSocialNetwork(null);
+		this.userPanel.addNetworkVisualStyle(null);
+		this.userPanel.updateNetworkSummaryPanel(null);
 	}
 }

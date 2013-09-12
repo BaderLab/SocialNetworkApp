@@ -1,12 +1,12 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
+package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import java.util.List;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Author;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

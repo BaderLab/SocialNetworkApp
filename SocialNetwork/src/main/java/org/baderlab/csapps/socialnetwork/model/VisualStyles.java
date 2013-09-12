@@ -1,13 +1,8 @@
-package main.java.org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * All the visual styles currently supported
- * by the Social Network App.
- * @author Victor Kofia
- */
 public class VisualStyles {
 	
 	/**
@@ -97,22 +92,22 @@ public class VisualStyles {
 	 * <br> Key: string representation of visual style
 	 * <br> Value: visual style ID
 	 */
-	private static Map<String, Integer> visualStyleMap = null;
-
+	private Map<String, Integer> visualStyleMap = null;	
+	
 	/**
 	 * Get unique id (numeral) associated with visual style
 	 * @param String visualStyle
 	 * @return int visualStyleID
 	 */
-	public static int getVisualStyleID(String visualStyle) {
-		if (VisualStyles.visualStyleMap == null) {
-			VisualStyles.visualStyleMap = new HashMap<String, Integer>();
-			VisualStyles.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
-			VisualStyles.visualStyleMap.put("Incites 'Lite'", INCITES_LITE_VISUAL_STYLE);
-			VisualStyles.visualStyleMap.put("Pubmed 'Lite'", PUBMED_LITE_VISUAL_STYLE);
-			VisualStyles.visualStyleMap.put("Scopus 'Lite'", PUBMED_LITE_VISUAL_STYLE);
+	public int getVisualStyleID(String visualStyle) {
+		if (this.visualStyleMap == null) {
+			this.visualStyleMap = new HashMap<String, Integer>();
+			this.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
+			this.visualStyleMap.put("Incites 'Lite'", INCITES_LITE_VISUAL_STYLE);
+			this.visualStyleMap.put("Pubmed 'Lite'", PUBMED_LITE_VISUAL_STYLE);
+			this.visualStyleMap.put("Scopus 'Lite'", PUBMED_LITE_VISUAL_STYLE);
 		}
-		return VisualStyles.visualStyleMap.get(visualStyle);
+		return this.visualStyleMap.get(visualStyle);
 	}
 
 	/**
@@ -120,7 +115,7 @@ public class VisualStyles {
 	 * @param int visualStyleSelectorType
 	 * @return String[] visualStyleList
 	 */
-	public static String[] getVisualStyleList(int visualStyleSelectorType) {
+	public String[] getVisualStyleList(int visualStyleSelectorType) {
 		String[] visualStyleList = null;
 		switch(visualStyleSelectorType) {
 			case VisualStyles.DEFAULT_VISUAL_STYLE:
@@ -140,3 +135,4 @@ public class VisualStyles {
 	}
 
 }
+

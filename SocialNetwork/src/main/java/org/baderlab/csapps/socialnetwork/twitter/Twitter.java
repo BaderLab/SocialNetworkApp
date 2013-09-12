@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.twitter;
+package org.baderlab.csapps.socialnetwork.twitter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+
   
 /**
  * Methods and fields for manipulating Twitter data
@@ -106,9 +108,9 @@ public class Twitter {
 			con.setRequestProperty("Connection", "Keep Alive");
 			return con;
 		} catch (MalformedURLException e) {
-			Cytoscape.notifyUser("Twitter! DERP!!");
+			CytoscapeUtilities.notifyUser("Twitter! DERP!!");
 		} catch (IOException e) {
-			Cytoscape.notifyUser("Twitter! DERP!!");
+			CytoscapeUtilities.notifyUser("Twitter! DERP!!");
 		}
 		return null;
 		

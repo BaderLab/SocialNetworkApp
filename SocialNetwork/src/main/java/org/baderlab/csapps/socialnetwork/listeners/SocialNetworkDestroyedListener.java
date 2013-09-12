@@ -1,13 +1,13 @@
-package main.java.org.baderlab.csapps.socialnetwork.listeners;
+package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
@@ -18,9 +18,13 @@ import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
  */
 public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyedListener {
 	private CyNetworkManager cyNetworkManagerServiceRef = null;
+	private SocialNetworkAppManager appManager = null;
+	private UserPanel userPanel = null;
 	
-	public SocialNetworkDestroyedListener(CyNetworkManager cyNetworkManagerServiceRef) {
+	public SocialNetworkDestroyedListener(CyNetworkManager cyNetworkManagerServiceRef, SocialNetworkAppManager appManager) {
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+		this.appManager = appManager;
+		this.userPanel = this.appManager.getUserPanelRef();
 	}
 	
 	/**
@@ -40,17 +44,17 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 	}
 	
 	public void handleEvent(NetworkAboutToBeDestroyedEvent event) {
-		String name = Cytoscape.getNetworkName(event.getNetwork());
-		if (Cytoscape.getSocialNetworkMap().containsKey(name)) {
+		String name = this.appManager.getNetworkName(event.getNetwork());
+		if (this.appManager.getSocialNetworkMap().containsKey(name)) {
   			// Remove network from table
-			DefaultTableModel model = (DefaultTableModel) UserPanel.getNetworkTableRef().getModel();
+			DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
 			model.removeRow(getRow(model, name));
-			Map<String, SocialNetwork> map = Cytoscape.getSocialNetworkMap();
+			Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
 			map.remove(name);
 			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
-				Cytoscape.setCurrentlySelectedSocialNetwork(null);
-				UserPanel.addNetworkVisualStyle(null);
-				UserPanel.updateNetworkSummaryPanel(null);
+				this.appManager.setCurrentlySelectedSocialNetwork(null);
+				this.userPanel.addNetworkVisualStyle(null);
+				this.userPanel.updateNetworkSummaryPanel(null);
 			}
 		}
 	}

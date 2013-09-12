@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,8 +10,10 @@ import java.util.regex.Pattern;
 
 import javax.swing.JRadioButton;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+
   
 /**
  * Tools for manipulating Scopus data
@@ -19,11 +21,7 @@ import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
  */
 public class Scopus {
 	
-	/**
-	 * Reference to Scopus radio button
-	 */
-	private static JRadioButton scopusRadioButton = null;
-	
+
 	/**
 	 * Reference to Scopus publication list
 	 */
@@ -38,14 +36,6 @@ public class Scopus {
 		this.parseScopusPubList(csv);
 	}
 
-	/**
-	 * Get Scopus radio button
-	 * @param null
-	 * @return JRadioButton radioButton
-	 */
-	public static JRadioButton getScopusRadioButton() {
-		return scopusRadioButton;
-	}
 	
 	/**
 	 * Match year. Used for verifying validity of 
@@ -109,12 +99,12 @@ public class Scopus {
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			Cytoscape.notifyUser("Unable to locate Scopus data file.\nPlease re-load" +
+			CytoscapeUtilities.notifyUser("Unable to locate Scopus data file.\nPlease re-load" +
 					             " file and try again.");
 		} catch (UnableToParseYearException e) {
 			this.setPubList(null);
 			e.printStackTrace();
-			Cytoscape.notifyUser("Scopus data file is corrupt.\nPlease load" +
+			CytoscapeUtilities.notifyUser("Scopus data file is corrupt.\nPlease load" +
 		             " a valid file and try again.");
 		}
 	}
@@ -133,14 +123,6 @@ public class Scopus {
 		return authorList;
 	}
 
-	/**
-	 * Set Scopus radio button
-	 * @param JCheckBox scopusRadioButton
-	 * @return null
-	 */
-	public static void setScopusRadioButton(JRadioButton scopusRadioButton) {
-		Scopus.scopusRadioButton = scopusRadioButton;
-	}
 	
 	/**
 	 * Construct Scopus attribute map

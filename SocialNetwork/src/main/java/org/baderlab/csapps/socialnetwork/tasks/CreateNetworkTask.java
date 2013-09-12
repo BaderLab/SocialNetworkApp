@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.tasks;
+package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.awt.Cursor;
 import java.text.DecimalFormat;
@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.AbstractEdge;
-import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.model.Collaboration;
-import main.java.org.baderlab.csapps.socialnetwork.model.Cytoscape;
-import main.java.org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import main.java.org.baderlab.csapps.socialnetwork.panels.UserPanel;
 
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
+import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -44,6 +45,7 @@ public class CreateNetworkTask extends AbstractTask {
 	private CyNetworkNaming cyNetworkNamingServiceRef;
 	private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
 	private CyNetworkViewManager cyNetworkViewManagerServiceRef;
+	private SocialNetworkAppManager appManager;
 	private double progress = 0.0;
 	private int totalSteps = 0;
 	
@@ -57,13 +59,14 @@ public class CreateNetworkTask extends AbstractTask {
 			                 CyNetworkManager cyNetworkManagerServiceRef, 
 			                 CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
 			                 CyNetworkViewManager cyNetworkViewManagerServiceRef, 
-			                 CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
+			                 CyLayoutAlgorithmManager cyLayoutManagerServiceRef, SocialNetworkAppManager appManager) {
 		this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 		this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
 		this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
 		this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
 		this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
+		this.appManager = appManager;
 	}
 	
 	/**
@@ -117,7 +120,7 @@ public class CreateNetworkTask extends AbstractTask {
 			// Set network name
 			myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
 			.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
-					(Cytoscape.getNetworkName()));
+					(this.appManager.getNetworkName()));
 
 			// Build network
 			Collaboration consortium = null;
@@ -182,10 +185,10 @@ public class CreateNetworkTask extends AbstractTask {
 			return myNet;
 		} catch (ArrayIndexOutOfBoundsException exception) {
 			exception.printStackTrace();
-			Cytoscape.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-			Cytoscape.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
-			Cytoscape.getSocialNetworkMap().remove(Cytoscape.getNetworkName());
-			Cytoscape.setNetworkName(null);
+			this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			CytoscapeUtilities.notifyUser("Network could not be loaded. Array Index Out Of Bounds.");
+			this.appManager.getSocialNetworkMap().remove(this.appManager.getNetworkName());
+			this.appManager.setNetworkName(null);
 			taskMonitor = null;
 			return null;
 		}
@@ -201,10 +204,10 @@ public class CreateNetworkTask extends AbstractTask {
 		CyNetworkViewManager networkViewManager = this.cyNetworkViewManagerServiceRef;
 		
 		// Get map
-		Map<Collaboration, ArrayList<AbstractEdge>> map = Cytoscape.getMap();
+		Map<Collaboration, ArrayList<AbstractEdge>> map = this.appManager.getMap();
 				
 		if (map == null) {
-			Cytoscape.notifyUser
+			CytoscapeUtilities.notifyUser
 			("Network could not be loaded. Cytoscape network map could not be accessed.");
 		} else {
 									
@@ -232,7 +235,7 @@ public class CreateNetworkTask extends AbstractTask {
 						      .createNetworkView(network);
 				networkViewManager.addNetworkView(networkView);
 			} else {
-				Cytoscape.notifyUser("Network already present");
+				CytoscapeUtilities.notifyUser("Network already present");
 			}
 			
 		
@@ -243,8 +246,8 @@ public class CreateNetworkTask extends AbstractTask {
 				networkViewManager.destroyNetworkView(networkView);
 			}
 			
-			SocialNetwork socialNetwork = Cytoscape.getSocialNetworkMap()
-					                              .get(Cytoscape.getNetworkName());
+			SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap()
+					                              .get(this.appManager.getNetworkName());
 			socialNetwork.setNetworkView(networkView);
 			
 			// Auto apply visual style and layout
@@ -259,11 +262,11 @@ public class CreateNetworkTask extends AbstractTask {
 			
 			TaskIterator taskIterator = new TaskIterator();
 			taskIterator.append(layoutTaskIterator);
-			int visualStyleID = Cytoscape.getCurrentlySelectedSocialNetwork()
+			int visualStyleID = this.appManager.getCurrentlySelectedSocialNetwork()
                                          .getDefaultVisualStyle();
-			Cytoscape.setVisualStyleID(visualStyleID);
-			UserPanel.setSelectedVisualStyle(visualStyleID);
-			taskIterator.append(Cytoscape.getApplyVisualStyleTaskFactoryRef()
+			this.appManager.setVisualStyleID(visualStyleID);
+			this.appManager.getUserPanelRef().setSelectedVisualStyle(visualStyleID);
+			taskIterator.append(this.appManager.getApplyVisualStyleTaskFactoryRef()
 				                                    .createTaskIterator());
 			insertTasksAfterCurrentTask(taskIterator);
 

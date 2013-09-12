@@ -1,0 +1,15 @@
+git.branch=release
+git.commit.id.describe=9dd7c0d-dirty
+git.build.user.name=risserlin
+git.build.user.email=ruth.isserlin@utoronto.ca
+git.build.time=11.09.2013 @ 14:21:34 EDT
+git.commit.id=9dd7c0d5a5a64a9052d61e760003597afd0d29cf
+git.commit.id.abbrev=9dd7c0d
+git.commit.message.full=Fixed issue that was preventing faculty members from being correctly identified.
+
+git.commit.message.short=Fixed issue that was preventing faculty members from being correctly identified.
+build.user=risserlin
+build.timestamp=1378923694045
+build.os=Mac OS X
+build.java_version=1.6.0_51
+build.number=55

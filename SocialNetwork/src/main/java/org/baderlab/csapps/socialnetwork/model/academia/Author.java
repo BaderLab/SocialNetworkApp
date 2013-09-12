@@ -1,15 +1,15 @@
-package main.java.org.baderlab.csapps.socialnetwork.model.academia;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.xmlbeans.impl.common.Levenshtein;
+import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.model.CyNode;
 
-import main.java.org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import main.java.org.baderlab.csapps.socialnetwork.model.Category;
-import main.java.org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 
 /**
  * An author for an article, journal review, or scientific paper
@@ -148,7 +148,7 @@ public class Author extends AbstractNode {
 				break;
 			case Category.INCITES:
 				// Initialize attribute map for Incites author
-				this.setNodeAttrMap(Incites.constructIncitesAttrMap(this));
+				this.setNodeAttrMap(constructIncitesAttrMap());
 				this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
 				if (! this.getFirstName().equalsIgnoreCase("N/A")) {
 					this.setFirstInitial(this.getFirstName().substring(0,1));
@@ -645,6 +645,27 @@ public class Author extends AbstractNode {
 	public void setPubList(List<String> pubList) {
 		this.pubList = pubList;
 		this.getNodeAttrMap().put("Publications", pubList);
+	}
+	
+	/**
+	 * Construct Incites attribute map
+	 * @param null
+	 * @return Map nodeAttrMap
+	 */
+	public static HashMap<String, Object> constructIncitesAttrMap() {
+		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
+		String[] columns = new String[] {"Label", "Last Name", "First Name",
+				                         "Institution", "Location", "Department",
+				                         "Times Cited", "Publications"};
+		int i = 0;
+		for (i = 0; i < 6; i++) {
+			nodeAttrMap.put(columns[i], "");
+		}
+		// Initialize Times Cited attribute (~ Integer)
+		nodeAttrMap.put(columns[i], 0);
+		// Initialize Publications attribute (~ ArrayList)
+		nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
+		return nodeAttrMap;
 	}
 	 
 }

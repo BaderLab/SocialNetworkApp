@@ -1,4 +1,4 @@
-package main.java.org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model;
 
 
 /**

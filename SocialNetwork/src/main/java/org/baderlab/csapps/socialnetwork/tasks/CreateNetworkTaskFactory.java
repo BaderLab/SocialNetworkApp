@@ -1,6 +1,8 @@
-package main.java.org.baderlab.csapps.socialnetwork.tasks;
+package org.baderlab.csapps.socialnetwork.tasks;
 
 
+
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -18,19 +20,21 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 		private CyNetworkManager cyNetworkManagerServiceRef;
 		private CyNetworkNaming cyNetworkNamingServiceRef;
 		private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
+		private SocialNetworkAppManager appManager;
 	
 	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, 
 			                        CyNetworkFactory cyNetworkFactoryServiceRef, 
 			                        CyNetworkManager cyNetworkManagerServiceRef, 
 			                        CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
 			                        CyNetworkViewManager cyNetworkViewManagerServiceRef, 
-			                        CyLayoutAlgorithmManager cyLayoutManagerServiceRef) {
+			                        CyLayoutAlgorithmManager cyLayoutManagerServiceRef, SocialNetworkAppManager appManager) {
 			this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 			this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 			this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
 			this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
 			this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
 			this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
+			this.appManager = appManager;
 	}
 
 	public TaskIterator createTaskIterator() {
@@ -39,7 +43,7 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
 				                                      cyNetworkManagerServiceRef, 
 				                                      cyNetworkViewFactoryServiceRef, 
 				                                      cyNetworkViewManagerServiceRef, 
-				                                      cyLayoutManagerServiceRef));
+				                                      cyLayoutManagerServiceRef,appManager));
 	}
 
 }
