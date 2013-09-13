@@ -54,12 +54,12 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 		HashMap<String, Color> locationsMap = new HashMap<String, Color>();
 		locationsMap.put("Ontario", new Color(255,137,41));
 		//locationsMap.put("Canada", new Color(235,235,52));
-		locationsMap.put("Canada", Color.red);
-		locationsMap.put("United States", new Color(42,78,222));
-		locationsMap.put("International", new Color(42,230,246));
-		locationsMap.put("Other", new Color(211, 3, 253));
-		locationsMap.put("UNIV TORONTO", new Color(20, 253, 3));
-		locationsMap.put("N/A", Color.gray);
+		locationsMap.put("Canada", new Color(204,0,51));
+		locationsMap.put("United States", new Color(0,51,153));
+		locationsMap.put("International", new Color(0,204,204));
+		locationsMap.put("Other", new Color(204, 0, 204));
+		locationsMap.put("UNIV TORONTO", new Color(0, 204, 0));
+		locationsMap.put("N/A", new Color(153, 153, 153));
 		colorAttrMap.put(nodeattr_location, locationsMap);
 		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, 
 			                              new Object[] {colorAttrMap});
@@ -71,6 +71,23 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 		shapeAttrMap.put(nodeattr_dept, departmentMap);
 		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, 
 	            new Object[] {shapeAttrMap});
+		
+		//Specify Node_border_width and Node_Border_fill for faculty memebers (i.e. department)
+		Map<String, HashMap<String, Color>> borderpainAttrMap = new HashMap<String, HashMap<String, Color>>();
+		HashMap<String, Color> departmentMap_borderpaint = new HashMap<String, Color>();
+		departmentMap_borderpaint.put((String) (socialNetwork.getAttrMap().get(nodeattr_dept)), new Color(243,243,21));
+		borderpainAttrMap.put(nodeattr_dept, departmentMap_borderpaint);
+		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_PAINT, 
+	            new Object[] {borderpainAttrMap});
+
+		Map<String, HashMap<String, Integer>> borderwidthAttrMap = new HashMap<String, HashMap<String, Integer>>();
+		HashMap<String,Integer> departmentMap_borderwidth = new HashMap<String, Integer>();
+		departmentMap_borderwidth.put((String) (socialNetwork.getAttrMap().get(nodeattr_dept)), 10);
+		borderwidthAttrMap.put(nodeattr_dept, departmentMap_borderwidth);
+		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_WIDTH, 
+			            new Object[] {borderwidthAttrMap});
+		
+		
 	}
 	
 		

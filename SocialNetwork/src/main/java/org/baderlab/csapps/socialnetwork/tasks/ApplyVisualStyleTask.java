@@ -241,6 +241,43 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
+	 * Modify node border width
+	  * @param VisualStyles visualStyle
+	 * @return VisualStyle visualStyle
+	 */
+	private VisualStyle modifyNodeBorder(VisualStyle visualStyle) {
+		DiscreteMapping mapping = null;
+		Object[] tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
+                                     .getVisualStyleMap()
+                                     .get(BasicVisualLexicon.NODE_BORDER_PAINT);
+		Map<String, HashMap<String, Color>> colorMap = (Map<String, HashMap<String, Color>>) tempVar[0];
+		for (Entry<String, HashMap<String, Color>> colorMapEntry : colorMap.entrySet()) {
+			String colName = colorMapEntry.getKey();
+			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction
+                    (colName, String.class, BasicVisualLexicon.NODE_BORDER_PAINT);
+			for (Entry<String, Color> attrMapEntry : colorMapEntry.getValue().entrySet()) {
+				mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
+			}
+			visualStyle.addVisualMappingFunction(mapping);
+		}
+		
+		tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
+                .getVisualStyleMap()
+                .get(BasicVisualLexicon.NODE_BORDER_WIDTH);
+		Map<String, HashMap<String, Integer>> sizeMap = (Map<String, HashMap<String, Integer>>) tempVar[0];
+		for (Entry<String, HashMap<String, Integer>> sizeMapEntry : sizeMap.entrySet()) {
+			String colName = sizeMapEntry.getKey();
+			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction
+					(colName, String.class, BasicVisualLexicon.NODE_BORDER_WIDTH);
+			for (Entry<String, Integer> attrMapEntry : sizeMapEntry.getValue().entrySet()) {
+				mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
+			}
+			visualStyle.addVisualMappingFunction(mapping);
+		}
+		return visualStyle;
+	}
+	
+	/**
 	 * Modify node shape
 	 * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
@@ -306,6 +343,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		modifyNodeSize(incitesLiteVisualStyle);
 		modifyEdgeOpacity(incitesLiteVisualStyle);
 		modifyNodeColor(incitesLiteVisualStyle);
+		modifyNodeBorder(incitesLiteVisualStyle);
 		modifyNodeShape(incitesLiteVisualStyle);
 		return incitesLiteVisualStyle;
 	}
