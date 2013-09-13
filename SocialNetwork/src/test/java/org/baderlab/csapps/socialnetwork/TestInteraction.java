@@ -1,11 +1,9 @@
 package org.baderlab.csapps.socialnetwork;
-
 import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
-
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -15,11 +13,9 @@ import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
-/**
- * Test map creation
- * @author Victor Kofia
- */
+
 public class TestInteraction {
 
 	@Before
@@ -31,6 +27,7 @@ public class TestInteraction {
 	public void tearDown() throws Exception {
 	}
 	
+	@Test
 	/**
 	 * Verify the correct calculation of times cited in a single publication
 	 * NOTE: The publication being tested only has two authors and each author
@@ -47,6 +44,7 @@ public class TestInteraction {
 		assertTrue(authorA.getTimesCited() == 2 && authorB.getTimesCited() == 2);
 	}
 
+	@Test
 	/**
 	 * Verify the correct calculation of times cited in two publications
 	 * NOTE: The publications being tested only have three distinct authors 
@@ -62,5 +60,5 @@ public class TestInteraction {
 		assertTrue(authorA.getTimesCited() == 9 && authorB.getTimesCited() == 7);
 	}
 
-	
+
 }

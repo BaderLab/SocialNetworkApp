@@ -247,6 +247,39 @@ public class TestAuthor {
 	
 	@Test
 	/**
+	 * Test whether or not an author can be identified correctly as faculty when one of the names
+	 * has a middle initial
+	 */
+	public void testFacultyIdentificationInSetMiddleInitial() {
+		/*need the location map to instantiate an incites author*/
+		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+		
+		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
+		Author author2 = new Author("Kofia;Victor A.", Category.FACULTY);
+		HashSet<Author> authorSet = new HashSet<Author>();
+		authorSet.add(author2);
+		assertTrue(authorSet.contains(author1));
+	}
+	
+	@Test
+	/**
+	 * Test whether or not an author can be identified correctly as faculty when one of the names
+	 * only has an initial
+	 */
+	public void testFacultyIdentificationInSetOnlyInitial() {
+		/*need the location map to instantiate an incites author*/
+		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+		
+		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
+		Author author2 = new Author("Kofia;V.", Category.FACULTY);
+		HashSet<Author> authorSet = new HashSet<Author>();
+		authorSet.add(author2);
+		assertTrue(authorSet.contains(author1));
+	}
+	
+	
+	@Test
+	/**
 	 * Test whether or not an author with a slightly defective first name
 	 * can be identified correctly as faculty
 	 */
@@ -254,7 +287,7 @@ public class TestAuthor {
 		/*need the location map to instantiate an incites author*/
 		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
 		
-		Author author1 = new Author("Kofia, Vic (UNIV TORONTO)", Category.INCITES, locmap);
+		Author author1 = new Author("Kofia, Victo (UNIV TORONTO)", Category.INCITES, locmap);
 		Author author2 = new Author("Kofia;Victor", Category.FACULTY);
 		HashSet<Author> authorSet = new HashSet<Author>();
 		authorSet.add(author2);
@@ -271,7 +304,7 @@ public class TestAuthor {
 		Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
 		
 		Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
-		Author author2 = new Author("Kofia;Vic", Category.FACULTY);
+		Author author2 = new Author("Kofia;Victo", Category.FACULTY);
 		HashSet<Author> authorSet = new HashSet<Author>();
 		authorSet.add(author2);
 		assertTrue(authorSet.contains(author1));

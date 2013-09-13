@@ -201,12 +201,51 @@ public class Author extends AbstractNode {
 		format();
 	}
 
+	/* given - a name
+	 * returns true if this author has the same name
+	 * If one of the names is only a first initial checks to see if the initials are the same.  if the same returns true
+	 */
+	private boolean isSameFirstName(String name){
+		
+		boolean isEqualFirstName = false;
+		
+		//If the first name has middle initial get rid of it and just compare first name to first name
+		String firstname1 = (this.getFirstName().split(" ").length > 1) ? this.getFirstName().split(" ")[0] : this.getFirstName();
+		String firstname2 = (name.split(" ").length > 1) ? name.split(" ")[0] : name;
+		
+		double distance = Levenshtein.distance(firstname1.toLowerCase(), 
+				                        firstname2.toLowerCase());
+		double similarity = 1 - ((double) distance) / (Math.max(firstname1.length(), 
+				                        firstname2.length()));
+		if (similarity >= 0.75) {
+			isEqualFirstName = true;
+			
+		// If Levenshtein distance is too small, check to see if 
+		// if the one of the first names is actually an initial i.e. 'V'
+		} else {
+			//check if either first name is a single character
+			//or if it has 2 characters and one of the characters is a . as initials are often written V.
+			if((firstname1.length() ==1) || (firstname2.length() == 1) ||
+			(firstname1.length()==2 && firstname1.contains("."))||
+			(firstname2.length()==2 && firstname2.contains("."))){
+				//check to see if they have the same initial
+				isEqualFirstName = firstname1.substring(0, 1).equalsIgnoreCase(firstname2.substring(0,1));
+			}
+			
+		}
+			return isEqualFirstName;
+	}
+	
 	/**
 	 * Return true iff author is the same as other
 	 * @param Object other
 	 * @return boolean
 	 */
 	public boolean equals(Object other) {
+		
+		//compare the current author to the given author
+		//method used by contains method with hash of a set of Authors
+		
 		Author otherAuthor = (Author) other;
 		boolean isEqual = false, isEqualFirstName = false, isEqualLastName = false;
 		int distance = 0;
@@ -217,39 +256,8 @@ public class Author extends AbstractNode {
 			// Determine whether or not last names are equal
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
 			// Determine whether or not first names are equal
-			distance = Levenshtein.distance(this.getFirstName().toLowerCase(), 
-					   otherAuthor.getFirstName().toLowerCase());
-			similarity = 1 - ((double) distance) / (Math.max(this.getFirstName().length(), 
-					   otherAuthor.getFirstName().length()));
-			if (similarity >= 0.75) {
-				isEqualFirstName = true;
-				if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
-					otherAuthor.setFirstName(this.getFirstName());
-				}
-			} else {
-				if (isEqualLastName) {
-					boolean isSingleCharacter = false;
-					boolean isSameAsInitial = false;
-					// Verify that the first initials are not the same for either author
-					if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
-						isSingleCharacter = otherAuthor.getFirstName().length() == 1;
-						isSameAsInitial = otherAuthor.getFirstName().equalsIgnoreCase(this.getFirstInitial());
-						if (isSingleCharacter && isSameAsInitial) {
-							otherAuthor.setFirstName(this.getFirstName());
-							otherAuthor.setLabel(this.getFirstName() + "_" 
-							                     + otherAuthor.getLastName());
-						}
-					}
-					if (this.getFirstName().length() < otherAuthor.getFirstName().length()) {
-						isSingleCharacter = this.getFirstName().length() == 1;
-						isSameAsInitial = this.getFirstName().equalsIgnoreCase(otherAuthor.getFirstInitial());
-					}
-					// First name is only equal if it's a single character and is
-					// similar to the other author's first initial
-					isEqualFirstName = isSingleCharacter
-							         && isSameAsInitial;
-				}
-			}
+			isEqualFirstName = this.isSameFirstName(otherAuthor.getFirstName());
+			
 			// Determine whether or not both authors share the same institution
 			String myInstitution = this.getInstitution(), otherInstitution = otherAuthor.getInstitution();
 			isEqualInstitution = myInstitution.equalsIgnoreCase(otherInstitution);
@@ -262,36 +270,9 @@ public class Author extends AbstractNode {
 		} else if ((this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) || 
 				(this.getOrigin() == Category.FACULTY && otherAuthor.getOrigin() == Category.INCITES)){
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
-			// Determine whether or not first names are equal
-			distance = Levenshtein.distance(this.getFirstName().toLowerCase(), 
-					                        otherAuthor.getFirstName().toLowerCase());
-			similarity = 1 - ((double) distance) / (Math.max(this.getFirstName().length(), 
-					                        otherAuthor.getFirstName().length()));
-			if (similarity >= 0.75) {
-				isEqualFirstName = true;
-				if (this.getFirstName().length() > otherAuthor.getFirstName().length()) {
-					otherAuthor.setFirstName(this.getFirstName());
-				}
-			// If Levenshtein distance is too small, check to see if 
-			// if the first name is actually an initial i.e. 'V'
-			} else {
-				boolean isSingleCharacter = false;
-				boolean isSameAsInitial = false;
-				if (this.getFirstName().length() < otherAuthor.getFirstName().length()) {
-					isSingleCharacter = this.getFirstName().length() == 1;
-					isSameAsInitial = this.getFirstName().equalsIgnoreCase(otherAuthor.getFirstInitial());
-				} else {
-					isSingleCharacter = otherAuthor.getFirstName().length() == 1;
-					isSameAsInitial = otherAuthor.getFirstName().equalsIgnoreCase(this.getFirstInitial());
-					if (isSingleCharacter && isSameAsInitial) {
-						otherAuthor.setFirstName(this.getFirstName());
-					}
-				}
-				// First name is only equal if it's a single character and is
-				// similar to the other author's first initial
-				isEqualFirstName = isSingleCharacter
-						&& isSameAsInitial;
-			}
+			// Determine whether or not first names are equal			
+			isEqualFirstName = this.isSameFirstName(otherAuthor.getFirstName());
+			
 			isEqual = isEqualLastName && isEqualFirstName;
 			// Check to see if the other author has been correctly ID'ed. If so, set his identification
 			// status to true.
