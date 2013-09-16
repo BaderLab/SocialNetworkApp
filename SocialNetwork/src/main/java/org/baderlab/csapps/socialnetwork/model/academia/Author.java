@@ -12,7 +12,9 @@ import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
+import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.subnetwork.CyRootNetwork;
 
 
 /**
@@ -642,6 +644,7 @@ public class Author extends AbstractNode {
 	public void setLabel(String label) {
 		this.label = label;
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_label, label);
+
 	}
 
 	/**

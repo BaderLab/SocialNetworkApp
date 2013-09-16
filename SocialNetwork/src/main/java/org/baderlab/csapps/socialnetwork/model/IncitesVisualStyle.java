@@ -27,6 +27,10 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 	public static final String nodeattr_location_na = "N/A";
 	public static final String nodeattr_inst = "Institution";
 	public static final String nodeattr_dept = "Department";
+	
+	public static final String networkattr_Faculty = "Total number of Faculty";
+	public static final String networkattr_uniden_Faculty = "Total number of unidentified Faculty";
+	public static final String networkattr_uniden_Faculty_list = "List of unidentified Faculty";
 
 	
 	private CyNetwork network;

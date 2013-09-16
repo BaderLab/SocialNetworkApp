@@ -13,7 +13,10 @@ import java.util.Map.Entry;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
@@ -23,6 +26,7 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
@@ -82,6 +86,8 @@ public class CreateNetworkTask extends AbstractTask {
 			CyTable nodeTable = null;
 			// Get network edge table
 			CyTable edgeTable = null;
+			//get network table
+			CyTable networkTable = null;
 
 			// Add all columns to node table
 			nodeTable = myNet.getDefaultNodeTable();
@@ -116,12 +122,25 @@ public class CreateNetworkTask extends AbstractTask {
 					edgeTable.createListColumn(attrName, String.class, false);
 				}
 			}
-
+			
+			// Add all columns to network table
+			networkTable = myNet.getDefaultNetworkTable();
+			networkTable.createColumn(BasicSocialNetworkVisualstyle.networkattr_totalPub, Integer.class, false);
+			networkTable.createColumn(IncitesVisualStyle.networkattr_Faculty, Integer.class, false);
+			networkTable.createColumn(IncitesVisualStyle.networkattr_uniden_Faculty, Integer.class, false);
+			networkTable.createColumn(IncitesVisualStyle.networkattr_uniden_Faculty_list, String.class, false);
+																			
 			// Set network name
 			myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
 			.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
 					(this.appManager.getNetworkName()));
 
+			//add network attributes
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_Faculty, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_uniden_Faculty, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+			
 			// Build network
 			Collaboration consortium = null;
 			AbstractNode node1 = null;
@@ -153,6 +172,9 @@ public class CreateNetworkTask extends AbstractTask {
 						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
 								         attr.getValue());
 					}
+					//add node label as name and shared name
+					nodeTable.getRow(nodeRef.getSUID()).set(CyNetwork.NAME,node1.getLabel());
+					nodeTable.getRow(nodeRef.getSUID()).set(CyRootNetwork.SHARED_NAME,node1.getLabel());
 					nodeMap.put(node1, nodeRef);
 				}
 
@@ -164,6 +186,9 @@ public class CreateNetworkTask extends AbstractTask {
 						nodeTable.getRow(nodeRef.getSUID()).set(attr.getKey(), 
 								         attr.getValue());
 					}
+					nodeTable.getRow(nodeRef.getSUID()).set(CyNetwork.NAME,node2.getLabel());
+					nodeTable.getRow(nodeRef.getSUID()).set(CyRootNetwork.SHARED_NAME,node2.getLabel());
+					
 					nodeMap.put(node2, nodeRef);
 				}
 
@@ -176,6 +201,8 @@ public class CreateNetworkTask extends AbstractTask {
 						edgeTable.getRow(edgeRef.getSUID()).set(attr.getKey(), 
 								         attr.getValue());
 					}
+					edgeTable.getRow(edgeRef.getSUID()).set(CyNetwork.NAME,node1.getLabel() + "_" + node2.getLabel());
+					
 				}	
 				
 				updateProgress(taskMonitor);

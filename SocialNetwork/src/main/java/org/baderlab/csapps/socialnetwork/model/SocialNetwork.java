@@ -27,7 +27,7 @@ public class SocialNetwork {
 	/**
 	 * The network's type
 	 */
-	private int networkType = Category.DEFAULT;
+	private int networkType = Category.DEFAULT; 
 	/**
 	 * Visual style map
 	 * <br>Key: Object VisualStyle
@@ -42,15 +42,17 @@ public class SocialNetwork {
 	 * The network's attribute map (stores all network table attr)
 	 */
 	private Map<String, Object> attrMap = null;
-	/**
-	 * The network's summary list
-	 */
-	private ArrayList<String[]> summaryList = null;
+
 	/**
 	 * The network summary (outlines network's salient attributes
 	 * and any issues)
 	 */
 	private String networkSummary = null;
+	//Summary attributes for this network 
+	private int num_publications = 0;
+	private int num_faculty = 0;
+	private int num_uniden_faculty = 0;
+	private String unidentified_faculty = "";
 	
 	
 	/**
@@ -208,43 +210,28 @@ public class SocialNetwork {
 	public void setAttrMap(Map<String, Object> attrMap) {
 		this.attrMap = attrMap;
 	}
-
-	/**
-	 * Get summary list
-	 * @param null
-	 * @return ArrayList summaryList
-	 */
-	public ArrayList<String[]> getSummaryList() {
-		if (this.summaryList == null) {
-			this.setSummaryList(new ArrayList<String[]>());
-		}
-		return summaryList;
-	}
-
-	/**
-	 * Set summary
-	 * @param ArrayList summaryList
-	 * @return null 
-	 */
-	private void setSummaryList(ArrayList<String[]> summaryList) {
-		this.summaryList = summaryList;
-	}
-
+	
 	/**
 	 * Get network summary
 	 * @param null
 	 * @return String summary
 	 */
 	public String getSummary() {
-		if (this.networkSummary == null) {
-			String info = "<html>", key = null, value = null;
-			for (String[] summary : this.getSummaryList()) {
-				key = summary[0];
-				value = summary[1];
-				info += key + ": " + value + "<br>";
-			}
-			this.networkSummary = info + "</html>";
-		}
+		
+		String info;
+		//print out the summary information
+		if(this.networkType == Category.INCITES)
+			info = "<html>" + "Total # of publications: " + this.num_publications + "<br>" +
+				"Total # of faculty: " + this.num_faculty  + "<br>" +
+				"Total # of unidentified faculty: " + this.num_uniden_faculty + "<br>" +
+				"<hr><br>UNIDENTIFIED FACULTY" + this.unidentified_faculty ;
+				
+		else
+			info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
+		
+		
+		this.networkSummary = info + "</html>";
+
 		return this.networkSummary;
 	}
 
@@ -256,6 +243,39 @@ public class SocialNetwork {
 	public void setSummary(String summary) {
 		this.networkSummary = summary;
 	}
+
+	public int getNum_publications() {
+		return num_publications;
+	}
+
+	public void setNum_publications(int num_publications) {
+		this.num_publications = num_publications;
+	}
+
+	public int getNum_faculty() {
+		return num_faculty;
+	}
+
+	public void setNum_faculty(int num_faculty) {
+		this.num_faculty = num_faculty;
+	}
+
+	public int getNum_uniden_faculty() {
+		return num_uniden_faculty;
+	}
+
+	public void setNum_uniden_faculty(int num_uniden_faculty) {
+		this.num_uniden_faculty = num_uniden_faculty;
+	}
+
+	public String getUnidentified_faculty() {
+		return unidentified_faculty;
+	}
+
+	public void setUnidentified_faculty(String unidentified_faculty) {
+		this.unidentified_faculty = unidentified_faculty;
+	}
+	
 	
 		
 }
