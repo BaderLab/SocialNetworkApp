@@ -72,9 +72,15 @@ public class FacultySheetHandler extends DefaultHandler {
 		
 		if (name.equals("row")) {
 			// Parse all row contents. Ignore the first row (i.e. last name, first name, department ... etc)
-			if (! rowContents.trim().isEmpty() && ! rowContents.contains("department")) {
+			if (! rowContents.trim().isEmpty() && ! (rowContents.contains("department") || rowContents.contains("first name"))) {
+				
 				incitesParser.getFacultySet().add(new Author(rowContents, Category.FACULTY));
 				incitesParser.setDepartmentName(cellContents);
+				
+				//We are expecting 3 objects in the Faculty Sheet
+				//Last name, first name, department --> if there are only 2 assume department is missing
+				if(rowContents.split(";").length == 2)
+					incitesParser.setDepartmentName("not_specified");
 			}
 		}
 		

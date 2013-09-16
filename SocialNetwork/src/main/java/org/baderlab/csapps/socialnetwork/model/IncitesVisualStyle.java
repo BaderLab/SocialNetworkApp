@@ -1,6 +1,7 @@
 package org.baderlab.csapps.socialnetwork.model;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,13 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
 public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 	
 	public static final String nodeattr_location = "Location";
+	public static final String nodeattr_location_uoft = "UNIV TORONTO";
+	public static final String nodeattr_location_canada = "Canada";
+	public static final String nodeattr_location_us = "United States";
+	public static final String nodeattr_location_ontario = "Ontario";
+	public static final String nodeattr_location_inter = "International";
+	public static final String nodeattr_location_other = "Other";
+	public static final String nodeattr_location_na = "N/A";
 	public static final String nodeattr_inst = "Institution";
 	public static final String nodeattr_dept = "Department";
 
@@ -52,14 +60,13 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 		// Specify NODE_FILL_COLOR
 		Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
 		HashMap<String, Color> locationsMap = new HashMap<String, Color>();
-		locationsMap.put("Ontario", new Color(255,137,41));
-		//locationsMap.put("Canada", new Color(235,235,52));
-		locationsMap.put("Canada", new Color(204,0,51));
-		locationsMap.put("United States", new Color(0,51,153));
-		locationsMap.put("International", new Color(0,204,204));
-		locationsMap.put("Other", new Color(204, 0, 204));
-		locationsMap.put("UNIV TORONTO", new Color(0, 204, 0));
-		locationsMap.put("N/A", new Color(153, 153, 153));
+		locationsMap.put(nodeattr_location_ontario, new Color(255,137,41));
+		locationsMap.put(nodeattr_location_canada, new Color(204,0,51));
+		locationsMap.put(nodeattr_location_us, new Color(0,51,153));
+		locationsMap.put(nodeattr_location_inter, new Color(0,204,204));
+		locationsMap.put(nodeattr_location_other, new Color(204, 0, 204));
+		locationsMap.put(nodeattr_location_uoft, new Color(0, 204, 0));
+		locationsMap.put(nodeattr_location_na, new Color(153, 153, 153));
 		colorAttrMap.put(nodeattr_location, locationsMap);
 		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, 
 			                              new Object[] {colorAttrMap});
@@ -80,13 +87,19 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_PAINT, 
 	            new Object[] {borderpainAttrMap});
 
-		Map<String, HashMap<String, Integer>> borderwidthAttrMap = new HashMap<String, HashMap<String, Integer>>();
-		HashMap<String,Integer> departmentMap_borderwidth = new HashMap<String, Integer>();
-		departmentMap_borderwidth.put((String) (socialNetwork.getAttrMap().get(nodeattr_dept)), 10);
+		Map<String, HashMap<String, Double>> borderwidthAttrMap = new HashMap<String, HashMap<String, Double>>();
+		HashMap<String,Double> departmentMap_borderwidth = new HashMap<String, Double>();
+		departmentMap_borderwidth.put((String) (socialNetwork.getAttrMap().get(nodeattr_dept)), 10.0);
 		borderwidthAttrMap.put(nodeattr_dept, departmentMap_borderwidth);
 		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_WIDTH, 
 			            new Object[] {borderwidthAttrMap});
 		
+		Map<String, HashMap<String, Font>> fontsizeAttrMap = new HashMap<String, HashMap<String, Font>>();
+		HashMap<String,Font> departmentMap_fontsize = new HashMap<String, Font>();
+		departmentMap_fontsize.put(nodeattr_location_uoft,  new Font("Verdana", Font.BOLD, 12));
+		fontsizeAttrMap.put(nodeattr_location, departmentMap_fontsize);
+		socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL_FONT_FACE, 
+			            new Object[] {fontsizeAttrMap});
 		
 	}
 	

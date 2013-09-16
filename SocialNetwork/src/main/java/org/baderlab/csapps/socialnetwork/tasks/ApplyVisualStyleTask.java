@@ -1,6 +1,7 @@
 package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -241,7 +242,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	}
 	
 	/**
-	 * Modify node border width
+	 * Modify node border width and font size for faculty members
+	 * specific to incites data.
 	  * @param VisualStyles visualStyle
 	 * @return VisualStyle visualStyle
 	 */
@@ -264,16 +266,31 @@ public class ApplyVisualStyleTask extends AbstractTask {
 		tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
                 .getVisualStyleMap()
                 .get(BasicVisualLexicon.NODE_BORDER_WIDTH);
-		Map<String, HashMap<String, Integer>> sizeMap = (Map<String, HashMap<String, Integer>>) tempVar[0];
-		for (Entry<String, HashMap<String, Integer>> sizeMapEntry : sizeMap.entrySet()) {
+		Map<String, HashMap<String, Double>> sizeMap = (Map<String, HashMap<String, Double>>) tempVar[0];
+		for (Entry<String, HashMap<String, Double>> sizeMapEntry : sizeMap.entrySet()) {
 			String colName = sizeMapEntry.getKey();
 			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction
 					(colName, String.class, BasicVisualLexicon.NODE_BORDER_WIDTH);
-			for (Entry<String, Integer> attrMapEntry : sizeMapEntry.getValue().entrySet()) {
+			for (Entry<String, Double> attrMapEntry : sizeMapEntry.getValue().entrySet()) {
 				mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
 			}
 			visualStyle.addVisualMappingFunction(mapping);
 		}
+		//Map the Label font size
+		tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
+                .getVisualStyleMap()
+                .get(BasicVisualLexicon.NODE_LABEL_FONT_FACE);
+		Map<String, HashMap<String, Font>> fontMap = (Map<String, HashMap<String, Font>>) tempVar[0];
+		for (Entry<String, HashMap<String, Font>> fontMapEntry : fontMap.entrySet()) {
+			String colName = fontMapEntry.getKey();
+			mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction
+					(colName, String.class, BasicVisualLexicon.NODE_LABEL_FONT_FACE);
+			for (Entry<String, Font> attrMapEntry : fontMapEntry.getValue().entrySet()) {
+				mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
+			}
+			visualStyle.addVisualMappingFunction(mapping);
+		}
+		
 		return visualStyle;
 	}
 	
