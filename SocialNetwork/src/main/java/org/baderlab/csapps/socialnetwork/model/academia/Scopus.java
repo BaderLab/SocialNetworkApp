@@ -133,13 +133,15 @@ public class Scopus {
 	public static HashMap<String, Object> constructScopusAttrMap(Author author) {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
 		String[] columns = new String[] {BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname, BasicSocialNetworkVisualstyle.nodeattr_fname,
-				BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_pub};
+				BasicSocialNetworkVisualstyle.nodeattr_timescited,BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub};
 		int i = 0;
 		for (i = 0; i < 4; i++) {
 			nodeAttrMap.put(columns[i], "");
 		}
+		//initialize the num publication attribute (~Integer)
+		nodeAttrMap.put(columns[i], 0);
 		// Initialize Publications attribute (~ ArrayList)
-		nodeAttrMap.put(columns[i], new ArrayList<String>());
+		nodeAttrMap.put(columns[i+1], new ArrayList<String>());
 		return nodeAttrMap;
 	}
 

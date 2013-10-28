@@ -218,15 +218,11 @@ public class SocialNetworkAppManager {
 				return;
 			}
 			// Add summary attributes
-			socialNetwork.setNum_publications(incitesParser.getPubList().size());
-			socialNetwork.setNum_faculty(incitesParser.getFacultySet().size());
-			socialNetwork.setNum_uniden_faculty(incitesParser.getUnidentifiedFacultyList().size());
+			socialNetwork.setPublications(incitesParser.getPubList());
+			socialNetwork.setFaculty(incitesParser.getFacultySet());
+			socialNetwork.setUnidentifiedFaculty(incitesParser.getUnidentifiedFacultyList());
 			socialNetwork.setUnidentified_faculty(incitesParser.getUnidentifiedFacultyString());
-			/*socialNetwork.getSummaryList().add(new String[] {"Total # of publications: ", Integer.toString(incitesParser.getPubList().size())});
-			socialNetwork.getSummaryList().add(new String[] {"Total # of faculty: ", Integer.toString(incitesParser.getFacultySet().size())});
-			socialNetwork.getSummaryList().add(new String[] {"Total # of unidentified faculty: ", Integer.toString(incitesParser.getUnidentifiedFacultyList().size())});
-			socialNetwork.getSummaryList().add(new String[] {"<hr><br>UNIDENTIFIED FACULTY", incitesParser.getUnidentifiedFacultyString()});
-			*/
+			
 			// Add info to social network map(s)
 			socialNetwork.getAttrMap().put(IncitesVisualStyle.nodeattr_dept, departmentName);
 		// Create network out of Scopus data
@@ -237,7 +233,7 @@ public class SocialNetworkAppManager {
 				socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
 				scopus = new Scopus(networkFile);
 				pubList = scopus.getPubList();
-				socialNetwork.setNum_publications(scopus.getPubList().size());
+				socialNetwork.setPublications(scopus.getPubList());
 				if (pubList == null) {
 					this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					return;
@@ -303,7 +299,8 @@ public class SocialNetworkAppManager {
 				category = Category.PUBMED;
 				interaction = new Interaction(results, category);
 				socialNetwork = new SocialNetwork(searchTerm, category);
-				socialNetwork.setNum_publications(search.getTotalHits());
+				//TODO:figure out how to add publications from pubmed search
+				//socialNetwork.setPublications(search.getTotalHits());
 				
 				// Create new map using results
 				map = interaction.getAbstractMap();

@@ -41,7 +41,10 @@ public class Publication extends AbstractEdge {
 	 * Publication's title
 	 */
 	private String title = null; 
-
+	/*
+	 * Location that most of the authors are from
+	 */
+	private String location = "N/A";
 	
 	/**
 	 * Create new publication
@@ -65,6 +68,9 @@ public class Publication extends AbstractEdge {
 		}
 		this.expectedCitations = expectedCitations;
 		constructEdgeAttrMap();
+		
+		//calculate the most used location
+		this.calculateLocation();
 	}
 
 
@@ -81,7 +87,37 @@ public class Publication extends AbstractEdge {
 		edgeAttrMap.put("Title", this.title);
 	}
 	
+	/*
+	 * Go through all the authors on the paper and get the location that occurs the most on the paper
+	 */
 	
+	public void calculateLocation(){
+		String maxlocation = "N/A";
+		Integer max = 0;
+		HashMap<String, Integer> all_locations = new HashMap<String, Integer>();
+		
+		// Add a comma between each author
+		for (Author author: authorList) {
+			//get author locations
+			String current_location = author.getLocation();
+			
+			if(all_locations.containsKey(current_location)){
+				Integer count = all_locations.get(current_location) +1;
+				all_locations.put(current_location, count);
+				//only set the max count if it doesn't belong to "N/A" group
+				if((count > max) && (!current_location.equalsIgnoreCase("N/A"))){
+					max = count;
+					maxlocation = current_location;
+				}
+			}
+			else{
+				all_locations.put(current_location, 1);
+			}
+		}
+		
+		this.location = maxlocation;
+		
+	}
 	/**
 	 * Return a text representation of all of publication's authors
 	 * @paran null
@@ -244,5 +280,27 @@ public class Publication extends AbstractEdge {
 		return this.authorList.size() == 2 &&
 			   this.authorList.get(0).equals(this.authorList.get(1));
 	}
+
+
+	public String getLocation() {
+		return location;
+	}
+
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+
+	public ArrayList<Author> getAuthorList() {
+		return authorList;
+	}
+
+
+	public void setAuthorList(ArrayList<Author> authorList) {
+		this.authorList = authorList;
+	}
+	
+	
 	
 }

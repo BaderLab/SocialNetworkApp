@@ -2,13 +2,22 @@ package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,12 +45,16 @@ import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
+import org.baderlab.csapps.socialnetwork.util.GenerateReports;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetwork;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyledDocument;
 	
 /**
  * Main panel for Social Network App
@@ -112,6 +126,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Reference to network summary pane
 	 */
 	private  JTextPane networkSummaryPaneRef = null;
+	
+	/**
+	 * Reference to network summary pane
+	 */
+	private  JTextPane fileSummaryPaneRef = null;
+	
 	
 	/**
 	 * Reference to the main appManager
@@ -990,9 +1010,21 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		networkSummaryPane.setContentType("text/html");
 		networkSummaryPane.setEditable(false);
 		networkSummaryPane.setAutoscrolls(true);
-	    this.setNetworkSummaryPaneRef(networkSummaryPane);
+		this.setNetworkSummaryPaneRef(networkSummaryPane);
+		JTextPane fileSummaryPane = new JTextPane();
+		fileSummaryPane.setContentType("text/html");
+		fileSummaryPane.setEditable(false);
+		fileSummaryPane.setAutoscrolls(true);
+	    this.setFileSummaryPaneRef(fileSummaryPane);
+	    
+	    //add both textPanes to a Panel
+	    JPanel summaryPanel = new JPanel();
+	    summaryPanel.setLayout(new BorderLayout());
+	    summaryPanel.add(networkSummaryPane, BorderLayout.NORTH);
+	    summaryPanel.add(fileSummaryPane, BorderLayout.SOUTH);
+	    
 	    JScrollPane wrapperPane = new JScrollPane();
-		wrapperPane.getViewport().add(networkSummaryPane);
+		wrapperPane.getViewport().add(summaryPanel);
 		wrapperPane.setPreferredSize(new Dimension(50,100));
 	    networkSummaryPanel.add(wrapperPane, BorderLayout.NORTH);
 	    
@@ -1004,7 +1036,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param SocialNetwork socialNetwork
 	 * @return null
 	 */
-	public  void updateNetworkSummaryPanel(SocialNetwork socialNetwork) {
+	public  void updateNetworkSummaryPanel(SocialNetwork socialNetwork){
 		String networkName = "DEFAULT", networkSummary = "N/A";
 		if (socialNetwork != null) {
 			networkName = socialNetwork.getNetworkName();
@@ -1015,6 +1047,57 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		}	
 		this.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
 		this.getNetworkSummaryPaneRef().setText(networkSummary);
+		
+        
+        		//if this is an incites network add the summaries
+        		if(socialNetwork.getNetworkType() == Category.INCITES){
+        			GenerateReports gr = new GenerateReports(socialNetwork.getPublications(),socialNetwork.getNetworkName());
+        			HashMap<String,String> files = gr.createReports();
+		
+        			Object[] keys = files.keySet().toArray();
+        			Arrays.sort(keys);
+        			
+        			StyledDocument doc = this.getFileSummaryPaneRef().getStyledDocument();
+        	        SimpleAttributeSet attr = new SimpleAttributeSet();
+        	        	
+        	        //Add a heading label
+        	        JLabel header = new JLabel("List of summary files:");
+        	        this.getFileSummaryPaneRef().insertComponent(header);
+        	        try {
+						doc.insertString(doc.getLength(), "\n", attr );
+					} catch (BadLocationException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+        	        
+        			//for each file add a clickable label to launch file in browser.
+        			for(Object key:keys){
+        				JLabel websiteLabel = new JLabel();
+        				final File url = new File(files.get(key));
+        				websiteLabel.setText("<html><a href=\"\">"+key+"</a><br></html>");
+        				websiteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        				websiteLabel.addMouseListener(new MouseAdapter() {
+			            @Override
+			            public void mouseClicked(MouseEvent e) {
+			                    try {
+			                            Desktop.getDesktop().open(url);
+			                    } catch (IOException ex) {
+			                    		ex.printStackTrace();
+			                    } 
+			            }
+			        });
+        				this.getFileSummaryPaneRef().setCaretPosition(this.getFileSummaryPaneRef().getDocument().getLength());        	            
+        				this.getFileSummaryPaneRef().insertComponent(websiteLabel);
+        				try {
+							doc.insertString(doc.getLength(), "\n", attr );
+						} catch (BadLocationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+				
+        			}			
+        		}
+        
 		this.getNetworkSummaryPanelRef().revalidate();
 		this.getNetworkSummaryPanelRef().repaint();
 	}
@@ -1072,7 +1155,23 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	public  void setNetworkSummaryPaneRef(JTextPane networkSummaryPaneRef) {
 		this.networkSummaryPaneRef = networkSummaryPaneRef;
 	}
+	/**
+	 * Get network summary pane reference
+	 * @param null
+	 * @return JTextPane networkSummaryPaneRef
+	 */
+	public  JTextPane getFileSummaryPaneRef() {
+		return this.fileSummaryPaneRef;
+	}
 
+	/**
+	 * Set network summary pane reference
+	 * @param JTextPane networkSummaryPaneRef
+	 * @return null
+	 */
+	public  void setFileSummaryPaneRef(JTextPane fileSummaryPaneRef) {
+		this.fileSummaryPaneRef = fileSummaryPaneRef;
+	}
 	public AcademiaPanel getAcademiaPanel() {
 		return academiaPanel;
 	}

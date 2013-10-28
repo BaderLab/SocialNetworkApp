@@ -224,6 +224,10 @@ public class ApplyVisualStyleTask extends AbstractTask {
 	 * @return VisualStyle visualStyle
 	 */
 	private VisualStyle modifyNodeColor(VisualStyle visualStyle) {
+		
+		//set the default value for node color
+		visualStyle.setDefaultValue(BasicVisualLexicon.NODE_FILL_COLOR,  new Color(0,204,204));
+		
 		DiscreteMapping mapping = null;
 		Object[] tempVar = this.appManager.getCurrentlySelectedSocialNetwork()
                                      .getVisualStyleMap()

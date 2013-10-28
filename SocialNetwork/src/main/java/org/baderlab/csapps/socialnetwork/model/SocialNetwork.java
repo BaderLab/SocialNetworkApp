@@ -1,9 +1,15 @@
 package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.baderlab.csapps.socialnetwork.util.GenerateReports;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
 
@@ -43,12 +49,22 @@ public class SocialNetwork {
 	 */
 	private Map<String, Object> attrMap = null;
 
+	/*
+	 * The network's set of publications used to create it
+	 */
+	private ArrayList<Publication> publications = null;
+	private ArrayList<Author> identifiedFaculty = null;
+	private ArrayList<Author> unidentifiedFaculty = null;
+	private HashSet<Author> faculty = null;
+	
 	/**
 	 * The network summary (outlines network's salient attributes
 	 * and any issues)
 	 */
 	private String networkSummary = null;
-	//Summary attributes for this network 
+	//Summary attributes for this network
+	private HashMap<String,Integer> locations_totalpubsummary = null;
+	private HashMap<String,Integer> locations_totalcitsummary = null;
 	private int num_publications = 0;
 	private int num_faculty = 0;
 	private int num_uniden_faculty = 0;
@@ -220,17 +236,18 @@ public class SocialNetwork {
 		
 		String info;
 		//print out the summary information
-		if(this.networkType == Category.INCITES)
+		if(this.networkType == Category.INCITES){
 			info = "<html>" + "Total # of publications: " + this.num_publications + "<br>" +
 				"Total # of faculty: " + this.num_faculty  + "<br>" +
 				"Total # of unidentified faculty: " + this.num_uniden_faculty + "<br>" +
 				"<hr><br>UNIDENTIFIED FACULTY" + this.unidentified_faculty ;
-				
+						
+		}
 		else
 			info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
 		
 		
-		this.networkSummary = info + "</html>";
+		this.networkSummary = info + "</html>";		
 
 		return this.networkSummary;
 	}
@@ -248,7 +265,7 @@ public class SocialNetwork {
 		return num_publications;
 	}
 
-	public void setNum_publications(int num_publications) {
+	private void setNum_publications(int num_publications) {
 		this.num_publications = num_publications;
 	}
 
@@ -256,7 +273,7 @@ public class SocialNetwork {
 		return num_faculty;
 	}
 
-	public void setNum_faculty(int num_faculty) {
+	private void setNum_faculty(int num_faculty) {
 		this.num_faculty = num_faculty;
 	}
 
@@ -264,7 +281,7 @@ public class SocialNetwork {
 		return num_uniden_faculty;
 	}
 
-	public void setNum_uniden_faculty(int num_uniden_faculty) {
+	private void setNum_uniden_faculty(int num_uniden_faculty) {
 		this.num_uniden_faculty = num_uniden_faculty;
 	}
 
@@ -275,7 +292,100 @@ public class SocialNetwork {
 	public void setUnidentified_faculty(String unidentified_faculty) {
 		this.unidentified_faculty = unidentified_faculty;
 	}
+
+	public ArrayList<Publication> getPublications() {
+		return publications;
+	}
+
+	public void setPublications(ArrayList<Publication> publications) {
+		this.publications = publications;
+		this.setNum_publications(publications.size());
+		if(this.networkType == Category.INCITES){
+			//calculate the break down of locations for the set of publications
+			this.locations_totalcitsummary = this.summarize_totalCitations();
+			this.locations_totalpubsummary = this.summarize_totalPublications();
+		}
+	}
+
+	public ArrayList<Author> getIdentifiedFaculty() {
+		return identifiedFaculty;
+	}
+
+	public void setIdentifiedFaculty(ArrayList<Author> identifiedFaculty) {
+		this.identifiedFaculty = identifiedFaculty;		
+	}
+
+	public ArrayList<Author> getUnidentifiedFaculty() {
+		return unidentifiedFaculty;
+	}
+
+	public void setUnidentifiedFaculty(ArrayList<Author> unidentifiedFaculty) {
+		this.unidentifiedFaculty = unidentifiedFaculty;
+		this.setNum_uniden_faculty(unidentifiedFaculty.size());
+	}
+
+	public HashSet<Author> getFaculty() {
+		return faculty;
+	}
+
+	public void setFaculty(HashSet<Author> faculty) {
+		this.faculty = faculty;
+		this.setNum_faculty(faculty.size());
+	}
+	/*
+	 * for each publication in the set of publications for this network
+	 * Each publication is assigned a majority rules location
+	 * Add up the publications based on location.
+	 * Return hashamp of location --> total publications
+	 */
+	private HashMap<String,Integer> summarize_totalPublications(){
+		HashMap<String,Integer> locations_summary = new HashMap<String, Integer>();
+		
+		if(this.publications != null){
+			for(Publication pub:this.publications){
+				//for each publication get its most common location, add to counts
+				//get author locations
+				String current_location = pub.getLocation();
+				
+				if(locations_summary.containsKey(current_location)){
+					Integer count = locations_summary.get(current_location) +1;
+					locations_summary.put(current_location, count);
+					
+				}
+				else{
+					locations_summary.put(current_location, 1);
+				}
+			}			
+		}
+		return locations_summary;
+	}
 	
-	
+	/*
+	 * for each publication in the set of publications for this network
+	 * Each publication is assigned a majority rules location
+	 * Add up the citations based on location.
+	 * Return hashamp of location --> summed citations
+	 */
+	private HashMap<String,Integer> summarize_totalCitations(){
+		HashMap<String,Integer> locations_summary = new HashMap<String, Integer>();
+		
+		if(this.publications != null){
+			for(Publication pub:this.publications){
+				//for each publication get its most common location, add to counts
+				//get author locations
+				String current_location = pub.getLocation();
+				
+				if(locations_summary.containsKey(current_location)){
+					Integer count = locations_summary.get(current_location) + pub.getTimesCited();
+					locations_summary.put(current_location, count);
+					
+				}
+				else{
+					locations_summary.put(current_location, pub.getTimesCited());
+				}
+			}			
+		}
+		return locations_summary;
+	}
 		
 }

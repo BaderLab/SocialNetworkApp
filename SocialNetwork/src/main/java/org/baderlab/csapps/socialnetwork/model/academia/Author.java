@@ -689,6 +689,7 @@ public class Author extends AbstractNode {
 	public void setPubList(List<String> pubList) {
 		this.pubList = pubList;
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, pubList);
+		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_numpub, pubList.size());
 	}
 	
 	/**
@@ -700,15 +701,17 @@ public class Author extends AbstractNode {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
 		String[] columns = new String[] {BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname, BasicSocialNetworkVisualstyle.nodeattr_fname,
 				                         IncitesVisualStyle.nodeattr_inst, IncitesVisualStyle.nodeattr_location, IncitesVisualStyle.nodeattr_dept,
-				                         BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_pub};
+				                         BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_numpub,BasicSocialNetworkVisualstyle.nodeattr_pub};
 		int i = 0;
 		for (i = 0; i < 6; i++) {
 			nodeAttrMap.put(columns[i], "");
 		}
 		// Initialize Times Cited attribute (~ Integer)
 		nodeAttrMap.put(columns[i], 0);
+		// Initialize num pub attribute (~ Integer)
+		nodeAttrMap.put(columns[i+1], 0);
 		// Initialize Publications attribute (~ ArrayList)
-		nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
+		nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
 		return nodeAttrMap;
 	}
 	 
