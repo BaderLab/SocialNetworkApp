@@ -230,7 +230,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private  JButton createHelpButton() {
 		//URL iconURL = Thread.currentThread().getContextClassLoader().getResource("help.png");
-		URL iconURL =this.getClass().getResource("help.png");
+		URL iconURL =this.getClass().getClassLoader().getResource("help.png");
 		ImageIcon iconSearch = new ImageIcon(iconURL);
 		JButton helpButton = new JButton(iconSearch);
 	    helpButton.setBorder(null);
@@ -557,7 +557,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 */
 	private  JButton createSearchButton() {
 		//URL iconURL = Thread.currentThread().getContextClassLoader().getResource("search.png");
-		URL iconURL = this.getClass().getResource("search.png");
+		URL iconURL = this.getClass().getClassLoader().getResource("search.png");
 		ImageIcon iconSearch = new ImageIcon(iconURL);
 		JButton searchButton = new JButton(iconSearch);
 		searchButton.setToolTipText("Search");
