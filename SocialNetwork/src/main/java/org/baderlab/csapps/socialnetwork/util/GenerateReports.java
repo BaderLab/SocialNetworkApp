@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -40,10 +41,16 @@ public class GenerateReports {
 	private HashMap<String,Integer> pubByLocation = new HashMap<String, Integer>();
 	//location -> number of publication (unique location for each publication
 	private HashMap<String,Integer> pubByLocation_unique = new HashMap<String, Integer>();
+	//location -> number of publication (count each distinct location for each publication once.
+	//i.e. publication has a total of 10 authors, 2 from US, 5 from Canada and 3 international add publication count of 1 to US, Canada and international)
+	private HashMap<String,Integer> pubByLocation_distinct = new HashMap<String, Integer>();
 	//location -> number of total citations
-	private HashMap<String,Integer> citationByLocation = new HashMap<String, Integer>();
+	private HashMap<String,Integer> citationsByLocation = new HashMap<String, Integer>();
 	//location -> number of total citations (unique location for each publication
 	private HashMap<String,Integer> citationsByLocation_unique = new HashMap<String, Integer>();
+	//location -> number of total citations (count each distinct location for each publication once. 
+	//i.e. publication has a total of 10 authors, 2 from US, 5 from Canada and 3 international add publication count of 1 to US, Canada and international)
+	private HashMap<String,Integer> citationsByLocation_distinct = new HashMap<String, Integer>();
 		
 	
 	public GenerateReports(ArrayList<Publication> pubs, String outputDir,String networkName) {
@@ -66,22 +73,29 @@ public class GenerateReports {
 	
 		this.calculateTotals();
 		this.calculateTotals_unique();
+		this.calculateTotals_distinct();
 		HashMap<String, String> filenames = new HashMap<String, String>();
 		
 		String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
 		
+		this.generateFiles(this.outputDir,this.networkName + "_pubByLocation_distinct", this.pubByLocation_distinct,"Publications by Location - counting publications once for every distinct location");
+		filenames.put("1a. Pub by location(txt) - distinct locations publication counts", basename + "_pubByLocation_distinct.txt");
+		filenames.put("1b. Pub by location(html) - distinct locations publication counts", basename + "_pubByLocation_distinct.html");		
 		this.generateFiles(this.outputDir,this.networkName + "_pubByLocation", this.pubByLocation,"Publications by Location");
-		filenames.put("1. Pub by location(txt)", basename + "_pubByLocation.txt");
-		filenames.put("2. Pub by location(html)", basename + "_pubByLocation.html");
+		filenames.put("2a. Pub by location(txt)", basename + "_pubByLocation.txt");
+		filenames.put("2b. Pub by location(html)", basename + "_pubByLocation.html");
 		this.generateFiles(this.outputDir,this.networkName + "_pubByLocation_unique", this.pubByLocation_unique,"Publications by Location - counting publications only once");
-		filenames.put("3. Pub by location(txt) - unique publication counts",basename + "_pubByLocation_unique.txt");
-		filenames.put("4. Pub by location(html) - unique publication counts", basename + "_pubByLocation_unique.html");
-		this.generateFiles(this.outputDir,this.networkName + "_citationByLocation", this.citationByLocation,"Citations by Location");
-		filenames.put("5. Citation by location(txt)",basename + "_citationByLocation.txt");
-		filenames.put("6. Citation by location(html)", basename + "_citationByLocation.html");
+		filenames.put("3a. Pub by location(txt) - unique publication counts",basename + "_pubByLocation_unique.txt");
+		filenames.put("3b. Pub by location(html) - unique publication counts", basename + "_pubByLocation_unique.html");
+		this.generateFiles(this.outputDir,this.networkName + "_citationByLocation_distinct", this.citationsByLocation_distinct,"Citations by Location - counting citations once for every distinct location");
+		filenames.put("4a. Citation by location(txt) - distinct locations citation count",basename + "_citationByLocation_distinct.txt");
+		filenames.put("4b. Citation by location(html) - distinct locations citation counts", basename + "_citationByLocation_distinct.html");
+		this.generateFiles(this.outputDir,this.networkName + "_citationByLocation", this.citationsByLocation,"Citations by Location");
+		filenames.put("5a. Citation by location(txt)",basename + "_citationByLocation.txt");
+		filenames.put("5b. Citation by location(html)", basename + "_citationByLocation.html");
 		this.generateFiles(this.outputDir,this.networkName + "_citationByLocation_unique", this.citationsByLocation_unique,"Citations by Location - counting publications only once");
-		filenames.put("7. Citation by location(txt)- unique publication counts",  basename + "_citationByLocation_unique.txt");
-		filenames.put("8. Citation by location(html)- unique publication counts",  basename + "_citationByLocation_unique.html");
+		filenames.put("6a. Citation by location(txt)- unique publication counts",  basename + "_citationByLocation_unique.txt");
+		filenames.put("6b. Citation by location(html)- unique publication counts",  basename + "_citationByLocation_unique.html");
 		
 		return filenames;
 	}
@@ -120,8 +134,52 @@ public class GenerateReports {
 				}
 			}			
 		}
-		this.citationByLocation = citations_summary;
+		this.citationsByLocation = citations_summary;
 		this.pubByLocation = pubs_summary;
+		
+	}
+	/*
+	 * for each publication in the set of publications for this network
+	 * For each publication get its set of Authors.  For each Author get their location 
+	 * For each unique location on the given publication add a count to that location
+	 * (counts will be duplicated but only once per location for each publication.) 
+	 * Do the same for the times cited
+	 * Add up the publications based on distinct locations of a given publication.
+	 */
+	private void calculateTotals_distinct(){
+		HashMap<String,Integer> pubs_summary = new HashMap<String, Integer>();
+		HashMap<String,Integer> citations_summary = new HashMap<String, Integer>();
+		
+		if(this.publications != null){
+			for(Publication pub:this.publications){
+				
+				
+				//for each publication the set of Authors
+				HashSet<String> all_locations = new HashSet<String>();
+				for(Author author:pub.getAuthorList()){
+									
+					String current_location = author.getLocation();
+					if(!all_locations.contains(current_location))  
+						all_locations.add(current_location);
+				}
+				
+				for(String current:all_locations){
+					if(pubs_summary.containsKey(current) && citations_summary.containsKey(current)){
+						Integer pub_count = pubs_summary.get(current) +1;
+						pubs_summary.put(current, pub_count);
+						Integer cit_count = citations_summary.get(current) + pub.getTimesCited();
+						citations_summary.put(current, cit_count);
+					
+					}
+					else{
+						pubs_summary.put(current, 1);
+						citations_summary.put(current,pub.getTimesCited());
+					}
+				}
+			}			
+		}
+		this.citationsByLocation_distinct = citations_summary;
+		this.pubByLocation_distinct = pubs_summary;
 		
 	}
 	

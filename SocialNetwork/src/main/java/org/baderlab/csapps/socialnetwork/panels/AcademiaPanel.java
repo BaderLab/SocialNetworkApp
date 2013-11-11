@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
@@ -21,6 +23,8 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
 
 
@@ -57,12 +61,16 @@ public class AcademiaPanel {
 	 * A reference to the app Manager
 	 */
 	private SocialNetworkAppManager appManager = null;
+	private FileUtil fileUtil = null;
+	protected CySwingApplication cySwingAppRef = null;
 	
 	
 	
-	public AcademiaPanel(SocialNetworkAppManager appManager) {
+	public AcademiaPanel(SocialNetworkAppManager appManager,FileUtil fileUtil, CySwingApplication cySwingAppRef) {
 		super();
 		this.appManager = appManager;
+		this.fileUtil = fileUtil;
+		this.cySwingAppRef = cySwingAppRef;
 	}
 
 	/**
@@ -166,24 +174,24 @@ public class AcademiaPanel {
 		loadButton.addActionListener(new ActionListener() {
 	
 			public void actionPerformed(ActionEvent event) {
-				// Ask user to select the appropriate data file.
-				JFileChooser chooser = new JFileChooser();
-				// Initialize the chooser dialog box to desktop
-				File directory = new File(FileUtil.LAST_DIRECTORY);
-				chooser.setCurrentDirectory(directory);
-				chooser.setDialogTitle("Data Selection");
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int check = chooser.showDialog(null, "OK");
-				// Only attempt to read data file if user clicks "OK"
-				if (check == JFileChooser.APPROVE_OPTION) {
-					File textFile = chooser.getSelectedFile();
-					setDataFile(textFile);
-					getPathTextFieldRef().setText(textFile.getAbsolutePath());
-					getFacultyTextFieldRef().setText(parseFileName(textFile.getAbsolutePath()));
-				} else {
-					setDataFile(null);
-					getPathTextFieldRef().setText(null);
-				}
+			
+				//Use Cytoscape File util package for the file chooser instead of Java's so 
+				//we navigate to last cytoscape known directory. 
+				//Filter - only enable txt, and excel files. 
+				FileChooserFilter filter1 = new FileChooserFilter("text file","txt");
+				FileChooserFilter filter2 = new FileChooserFilter("excel spreadsheet","xls");
+				FileChooserFilter filter3 = new FileChooserFilter("excel spreadsheet","xlsx");
+				FileChooserFilter filter4 = new FileChooserFilter("excel spreadsheet","csv");
+				HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
+				filters.add(filter1);
+				filters.add(filter2);
+				filters.add(filter3);
+				filters.add(filter4);
+				File textFile = fileUtil.getFile( cySwingAppRef.getJFrame(), "Data File Selection",FileUtil.LOAD, filters);
+				
+				setDataFile(textFile);
+				getPathTextFieldRef().setText(textFile.getAbsolutePath());
+				getFacultyTextFieldRef().setText(parseFileName(textFile.getAbsolutePath()));
 			}
 		});
 		return loadButton;

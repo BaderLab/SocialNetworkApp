@@ -330,6 +330,12 @@
 			<version>${cytoscape.api.version}</version>
 			<type>bundle</type>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	
 	<packaging>bundle</packaging>

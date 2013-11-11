@@ -2,11 +2,14 @@ package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.*;
 
+import static org.mockito.Mockito.mock;
 
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Search;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.util.swing.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +20,9 @@ import org.junit.Test;
  */
 public class TestSearch {
 
+	private FileUtil fileUtil = mock(FileUtil.class);
+	private CySwingApplication cySwingAppRef = mock(CySwingApplication.class);
+	
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -32,7 +38,7 @@ public class TestSearch {
 	 */
 	public void testPubmedSearch() {
 		SocialNetworkAppManager appManager = new SocialNetworkAppManager ();
-		appManager.setUserPanelRef(new UserPanel(appManager));
+		appManager.setUserPanelRef(new UserPanel(appManager,fileUtil,cySwingAppRef));
 		Search search = new Search("emili a", Category.ACADEMIA,appManager);
 		int hits = search.getTotalHits();
 		int results = search.getResults().size();

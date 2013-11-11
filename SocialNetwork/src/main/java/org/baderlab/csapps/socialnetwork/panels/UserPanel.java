@@ -46,9 +46,11 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.util.GenerateReports;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.util.swing.FileUtil;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -137,6 +139,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * Reference to the main appManager
 	 */
 	private SocialNetworkAppManager appManager = null;
+	private FileUtil fileUtil = null;
+	private CySwingApplication cySwingAppRef = null;
 	
 	/*
 	 * instance of academia panel
@@ -148,10 +152,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	 * @param null
 	 * @return null
 	 */
-	public UserPanel(SocialNetworkAppManager appManager) {
+	public UserPanel(SocialNetworkAppManager appManager, FileUtil fileUtil, CySwingApplication cySwingAppRef ) {
 		
 		// Save a reference to this panel object
 		this.appManager = appManager;
+		this.fileUtil = fileUtil;
+		this.cySwingAppRef = cySwingAppRef;
 		this.appManager.setUserPanelRef(this);
 		
 		this.setLayout(new BorderLayout());
@@ -165,7 +171,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.add(this.topPanelRef, BorderLayout.NORTH);
 		
 		// Add the default info panel (Academia)
-		this.academiaPanel = new AcademiaPanel(appManager);
+		this.academiaPanel = new AcademiaPanel(appManager,this.fileUtil, this.cySwingAppRef);
 		this.setSelectedInfoPanel(this.academiaPanel.createAcademiaInfoPanel());
 		this.add(this.infoPanelRef, BorderLayout.CENTER);
 		

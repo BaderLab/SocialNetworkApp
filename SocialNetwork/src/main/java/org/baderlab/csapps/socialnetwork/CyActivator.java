@@ -18,6 +18,7 @@ import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -64,6 +65,8 @@ public class CyActivator extends AbstractCyActivator {
 		CyLayoutAlgorithmManager cyLayoutManagerServiceRef = getService(bc, CyLayoutAlgorithmManager.class);
 		
 		VisualStyleFactory visualStyleFactoryServiceRef = getService(bc,VisualStyleFactory.class);
+		
+		FileUtil fileUtil = getService(bc, FileUtil.class);
 		
 		//open browser used by about  panel,
 		OpenBrowser openBrowserRef = getService(bc, OpenBrowser.class);
@@ -138,7 +141,7 @@ public class CyActivator extends AbstractCyActivator {
 		appManager.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
 		
 		// Create & register new menu item (for opening /closing main app panel)
-		UserPanel userPanel = new UserPanel(appManager);
+		UserPanel userPanel = new UserPanel(appManager,fileUtil,cySwingApplicationServiceRef);
 		
 		Map<String, String> serviceProperties = new HashMap<String, String>();
 		serviceProperties.put("inMenuBar", "true");
