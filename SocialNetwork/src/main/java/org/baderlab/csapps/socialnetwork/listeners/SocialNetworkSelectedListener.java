@@ -31,7 +31,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 			// Update UI iff a social network has been selected
 			if (this.appManager.getSocialNetworkMap().containsKey(name)) {
 				SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-				this.userPanel.updateNetworkSummaryPanel(socialNetwork);
+				this.userPanel.updateNetworkSummaryPanel(socialNetwork);				
 				this.userPanel.addNetworkVisualStyle(socialNetwork);
 				this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
 				return;
@@ -39,6 +39,6 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
 		}
 		this.appManager.setCurrentlySelectedSocialNetwork(null);
 		this.userPanel.addNetworkVisualStyle(null);
-		this.userPanel.updateNetworkSummaryPanel(null);
+		this.userPanel.updateNetworkSummaryPanel(null);	
 	}
 }

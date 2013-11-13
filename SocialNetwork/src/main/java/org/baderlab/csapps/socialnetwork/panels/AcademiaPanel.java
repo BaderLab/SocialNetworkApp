@@ -13,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import javax.swing.JRadioButton;
@@ -179,9 +178,9 @@ public class AcademiaPanel {
 				//we navigate to last cytoscape known directory. 
 				//Filter - only enable txt, and excel files. 
 				FileChooserFilter filter1 = new FileChooserFilter("text file","txt");
-				FileChooserFilter filter2 = new FileChooserFilter("excel spreadsheet","xls");
-				FileChooserFilter filter3 = new FileChooserFilter("excel spreadsheet","xlsx");
-				FileChooserFilter filter4 = new FileChooserFilter("excel spreadsheet","csv");
+				FileChooserFilter filter2 = new FileChooserFilter("excel spreadsheet(xls)","xls");
+				FileChooserFilter filter3 = new FileChooserFilter("excel spreadsheet(xlsx)","xlsx");
+				FileChooserFilter filter4 = new FileChooserFilter("excel spreadsheet(csv)","csv");
 				HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
 				filters.add(filter1);
 				filters.add(filter2);

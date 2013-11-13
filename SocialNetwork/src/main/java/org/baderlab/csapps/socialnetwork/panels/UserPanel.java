@@ -12,11 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -346,7 +343,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 			
 		}
 		
-		this.updateNetworkSummaryPanel(socialNetwork);
+		this.updateNetworkSummaryPanel(socialNetwork);		
 		this.addNetworkVisualStyle(socialNetwork);
 		
 		this.getNetworkPanelRef().revalidate();

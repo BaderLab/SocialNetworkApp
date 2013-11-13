@@ -54,7 +54,7 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
 				this.appManager.setCurrentlySelectedSocialNetwork(null);
 				this.userPanel.addNetworkVisualStyle(null);
-				this.userPanel.updateNetworkSummaryPanel(null);
+				this.userPanel.updateNetworkSummaryPanel(null);				
 			}
 		}
 	}
