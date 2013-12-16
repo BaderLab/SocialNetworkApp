@@ -117,7 +117,7 @@ public class Scopus {
 	 */
 	private ArrayList<Author> parseAuthors(String authors) {
 		ArrayList<Author> authorList = new ArrayList<Author>();
-		String[] contents = authors.split(",");
+		String[] contents = authors.split("\\.,");
 		for (String authorInfo : contents) {
 			authorList.add(new Author(authorInfo.trim(), Category.SCOPUS));
 		}

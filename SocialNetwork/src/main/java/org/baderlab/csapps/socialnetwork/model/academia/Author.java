@@ -110,7 +110,7 @@ public class Author extends AbstractNode {
 			case Category.SCOPUS:
 				// Initialize attribute map for Scopus author
 				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
-				String[] scopusNames = rawAuthorText.split("\\s");
+				String[] scopusNames = rawAuthorText.split("\\s|,");
 				if (scopusNames.length == 1) {
 					this.setLastName(scopusNames[0]);
 				} else  {
