@@ -78,21 +78,27 @@ public class Scopus {
 			// Parse for publications
 			while (in.hasNext()) {
 				line = in.nextLine();
-				columns = line.split("\",|,\"");
-				authors = columns[0].substring(1);
+				//only split by commas not contained in quotes.
+				//columns = line.split("(,)(?=(?:[^\"]|\"[^\"]*\")*$)");
+				columns = splitQuoted("\"",",",line);
+				//columns = line.split("\",|,\"");
+				authors = columns[0].replace("\"", "");
 				coauthorList = this.parseAuthors(authors);
-				title = columns[1].substring(1);
-				year = columns[2];
+				title = columns[1].replace("\"", "");
+				year = columns[2].replace("\"", "");
 				if (! this.matchYear(year)) {
-					throw new UnableToParseYearException();
+					//the year doesn't match assume something is wonky with this line
+					//skip this record, print out the line and continue
+					System.out.println("unable to parse scopus line: " + line.toString());
+					continue;
+					//throw new UnableToParseYearException();
 				}
-				subjectArea = columns[3];
-				numericalData = columns[4];
-				lastIndex = numericalData.lastIndexOf(",");
-				if (lastIndex == numericalData.length() - 1) {
+				subjectArea = columns[3].replace("\"", "");
+				numericalData = (columns[10] != null) ? columns[10].replace("\"", ""):columns[10];
+				if (numericalData == null || numericalData.equalsIgnoreCase("")) {
 					timesCited = "0";
 				} else {
-					timesCited = numericalData.substring(lastIndex + 1);
+					timesCited = numericalData;
 				}
 				pub = new Publication(title, year, subjectArea, 
 						timesCited, null, coauthorList);
@@ -102,14 +108,48 @@ public class Scopus {
 			e.printStackTrace();
 			CytoscapeUtilities.notifyUser("Unable to locate Scopus data file.\nPlease re-load" +
 					             " file and try again.");
-		} catch (UnableToParseYearException e) {
+		} /*catch (UnableToParseYearException e) {
 			this.setPubList(null);
 			e.printStackTrace();
 			CytoscapeUtilities.notifyUser("Scopus data file is corrupt.\nPlease load" +
 		             " a valid file and try again.");
-		}
+		}*/
 	}
 
+	private String[] splitQuoted(String quote, String separator, String s){
+		
+		//scopus file has 14 fields.
+		String[] columns = new String[14];
+		int current = 0;
+		int index = 0;
+		int startindex = 0;
+		int firstquote = s.indexOf(quote);
+		int nextquote = s.indexOf(quote, current +1);
+		int nextcomma = s.indexOf(separator);
+		while(current < s.length() && index < 14){
+		
+			if(nextcomma > current && (nextcomma < firstquote || nextcomma > nextquote)){
+				columns[index] = (s.substring(startindex,nextcomma));
+				startindex = nextcomma+1;
+				index++;
+			}
+			
+			current = nextcomma;
+			nextcomma = s.indexOf(separator, current+1);
+			//if next comma is -1 then we have gotten to end of the string. 
+			nextcomma = (nextcomma == -1)? s.length():nextcomma;
+			
+			if(current > nextquote){
+				firstquote = s.indexOf(quote, nextquote+1);
+				nextquote = s.indexOf(quote,firstquote+1);
+			}
+			
+		}
+		return columns;
+			
+			
+	}
+	
 	/**
 	 * Return authors
 	 * @param String authors
