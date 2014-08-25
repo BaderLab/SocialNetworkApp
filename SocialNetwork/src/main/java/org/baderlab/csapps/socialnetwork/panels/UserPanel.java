@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -155,7 +156,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.appManager = appManager;
 		this.fileUtil = fileUtil;
 		this.cySwingAppRef = cySwingAppRef;
-		this.appManager.setUserPanelRef(this);
 		
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(400,200));
@@ -168,14 +168,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 		this.add(this.topPanelRef, BorderLayout.NORTH);
 		
 		// Add the default info panel (Academia)
-		this.academiaPanel = new AcademiaPanel(appManager,this.fileUtil, this.cySwingAppRef);
+		this.academiaPanel = new AcademiaPanel(appManager, this.fileUtil, this.cySwingAppRef);
 		this.setSelectedInfoPanel(this.academiaPanel.createAcademiaInfoPanel());
 		this.add(this.infoPanelRef, BorderLayout.CENTER);
 		
 		// Add bottom panel
 		this.add(this.createBottomPanel(), BorderLayout.SOUTH);
-		
-		
 		
 	}
 
@@ -1182,7 +1180,5 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 	public void setAcademiaPanel(AcademiaPanel academiaPanel) {
 		this.academiaPanel = academiaPanel;
 	}
-	
-	
 
 }

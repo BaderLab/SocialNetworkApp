@@ -1,27 +1,14 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
-import java.awt.Color;
 import java.awt.Cursor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyTable;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
-import org.cytoscape.view.presentation.property.values.NodeShape;
 
 public class SocialNetworkAddedListener implements NetworkAddedListener {
 	

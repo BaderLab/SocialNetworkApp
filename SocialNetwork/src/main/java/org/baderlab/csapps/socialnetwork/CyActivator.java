@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator {
+	
 	public CyActivator() {
 		super();
 	}
@@ -91,6 +92,24 @@ public class CyActivator extends AbstractCyActivator {
 		//TODO:Change name of class 
 		SocialNetworkAppManager appManager = new SocialNetworkAppManager();
 		
+		// Create & register new menu item (for opening /closing main app panel)
+		UserPanel userPanel = new UserPanel(appManager,fileUtil,cySwingApplicationServiceRef);
+		
+		Map<String, String> serviceProperties = new HashMap<String, String>();
+		serviceProperties.put("inMenuBar", "true");
+		serviceProperties.put("preferredMenu", "Apps.Social Network");
+		ShowUserPanelAction userPanelAction = new ShowUserPanelAction(serviceProperties, 
+		  cyApplicationManagerServiceRef, 
+		  cyNetworkViewManagerServiceRef, 
+		  cySwingApplicationServiceRef, 
+		  cyServiceRegistrarRef, userPanel);		
+		
+		registerService(bc, userPanelAction, CyAction.class, new Properties());	
+		
+		//add panel and action to the manager
+		appManager.setUserPanelRef(userPanel);		
+		appManager.setUserPanelAction(userPanelAction);
+		
 		//instantiate an instance of CytoscapeUtilities (to populate static fields with version information)
 		CytoscapeUtilities utils = new CytoscapeUtilities();
 		
@@ -125,7 +144,7 @@ public class CyActivator extends AbstractCyActivator {
 		DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef,appManager);
 		registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
 		
-		// Add dependencies to class Cytoscape
+		// Add dependencies to app manager
 		// NOTE: Using setters violates dependency injection		
 				
 		appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
@@ -139,25 +158,6 @@ public class CyActivator extends AbstractCyActivator {
 		appManager.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
 
 		appManager.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
-		
-		// Create & register new menu item (for opening /closing main app panel)
-		UserPanel userPanel = new UserPanel(appManager,fileUtil,cySwingApplicationServiceRef);
-		
-		Map<String, String> serviceProperties = new HashMap<String, String>();
-		serviceProperties.put("inMenuBar", "true");
-		serviceProperties.put("preferredMenu", "Apps.Social Network");
-		ShowUserPanelAction userPanelAction = new ShowUserPanelAction(serviceProperties, 
-				                                              cyApplicationManagerServiceRef, 
-				                                              cyNetworkViewManagerServiceRef, 
-				                                              cySwingApplicationServiceRef, 
-				                                              cyServiceRegistrarRef, userPanel);		
-		
-		registerService(bc, userPanelAction, CyAction.class, new Properties());	
-		
-		//add panel and action to the manager
-		appManager.setUserPanelRef(userPanel);		
-		appManager.setUserPanelAction(userPanelAction);
-		
 		
 		//About Action
 		serviceProperties = new HashMap<String, String>();

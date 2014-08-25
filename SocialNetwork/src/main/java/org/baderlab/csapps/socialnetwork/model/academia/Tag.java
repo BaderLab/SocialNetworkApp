@@ -12,7 +12,7 @@ public class Tag {
 	 * @return String query
 	 */
 	public static String augmentQueryKey(String query, String queryKey) {
-		return query += "&query_key=" + queryKey;
+		return String.format("%s&query_key=%s", query, queryKey);
 	}
 	
 	/**
@@ -22,7 +22,7 @@ public class Tag {
 	 * @return String query
 	 */
 	public static String augmentWebEnv(String query, String webEnv) {
-		return query += "&WebEnv=" + webEnv;
+		return String.format("%s&WebEnv=%s", query, webEnv);
 	}
 	
 	/**

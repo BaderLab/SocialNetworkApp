@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 
   
 /**

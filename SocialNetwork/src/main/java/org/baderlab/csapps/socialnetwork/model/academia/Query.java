@@ -1,17 +1,19 @@
 package org.baderlab.csapps.socialnetwork.model.academia;
 
+
 /**
  * A PubMed Entrez query
  * @author Victor Kofia
  */
 public class Query {
+  
 	/**
 	 * Augment query with server history tag
 	 * @param String query
 	 * @return String query
 	 */
-	public static String augmentHistory(String query) {
-		return query + "&usehistory=y";
+	private String augmentHistory(String query) {
+		return String.format("%s&usehistory=y", query);
 	}
 	
 	/**
@@ -20,11 +22,11 @@ public class Query {
 	 * @param String journal
 	 * @return String query
 	 */
-	public static String augmentJournal(String query, String journal) {
+	private String augmentJournal(String query, String journal) {
 		if (journal.trim().isEmpty()) {
 			return query;
 		}
-		return journal.toLowerCase() + "[journal]+AND+" + query;
+		return String.format("%s[journal]+AND+%s", journal.toLowerCase(), query);
 	}
 	
 	/**
@@ -33,11 +35,11 @@ public class Query {
 	 * @param String limit
 	 * @return String query
 	 */
-	public static String augmentLimit(String query, String limit) {
+	private String augmentLimit(String query, String limit) {
 		if (limit.trim().isEmpty()) {
 			return query;
 		}
-		return query + "&retmax=" + limit;
+		return String.format("%s&retmax=%s", query, limit);
 	}
 	
 	/**
@@ -46,11 +48,11 @@ public class Query {
 	 * @param String year
 	 * @return String query
 	 */
-	public static String augmentYear(String query, String year) {
+	private String augmentYear(String query, String year) {
 		if (year.trim().isEmpty()) {
 			return query;
 		}
-		return query + "+AND+" + year + "[pdat]";
+		return String.format("%s+AND+%s[pdat]", query, year);
 	}
 	
 	/**
@@ -65,8 +67,8 @@ public class Query {
 	 */
 	public Query(String rawQuery) {
 		rawQuery = rawQuery.replace(",", "");
-		rawQuery = rawQuery.replace("\\s", "+");
-		this.query = Query.augmentHistory(rawQuery);
+		rawQuery = rawQuery.replace(" ", "+");
+		this.query = augmentHistory(rawQuery);
 	}
 	
 	/**
@@ -79,11 +81,11 @@ public class Query {
 	 * @return null
 	 */
 	public Query(String rawQuery, String journal, String year, String limit) {
-		rawQuery = rawQuery.replace("\\s", "+");
-		rawQuery = Query.augmentYear(rawQuery, year);
-		rawQuery = Query.augmentJournal(rawQuery, journal);
-		rawQuery = Query.augmentHistory(rawQuery);
-		this.query = Query.augmentLimit(rawQuery, limit);	
+		rawQuery = rawQuery.replace(" ", "+");
+		rawQuery = augmentYear(rawQuery, year);
+		rawQuery = augmentJournal(rawQuery, journal);
+		rawQuery = augmentHistory(rawQuery);
+		this.query = augmentLimit(rawQuery, limit);	
 	}
 	
 	/**

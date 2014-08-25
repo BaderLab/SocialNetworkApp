@@ -3,11 +3,9 @@ package org.baderlab.csapps.socialnetwork.model;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;

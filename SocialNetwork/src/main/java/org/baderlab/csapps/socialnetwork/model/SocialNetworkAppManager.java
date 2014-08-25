@@ -10,19 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
-import org.baderlab.csapps.socialnetwork.panels.AcademiaPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -275,7 +269,7 @@ public class SocialNetworkAppManager {
 			return;
 		}
 		// Create new search session
-		Search search = new Search(searchTerm, category,this);
+		Search search = new Search(searchTerm, category, this);
 		// Get a list of the results that are going to serve as edges. Exact result type
 		// may vary with website
 		List<? extends AbstractEdge> results = (List<? extends AbstractEdge>) search.getResults();
@@ -414,7 +408,7 @@ public class SocialNetworkAppManager {
 	}
 
 	/**
-	 * Get network to be destroyed
+	 * The network that is about to be destroyed
 	 * @param null
 	 * @return CyNetwork networkToBeDestroyed
 	 */
@@ -485,7 +479,7 @@ public class SocialNetworkAppManager {
 	 * @return UserPanel userPanelRef
 	 */
 	public  UserPanel getUserPanelRef() {
-		return userPanelRef;
+		return this.userPanelRef;
 	}
 
 	/**
@@ -590,7 +584,7 @@ public class SocialNetworkAppManager {
 	}
 	
 	/**
-	 * Set network to be destroyed
+	 * Set the network that is about to be destroyed
 	 * @param CyNetwork networkToBeDestroyed
 	 * @return null
 	 */

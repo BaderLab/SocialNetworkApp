@@ -15,7 +15,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
-/*
+/**
  * Given a set of publications generate all relevant reports and save the reports into a temporary directory
  * Reports:
  *  1. NetworkName_pubByLocation.txt

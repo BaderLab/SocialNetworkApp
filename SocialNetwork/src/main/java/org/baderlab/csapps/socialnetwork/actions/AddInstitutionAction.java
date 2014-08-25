@@ -1,13 +1,9 @@
 package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,9 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
@@ -70,25 +64,6 @@ public class AddInstitutionAction extends AbstractCyAction {
 		this.setLocationSet(set);
 	}
 	
-	/**
-	 * Save map to file
-	 * @param File file
-	 * @return null
-	 */
-	private void saveMap(File file, Map<String, String> map) {
-		// Save map (to Cytoscape directory)
-		try {
-			FileOutputStream fout = new FileOutputStream(file.getAbsolutePath());
-			ObjectOutputStream oos = new ObjectOutputStream(fout);   
-			oos.writeObject(map);
-			oos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void actionPerformed(ActionEvent arg0) {
 		JTextField institutionTextField = new JTextField(5);
 		JTextField locationTextField = new JTextField(5);
@@ -142,7 +117,8 @@ public class AddInstitutionAction extends AbstractCyAction {
 				// Get map file in jar
 				InputStream in = Incites_InstitutionLocationMap.class.getClassLoader().getResourceAsStream("map.sn");
 				ObjectInputStream ois = new ObjectInputStream(in);
-				Map<String, String> map = (HashMap<String, String>) ois.readObject();
+				@SuppressWarnings("unchecked")
+        Map<String, String> map = (HashMap<String, String>) ois.readObject();
 				// Add insitution / location info to map
 				map.put(institution, location);
 				

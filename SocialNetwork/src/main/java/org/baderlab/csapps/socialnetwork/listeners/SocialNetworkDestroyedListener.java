@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
-
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
@@ -45,12 +44,15 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
 	
 	public void handleEvent(NetworkAboutToBeDestroyedEvent event) {
 		String name = this.appManager.getNetworkName(event.getNetwork());
-		if (this.appManager.getSocialNetworkMap().containsKey(name)) {
+		Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
+		if (map.containsKey(name)) {
+      map.remove(name);
   			// Remove network from table
-			DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
-			model.removeRow(getRow(model, name));
-			Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
-			map.remove(name);
+		  DefaultTableModel  model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();		    
+			int row = getRow(model, name);
+			if (row > -1) {
+			  model.removeRow(getRow(model, name));			  
+			}
 			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
 				this.appManager.setCurrentlySelectedSocialNetwork(null);
 				this.userPanel.addNetworkVisualStyle(null);

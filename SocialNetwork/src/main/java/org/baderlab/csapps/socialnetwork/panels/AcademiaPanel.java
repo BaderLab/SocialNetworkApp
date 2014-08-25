@@ -14,14 +14,11 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;

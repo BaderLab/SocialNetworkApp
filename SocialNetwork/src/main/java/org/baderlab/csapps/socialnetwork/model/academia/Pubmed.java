@@ -10,7 +10,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -83,10 +82,9 @@ public class Pubmed {
 			// Create new SAXParser
 			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 			// Get Query Key & Web Env
-			saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez" +
-	        "/eutils/esearch.fcgi?db=pubmed&term=" + query, getSearchHandler());
-			System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez" +
-	        "/eutils/esearch.fcgi?db=pubmed&term=" + query);
+			String url = String.format
+			("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
+			saxParser.parse(url, getSearchHandler());
 			// Once all required fields have been filled commit to search
 			commitPubMedSearch();
 		} catch (ParserConfigurationException e) {
@@ -109,7 +107,7 @@ public class Pubmed {
 	 * @param null
 	 * @return null
 	 */
-	public void commitPubMedSearch() {
+	private void commitPubMedSearch() {
 		try {
 			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 			if (Integer.parseInt(totalPubs) > 500) {
@@ -122,10 +120,9 @@ public class Pubmed {
 				// Use newly discovered queryKey and webEnv to build a tag
 				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
 				// Load all publications at once
-				saxParser.parse("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
-					"/esummary.fcgi?db=pubmed" + tag , getPublicationHandler());
-				System.out.println("http://eutils.ncbi.nlm.nih.gov/entrez/eutils" +
-					"/esummary.fcgi?db=pubmed" + tag);
+				String url = String.format
+				("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+				saxParser.parse(url, getPublicationHandler());
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -157,7 +154,7 @@ public class Pubmed {
 	 * @param null
 	 * @return DefaultHandler publicationHandler
 	 */
-	public DefaultHandler getPublicationHandler() {
+	private DefaultHandler getPublicationHandler() {
 		DefaultHandler publicationHandler = new DefaultHandler() {
 			
 			/**
@@ -247,7 +244,7 @@ public class Pubmed {
 	 * @param null
 	 * @return DefaultHandler searchHandler
 	 */
-	public DefaultHandler getSearchHandler() throws SAXException, 
+	private DefaultHandler getSearchHandler() throws SAXException, 
 	                                                IOException, 
 	                                                ParserConfigurationException {
 		DefaultHandler searchHandler = new DefaultHandler() {
@@ -308,11 +305,7 @@ public class Pubmed {
  	 * @return int totalPubs
  	 */
  	public int getTotalPubs() {
- 		if (totalPubs == null) {
- 			return -1;
- 		} else {
- 			return Integer.parseInt(this.totalPubs);
- 		}
+ 		return totalPubs != null ? Integer.parseInt(this.totalPubs) : -1;
  	}
  	
 }
