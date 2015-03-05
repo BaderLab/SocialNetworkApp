@@ -1,5 +1,7 @@
 package org.baderlab.csapps.socialnetwork.model.academia;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,9 @@ public class Pubmed {
 	 * multiple additions in to a publication
 	 */
 	private Author author = null;
+	private String lastName = null;
+	private String firstName = null;
+	private String middleInitials = null;
 	/**
  	 * A publication's journal
  	 */
@@ -71,34 +76,51 @@ public class Pubmed {
 	private String webEnv = null;
 	
 	/**
+	 * Variable to indicate that pubmed search should be done.  
+	 */
+	private boolean search = true;
+	private String filename = "";
+	
+	/**
 	 * Create a new Pubmed search session
 	 * @param String searchTerm
 	 * @return null
 	 */
 	public Pubmed(String searchTerm) {
- 		//Query
-		Query query = new Query(searchTerm);
-		try {
-			// Create new SAXParser
-			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-			// Get Query Key & Web Env
-			String url = String.format
-			("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
-			saxParser.parse(url, getSearchHandler());
-			// Once all required fields have been filled commit to search
-			commitPubMedSearch();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
+		
+		if(searchTerm.endsWith(".xml")){
+			search = false;
+			filename = searchTerm;
+		}
+		if(search){
+		
+			//Query
+			Query query = new Query(searchTerm);
+			try {
+				// Create new SAXParser
+				SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+				// Get Query Key & Web Env
+				String url = String.format
+						("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
+				saxParser.parse(url, getSearchHandler());
+				// Once all required fields have been filled commit to search
+				commitPubMedSearch();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
-		} catch (SAXException e) {
-			e.printStackTrace();
-			CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
+			} catch (SAXException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " +
 		             "try again some other time.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " +
+			} catch (IOException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " +
 		             "internet connection.");
+			}
+		}
+		else{
+			commitPubMedSearch();
 		}
 	}
  	
@@ -110,19 +132,25 @@ public class Pubmed {
 	private void commitPubMedSearch() {
 		try {
 			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-			if (Integer.parseInt(totalPubs) > 500) {
-				// WIP (Work In Progress)
-				// On the event that a search yields 500+ publications, these publications will
-				// need to be accessed incrementally as pubmed places sanctions on users with
-				// extremely large requests
+			if(search){
+				if (Integer.parseInt(totalPubs) > 500) {
+					// WIP (Work In Progress)
+					// On the event that a search yields 500+ publications, these publications will
+					// need to be accessed incrementally as pubmed places sanctions on users with
+					// extremely large requests
+				}
+				else {
+					// Use newly discovered queryKey and webEnv to build a tag
+					Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
+					// Load all publications at once
+					String url = String.format
+							("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+					saxParser.parse(url, getPublicationHandler());
+				}
 			}
-			else {
-				// Use newly discovered queryKey and webEnv to build a tag
-				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-				// Load all publications at once
-				String url = String.format
-				("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-				saxParser.parse(url, getPublicationHandler());
+			else{
+				File XmlFile = new File(filename);
+				saxParser.parse(XmlFile, getPublicationHandlerFile());
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -216,6 +244,134 @@ public class Pubmed {
 				if (qName.equalsIgnoreCase("DocSum")) {
 					pubList.add(new Publication(title, pubDate, journal, timesCited, null, pubAuthorList));
 					pubAuthorList.clear();
+				}
+			}
+			
+			/**
+			 * Returns true iff attributes contains the specified  text
+			 * @param Attribute attributes
+			 * @param String text
+			 * @return Boolean bool
+			 */
+			public boolean contains(Attributes attributes, String text) {
+				for (int i = 0; i < attributes.getLength(); i++) {
+					if(attributes.getValue(i).equalsIgnoreCase(text)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		
+		return publicationHandler;
+		
+	}
+	
+	/**
+	 * Get publication handler
+	 * @param null
+	 * @return DefaultHandler publicationHandler
+	 */
+	private DefaultHandler getPublicationHandlerFile() {
+		DefaultHandler publicationHandler = new DefaultHandler() {
+			
+			/**
+			 * XML Parsing variables. Used to temporarily store data.
+			 */
+			boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, 
+					isTimesCited = false,isFirstName = false, isLastName=false,isMiddleInitial = false;
+			
+			// Reset variable contents
+			public void startElement(String uri, String localName, String qName, Attributes attributes) 
+					                                                              throws SAXException {
+				if (qName.equals( "Author")) {
+					isAuthor = true;
+				}
+				if (qName.equals( "LastName")) {
+					isLastName = true;
+				}
+				if (qName.equals( "ForeName")) {
+					isFirstName = true;
+				}
+				if (qName.equals( "Initials")) {
+					isMiddleInitial = true;
+				}
+				if (qName.equals("Title")) {
+					isJournal = true;
+				}
+				if (qName.equals( "PubDate")) {
+					isPubDate = true;
+				}
+				if (qName.equals( "ArticleTitle")) {
+					isTitle = true;
+				}
+				if (qName.equals( "PmcRefCount")) {
+					isTimesCited = true;
+				}
+			}
+			
+			// Collect tag contents (if applicable)
+			public void characters(char ch[], int start, int length) throws SAXException {
+				if (isPubDate) {
+					pubDate = new String(ch, start, length);
+					isPubDate = false;
+				}
+				if (isAuthor) {
+					author = new Author(new String(ch, start, length), Category.PUBMED);
+					isAuthor = false;
+				}
+				if (isFirstName) {
+					firstName = new String(ch, start, length);
+					isFirstName = false;					
+				}
+				if (isLastName) {
+					lastName = new String(ch, start, length);
+					isLastName = false;					
+				}
+				if (isMiddleInitial) {
+					middleInitials = new String(ch, start, length);
+					isMiddleInitial = false;					
+				}
+				if (isJournal) {
+					journal = new String(ch, start, length);
+					isJournal = false;
+				}
+				if (isTitle) {
+					title = new String(ch, start, length);
+					isTitle = false;
+				}
+				if (isTimesCited) {
+					timesCited = new String(ch, start, length);
+					isTimesCited = false;
+				}
+			}
+			
+			// Create new publication and add it to overall publist
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (qName.equalsIgnoreCase("PubmedArticle")) {
+					//only add the publication if it has less than 30 authors
+					if(pubAuthorList.size()<=270){
+						pubList.add(new Publication(title, pubDate, journal, timesCited, null, pubAuthorList));
+						pubAuthorList.clear();
+					}
+					else{
+						System.out.println(title + ";; with ;;" + pubAuthorList.size() + " authors");
+						pubAuthorList.clear();
+					}
+				}
+				if(qName.equals("Author")){
+					//add the firstname,lastname, initial to the author
+					author.setFirstName(firstName);
+					author.setLastName(lastName);
+					author.setMiddleInitial(middleInitials);
+					author.setFirstInitial(firstName.substring(0,1));
+					author.setLabel(author.getFirstInitial() + " " + author.getLastName());
+					
+					// Add author to publication author list
+					if (! pubAuthorList.contains(author)) {						
+						pubAuthorList.add(author);
+					}
+					
 				}
 			}
 			

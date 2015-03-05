@@ -594,7 +594,7 @@ public class Author extends AbstractNode {
 	 * @param String firstName
 	 * @return null
 	 */
-	private void setFirstName(String firstName) {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_fname, firstName);
 	}
@@ -604,7 +604,7 @@ public class Author extends AbstractNode {
 	 * @param String lastName
 	 * @return null
 	 */
-	private void setLastName(String lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 		this.getNodeAttrMap().put("Last Name", lastName);
 	}
@@ -614,7 +614,7 @@ public class Author extends AbstractNode {
 	 * @param String middleInitial
 	 * @return null
 	 */
-	private void setMiddleInitial(String middleInitial) {
+	public void setMiddleInitial(String middleInitial) {
 		this.middleInitial = middleInitial;
 	}
 	
