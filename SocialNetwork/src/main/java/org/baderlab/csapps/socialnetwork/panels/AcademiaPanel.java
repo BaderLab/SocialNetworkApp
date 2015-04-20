@@ -1,3 +1,40 @@
+/**
+ **                       SocialNetwork Cytoscape App
+ **
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Research, University of Toronto
+ **
+ ** Contact: http://www.baderlab.org
+ **
+ ** Code written by: Victor Kofia, Ruth Isserlin
+ ** Authors: Victor Kofia, Ruth Isserlin, Gary D. Bader
+ **
+ ** This library is free software; you can redistribute it and/or modify it
+ ** under the terms of the GNU Lesser General Public License as published
+ ** by the Free Software Foundation; either version 2.1 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This library is distributed in the hope that it will be useful, but
+ ** WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
+ ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
+ ** documentation provided hereunder is on an "as is" basis, and
+ ** University of Toronto
+ ** has no obligations to provide maintenance, support, updates, 
+ ** enhancements or modifications.  In no event shall the
+ ** University of Toronto
+ ** be liable to any party for direct, indirect, special,
+ ** incidental or consequential damages, including lost profits, arising
+ ** out of the use of this software and its documentation, even if
+ ** University of Toronto
+ ** has been advised of the possibility of such damage.  
+ ** See the GNU Lesser General Public License for more details.
+ **
+ ** You should have received a copy of the GNU Lesser General Public License
+ ** along with this library; if not, write to the Free Software Foundation,
+ ** Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ **
+ **/
+
 package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
@@ -60,9 +97,13 @@ public class AcademiaPanel {
 	private FileUtil fileUtil = null;
 	protected CySwingApplication cySwingAppRef = null;
 	
-	
-	
-	public AcademiaPanel(SocialNetworkAppManager appManager,FileUtil fileUtil, CySwingApplication cySwingAppRef) {
+	/**
+	 * 
+	 * @param {@link SocialNetworkAppManager} appManager
+	 * @param {@link FileUtil} fileUtil
+	 * @param {@link CySwingApplication} cySwingAppRef
+	 */
+	public AcademiaPanel(SocialNetworkAppManager appManager, FileUtil fileUtil, CySwingApplication cySwingAppRef) {
 		super();
 		this.appManager = appManager;
 		this.fileUtil = fileUtil;
@@ -73,7 +114,7 @@ public class AcademiaPanel {
 	 * Create academia info panel. In addition to Pubmed specific features, 
 	 * this panel will also enable users to load Incites data.
 	 * @param null
-	 * @return JPanel academiaInfoPanel
+	 * @return {@link JPanel} academiaInfoPanel
 	 */
 	public  JPanel createAcademiaInfoPanel() {
 		JPanel academiaInfoPanel = new JPanel();
@@ -91,7 +132,7 @@ public class AcademiaPanel {
 	 * Create Database info panel.
 	 * Allows user to load Incites or Scopus derived data files
 	 * @param null
-	 * @return JPanel databaseInfoPanel
+	 * @return {@link JPanel} databaseInfoPanel
 	 */
 	public  JPanel createDatabaseInfoPanel() {
 	
@@ -124,7 +165,7 @@ public class AcademiaPanel {
 	/**
 	 * Create database panel
 	 * @param null
-	 * @return JPanel databasePanel
+	 * @return {@link JPanel} databasePanel
 	 */
 	 public JPanel createDatabasePanel() {
 		JPanel databasePanel = new JPanel();
@@ -158,7 +199,7 @@ public class AcademiaPanel {
 	/**
 	 *Create load button. Load button loads data file onto Cytoscape for parsing
 	 *@param null
-	 *@return JButton load
+	 *@return {@link JButton} load
 	 */
 	public  JButton createLoadButton() {
 	
@@ -197,7 +238,7 @@ public class AcademiaPanel {
 	 * Create new load data panel. Allows user to specify path
 	 * of desired data file
 	 * @param null
-	 * @return JPanel loadDataPanel
+	 * @return {@link JPanel} loadDataPanel
 	 */
 	public  JPanel createLoadDataPanel() {
 		JPanel loadDataPanel = new JPanel();
@@ -219,7 +260,7 @@ public class AcademiaPanel {
 	 * attempts to create a network out of a file specified
 	 * by the user.
 	 * @param null
-	 * @return JButton createNetworkButton
+	 * @return {@link JButton} createNetworkButton
 	 */
 	public  JButton createNetworkButton() {
 		JButton createNetworkButton = new JButton("Create Network");
@@ -266,7 +307,7 @@ public class AcademiaPanel {
 
 	/**Create specify network name panel. 
 	 * @param null
-	 * @return JPanel networkNamePanel
+	 * @return {@link JPanel} networkNamePanel
 	 */
 	public  JPanel createSpecifyNetworkNamePanel() {
 		JPanel specifyNetworkNamePanel = new JPanel();
@@ -283,7 +324,7 @@ public class AcademiaPanel {
 	/**
 	 * Get academia info panel reference
 	 * @param null
-	 * @return JPanel academiaInfoPanelRef
+	 * @return {@link JPanel} academiaInfoPanelRef
 	 */
 	public  JPanel getAcademiaInfoPanelRef() {
 		return this.academiaInfoPanelRef;
@@ -291,7 +332,7 @@ public class AcademiaPanel {
 	/**
 	 * Get faculty text field
 	 * @param null
-	 * @return JTextField facultyTextField
+	 * @return {@link JTextField} facultyTextField
 	 */
 	public  JTextField getFacultyTextFieldRef() {
 		return this.facultyTextFieldRef;
@@ -300,7 +341,7 @@ public class AcademiaPanel {
 	/**
 	 * Get path text field
 	 * @param null
-	 * @return JTextField pathTextField
+	 * @return {@link JTextField} pathTextField
 	 */
 	public  JTextField getPathTextFieldRef() {
 		return this.pathTextFieldRef;
@@ -309,7 +350,7 @@ public class AcademiaPanel {
 	/**
 	 * Get selected data file
 	 * @param null
-	 * @return File selectedFile
+	 * @return {@link File} selectedFile
 	 */
 	public  File getSelectedFileRef() {
 		return this.selectedFileRef;
@@ -331,7 +372,7 @@ public class AcademiaPanel {
 	
 	/**
 	 * Set academia info panel reference
-	 * @param JPanel academiaInfoPanelRef
+	 * @param {@link JPanel} academiaInfoPanelRef
 	 * @return null
 	 */
 	public  void setAcademiaInfoPanelRef(JPanel academiaInfoPanelRef) {
@@ -340,7 +381,7 @@ public class AcademiaPanel {
 	
 	/**
 	 * Set selected data file
-	 * @param File data
+	 * @param {@link File} data
 	 * @return null
 	 */
 	public  void setDataFile(File selectedFile) {
@@ -349,7 +390,7 @@ public class AcademiaPanel {
 
 	/**
 	 * Set faculty text field
-	 * @param JTextField facultyTextField
+	 * @param {@link JTextField} facultyTextField
 	 * @return null
 	 */
 	public  void setFacultyTextFieldRef(JTextField facultyTextField) {
@@ -358,7 +399,7 @@ public class AcademiaPanel {
 
 	/**
 	 * Set path text field
-	 * @param JTextField pathTextField
+	 * @param {@link JTextField} pathTextField
 	 * @return null
 	 */
 	public  void setLoadTextField(JTextField pathTextField) {

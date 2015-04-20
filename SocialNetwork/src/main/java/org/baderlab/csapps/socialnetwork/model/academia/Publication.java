@@ -1,3 +1,39 @@
+/**
+ **                       SocialNetwork Cytoscape App
+ **
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Research, University of Toronto
+ **
+ ** Contact: http://www.baderlab.org
+ **
+ ** Code written by: Victor Kofia, Ruth Isserlin
+ ** Authors: Victor Kofia, Ruth Isserlin, Gary D. Bader
+ **
+ ** This library is free software; you can redistribute it and/or modify it
+ ** under the terms of the GNU Lesser General Public License as published
+ ** by the Free Software Foundation; either version 2.1 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This library is distributed in the hope that it will be useful, but
+ ** WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
+ ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
+ ** documentation provided hereunder is on an "as is" basis, and
+ ** University of Toronto
+ ** has no obligations to provide maintenance, support, updates, 
+ ** enhancements or modifications.  In no event shall the
+ ** University of Toronto
+ ** be liable to any party for direct, indirect, special,
+ ** incidental or consequential damages, including lost profits, arising
+ ** out of the use of this software and its documentation, even if
+ ** University of Toronto
+ ** has been advised of the possibility of such damage.  
+ ** See the GNU Lesser General Public License for more details.
+ **
+ ** You should have received a copy of the GNU Lesser General Public License
+ ** along with this library; if not, write to the Free Software Foundation,
+ ** Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ **
+ **/
 
 package org.baderlab.csapps.socialnetwork.model.academia;
 
@@ -30,21 +66,21 @@ public class Publication extends AbstractEdge {
 	 */
 	private String journal = null;
 	/**
+	 * Location that most of the authors are from
+	 */
+	private String location = "N/A";
+	/**
 	 * Publication's release date
 	 */
 	private String pubDate = null;
 	/**
 	 * The total amount of times Publication has been cited
 	 */
-	private int timesCited = 0;
+	private int timesCited = 0; 
 	/**
 	 * Publication's title
 	 */
-	private String title = null; 
-	/*
-	 * Location that most of the authors are from
-	 */
-	private String location = "N/A";
+	private String title = null;
 	
 	/**
 	 * Create new publication
@@ -69,28 +105,11 @@ public class Publication extends AbstractEdge {
 		this.expectedCitations = expectedCitations;
 		constructEdgeAttrMap();
 		
-		//calculate the most used location
+		// Calculate the most used location
 		this.calculateLocation();
 	}
 
 
-	/**
-	 * Construct edge attribute map for use in Cytoscape
-	 * @param null
-	 * @return null
-	 */
-	public void constructEdgeAttrMap() {
-		edgeAttrMap = new HashMap<String, Object>();
-		edgeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, this.timesCited);
-		edgeAttrMap.put("Pub Date", this.pubDate);
-		edgeAttrMap.put("Journal", this.journal);
-		edgeAttrMap.put("Title", this.title);
-	}
-	
-	/*
-	 * Go through all the authors on the paper and get the location that occurs the most on the paper
-	 */
-	
 	public void calculateLocation(){
 		String maxlocation = "N/A";
 		Integer max = 0;
@@ -118,6 +137,32 @@ public class Publication extends AbstractEdge {
 		this.location = maxlocation;
 		
 	}
+	
+	/*
+	 * Go through all the authors on the paper and get the location that occurs the most on the paper
+	 */
+	
+	/**
+	 * Construct edge attribute map for use in Cytoscape
+	 * @param null
+	 * @return null
+	 */
+	public void constructEdgeAttrMap() {
+		edgeAttrMap = new HashMap<String, Object>();
+		edgeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, this.timesCited);
+		edgeAttrMap.put("Pub Date", this.pubDate);
+		edgeAttrMap.put("Journal", this.journal);
+		edgeAttrMap.put("Title", this.title);
+	}
+	/**
+	 * Get author list
+	 * 
+	 * @return ArrayList<Author> authorList
+	 */
+	public ArrayList<Author> getAuthorList() {
+		return authorList;
+	}
+	
 	/**
 	 * Return a text representation of all of publication's authors
 	 * @paran null
@@ -131,6 +176,17 @@ public class Publication extends AbstractEdge {
 		}
 		return allAuthors;
 	}
+	
+	
+	/**
+	 * Get CyEdge
+	 * @param null
+	 * @return CyEdge cyEdge
+	 */
+	public CyEdge getCyEdge() {
+		return this.cyEdge;
+	}
+	
 	
 	/**
 	 * Get edge attribute map
@@ -153,13 +209,23 @@ public class Publication extends AbstractEdge {
 	
 	
 	/**
+	 * Get location
+	 * 
+	 * @return String location
+	 */
+	public String getLocation() {
+		return location;
+	}
+	
+	
+	/**
 	 * Get authors
 	 * @return List authorList
 	 */
 	public List<? extends AbstractNode> getNodes() {
 		return this.authorList;
 	}
-	
+
 	
 	/**
 	 * Get publication date
@@ -169,8 +235,8 @@ public class Publication extends AbstractEdge {
 	public String getPubDate() {
 		return this.pubDate;
 	}
-	
-	
+
+
 	/**
 	 * Get times cited
 	 * @param null
@@ -179,8 +245,7 @@ public class Publication extends AbstractEdge {
 	public int getTimesCited() {
 		return timesCited;
 	}
-	
-	
+
 	/**
 	 * Get publication title
 	 * @param null
@@ -190,6 +255,25 @@ public class Publication extends AbstractEdge {
 		return this.title;
 	}
 
+	/**
+	 * Return true iff publication was authored by a single
+	 * individual
+	 * @param null
+	 * @return boolean bool
+	 */
+	public boolean isSingleAuthored() {
+		return this.authorList.size() == 2 &&
+			   this.authorList.get(0).equals(this.authorList.get(1));
+	}
+	
+	/**
+	 * Set the author list
+	 * 
+	 * @param ArrayList<AuthorList> authorList
+	 */
+	public void setAuthorList(ArrayList<Author> authorList) {
+		this.authorList = authorList;
+	}
 	
 	/**
 	 * Set publication authors
@@ -202,6 +286,16 @@ public class Publication extends AbstractEdge {
 
 
 	/**
+	 * Set CyEdge
+	 * @param CyEdge cyEdge
+	 * @return null
+	 */
+	public void setCyEdge(CyEdge cyEdge) {
+		this.cyEdge = cyEdge;
+	}
+
+
+	/**
 	 * Set expected citations
 	 * @param String expectedCitations
 	 * @return null
@@ -209,6 +303,16 @@ public class Publication extends AbstractEdge {
 	public void setExpectedCitations(String expectedCitations) {
 		this.expectedCitations = expectedCitations;
 	}
+	
+	/**
+	 * Set location
+	 * 
+	 * @param String location
+	 */
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 
 	/**
 	 * Set publication pub date
@@ -227,7 +331,7 @@ public class Publication extends AbstractEdge {
 	public void setTimesCited(int timesCited) {
 		this.timesCited = timesCited;
 	}
-	
+
 	/**
 	 * Set publication title
 	 * @param String title
@@ -236,7 +340,7 @@ public class Publication extends AbstractEdge {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	/**
 	 * Return a string representation of the publication in the format:
 	 * <br>Title: <i>title</i>
@@ -249,58 +353,5 @@ public class Publication extends AbstractEdge {
 		return "Title: " + title
 			+  "\nTimes Cited: " + timesCited;
 	}
-
-
-	/**
-	 * Get CyEdge
-	 * @param null
-	 * @return CyEdge cyEdge
-	 */
-	public CyEdge getCyEdge() {
-		return this.cyEdge;
-	}
-
-
-	/**
-	 * Set CyEdge
-	 * @param CyEdge cyEdge
-	 * @return null
-	 */
-	public void setCyEdge(CyEdge cyEdge) {
-		this.cyEdge = cyEdge;
-	}
-	
-	/**
-	 * Return true iff publication was authored by a single
-	 * individual
-	 * @param null
-	 * @return boolean bool
-	 */
-	public boolean isSingleAuthored() {
-		return this.authorList.size() == 2 &&
-			   this.authorList.get(0).equals(this.authorList.get(1));
-	}
-
-
-	public String getLocation() {
-		return location;
-	}
-
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-
-	public ArrayList<Author> getAuthorList() {
-		return authorList;
-	}
-
-
-	public void setAuthorList(ArrayList<Author> authorList) {
-		this.authorList = authorList;
-	}
-	
-	
 	
 }

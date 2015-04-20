@@ -1,13 +1,13 @@
 /**
- **                       EnrichmentMap Cytoscape Plugin
+ **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2008-2009 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
  **
- ** Code written by: Ruth Isserlin
- ** Authors: Daniele Merico, Ruth Isserlin, Oliver Stueker, Gary D. Bader
+ ** Code written by: Victor Kofia, Ruth Isserlin
+ ** Authors: Victor Kofia, Ruth Isserlin, Gary D. Bader
  **
  ** This library is free software; you can redistribute it and/or modify it
  ** under the terms of the GNU Lesser General Public License as published

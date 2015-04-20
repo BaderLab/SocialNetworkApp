@@ -1,3 +1,40 @@
+/**
+ **                       SocialNetwork Cytoscape App
+ **
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Research, University of Toronto
+ **
+ ** Contact: http://www.baderlab.org
+ **
+ ** Code written by: Victor Kofia, Ruth Isserlin
+ ** Authors: Victor Kofia, Ruth Isserlin, Gary D. Bader
+ **
+ ** This library is free software; you can redistribute it and/or modify it
+ ** under the terms of the GNU Lesser General Public License as published
+ ** by the Free Software Foundation; either version 2.1 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This library is distributed in the hope that it will be useful, but
+ ** WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
+ ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
+ ** documentation provided hereunder is on an "as is" basis, and
+ ** University of Toronto
+ ** has no obligations to provide maintenance, support, updates, 
+ ** enhancements or modifications.  In no event shall the
+ ** University of Toronto
+ ** be liable to any party for direct, indirect, special,
+ ** incidental or consequential damages, including lost profits, arising
+ ** out of the use of this software and its documentation, even if
+ ** University of Toronto
+ ** has been advised of the possibility of such damage.  
+ ** See the GNU Lesser General Public License for more details.
+ **
+ ** You should have received a copy of the GNU Lesser General Public License
+ ** along with this library; if not, write to the Free Software Foundation,
+ ** Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ **
+ **/
+
 package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.awt.Cursor;
@@ -35,7 +72,8 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 
 /**
- * Create a new network
+ * ??
+ * 
  * @author Victor Kofia
  */
 public class CreateNetworkTask extends AbstractTask {
@@ -60,7 +98,8 @@ public class CreateNetworkTask extends AbstractTask {
 			                 CyNetworkManager cyNetworkManagerServiceRef, 
 			                 CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
 			                 CyNetworkViewManager cyNetworkViewManagerServiceRef, 
-			                 CyLayoutAlgorithmManager cyLayoutManagerServiceRef, SocialNetworkAppManager appManager) {
+			                 CyLayoutAlgorithmManager cyLayoutManagerServiceRef, 
+			                 SocialNetworkAppManager appManager) {
 		this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
 		this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
 		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -132,14 +171,18 @@ public class CreateNetworkTask extends AbstractTask {
 			.set("name", cyNetworkNamingServiceRef.getSuggestedNetworkTitle
 					(this.appManager.getNetworkName()));
 
-			//add network attributes
-			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
-			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_Faculty, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
-			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_uniden_Faculty, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
-			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+			// Add network attributes
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, 
+					                                                   appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_Faculty, 
+					                                                   appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_uniden_Faculty, 
+					                                                   appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
+			myNet.getDefaultNetworkTable().getRow(myNet.getSUID()).set(IncitesVisualStyle.networkattr_totalPub, 
+					                                                   appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
 			
 			// Build network
-			Collaboration consortium = null;
+			Collaboration collaboration = null;
 			AbstractNode node1 = null;
 			AbstractNode node2 = null;
 			List<? extends AbstractEdge> edgeArray = null;
@@ -151,14 +194,14 @@ public class CreateNetworkTask extends AbstractTask {
 			// Set 'Load Network' progress monitor
 			this.setProgressMonitor(taskMonitor, "Loading Network", map.size());
 
-			// Get all consortiums and their corresponding edges
+			// Get all collaborations and their corresponding edges
 			for (Entry<Collaboration, ArrayList<AbstractEdge>> entry : map.entrySet()) {
-				consortium = entry.getKey();
+				collaboration = entry.getKey();
 				edgeArray= entry.getValue();
 
 				// Get nodes
-				node1 = consortium.getNode1();
-				node2 = consortium.getNode2();
+				node1 = collaboration.getNode1();
+				node2 = collaboration.getNode2();
 				
 				// Check for nodes in nodeMap
 				if (! nodeMap.containsKey(node1)) {

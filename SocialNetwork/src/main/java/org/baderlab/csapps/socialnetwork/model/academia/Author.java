@@ -1,3 +1,40 @@
+/**
+ **                       SocialNetwork Cytoscape App
+ **
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Research, University of Toronto
+ **
+ ** Contact: http://www.baderlab.org
+ **
+ ** Code written by: Victor Kofia, Ruth Isserlin
+ ** Authors: Victor Kofia, Ruth Isserlin, Gary D. Bader
+ **
+ ** This library is free software; you can redistribute it and/or modify it
+ ** under the terms of the GNU Lesser General Public License as published
+ ** by the Free Software Foundation; either version 2.1 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This library is distributed in the hope that it will be useful, but
+ ** WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
+ ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
+ ** documentation provided hereunder is on an "as is" basis, and
+ ** University of Toronto
+ ** has no obligations to provide maintenance, support, updates, 
+ ** enhancements or modifications.  In no event shall the
+ ** University of Toronto
+ ** be liable to any party for direct, indirect, special,
+ ** incidental or consequential damages, including lost profits, arising
+ ** out of the use of this software and its documentation, even if
+ ** University of Toronto
+ ** has been advised of the possibility of such damage.  
+ ** See the GNU Lesser General Public License for more details.
+ **
+ ** You should have received a copy of the GNU Lesser General Public License
+ ** along with this library; if not, write to the Free Software Foundation,
+ ** Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ **
+ **/
+
 package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.ArrayList;
@@ -12,9 +49,7 @@ import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.subnetwork.CyRootNetwork;
 
 
 /**
@@ -71,12 +106,12 @@ public class Author extends AbstractNode {
 	 * List of all publications author has authored / co-authored
 	 */
 	private List<String> pubList = null;
-	
-	/*
+
+	/**
 	 * location Map 
 	 */
 	private Incites_InstitutionLocationMap locationMap = null;
-	
+
 	/**
 	 * Set identification
 	 * @param boolean bool
@@ -85,7 +120,7 @@ public class Author extends AbstractNode {
 	private void setIdenfitication(boolean bool) {
 		this.identified = bool;
 	}
-	
+
 	/**
 	 * Returns true iff author is a faculty member and has been
 	 * successfully identified
@@ -95,7 +130,7 @@ public class Author extends AbstractNode {
 	public boolean isIdentified() {
 		return this.identified;
 	}
-		
+
 	/**
 	 * Create a new author with the first name, last name and middle initial specified 
 	 * in rawAuthorText.
@@ -107,147 +142,150 @@ public class Author extends AbstractNode {
 	public Author(String rawAuthorText, int origin) {
 		this.setOrigin(origin);
 		switch (origin) {
-			case Category.SCOPUS:
-				// Initialize attribute map for Scopus author
-				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
-				String[] scopusNames = rawAuthorText.split("\\s|,");
-				if (scopusNames.length == 1) {
-					this.setLastName(scopusNames[0]);
-				} else  {
-					String lastName = scopusNames[0];
-					int i = 1;
-					for (i = 1; i < scopusNames.length - 1; i++) {
-						lastName += " " + scopusNames[i];
-					}
-					this.setLastName(lastName);
-					String[] initials = scopusNames[i].split("\\.");
-					if (initials.length == 1) {
-						this.setFirstName(initials[0]);
-						this.setFirstInitial(initials[0]);
-					} else if (initials.length > 1) {
-						this.setFirstName(initials[0]);
-						this.setFirstInitial(initials[0]);
-						this.setMiddleInitial(initials[1]);
-					}
+		case Category.SCOPUS:
+			// Initialize attribute map for Scopus author
+			this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
+			String[] scopusNames = rawAuthorText.split("\\s|,");
+			if (scopusNames.length == 1) {
+				this.setLastName(scopusNames[0]);
+			} else  {
+				String lastName = scopusNames[0];
+				int i = 1;
+				for (i = 1; i < scopusNames.length - 1; i++) {
+					lastName += " " + scopusNames[i];
+				}
+				this.setLastName(lastName);
+				String[] initials = scopusNames[i].split("\\.");
+				if (initials.length == 1) {
+					this.setFirstName(initials[0]);
+					this.setFirstInitial(initials[0]);
+				} else if (initials.length > 1) {
+					this.setFirstName(initials[0]);
+					this.setFirstInitial(initials[0]);
+					this.setMiddleInitial(initials[1]);
+				}
+			}
+			this.setLabel(this.getFirstInitial() + " " + this.getLastName());
+			break;
+		case Category.PUBMED:
+			// Initialize attribute map for Pubmed author (~ same as Scopus)
+			this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
+			String[] pubmedNames = rawAuthorText.split("\\s");
+			if (pubmedNames.length == 1) {
+				this.lastName =  pubmedNames[0];
+			} else {
+				String lastName = pubmedNames[0];
+				int i = 1;
+				for (i = 1; i < pubmedNames.length - 1; i++) {
+					lastName += " " + pubmedNames[i];
+				}
+				this.setLastName(lastName);
+				if (pubmedNames[i].length() >= 2) {
+					// Extract both first initial & middle initial
+					this.setFirstInitial(pubmedNames[i].substring(0,1));
+					this.setMiddleInitial(pubmedNames[i].substring(1));
+				} else {
+					// If no middle initial is specified, it will be marked
+					// as unknown
+					this.setFirstInitial(pubmedNames[i]);
 				}
 				this.setLabel(this.getFirstInitial() + " " + this.getLastName());
-				break;
-			case Category.PUBMED:
-				// Initialize attribute map for Pubmed author (~ same as Scopus)
-				this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
-				String[] pubmedNames = rawAuthorText.split("\\s");
-				if (pubmedNames.length == 1) {
-					this.lastName =  pubmedNames[0];
-				} else {
-					String lastName = pubmedNames[0];
-					int i = 1;
-					for (i = 1; i < pubmedNames.length - 1; i++) {
-						lastName += " " + pubmedNames[i];
-					}
-					this.setLastName(lastName);
-					if (pubmedNames[i].length() >= 2) {
-						// Extract both first initial & middle initial
-						this.setFirstInitial(pubmedNames[i].substring(0,1));
-						this.setMiddleInitial(pubmedNames[i].substring(1));
-					} else {
-						// If no middle initial is specified, it will be marked
-						// as unknown
-						this.setFirstInitial(pubmedNames[i]);
-					}
-					this.setLabel(this.getFirstInitial() + " " + this.getLastName());
-				}
-				break;			
-			case Category.FACULTY:
-				String[] authorAttr = rawAuthorText.split(";");
-				// Since faculty authors are facsimiles, only a bare
-				// minimum of attributes are needed to create them.
-				// Last name and first initial are enough to identify
-				// any author.
-				this.setLastName(authorAttr[0]);
-				this.setFirstName(authorAttr[1]);
-				this.setFirstInitial(this.getFirstName().substring(0,1));
-				// Set attributes to null to prevent Cytoscape from
-				// trying to put data in non-existent columns
-				this.setNodeAttrMap(null);
-				break;
+			}
+			break;			
+		case Category.FACULTY:
+			String[] authorAttr = rawAuthorText.split(";");
+			// Last name and first initial are enough to identify
+			// any author.
+			this.setLastName(authorAttr[0]);
+			this.setFirstName(authorAttr[1]);
+			this.setFirstInitial(this.getFirstName().substring(0,1));
+			// Set attributes to null to prevent Cytoscape from
+			// trying to put data in non-existent columns
+			this.setNodeAttrMap(null);
+			break;
 		}
-		
-		// Format names to ensure consistency
-		format();
-	}
-	/*
-	 * Constructor specific to incites as the location map is required to build an incites author object
-	 */
-	public Author(String rawAuthorText, int origin, Incites_InstitutionLocationMap locationMap) {
-		this.setOrigin(origin);
-			switch (origin) {
-			
-			case Category.INCITES:
-				this.locationMap = locationMap;
-				// Initialize attribute map for Incites author
-				this.setNodeAttrMap(constructIncitesAttrMap());
-				this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
-				if (! this.getFirstName().equalsIgnoreCase("N/A")) {
-					this.setFirstInitial(this.getFirstName().substring(0,1));
-				}
-				this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
-				this.setLastName(IncitesParser.parseLastName(rawAuthorText));
-				this.setLabel(this.getFirstName() + " " + this.getLastName());
-				this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
-				this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
-				break;
-			
-		}
-		
+
 		// Format names to ensure consistency
 		format();
 	}
 
-	/* given - a name
-	 * returns true if this author has the same name
-	 * If one of the names is only a first initial checks to see if the initials are the same.  if the same returns true
+	/**
+	 * Constructor specific to incites as the location map is required to build an incites author object
+	 * 
+	 * @param String rawAuthorText
+	 * @param int origin
+	 * @param {@link Incites_InstitutionLocationMap} locationMap
+	 */
+	public Author(String rawAuthorText, int origin, Incites_InstitutionLocationMap locationMap) {
+		this.setOrigin(origin);
+		switch (origin) {
+
+		case Category.INCITES:
+			this.locationMap = locationMap;
+			// Initialize attribute map for Incites author
+			this.setNodeAttrMap(constructIncitesAttrMap());
+			this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
+			if (! this.getFirstName().equalsIgnoreCase("N/A")) {
+				this.setFirstInitial(this.getFirstName().substring(0,1));
+			}
+			this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
+			this.setLastName(IncitesParser.parseLastName(rawAuthorText));
+			this.setLabel(this.getFirstName() + " " + this.getLastName());
+			this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
+			this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
+			break;
+
+		}
+
+		// Format names to ensure consistency
+		format();
+	}
+
+	/**
+	 * Returns true if author has the same name
+	 * 
+	 * @param String name
 	 */
 	private boolean isSameFirstName(String name){
-		
+
 		boolean isEqualFirstName = false;
-		
+
 		//If the first name has middle initial get rid of it and just compare first name to first name
 		String firstname1 = (this.getFirstName().split(" ").length > 1) ? this.getFirstName().split(" ")[0] : this.getFirstName();
 		String firstname2 = (name.split(" ").length > 1) ? name.split(" ")[0] : name;
-		
+
 		double distance = Levenshtein.distance(firstname1.toLowerCase(), 
-				                        firstname2.toLowerCase());
+				firstname2.toLowerCase());
 		double similarity = 1 - ((double) distance) / (Math.max(firstname1.length(), 
-				                        firstname2.length()));
+				firstname2.length()));
 		if (similarity >= 0.75) {
 			isEqualFirstName = true;
-			
-		// If Levenshtein distance is too small, check to see if 
-		// if the one of the first names is actually an initial i.e. 'V'
+
+			// If Levenshtein distance is too small, check to see if 
+			// one of the first names is actually an initial i.e. 'V'
 		} else {
 			//check if either first name is a single character
 			//or if it has 2 characters and one of the characters is a . as initials are often written V.
 			if((firstname1.length() ==1) || (firstname2.length() == 1) ||
-			(firstname1.length()==2 && firstname1.contains("."))||
-			(firstname2.length()==2 && firstname2.contains("."))){
+					(firstname1.length()==2 && firstname1.contains("."))||
+					(firstname2.length()==2 && firstname2.contains("."))){
 				//check to see if they have the same initial
 				isEqualFirstName = firstname1.substring(0, 1).equalsIgnoreCase(firstname2.substring(0,1));
 			}
-			
 		}
-			return isEqualFirstName;
+		return isEqualFirstName;
 	}
-	
+
 	/**
 	 * Return true iff author is the same as other
 	 * @param Object other
 	 * @return boolean
 	 */
 	public boolean equals(Object other) {
-		
+
 		//compare the current author to the given author
 		//method used by contains method with hash of a set of Authors
-		
+
 		Author otherAuthor = (Author) other;
 		boolean isEqual = false, isEqualFirstName = false, isEqualLastName = false;
 		int distance = 0;
@@ -259,7 +297,7 @@ public class Author extends AbstractNode {
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
 			// Determine whether or not first names are equal
 			isEqualFirstName = this.isSameFirstName(otherAuthor.getFirstName());
-			
+
 			// Determine whether or not both authors share the same institution
 			String myInstitution = this.getInstitution(), otherInstitution = otherAuthor.getInstitution();
 			isEqualInstitution = myInstitution.equalsIgnoreCase(otherInstitution);
@@ -268,29 +306,29 @@ public class Author extends AbstractNode {
 				isEqualInstitution = true;
 			}
 			isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
-		// Incites (~ Faculty)
+			// Incites (~ Faculty)
 		} else if ((this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY) || 
 				(this.getOrigin() == Category.FACULTY && otherAuthor.getOrigin() == Category.INCITES)){
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
 			// Determine whether or not first names are equal			
 			isEqualFirstName = this.isSameFirstName(otherAuthor.getFirstName());
-			
+
 			isEqual = isEqualLastName && isEqualFirstName;
 			// Check to see if the other author has been correctly ID'ed. If so, set his identification
 			// status to true.
 			if (isEqual) {
 				otherAuthor.setIdenfitication(true);
 			}
-		// Pubmed / Scopus
+			// Pubmed / Scopus
 		} else if (this.getOrigin() == Category.PUBMED && otherAuthor.getOrigin() == Category.PUBMED ||
-				   this.getOrigin() == Category.SCOPUS && otherAuthor.getOrigin() == Category.SCOPUS) {
+				this.getOrigin() == Category.SCOPUS && otherAuthor.getOrigin() == Category.SCOPUS) {
 			isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
 			isEqualFirstName = this.getFirstInitial().equalsIgnoreCase(otherAuthor.getFirstInitial());
 			isEqual = isEqualFirstName && isEqualLastName;
 		}
 		return isEqual;
 	}
-	
+
 	/**
 	 * Modify institution for both author1 and author2 (who are assumed to be the same).
 	 * Set institution to the higher priority as defined in the app locationMap
@@ -319,14 +357,14 @@ public class Author extends AbstractNode {
 		} else if (rank == otherRank) {
 			Author[] randomAuthorArray = new Author[] {author, otherAuthor};
 			Random rand = new Random();
-		    int i = rand.nextInt((1 - 0) + 1) + 0;
-		    String randomInstitution = randomAuthorArray[i].getInstitution();
-		    String randomLocation = randomAuthorArray[i].getLocation();
-	        otherAuthor.setInstitution(randomInstitution);
+			int i = rand.nextInt((1 - 0) + 1) + 0;
+			String randomInstitution = randomAuthorArray[i].getInstitution();
+			String randomLocation = randomAuthorArray[i].getLocation();
+			otherAuthor.setInstitution(randomInstitution);
 			otherAuthor.setLocation(randomLocation);
 		}
 	}
-	
+
 	/**
 	 * Capitalize the first letter of string and return. If string is 
 	 * a single character letter, it will be capitalized. Empty strings 
@@ -338,10 +376,10 @@ public class Author extends AbstractNode {
 		// Verify that the first letters in both first and last names are uppercase, and all following letters
 		// are in lowercase
 		String firstName = this.getFirstName().substring(0,1).toUpperCase() + 
-				           this.getFirstName().substring(1).toLowerCase();
+				this.getFirstName().substring(1).toLowerCase();
 		this.setFirstName(firstName);
 		String lastName = this.getLastName().substring(0,1).toUpperCase() + 
-				          this.getLastName().substring(1).toLowerCase();
+				this.getLastName().substring(1).toLowerCase();
 		this.setLastName(lastName);
 		// Ensure that the first and middle initials are capitalized
 		this.setFirstInitial(this.getFirstInitial().toUpperCase());
@@ -384,7 +422,7 @@ public class Author extends AbstractNode {
 		return this.institution;
 	}
 
-	
+
 	/**
 	 * Get author's last name
 	 * @param null
@@ -393,7 +431,7 @@ public class Author extends AbstractNode {
 	public String getLastName() {
 		return this.lastName;
 	}
-	
+
 	/**
 	 * Get author's location
 	 * @param null
@@ -414,7 +452,7 @@ public class Author extends AbstractNode {
 		}
 		return this.nodeAttrMap;
 	}
-	
+
 	/**
 	 * Get author's total number of citations
 	 * @param null
@@ -423,7 +461,7 @@ public class Author extends AbstractNode {
 	public int getTimesCited() {
 		return this.timesCited;
 	}
-	
+
 	/**
 	 * Return author hash code. Hash code uniquely identifies each specific
 	 * last name - first initial combo. Individuals with matching last names
@@ -436,15 +474,15 @@ public class Author extends AbstractNode {
 		int result = 1;
 		result += prime * result
 				+ ((firstInitial == null) ? 0 : firstInitial.hashCode());
-//		result = prime * result
-//				+ ((institution == null) ? 0 : institution.hashCode());
+		//		result = prime * result
+		//				+ ((institution == null) ? 0 : institution.hashCode());
 		result += prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
-//		result = prime * result
-//				+ ((location == null) ? 0 : location.hashCode());
-//		result = prime * result
-//				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
-//		result = prime * result + totalPubs;
+		//		result = prime * result
+		//				+ ((location == null) ? 0 : location.hashCode());
+		//		result = prime * result
+		//				+ ((middleInitial == null) ? 0 : middleInitial.hashCode());
+		//		result = prime * result + totalPubs;
 		return result;
 	}
 
@@ -494,7 +532,7 @@ public class Author extends AbstractNode {
 	public void setNodeAttrMap(Map<String, Object> attrMap) {
 		this.nodeAttrMap = attrMap;
 	}
-	
+
 	/**
 	 * Set author's total number of citations
 	 * @param int timesCited
@@ -504,7 +542,7 @@ public class Author extends AbstractNode {
 		this.timesCited = timesCited;
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_timescited, timesCited);
 	}
-	
+
 	/**
 	 * Return a string representation of author in the format:
 	 * <br><b><i>Last Name, First Name</i></b>
@@ -550,7 +588,7 @@ public class Author extends AbstractNode {
 	public void setCyNode(CyNode cyNode) {
 		this.cyNode = cyNode;
 	}
-	
+
 	/**
 	 * Add publication
 	 * @param Publication publication
@@ -578,7 +616,7 @@ public class Author extends AbstractNode {
 			this.setPubList(pubList);
 		}
 	}
-	
+
 	/**
 	 * Set institution
 	 * @param String institution
@@ -588,7 +626,7 @@ public class Author extends AbstractNode {
 		this.institution = institution;
 		this.getNodeAttrMap().put(IncitesVisualStyle.nodeattr_inst, institution);
 	}
-	
+
 	/**
 	 * Set first name
 	 * @param String firstName
@@ -598,7 +636,7 @@ public class Author extends AbstractNode {
 		this.firstName = firstName;
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_fname, firstName);
 	}
-	
+
 	/**
 	 * Set last name
 	 * @param String lastName
@@ -608,7 +646,7 @@ public class Author extends AbstractNode {
 		this.lastName = lastName;
 		this.getNodeAttrMap().put("Last Name", lastName);
 	}
-	
+
 	/**
 	 * Set middle initial
 	 * @param String middleInitial
@@ -617,7 +655,7 @@ public class Author extends AbstractNode {
 	public void setMiddleInitial(String middleInitial) {
 		this.middleInitial = middleInitial;
 	}
-	
+
 	/**
 	 * Get middle initial
 	 * @param null
@@ -648,8 +686,7 @@ public class Author extends AbstractNode {
 	}
 
 	/**
-	 * True iff publication has 
-	 * already been added
+	 * True iff publication has already been added
 	 * @param null
 	 * @return Boolean alreadyBeenAdded
 	 */
@@ -662,7 +699,7 @@ public class Author extends AbstractNode {
 	 * <br>NOTE: alreadyBeenAdded should be
 	 * false unless a lone author publication
 	 * is being parsed
-	 * @param Boolean alreadyBeenAdded 
+	 * @param boolean alreadyBeenAdded 
 	 * @return null
 	 */
 	public void setAlreadyBeenAdded(boolean alreadyBeenAdded) {
@@ -691,7 +728,7 @@ public class Author extends AbstractNode {
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, pubList);
 		this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_numpub, pubList.size());
 	}
-	
+
 	/**
 	 * Construct Incites attribute map
 	 * @param null
@@ -699,9 +736,15 @@ public class Author extends AbstractNode {
 	 */
 	public static HashMap<String, Object> constructIncitesAttrMap() {
 		HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-		String[] columns = new String[] {BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname, BasicSocialNetworkVisualstyle.nodeattr_fname,
-				                         IncitesVisualStyle.nodeattr_inst, IncitesVisualStyle.nodeattr_location, IncitesVisualStyle.nodeattr_dept,
-				                         BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_numpub,BasicSocialNetworkVisualstyle.nodeattr_pub};
+		String[] columns = new String[] {BasicSocialNetworkVisualstyle.nodeattr_label, 
+				BasicSocialNetworkVisualstyle.nodeattr_lname, 
+				BasicSocialNetworkVisualstyle.nodeattr_fname,
+				IncitesVisualStyle.nodeattr_inst, 
+				IncitesVisualStyle.nodeattr_location, 
+				IncitesVisualStyle.nodeattr_dept,
+				BasicSocialNetworkVisualstyle.nodeattr_timescited, 
+				BasicSocialNetworkVisualstyle.nodeattr_numpub,
+				BasicSocialNetworkVisualstyle.nodeattr_pub};
 		int i = 0;
 		for (i = 0; i < 6; i++) {
 			nodeAttrMap.put(columns[i], "");
@@ -714,5 +757,5 @@ public class Author extends AbstractNode {
 		nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
 		return nodeAttrMap;
 	}
-	 
+
 }
