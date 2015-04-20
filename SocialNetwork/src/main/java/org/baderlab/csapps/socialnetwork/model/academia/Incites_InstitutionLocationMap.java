@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -44,106 +44,110 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
  * Tools for manipulating Incites data
+ *
  * @author Victor Kofia
  */
 public class Incites_InstitutionLocationMap {
 
-	/**
-	 * Author location map
-	 */
-	private  Map<String, String> locationMap = null;
+    /**
+     * Author location map
+     */
+    private Map<String, String> locationMap = null;
 
-	/**
-	 * Location ranking map.
-	 * <br> key: <i>location</i>
-	 * <br> value: <i>rank</i>
-	 */
-	private  Map<String, Integer> locationRankingMap = null;
+    /**
+     * Location ranking map. <br>
+     * key: <i>location</i> <br>
+     * value: <i>rank</i>
+     */
+    private Map<String, Integer> locationRankingMap = null;
 
-	/**
-	 * Initialize the map with values from a file stored in the jar
-	 * File is currently stored as binary hashmap
-	 */
-	 // TODO: Convert to text file so it is easily updatable.
-	public Incites_InstitutionLocationMap() {
-		if (this.locationMap == null) {
-			try {
-				InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
-				this.locationMap = new HashMap<String,String>();
+    /**
+     * Initialize the map with values from a file stored in the jar File is
+     * currently stored as binary hashmap
+     */
+    // TODO: Convert to text file so it is easily updatable.
+    public Incites_InstitutionLocationMap() {
+        if (this.locationMap == null) {
+            try {
+                InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
+                this.locationMap = new HashMap<String, String>();
 
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-				String sCurrentLine = null;
-				while((sCurrentLine = br.readLine()) != null) {
-					// Tokenize the line
-					String[] tokens = sCurrentLine.split("\t");
-					// Properly formed line
-					if(tokens.length == 2) {
-						this.locationMap.put(tokens[0], tokens[1]);
-					}
-					else {
-						System.out.println("misformed line in locationmap file\n \"" + sCurrentLine + "\n");
-					}										
-				}				
-				/*ObjectInputStream ois = new ObjectInputStream(in);
-				this.setLocationMap((Map<String, String>) ois.readObject());*/
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
-			} catch (IOException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
-			} 
-		}
-	}
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                String sCurrentLine = null;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    // Tokenize the line
+                    String[] tokens = sCurrentLine.split("\t");
+                    // Properly formed line
+                    if (tokens.length == 2) {
+                        this.locationMap.put(tokens[0], tokens[1]);
+                    } else {
+                        System.out.println("misformed line in locationmap file\n \"" + sCurrentLine + "\n");
+                    }
+                }
+                /*
+                 * ObjectInputStream ois = new ObjectInputStream(in);
+                 * this.setLocationMap((Map<String, String>) ois.readObject());
+                 */
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
+            }
+        }
+    }
 
-	/**
-	 * Get location map
-	 * @param null
-	 * @return Map locationMap
-	 */
-	public  Map<String, String> getLocationMap() {		
-		return this.locationMap;
-	}
+    /**
+     * Get location map
+     *
+     * @param null
+     * @return Map locationMap
+     */
+    public Map<String, String> getLocationMap() {
+        return this.locationMap;
+    }
 
-	/**
-	 * Set location map
-	 * @param Map locationMap
-	 * @return null
-	 */
-	public  void setLocationMap(Map<String, String> locationMap) {
-		this.locationMap = locationMap;
-	}
+    /**
+     * Get location ranking map
+     *
+     * @param null
+     * @return Map locationRankingMap
+     */
+    public Map<String, Integer> getLocationRankingMap() {
+        if (this.locationRankingMap == null) {
+            Map<String, Integer> map = new HashMap<String, Integer>();
+            String[] locations = new String[] { "UNIV TORONTO", "Ontario", "Canada", "United States", "International", "Other" };
+            for (int i = 0; i < 6; i++) {
+                map.put(locations[i], 6 - i);
+            }
+            this.setLocationRankingMap(map);
+        }
+        return this.locationRankingMap;
+    }
 
-	/**
-	 * Set location ranking map
-	 * @param Map locationRankingMap
-	 * @return null
-	 */
-	private  void setLocationRankingMap(Map<String, Integer> map) {
-		this.locationRankingMap = map;
-	}
+    /**
+     * Set location map
+     *
+     * @param Map locationMap
+     * @return null
+     */
+    public void setLocationMap(Map<String, String> locationMap) {
+        this.locationMap = locationMap;
+    }
 
-	/**
-	 * Get location ranking map
-	 * @param null
-	 * @return Map locationRankingMap
-	 */
-	public  Map<String, Integer> getLocationRankingMap() {
-		if (this.locationRankingMap == null) {
-			Map<String, Integer> map = new HashMap<String, Integer>();
-			String[] locations = new String[] {"UNIV TORONTO", "Ontario", "Canada", 
-					"United States", "International", "Other"};
-			for (int i = 0; i < 6; i++) {
-				map.put(locations[i], 6 - i);
-			}
-			this.setLocationRankingMap(map);
-		}
-		return this.locationRankingMap;
-	}
+    /**
+     * Set location ranking map
+     *
+     * @param Map locationRankingMap
+     * @return null
+     */
+    private void setLocationRankingMap(Map<String, Integer> map) {
+        this.locationRankingMap = map;
+    }
 
 }

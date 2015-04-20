@@ -48,19 +48,22 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 public class DestroyNetworkTask extends AbstractTask {
-	private CyNetworkManager cyNetworkManagerServiceRef = null;
-	private SocialNetworkAppManager appManager;
-	
-	public DestroyNetworkTask(CyNetworkManager cyNetworkManagerServiceRef, SocialNetworkAppManager appManager) {
-		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
-		this.appManager = appManager;
-	}
 
-	/**
-	 * Destroy a network
-	 */
-	public void run(TaskMonitor taskMonitor) throws Exception {
-		cyNetworkManagerServiceRef.destroyNetwork(this.appManager.getNetworkToBeDestroyed());
-	}
+    private CyNetworkManager cyNetworkManagerServiceRef = null;
+    private SocialNetworkAppManager appManager;
+
+    public DestroyNetworkTask(CyNetworkManager cyNetworkManagerServiceRef, SocialNetworkAppManager appManager) {
+        this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+        this.appManager = appManager;
+    }
+
+    /**
+     * Destroy a network
+     * 
+     * @param {@link TaskMonitor} taskMonitor
+     */
+    public void run(TaskMonitor taskMonitor) throws Exception {
+        cyNetworkManagerServiceRef.destroyNetwork(this.appManager.getNetworkToBeDestroyed());
+    }
 
 }

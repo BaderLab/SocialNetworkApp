@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -37,7 +37,6 @@
 
 package org.baderlab.csapps.socialnetwork.tasks;
 
-
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
@@ -47,36 +46,32 @@ import org.cytoscape.work.TaskIterator;
 
 /**
  * ??
- * 
+ *
  * @author Victor Kofia
  */
 public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
-	private VisualMappingManager vmmServiceRef;
-	private VisualStyleFactory visualStyleFactoryServiceRef;
-	private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
-	private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
-	private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-	private SocialNetworkAppManager appManager;
-	
-	public ApplyVisualStyleTaskFactory(VisualStyleFactory visualStyleFactoryServiceRef, 
-			                           VisualMappingManager vmmServiceRef, 
-			                           VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
-			                           VisualMappingFunctionFactory continuousMappingFactoryServiceRef, 
-			                           VisualMappingFunctionFactory discreteMappingFactoryServiceRef, SocialNetworkAppManager appManager)  {
-		this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
-		this.vmmServiceRef = vmmServiceRef;
-		this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
-		this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
-		this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
-		this.appManager = appManager;
-	}
-	
-	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new ApplyVisualStyleTask(visualStyleFactoryServiceRef, 
-				                                         vmmServiceRef, 
-				                                         passthroughMappingFactoryServiceRef, 
-				                                         continuousMappingFactoryServiceRef, 
-				                                         discreteMappingFactoryServiceRef,appManager));
-	}
+
+    private VisualMappingManager vmmServiceRef;
+    private VisualStyleFactory visualStyleFactoryServiceRef;
+    private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
+    private SocialNetworkAppManager appManager;
+
+    public ApplyVisualStyleTaskFactory(VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingManager vmmServiceRef,
+            VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef, SocialNetworkAppManager appManager) {
+        this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
+        this.vmmServiceRef = vmmServiceRef;
+        this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
+        this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
+        this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
+        this.appManager = appManager;
+    }
+
+    public TaskIterator createTaskIterator() {
+        return new TaskIterator(new ApplyVisualStyleTask(this.visualStyleFactoryServiceRef, this.vmmServiceRef, this.passthroughMappingFactoryServiceRef,
+                this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef, this.appManager));
+    }
 
 }

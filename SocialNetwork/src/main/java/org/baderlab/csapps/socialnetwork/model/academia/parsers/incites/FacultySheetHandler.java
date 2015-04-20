@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -47,80 +47,85 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Handler for faculty spreadsheet (SAX parser)
+ *
  * @author Victor Kofia
  */
 public class FacultySheetHandler extends DefaultHandler {
-	/**
-	 * XML parsing variables. Used to store data temporarily. 
-	 */
-	private String cellContents = "", rowContents = "", cellID = "";
-	/**
-	 * Reference to Incites parser object
-	 */
-	private IncitesParser incitesParser = null;
-	/**
-	 * Reference to XLSX table. Necessary for extracting cell 
-	 * contents (cell IDs are used to extract cell contents)
-	 */
-	private SharedStringsTable sst = null;
-	
-	/**
-	 * Create new faculty sheet handler
-	 * @param SharedStringsTable sst
-	 * @param Incites incites
-	 * @return null
-	 */
-	public FacultySheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
-		this.sst = sst;
-		this.incitesParser = incitesParser;	
-	}
-	
-	public void startElement(String uri, String localName, String name,
-			Attributes attributes) throws SAXException {
-		
-		// Reset row contents
-		if (name.equals("row")) {
-			rowContents = "";
-		}
-		
-		// Reset cell id
-		if(name.equals("v")) {
-			cellID = "";
-		}
-		
-	}
 
-	// Collect tag contents
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
-		cellID += new String(ch, start, length);
-	}
-	
-	public void endElement(String uri, String localName, String name)
-			throws SAXException {
-		
-		if(name.equals("v")) {
-			// Extract cell contents
-			cellContents = new XSSFRichTextString(sst.getEntryAt(Integer.parseInt(cellID))).toString();
-			// Add to row
-			rowContents += incitesParser.parseFacultyName(cellContents.trim().toLowerCase()) + ";";
-		}
-		
-		if (name.equals("row")) {
-			// Parse all row contents. Ignore the first row (i.e. last name, first name, department ... etc)
-			if (! rowContents.trim().isEmpty() && ! (rowContents.contains("department") || rowContents.contains("first name"))) {
-				
-				incitesParser.getFacultySet().add(new Author(rowContents, Category.FACULTY));
-				incitesParser.setDepartmentName(cellContents);
-				
-				// We are expecting 3 objects in the Faculty Sheet
-				// Last name, first name, department --> if there are only 2 assume department is missing
-				if(rowContents.split(";").length == 2)
-					incitesParser.setDepartmentName("not_specified");
-			}
-		}
-		
-	}
-	
+    /**
+     * XML parsing variables. Used to store data temporarily.
+     */
+    private String cellContents = "", rowContents = "", cellID = "";
+    /**
+     * Reference to Incites parser object
+     */
+    private IncitesParser incitesParser = null;
+    /**
+     * Reference to XLSX table. Necessary for extracting cell contents (cell IDs
+     * are used to extract cell contents)
+     */
+    private SharedStringsTable sst = null;
+
+    /**
+     * Create new faculty sheet handler
+     *
+     * @param SharedStringsTable sst
+     * @param Incites incites
+     * @return null
+     */
+    public FacultySheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
+        this.sst = sst;
+        this.incitesParser = incitesParser;
+    }
+
+    // Collect tag contents
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        this.cellID += new String(ch, start, length);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String name) throws SAXException {
+
+        if (name.equals("v")) {
+            // Extract cell contents
+            this.cellContents = new XSSFRichTextString(this.sst.getEntryAt(Integer.parseInt(this.cellID))).toString();
+            // Add to row
+            this.rowContents += this.incitesParser.parseFacultyName(this.cellContents.trim().toLowerCase()) + ";";
+        }
+
+        if (name.equals("row")) {
+            // Parse all row contents. Ignore the first row (i.e. last name,
+            // first name, department ... etc)
+            if (!this.rowContents.trim().isEmpty() && !(this.rowContents.contains("department") || this.rowContents.contains("first name"))) {
+
+                this.incitesParser.getFacultySet().add(new Author(this.rowContents, Category.FACULTY));
+                this.incitesParser.setDepartmentName(this.cellContents);
+
+                // We are expecting 3 objects in the Faculty Sheet
+                // Last name, first name, department --> if there are only 2
+                // assume department is missing
+                if (this.rowContents.split(";").length == 2) {
+                    this.incitesParser.setDepartmentName("not_specified");
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+
+        // Reset row contents
+        if (name.equals("row")) {
+            this.rowContents = "";
+        }
+
+        // Reset cell id
+        if (name.equals("v")) {
+            this.cellID = "";
+        }
+
+    }
+
 }
-

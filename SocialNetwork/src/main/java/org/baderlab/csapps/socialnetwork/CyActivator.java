@@ -37,6 +37,9 @@
 
 package org.baderlab.csapps.socialnetwork;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -52,28 +55,24 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
+import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.service.util.AbstractCyActivator;
+import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskManager;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
-import org.cytoscape.model.events.NetworkAddedListener;
 import org.osgi.framework.BundleContext;
-import org.cytoscape.service.util.AbstractCyActivator;
-import org.cytoscape.session.CyNetworkNaming;
-import org.cytoscape.service.util.CyServiceRegistrar;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator {
 	
@@ -180,7 +179,6 @@ public class CyActivator extends AbstractCyActivator {
 		// Add dependencies to app manager
 		// TODO: 
 		// NOTE: Using setters violates dependency injection		
-				
 		appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 								
 		appManager.setServiceRegistrar(cyServiceRegistrarRef);

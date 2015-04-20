@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -49,40 +49,35 @@ import org.cytoscape.work.TaskIterator;
 
 /**
  * ??
- * 
+ *
  * @author Victor Kofia
  */
 public class CreateNetworkTaskFactory extends AbstractTaskFactory {
-		private CyNetworkFactory cyNetworkFactoryServiceRef;
-		private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
-		private CyNetworkViewManager cyNetworkViewManagerServiceRef;
-		private CyNetworkManager cyNetworkManagerServiceRef;
-		private CyNetworkNaming cyNetworkNamingServiceRef;
-		private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
-		private SocialNetworkAppManager appManager;
-	
-	public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, 
-			                        CyNetworkFactory cyNetworkFactoryServiceRef, 
-			                        CyNetworkManager cyNetworkManagerServiceRef, 
-			                        CyNetworkViewFactory cyNetworkViewFactoryServiceRef, 
-			                        CyNetworkViewManager cyNetworkViewManagerServiceRef, 
-			                        CyLayoutAlgorithmManager cyLayoutManagerServiceRef, SocialNetworkAppManager appManager) {
-			this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
-			this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
-			this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
-			this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
-			this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
-			this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
-			this.appManager = appManager;
-	}
 
-	public TaskIterator createTaskIterator() {
-		return new TaskIterator(new CreateNetworkTask(cyNetworkNamingServiceRef, 
-				                                      cyNetworkFactoryServiceRef, 
-				                                      cyNetworkManagerServiceRef, 
-				                                      cyNetworkViewFactoryServiceRef, 
-				                                      cyNetworkViewManagerServiceRef, 
-				                                      cyLayoutManagerServiceRef,appManager));
-	}
+    private CyNetworkFactory cyNetworkFactoryServiceRef;
+    private CyNetworkViewFactory cyNetworkViewFactoryServiceRef;
+    private CyNetworkViewManager cyNetworkViewManagerServiceRef;
+    private CyNetworkManager cyNetworkManagerServiceRef;
+    private CyNetworkNaming cyNetworkNamingServiceRef;
+    private CyLayoutAlgorithmManager cyLayoutManagerServiceRef;
+    private SocialNetworkAppManager appManager;
+
+    public CreateNetworkTaskFactory(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef,
+            CyNetworkManager cyNetworkManagerServiceRef, CyNetworkViewFactory cyNetworkViewFactoryServiceRef,
+            CyNetworkViewManager cyNetworkViewManagerServiceRef, CyLayoutAlgorithmManager cyLayoutManagerServiceRef,
+            SocialNetworkAppManager appManager) {
+        this.cyNetworkNamingServiceRef = cyNetworkNamingServiceRef;
+        this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
+        this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+        this.cyNetworkViewFactoryServiceRef = cyNetworkViewFactoryServiceRef;
+        this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
+        this.cyLayoutManagerServiceRef = cyLayoutManagerServiceRef;
+        this.appManager = appManager;
+    }
+
+    public TaskIterator createTaskIterator() {
+        return new TaskIterator(new CreateNetworkTask(this.cyNetworkNamingServiceRef, this.cyNetworkFactoryServiceRef, this.cyNetworkManagerServiceRef,
+                this.cyNetworkViewFactoryServiceRef, this.cyNetworkViewManagerServiceRef, this.cyLayoutManagerServiceRef, this.appManager));
+    }
 
 }

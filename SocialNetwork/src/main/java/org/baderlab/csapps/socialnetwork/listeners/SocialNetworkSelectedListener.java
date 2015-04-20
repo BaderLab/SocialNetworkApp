@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -37,48 +37,55 @@
 
 package org.baderlab.csapps.socialnetwork.listeners;
 
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.model.CyNetwork;
 
+/**
+ * Listens for social networks that have been selected by the user and
+ * displays any relevant information on the UI
+ *
+ * @author Victor Kofia
+ */
 public class SocialNetworkSelectedListener implements SetSelectedNetworksListener {
 
-	private SocialNetworkAppManager appManager;
-	private UserPanel userPanel;
-	
-	/**
-	 * 
-	 * @param {@link SocialNetworkAppManager} appManager
-	 */
-	public SocialNetworkSelectedListener(SocialNetworkAppManager appManager) {
-		super();
-		this.appManager = appManager;
-		this.userPanel = this.appManager.getUserPanelRef();
-	}
+    private SocialNetworkAppManager appManager;
+    private UserPanel userPanel;
 
-	/**
-	 * Updates UI
-	 * 
-	 * @param {@link SetSelectedNetworksEvent} event
-	 */
-	public void handleEvent(SetSelectedNetworksEvent event) {
-		String name = null;
-		for (CyNetwork network : event.getNetworks()) {
-			name = this.appManager.getNetworkName(network);
-			// Update UI iff a social network has been selected
-			if (this.appManager.getSocialNetworkMap().containsKey(name)) {
-				SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-				this.userPanel.updateNetworkSummaryPanel(socialNetwork);				
-				this.userPanel.addNetworkVisualStyle(socialNetwork);
-				this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
-				return;
-			}
-		}
-		this.appManager.setCurrentlySelectedSocialNetwork(null);
-		this.userPanel.addNetworkVisualStyle(null);
-		this.userPanel.updateNetworkSummaryPanel(null);	
-	}
+    /**
+     * Creates a new {@link SocialNetworkAppManager} object
+     *
+     * @param {@link SocialNetworkAppManager} appManager
+     */
+    public SocialNetworkSelectedListener(SocialNetworkAppManager appManager) {
+        super();
+        this.appManager = appManager;
+        this.userPanel = this.appManager.getUserPanelRef();
+    }
+
+    /**
+     * Updates UI
+     *
+     * @param {@link SetSelectedNetworksEvent} event
+     */
+    public void handleEvent(SetSelectedNetworksEvent event) {
+        String name = null;
+        for (CyNetwork network : event.getNetworks()) {
+            name = this.appManager.getNetworkName(network);
+            // Update UI iff a social network has been selected
+            if (this.appManager.getSocialNetworkMap().containsKey(name)) {
+                SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
+                this.userPanel.updateNetworkSummaryPanel(socialNetwork);
+                this.userPanel.addNetworkVisualStyle(socialNetwork);
+                this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
+                return;
+            }
+        }
+        this.appManager.setCurrentlySelectedSocialNetwork(null);
+        this.userPanel.addNetworkVisualStyle(null);
+        this.userPanel.updateNetworkSummaryPanel(null);
+    }
 }

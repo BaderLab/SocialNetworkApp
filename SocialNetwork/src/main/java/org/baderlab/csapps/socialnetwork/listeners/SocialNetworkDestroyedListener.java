@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -38,64 +38,77 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.util.Map;
-
 import javax.swing.table.DefaultTableModel;
-
-import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedEvent;
 import org.cytoscape.model.events.NetworkAboutToBeDestroyedListener;
 
 /**
- * Keeps track of major events and handles cleanup
+ * Updates the network table after a network is destroyed.
+ *
  * @author Victor Kofia
  */
 public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyedListener {
-	private CyNetworkManager cyNetworkManagerServiceRef = null;
-	private SocialNetworkAppManager appManager = null;
-	private UserPanel userPanel = null;
 
-	public SocialNetworkDestroyedListener(CyNetworkManager cyNetworkManagerServiceRef, SocialNetworkAppManager appManager) {
-		this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
-		this.appManager = appManager;
-		this.userPanel = this.appManager.getUserPanelRef();
-	}
+    private CyNetworkManager cyNetworkManagerServiceRef = null;
+    private SocialNetworkAppManager appManager = null;
+    private UserPanel userPanel = null;
 
-	/**
-	 * Get the row in table that contains the specified name. 
-	 * Assumes that each row stores a unique name.
-	 * @param String model
-	 * @param String name
-	 * @return int row
-	 */
-	private int getRow(DefaultTableModel model, String name) {
-		for (int row = 0; row < model.getRowCount(); row++) {
-			if (((String) model.getValueAt(row, 0)).equalsIgnoreCase(name)) {
-				return row;
-			}
-		}
-		return -1;
-	}
+    /**
+     *
+     * Create a new {@link SocialNetworkDestroyedListener} object
+     *
+     * @param {@link CyNetworkManager} cyNetworkManagerServiceRef
+     * @param {@link SocialNetworkAppManager} appManager
+     */
+    public SocialNetworkDestroyedListener(CyNetworkManager cyNetworkManagerServiceRef, SocialNetworkAppManager appManager) {
+        this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+        this.appManager = appManager;
+        this.userPanel = this.appManager.getUserPanelRef();
+    }
 
-	public void handleEvent(NetworkAboutToBeDestroyedEvent event) {
-		String name = this.appManager.getNetworkName(event.getNetwork());
-		Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
-		if (map.containsKey(name)) {
-			map.remove(name);
-			// Remove network from table
-			DefaultTableModel  model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();		    
-			int row = getRow(model, name);
-			if (row > -1) {
-				model.removeRow(getRow(model, name));			  
-			}
-			if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
-				this.appManager.setCurrentlySelectedSocialNetwork(null);
-				this.userPanel.addNetworkVisualStyle(null);
-				this.userPanel.updateNetworkSummaryPanel(null);				
-			}
-		}
-	}
+    /**
+     * Get the row in table that contains the specified name. Assumes that each
+     * row stores a unique name.
+     *
+     * @param {@link DefaultTableModel} model
+     * @param String name
+     * @return int row
+     */
+    private int getRow(DefaultTableModel model, String name) {
+        for (int row = 0; row < model.getRowCount(); row++) {
+            if (((String) model.getValueAt(row, 0)).equalsIgnoreCase(name)) {
+                return row;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Perform cleanup after network is destroyed
+     *
+     * @param {@link NetworkAboutToBeDestroyed} event
+     */
+    public void handleEvent(NetworkAboutToBeDestroyedEvent event) {
+        String name = this.appManager.getNetworkName(event.getNetwork());
+        Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
+        if (map.containsKey(name)) {
+            map.remove(name);
+            // Remove network from table
+            DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
+            int row = getRow(model, name);
+            if (row > -1) {
+                model.removeRow(getRow(model, name));
+            }
+            if (this.cyNetworkManagerServiceRef.getNetworkSet().size() == 1) {
+                this.appManager.setCurrentlySelectedSocialNetwork(null);
+                this.userPanel.addNetworkVisualStyle(null);
+                this.userPanel.updateNetworkSummaryPanel(null);
+            }
+        }
+    }
 
 }

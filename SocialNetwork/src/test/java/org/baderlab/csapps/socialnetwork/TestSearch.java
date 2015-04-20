@@ -1,7 +1,7 @@
 /**
  **                       SocialNetwork Cytoscape App
  **
- ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
+ ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
  **
  ** Contact: http://www.baderlab.org
@@ -19,14 +19,14 @@
  ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
  ** documentation provided hereunder is on an "as is" basis, and
  ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
+ ** has no obligations to provide maintenance, support, updates,
  ** enhancements or modifications.  In no event shall the
  ** University of Toronto
  ** be liable to any party for direct, indirect, special,
  ** incidental or consequential damages, including lost profits, arising
  ** out of the use of this software and its documentation, even if
  ** University of Toronto
- ** has been advised of the possibility of such damage.  
+ ** has been advised of the possibility of such damage.
  ** See the GNU Lesser General Public License for more details.
  **
  ** You should have received a copy of the GNU Lesser General Public License
@@ -37,10 +37,8 @@
 
 package org.baderlab.csapps.socialnetwork;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Search;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -53,33 +51,34 @@ import org.junit.Test;
 
 /**
  * Test search feature
+ *
  * @author Victor Kofia
  */
 public class TestSearch {
 
-	private FileUtil fileUtil = mock(FileUtil.class);
-	private CySwingApplication cySwingAppRef = mock(CySwingApplication.class);
-	
-	@Before
-	public void setUp() throws Exception {
-	}
+    private FileUtil fileUtil = mock(FileUtil.class);
+    private CySwingApplication cySwingAppRef = mock(CySwingApplication.class);
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	/**
-	 * Verify that the number of hits declared by PubMed's xml file is equal 
-	 * to the total number of results returned by search
-	 */
-	public void testPubmedSearch() {
-		SocialNetworkAppManager appManager = new SocialNetworkAppManager ();
-		appManager.setUserPanelRef(new UserPanel(appManager,fileUtil,cySwingAppRef));
-		Search search = new Search("emili a", Category.ACADEMIA,appManager);
-		int hits = search.getTotalHits();
-		int results = search.getResults().size();
-		assertTrue(hits == results);
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    @Test
+    /**
+     * Verify that the number of hits declared by PubMed's xml file is equal
+     * to the total number of results returned by search
+     */
+    public void testPubmedSearch() {
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
+        appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
+        Search search = new Search("emili a", Category.ACADEMIA, appManager);
+        int hits = search.getTotalHits();
+        int results = search.getResults().size();
+        assertTrue(hits == results);
+    }
 
 }
