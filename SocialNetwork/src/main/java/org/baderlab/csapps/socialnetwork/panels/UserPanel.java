@@ -236,8 +236,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             }
 
             // Add row to table
-            model.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(),
-                    Category.toString(networkType) });
+            model.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
 
             // Set table reference
             this.setNetworkTableRef(networkTable);
@@ -286,8 +285,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             // Add network info to table
         } else {
             DefaultTableModel networkTableModel = (DefaultTableModel) getNetworkTableRef().getModel();
-            networkTableModel.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(),
-                    Category.toString(networkType) });
+            networkTableModel.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
 
         }
 
@@ -788,7 +786,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Get network summary pane reference
      *
      * @param null
-     * @return JTextPane networkSummaryPaneRef
+     * @return JTextPane fileSummaryPaneRef
      */
     public JTextPane getFileSummaryPaneRef() {
         return this.fileSummaryPaneRef;
@@ -1213,6 +1211,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         }
         this.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
         this.getNetworkSummaryPaneRef().setText(networkSummary);
+        this.getFileSummaryPaneRef().setText("");
 
         // if this is an incites network add the summaries
         if (socialNetwork.getNetworkType() == Category.INCITES) {

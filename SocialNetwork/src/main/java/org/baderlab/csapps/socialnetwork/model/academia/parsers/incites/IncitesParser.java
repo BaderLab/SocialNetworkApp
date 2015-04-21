@@ -182,7 +182,6 @@ public class IncitesParser {
      * Create new Incites parser object
      *
      * @param File xlsx
-     * @return null
      */
     public IncitesParser(File xlsx) {
         this.locationMap = new Incites_InstitutionLocationMap();
@@ -211,9 +210,6 @@ public class IncitesParser {
     /**
      * Calculate network summary i.e. which faculty members got identified? <br>
      * which ones didn't?
-     *
-     * @param null
-     * @return null
      */
     private void calculateSummary() {
         ArrayList<Author> identifiedAuthorsList = new ArrayList<Author>();
@@ -270,7 +266,6 @@ public class IncitesParser {
     /**
      * Get the # of defective rows
      *
-     * @param null
      * @return int defectiveRows
      */
     public int getDefectiveRows() {
@@ -280,7 +275,6 @@ public class IncitesParser {
     /**
      * Get department name
      *
-     * @param null
      * @return String departmentName
      */
     public String getDepartmentName() {
@@ -290,7 +284,6 @@ public class IncitesParser {
     /**
      * Get faculty set
      *
-     * @param null
      * @return HashSet facultySet
      */
     public HashSet<Author> getFacultySet() {
@@ -303,7 +296,6 @@ public class IncitesParser {
     /**
      * Get identified faculty list
      *
-     * @param null
      * @return ArrayList identifiedFacultyList
      */
     public ArrayList<Author> getIdentifiedFacultyList() {
@@ -313,7 +305,6 @@ public class IncitesParser {
     /**
      * Get the # of ignored rows
      *
-     * @param null
      * @return int ignoredRows
      */
     public int getIgnoredRows() {
@@ -323,7 +314,6 @@ public class IncitesParser {
     /**
      * Get lone author list
      *
-     * @param null
      * @return ArrayList loneAuthorList
      */
     public ArrayList<Author> getLoneAuthorList() {
@@ -336,7 +326,6 @@ public class IncitesParser {
     /**
      * Get publication list
      *
-     * @param null
      * @return ArrayList pubList
      */
     public ArrayList<Publication> getPubList() {
@@ -359,7 +348,6 @@ public class IncitesParser {
      * Get unidentified faculty string <br>
      * last name, first name
      *
-     * @param null
      * @return String unidentifiedFacultyString
      */
     public String getUnidentifiedFacultyString() {
@@ -405,7 +393,6 @@ public class IncitesParser {
      * Parse all faculty contained in data file
      *
      * @param File xlsxFile
-     * @return null
      */
     private void parseFaculty(File xlsxFile) {
         try {
@@ -456,7 +443,6 @@ public class IncitesParser {
      * author a node. Node info is embedded inside each edge.
      *
      * @param File xlsxFile
-     * @return null
      */
     private void parsePublications(File xlsxFile) {
         try {
@@ -490,7 +476,6 @@ public class IncitesParser {
      * Set department name
      *
      * @param String departmentName
-     * @return null
      */
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
@@ -500,7 +485,6 @@ public class IncitesParser {
      * Set 'faculty set'
      *
      * @param HashSet facultySet
-     * @return null
      */
     private void setFacultySet(HashSet<Author> facultySet) {
         this.facultySet = facultySet;
@@ -510,7 +494,6 @@ public class IncitesParser {
      * Set identified faculty list
      *
      * @param ArrayList identifiedFaculty
-     * @return null
      */
     public void setIdentifiedFacultyList(ArrayList<Author> identifiedFacultyList) {
         this.identifiedFacultyList = identifiedFacultyList;
@@ -520,7 +503,6 @@ public class IncitesParser {
      * Set lone author list
      *
      * @param ArrayList loneAuthorList
-     * @return null
      */
     public void setLoneAuthorList(ArrayList<Author> loneAuthorList) {
         this.loneAuthorList = loneAuthorList;
@@ -530,7 +512,6 @@ public class IncitesParser {
      * Set publication list
      *
      * @param ArrayList pubList
-     * @return null
      */
     private void setPubList(ArrayList<Publication> pubList) {
         this.pubList = pubList;
@@ -540,7 +521,6 @@ public class IncitesParser {
      * Set unidentified faculty list
      *
      * @param ArrayList unidentifiedFacultyList
-     * @return null
      */
     public void setUnidentifiedFacultyList(ArrayList<Author> unidentifiedFacultyList) {
         this.unidentifiedFacultyList = unidentifiedFacultyList;
@@ -551,7 +531,6 @@ public class IncitesParser {
      * last name, first name
      *
      * @param String unidentifiedFacultyString
-     * @return null
      */
     public void setUnidentifiedFacultyString(String unidentifiedFacultyString) {
         this.unidentifiedFacultyString = unidentifiedFacultyString;
@@ -559,9 +538,6 @@ public class IncitesParser {
 
     /**
      * Update the number of defective columns (add 1)
-     *
-     * @param null
-     * @return null
      */
     public void updateDefectiveRows() {
         this.defectiveRows++;
@@ -571,7 +547,6 @@ public class IncitesParser {
      * Update the # of ignored rows (add 1)
      *
      * @param int ignoredRows
-     * @return null
      */
     public void updateIgnoredRows() {
         this.ignoredRows++;
