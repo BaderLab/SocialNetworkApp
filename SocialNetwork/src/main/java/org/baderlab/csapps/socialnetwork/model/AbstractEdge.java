@@ -70,7 +70,7 @@ public abstract class AbstractEdge {
      * Get CyEdge
      *
      * @param null
-     * @return CyEdge cyEdge
+     * @return {@link CyEdge} cyEdge
      */
     public abstract CyEdge getCyEdge();
 
@@ -93,7 +93,7 @@ public abstract class AbstractEdge {
     /**
      * Set CyEdge
      *
-     * @param CyEdge cyEdge
+     * @param {@link CyEdge} cyEdge
      * @return null
      */
     public abstract void setCyEdge(CyEdge cyEdge);

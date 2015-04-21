@@ -121,13 +121,11 @@ public class Copublications extends AbstractEdge {
         return this.edgeAttrMap;
     }
 
-    /**
-     * NON-FUNCTIONAL. DO NOT USE.
-     *
-     * @param null
-     * @return null
-     */
     @Override
+    /*
+     * (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getNodes()
+     */
     public List<? extends AbstractNode> getNodes() {
         return null;
     }
@@ -135,7 +133,6 @@ public class Copublications extends AbstractEdge {
     /**
      * Get publist
      *
-     * @param null
      * @return ArrayList pubList
      */
     private ArrayList<Publication> getPubList() {
@@ -145,7 +142,6 @@ public class Copublications extends AbstractEdge {
     /**
      * Get total # of co-publications
      *
-     * @param null
      * @return int totalPubs
      */
     public int getTotalPubs() {
@@ -153,6 +149,10 @@ public class Copublications extends AbstractEdge {
     }
 
     @Override
+    /*
+     * (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#setCyEdge(org.cytoscape.model.CyEdge)
+     */
     public void setCyEdge(CyEdge cyEdge) {
         this.cyEdge = cyEdge;
     }
