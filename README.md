@@ -2,4 +2,4 @@ SocialNetworkApp
 ================
 Social Network Cytoscape App
 
-http://baderlab.org/UserguideSocialNetworkApp
+http://baderlab.org/Software/SocialNetworkApp
