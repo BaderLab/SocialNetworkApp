@@ -56,10 +56,12 @@ public class FacultySheetHandler extends DefaultHandler {
      * XML parsing variables. Used to store data temporarily.
      */
     private String cellContents = "", rowContents = "", cellID = "";
+
     /**
      * Reference to Incites parser object
      */
     private IncitesParser incitesParser = null;
+
     /**
      * Reference to XLSX table. Necessary for extracting cell contents (cell IDs
      * are used to extract cell contents)
@@ -71,7 +73,6 @@ public class FacultySheetHandler extends DefaultHandler {
      *
      * @param SharedStringsTable sst
      * @param Incites incites
-     * @return null
      */
     public FacultySheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
         this.sst = sst;
@@ -79,12 +80,23 @@ public class FacultySheetHandler extends DefaultHandler {
     }
 
     // Collect tag contents
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         this.cellID += new String(ch, start, length);
     }
 
     @Override
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+     * java.lang.String, java.lang.String)
+     */
     public void endElement(String uri, String localName, String name) throws SAXException {
 
         if (name.equals("v")) {
@@ -114,6 +126,12 @@ public class FacultySheetHandler extends DefaultHandler {
     }
 
     @Override
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 
         // Reset row contents
