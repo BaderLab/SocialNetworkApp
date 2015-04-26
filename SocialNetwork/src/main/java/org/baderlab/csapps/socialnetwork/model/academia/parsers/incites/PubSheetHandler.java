@@ -58,32 +58,40 @@ public class PubSheetHandler extends DefaultHandler {
      * List of authors in each publication
      */
     List<Author> coauthorList = null;
+
     /**
      * The columns of a row.
      */
     private String[] columns = null;
+
     /**
      * XML Parsing variables. Used to store data temporarily.
      */
     private String cellID = "", cellContents = "", rowContents = "";
+
     /**
      * Reference to Incites object
      */
     private IncitesParser incitesParser = null;
+
     private boolean isString = false;
+
     /**
      * Reference to individual publication
      */
     Publication pub;
+
     /**
      * Reference to XLSX table. Necessary for extracting cell contents (cell IDs
      * are used to extract cell contents)
      */
     private SharedStringsTable sst = null;
+
     /**
      * Publication attributes.
      */
     String title, timesCited = null, expectedCitations = "0.00";
+
     String year = null, subjectArea = null, authors = null;
 
     /**
@@ -91,7 +99,6 @@ public class PubSheetHandler extends DefaultHandler {
      *
      * @param SharedStringsTable sst
      * @param Incites incites
-     * @return null
      */
     public PubSheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
         this.sst = sst;
@@ -99,12 +106,23 @@ public class PubSheetHandler extends DefaultHandler {
     }
 
     // Collect tag contents
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         this.cellID += new String(ch, start, length);
     }
 
     @Override
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+     * java.lang.String, java.lang.String)
+     */
     public void endElement(String uri, String localName, String name) throws SAXException {
 
         // Extract cell contents
@@ -227,6 +245,12 @@ public class PubSheetHandler extends DefaultHandler {
     }
 
     @Override
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
         // Reset row contents
         if (name.equals("row")) {
