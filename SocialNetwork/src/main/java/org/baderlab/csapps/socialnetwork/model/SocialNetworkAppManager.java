@@ -159,7 +159,6 @@ public class SocialNetworkAppManager {
      * Apply visual style to network
      *
      * @param String visualStyle
-     * @return null
      */
     public void applyVisualStyle(String visualStyle) {
         this.setVisualStyleID(new VisualStyles().getVisualStyleID(visualStyle));
@@ -169,22 +168,16 @@ public class SocialNetworkAppManager {
     /**
      * Close user panel. Method will do nothing if user panel has not been
      * registered prior to it's execution.
-     *
-     * @param null
-     * @return null
      */
     public void closeUserPanel() {
         this.getServiceRegistrar().unregisterService(this.getUserPanelRef(), CytoPanelComponent.class);
-        this.getUserPanelAction().putValue(Action.NAME, "View Panel");
+        this.getUserPanelAction().putValue(Action.NAME, "Show Social Network");
     }
 
     /**
      * Create a network. Method marked private in order to prevent users from
      * inadvertently creating a network before all pertinent edge and node info
      * is set.
-     *
-     * @param null
-     * @return null
      */
     private void createNetwork() {
 
@@ -202,7 +195,6 @@ public class SocialNetworkAppManager {
      * Create a network from file
      *
      * @param File networkFile
-     * @return null
      */
     public void createNetwork(File networkFile) throws FileNotFoundException {
         // Verify that network name is valid
@@ -293,7 +285,6 @@ public class SocialNetworkAppManager {
      *
      * @param String searchTerm
      * @param int category
-     * @return null
      */
     public void createNetwork(String searchTerm, int category) {
         // Verify that network name is valid
@@ -348,7 +339,6 @@ public class SocialNetworkAppManager {
      * Destroy a network
      *
      * @param CyNetwork network
-     * @return null
      */
     public void destroyNetwork(CyNetwork network) {
         this.setNetworkToBeDestroyed(network);
@@ -362,7 +352,6 @@ public class SocialNetworkAppManager {
     /**
      * Get currently selected social network
      *
-     * @param null
      * @return SocialNetwork currentlySelectedSocialNetwork
      */
     public SocialNetwork getCurrentlySelectedSocialNetwork() {
@@ -372,7 +361,6 @@ public class SocialNetworkAppManager {
     /**
      * Get Cytoscape application manager
      *
-     * @param null
      * @return CyApplicationManager cyAppManagerServiceRef
      */
     public CyApplicationManager getCyAppManagerServiceRef() {
@@ -382,7 +370,6 @@ public class SocialNetworkAppManager {
     /**
      * Get destroy network task factory
      *
-     * @param null
      * @return DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef
      */
     public DestroyNetworkTaskFactory getDestroyNetworkTaskFactoryRef() {
@@ -392,7 +379,6 @@ public class SocialNetworkAppManager {
     /**
      * Get network map. Contains edge and node information.
      *
-     * @param null
      * @return Map map
      */
     public Map<Collaboration, ArrayList<AbstractEdge>> getMap() {
@@ -402,7 +388,6 @@ public class SocialNetworkAppManager {
     /**
      * Get network name.
      *
-     * @param null
      * @return String networkName
      */
     public String getNetworkName() {
@@ -425,9 +410,7 @@ public class SocialNetworkAppManager {
     /**
      * Get network table column names
      *
-     * @param null
      * @return String[] networkTableColumnNames
-     * @return
      */
     public String[] getNetworkTableColumnNames() {
         return new String[] { "Name", "Node Count", "Edge Count", "Category" };
@@ -436,7 +419,6 @@ public class SocialNetworkAppManager {
     /**
      * Get network task factory
      *
-     * @param null
      * @return NetworkTaskFactory networkTaskFactory
      */
     public CreateNetworkTaskFactory getNetworkTaskFactoryRef() {
@@ -446,7 +428,6 @@ public class SocialNetworkAppManager {
     /**
      * The network that is about to be destroyed
      *
-     * @param null
      * @return CyNetwork networkToBeDestroyed
      */
     public CyNetwork getNetworkToBeDestroyed() {
@@ -456,7 +437,6 @@ public class SocialNetworkAppManager {
     /**
      * Get Cytoscape service registrar
      *
-     * @param null
      * @return CyServiceRegistrar cyServiceRegistrarRef
      */
     public CyServiceRegistrar getServiceRegistrar() {
@@ -479,7 +459,6 @@ public class SocialNetworkAppManager {
     /**
      * Get social network map
      *
-     * @param null
      * @return Map social networks <br>
      * <i>key: network name</i> <br>
      * <i>value: {CyNetwork, Category, CyNetworkView}</i>
@@ -495,7 +474,6 @@ public class SocialNetworkAppManager {
     /**
      * Get Cytoscape task manager
      *
-     * @param null
      * @return TaskManager taskManager
      */
     public TaskManager<?, ?> getTaskManager() {
@@ -505,7 +483,6 @@ public class SocialNetworkAppManager {
     /**
      * Get user panel action
      *
-     * @param null
      * @return UserPanelAction userPanelAction
      */
     public ShowUserPanelAction getUserPanelAction() {
@@ -515,7 +492,6 @@ public class SocialNetworkAppManager {
     /**
      * Get user panel reference
      *
-     * @param null
      * @return UserPanel userPanelRef
      */
     public UserPanel getUserPanelRef() {
@@ -525,7 +501,6 @@ public class SocialNetworkAppManager {
     /**
      * Get visual style ID
      *
-     * @param null
      * @return int visualStyleID
      */
     public int getVisualStyleID() {
@@ -566,7 +541,6 @@ public class SocialNetworkAppManager {
      * Set 'apply view' task factory
      *
      * @param ApplyViewTaskFactory applyViewTaskFactoryRef
-     * @return null
      */
     public void setApplyVisualStyleTaskFactoryRef(ApplyVisualStyleTaskFactory applyViewTaskFactoryRef) {
         applyVisualStyleTaskFactoryRef = applyViewTaskFactoryRef;
@@ -576,7 +550,6 @@ public class SocialNetworkAppManager {
      * Set currently selected social network
      *
      * @param SocialNetwork currentlySelectedSocialNetwork
-     * @return null
      */
     public void setCurrentlySelectedSocialNetwork(SocialNetwork currentlySelectedSocialNetwork) {
         this.currentlySelectedSocialNetwork = currentlySelectedSocialNetwork;
@@ -586,7 +559,6 @@ public class SocialNetworkAppManager {
      * Set network's view as the current view
      *
      * @param String networkName
-     * @return null
      */
     public void setCurrentNetworkView(String networkName) {
         CyNetworkView networkView = getSocialNetworkMap().get(networkName).getNetworkView();
@@ -597,7 +569,6 @@ public class SocialNetworkAppManager {
      * Set Cytoscape application manager
      *
      * @param CyApplicationManager cyAppManagerServiceRef
-     * @return null
      */
     public void setCyAppManagerServiceRef(CyApplicationManager cyAppManagerServiceRef) {
         this.cyAppManagerServiceRef = cyAppManagerServiceRef;
@@ -607,7 +578,6 @@ public class SocialNetworkAppManager {
      * Set 'destroy network' task factory
      *
      * @param DestroyNetworkTaskFActory destroyNetworkTaskFactory
-     * @return null
      */
     public void setDestroyNetworkTaskFactoryRef(DestroyNetworkTaskFactory destroyNetworkTaskFactory) {
         this.destroyNetworkTaskFactoryRef = destroyNetworkTaskFactory;
@@ -617,7 +587,6 @@ public class SocialNetworkAppManager {
      * Set map
      *
      * @param Map map
-     * @return null
      */
     public void setMap(Map<Collaboration, ArrayList<AbstractEdge>> map) {
         this.map = map;
@@ -627,7 +596,6 @@ public class SocialNetworkAppManager {
      * Set network name
      *
      * @param String networkName
-     * @return null
      */
     public void setNetworkName(String networkName) {
         this.networkName = networkName;
@@ -637,7 +605,6 @@ public class SocialNetworkAppManager {
      * Set network task factory
      *
      * @param CreateNetworkTaskFactory networkTaskFactory
-     * @return null
      */
     public void setNetworkTaskFactoryRef(CreateNetworkTaskFactory networkTaskFactoryRef) {
         this.networkTaskFactoryRef = networkTaskFactoryRef;
@@ -647,7 +614,6 @@ public class SocialNetworkAppManager {
      * Set the network that is about to be destroyed
      *
      * @param CyNetwork networkToBeDestroyed
-     * @return null
      */
     public void setNetworkToBeDestroyed(CyNetwork networkToBeDestroyed) {
         this.networkToBeDestroyed = networkToBeDestroyed;
@@ -657,7 +623,6 @@ public class SocialNetworkAppManager {
      * Set Cytoscape service registrar
      *
      * @param CyServiceRegistrar cyServiceRegistrarRef
-     * @return null
      */
     public void setServiceRegistrar(CyServiceRegistrar cyServiceRegistrarRef) {
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
@@ -667,7 +632,6 @@ public class SocialNetworkAppManager {
      * Set social network map
      *
      * @param Map socialNetworkMap
-     * @return null
      */
     public void setSocialNetworkMap(Map<String, SocialNetwork> socialNetwork) {
         this.socialNetworkMap = socialNetwork;
@@ -677,7 +641,6 @@ public class SocialNetworkAppManager {
      * Set task manager
      *
      * @param TaskManager taskManager
-     * @return null
      */
     public void setTaskManager(TaskManager<?, ?> taskManager) {
         this.taskManagerServiceRef = taskManager;
@@ -687,7 +650,6 @@ public class SocialNetworkAppManager {
      * Set user panel action
      *
      * @param ShowUserPanelAction userPanelAction
-     * @return null
      */
     public void setUserPanelAction(ShowUserPanelAction userPanelAction) {
         this.userPanelAction = userPanelAction;
@@ -697,7 +659,6 @@ public class SocialNetworkAppManager {
      * Set user panel reference
      *
      * @param UserPanel userPanelRef
-     * @return null
      */
     public void setUserPanelRef(UserPanel userPanelRef) {
         this.userPanelRef = userPanelRef;
@@ -707,7 +668,6 @@ public class SocialNetworkAppManager {
      * Set visual style ID
      *
      * @param int visualStyleID
-     * @return null
      */
     public void setVisualStyleID(int visualStyleID) {
         this.visualStyleID = visualStyleID;
