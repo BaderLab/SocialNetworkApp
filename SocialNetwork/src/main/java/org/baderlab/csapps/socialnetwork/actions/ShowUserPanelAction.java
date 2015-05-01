@@ -73,14 +73,13 @@ public class ShowUserPanelAction extends AbstractCyAction {
      * @param CySwingApplication cySwingApplicationServiceRef
      * @param CyServiceRegistrar cyServiceRegistrarRef
      * @param UserPanel userPanel
-     * @return null
      */
     public ShowUserPanelAction(Map<String, String> configProps, CyApplicationManager cyApplicationManagerServiceRef,
             CyNetworkViewManager cyNetworkViewManagerServiceRef, CySwingApplication cySwingApplicationServiceRef,
             CyServiceRegistrar cyServiceRegistrarRef, UserPanel userPanel) {
 
         super(configProps, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef);
-        putValue(Action.NAME, "View Panel");
+        putValue(Action.NAME, "Show Social Network");
         this.cytoPanelWest = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.WEST);
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.userPanel = userPanel;
@@ -90,11 +89,10 @@ public class ShowUserPanelAction extends AbstractCyAction {
      * Display / Hide the main panel
      *
      * @param ActionEvent event
-     * @return null
      */
     public void actionPerformed(ActionEvent event) {
         String currentName = (String) getValue(Action.NAME);
-        if (currentName.trim().equalsIgnoreCase("View Panel")) {
+        if (currentName.trim().equalsIgnoreCase("Show Social Network")) {
             this.cyServiceRegistrarRef.registerService(this.userPanel, CytoPanelComponent.class, new Properties());
             // If the state of the cytoPanelWest is HIDE, show it
             if (this.cytoPanelWest.getState() == CytoPanelState.HIDE) {
@@ -106,10 +104,10 @@ public class ShowUserPanelAction extends AbstractCyAction {
                 return;
             }
             this.cytoPanelWest.setSelectedIndex(index);
-            putValue(Action.NAME, "Hide Panel");
-        } else if (currentName.trim().equalsIgnoreCase("Hide Panel")) {
+            putValue(Action.NAME, "Hide Social Network");
+        } else if (currentName.trim().equalsIgnoreCase("Hide Social Network")) {
             this.cyServiceRegistrarRef.unregisterService(this.userPanel, CytoPanelComponent.class);
-            putValue(Action.NAME, "View Panel");
+            putValue(Action.NAME, "Show Social Network");
         }
     }
 
