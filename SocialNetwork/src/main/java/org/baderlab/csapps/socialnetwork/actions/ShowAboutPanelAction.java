@@ -59,7 +59,7 @@ public class ShowAboutPanelAction extends AbstractCyAction {
     public ShowAboutPanelAction(Map<String, String> configProps, CyApplicationManager applicationManager, CyNetworkViewManager networkViewManager,
             CySwingApplication application, OpenBrowser openBrowserRef) {
         super(configProps, applicationManager, networkViewManager);
-        putValue(NAME, "About Social Network");
+        putValue(NAME, "About ...");
         this.application = application;
         this.browser = openBrowserRef;
     }
