@@ -212,7 +212,7 @@ public class Publication extends AbstractEdge {
     }
 
     /**
-     * Get location
+     * Get the location associated with this publication
      *
      * @return String location
      */
@@ -221,7 +221,7 @@ public class Publication extends AbstractEdge {
     }
 
     /**
-     * Get authors
+     * Get the authors of this publication
      *
      * @return List authorList
      */

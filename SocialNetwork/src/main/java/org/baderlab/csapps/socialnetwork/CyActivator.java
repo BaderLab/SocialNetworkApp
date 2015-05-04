@@ -44,8 +44,6 @@ import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
-import org.baderlab.csapps.socialnetwork.autoannotate.action.AutoAnnotationPanelAction;
-import org.baderlab.csapps.socialnetwork.autoannotate.action.DisplayOptionsPanelAction;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
@@ -280,6 +278,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, incitesAction, CyAction.class, new Properties());
 
         // Auto-annotate Panel Action - opens Annotation panel
+        /*
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Apps.Social Network");
@@ -290,8 +289,10 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         registerService(bc, autoAnnotationPanelAction, CyAction.class, new Properties());
+         */
 
         //Auto-annotate Display Options Panel Action - opens display options panel
+        /*
         serviceProperties = new HashMap<String, String>();
         DisplayOptionsPanelAction displayOptionsPanelAction = new DisplayOptionsPanelAction(serviceProperties,
                 cyApplicationManagerServiceRef,
@@ -300,6 +301,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         autoAnnotationManager.setDisplayOptionsPanelAction(displayOptionsPanelAction);
+         */
 
     }
 }

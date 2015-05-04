@@ -173,16 +173,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     private FileUtil fileUtil = null;
     private CySwingApplication cySwingAppRef = null;
 
-    /*
+    /**
      * instance of academia panel
      */
     private AcademiaPanel academiaPanel = null;
 
     /**
      * Create a new panel
-     *
-     * @param null
-     * @return null
      */
     public UserPanel(SocialNetworkAppManager appManager, FileUtil fileUtil, CySwingApplication cySwingAppRef) {
 
@@ -215,7 +212,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Add a network to app's network panel
      *
      * @param CyNetwork network
-     * @return null
      */
     public void addNetworkToNetworkPanel(SocialNetwork socialNetwork) {
 
@@ -301,7 +297,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Add network's visual style to user panel
      *
      * @param Network network
-     * @return null
      */
     public void addNetworkVisualStyle(SocialNetwork socialNetwork) {
         // int networkType = (socialNetwork == null) ? Category.DEFAULT :
@@ -341,7 +336,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Assumes network is already loaded into Cytoscape.
      *
      * @param String networkName
-     * @return null
      */
     public void changeNetworkVisualStyle(String networkName) {
         int visualStyleType = this.appManager.getSocialNetworkMap().get(networkName).getDefaultVisualStyle();
@@ -360,7 +354,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * (reset, close). As well as a network panel that will allow the user to
      * change network parameters at their convenience.
      *
-     * @param null
      * @return JPanel bottomPanel
      */
     private JPanel createBottomPanel() {
@@ -376,7 +369,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create category option selector.
      *
-     * @param null
      * @return JComboBox optionSelector
      */
     private JComboBox createCategoryOptionSelector() {
@@ -411,7 +403,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create new category panel; will allow user to select a particular search
      * category
      *
-     * @param null
      * @return JPanel categoryPanel
      */
     private JPanel createCategoryPanel() {
@@ -425,7 +416,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create close button. Close button closes current panel
      *
-     * @param null
      * @return JButton closeButton
      */
     private JButton createCloseButton() {
@@ -445,7 +435,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create new control panel for use in main app panel; will allow users to
      * reset or close the main app panel.
      *
-     * @param null
      * @return JPanel control panel
      */
     private JPanel createControlPanel() {
@@ -462,7 +451,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create 'destroy menu item'. Function is self-evident.
      *
-     * @param null
      * @return JMenuItem destroyNetworkMenuItem
      */
     public JMenuItem createDestroyNetworkMenuItem() {
@@ -483,7 +471,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create help button
      *
-     * @param null
      * @return JButton helpButton
      */
     private JButton createHelpButton() {
@@ -522,7 +509,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create new network panel; will allow lay users to easily modify network
      * parameters
      *
-     * @param null
      * @return JPanel networkPanel
      */
     private JPanel createNetworkPanel() {
@@ -573,7 +559,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create reset button. Reset button resets info panel. All form fills will
      * be cleared and info panel will revert to its natural undisturbed state
      *
-     * @param null
      * @return JButton resetButton
      */
     private JButton createResetButton() {
@@ -594,7 +579,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create new search box. Will allow user to search any social website
      *
-     * @param null
      * @return JTextField searchBox
      */
     private JTextField createSearchBox() {
@@ -622,7 +606,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Button not 100% necessary. Its function can be duplicated by a simple tap
      * on the return key
      *
-     * @param null
      * @return JButton search
      */
     private JButton createSearchButton() {
@@ -651,7 +634,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create search option selector.
      *
-     * @param null
      * @return JComboBox optionSelector
      */
     private JComboBox createSearchFilter() {
@@ -662,7 +644,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
             public void actionPerformed(ActionEvent e) {
                 // SEARCH FILTERS
-                // WIP (Work In Progress)
+                // TODO:  (Work In Progress)
             }
         });
         return searchOptionSelector;
@@ -672,7 +654,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create new search panel. Will allow user to search for a particular
      * network. A default search filter will also be made available to the user.
      *
-     * @param null
      * @return JPanel searchPanel
      */
     private JPanel createSearchPanel() {
@@ -704,7 +685,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Create new top panel for use in main app panel. Top panel will contain
      * search box and category option seelctor.
      *
-     * @param null
      * @return JPanel topPanel
      */
     private JPanel createTopPanel() {
@@ -760,10 +740,19 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         return visualStyleSelector;
     }
 
+    /**
+     * Get academia panel
+     *
+     * @return {@link AcademiaPanel} academiaPanel
+     */
     public AcademiaPanel getAcademiaPanel() {
         return this.academiaPanel;
     }
 
+    /**
+     *
+     * @return {@link Component} component
+     */
     public Component getComponent() {
         return this;
     }
@@ -771,7 +760,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get control panel reference
      *
-     * @param null
      * @return JPanel controlPanelRef
      */
     private JPanel getControlPanelRef() {
@@ -785,7 +773,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get network summary pane reference
      *
-     * @param null
      * @return JTextPane fileSummaryPaneRef
      */
     public JTextPane getFileSummaryPaneRef() {
@@ -795,7 +782,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get panel icon
      *
-     * @param null
      * @return Icon panelIcon
      */
     public Icon getIcon() {
@@ -805,7 +791,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get network panel reference
      *
-     * @param null
      * @return JPanel networkPanelRef
      */
     public JPanel getNetworkPanelRef() {
@@ -815,7 +800,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get network summary panel reference
      *
-     * @param null
      * @return JPanel networkSummaryPanel
      */
     private JPanel getNetworkSummaryPanelRef() {
@@ -825,7 +809,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get network summary pane reference
      *
-     * @param null
      * @return JTextPane networkSummaryPaneRef
      */
     public JTextPane getNetworkSummaryPaneRef() {
@@ -835,7 +818,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get network table reference
      *
-     * @param null
      * @return JTable networkTableRef
      */
     public JTable getNetworkTableRef() {
@@ -845,7 +827,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get user panel searchbox
      *
-     * @param null
      * @return JTextField searchBox
      */
     public JTextField getSearchBox() {
@@ -855,7 +836,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get search filter
      *
-     * @param null
      * @return JComboBox searchFilter
      */
     private JComboBox getSearchFilter() {
@@ -865,7 +845,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get selected category
      *
-     * @param null
      * @return int selectedCategory
      */
     public int getSelectedCategory() {
@@ -875,7 +854,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get current info panel
      *
-     * @param null
      * @return JPanel currentInfoPanel
      */
     private JPanel getSelectedInfoPanel() {
@@ -885,7 +863,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get selected network
      *
-     * @param null
      * @return String network
      */
     public String getSelectedNetwork() {
@@ -895,7 +872,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get selected visual style
      *
-     * @param null
      * @return int visualStyle
      */
     private int getSelectedVisualStyle() {
@@ -905,7 +881,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get panel title
      *
-     * @param null
      * @return String panelTitle
      */
     public String getTitle() {
@@ -915,7 +890,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get visual style help button
      *
-     * @param null
      * @return JButton visualStyleHelpButton
      */
     public JButton getVisualStyleHelpButton() {
@@ -925,7 +899,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get visual style panel
      *
-     * @param null
      * @return JPanel visualStylePanel
      */
     public JPanel getVisualStylePanel() {
@@ -935,7 +908,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get visual style selector
      *
-     * @param null
      * @return JComboBox visualStyleSelector
      */
     public JComboBox getVisualStyleSelector() {
@@ -945,7 +917,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Get visual style type
      *
-     * @param null
      * @return int visualStyleType
      */
     public int getVisualStyleSelectorType() {
@@ -957,7 +928,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @param String dialogTitle
      * @param String helpInfo
-     * @return null
      */
     private void help(String dialogTitle, String helpInfo) {
         String formatting = "<html><body style='width: 300px'>";
@@ -982,9 +952,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
     /**
      * Switch info panel to the new one that user's selected
-     *
-     * @param null
-     * @return null
      */
     private void performSwitcharoo() {
         // Remove current info panel
@@ -1013,6 +980,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         this.repaint();
     }
 
+    /**
+     * Set academia panel
+     *
+     * @param {@link AcademiaPanel} academiaPanel
+     */
     public void setAcademiaPanel(AcademiaPanel academiaPanel) {
         this.academiaPanel = academiaPanel;
     }
@@ -1021,7 +993,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set control panel reference
      *
      * @param JPanel controlPanelRef
-     * @return null
      */
     private void setControlPanelRef(JPanel controlPanelRef) {
         this.controlPanelRef = controlPanelRef;
@@ -1031,7 +1002,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set network summary pane reference
      *
      * @param JTextPane networkSummaryPaneRef
-     * @return null
      */
     public void setFileSummaryPaneRef(JTextPane fileSummaryPaneRef) {
         this.fileSummaryPaneRef = fileSummaryPaneRef;
@@ -1041,7 +1011,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set network panel reference
      *
      * @param JPanel networkPanelRef
-     * @return null
      */
     private void setNetworkPanelRef(JPanel networkPanelRef) {
         this.networkPanelRef = networkPanelRef;
@@ -1051,7 +1020,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set network summary panel reference
      *
      * @param JPanel networkSummaryPanel
-     * @return null
      */
     private void setNetworkSummaryPanelRef(JPanel networkSummaryPanel) {
         this.networkSummaryPanelRef = networkSummaryPanel;
@@ -1061,7 +1029,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set network summary pane reference
      *
      * @param JTextPane networkSummaryPaneRef
-     * @return null
      */
     public void setNetworkSummaryPaneRef(JTextPane networkSummaryPaneRef) {
         this.networkSummaryPaneRef = networkSummaryPaneRef;
@@ -1071,7 +1038,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set network table reference
      *
      * @param JTable networkTableRef
-     * @return null
      */
     public void setNetworkTableRef(JTable networkTableRef) {
         this.networkTableRef = networkTableRef;
@@ -1081,7 +1047,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set user panel searchbox
      *
      * @param JTextField searchBox
-     * @return null
      */
     public void setSearchBox(JTextField searchBox) {
         this.searchBoxRef = searchBox;
@@ -1091,7 +1056,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set search filter
      *
      * @param JComboBox searchFilter
-     * @return null
      */
     private void setSearchFilter(JComboBox searchOptionSelector) {
         this.searchFilter = searchOptionSelector;
@@ -1101,7 +1065,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set selected category
      *
      * @param int category
-     * @return null
      */
     private void setSelectedCategory(int category) {
         this.selectedCategory = category;
@@ -1111,7 +1074,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set current info panel
      *
      * @param JPanel infoPanel
-     * @return null
      */
     private void setSelectedInfoPanel(JPanel infoPanel) {
         this.infoPanelRef = infoPanel;
@@ -1121,7 +1083,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set selected network
      *
      * @param String network
-     * @return null
      */
     public void setSelectedNetwork(String network) {
         this.selectedNetwork = network;
@@ -1131,7 +1092,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set selected visual style
      *
      * @param int visualStyle
-     * @return null
      */
     public void setSelectedVisualStyle(int visualStyle) {
         this.selectedVisualStyle = visualStyle;
@@ -1141,7 +1101,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set visual style help button
      *
      * @param JButton visualStyleHelpButton
-     * @return null
      */
     public void setVisualStyleHelpButton(JButton visualStyleHelpButton) {
         this.helpButton = visualStyleHelpButton;
@@ -1151,7 +1110,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set visual style panel
      *
      * @param JPanel visualStylePanel
-     * @return null
      */
     public void setVisualStylePanel(JPanel visualStylePanel) {
         this.visualStylePanel = visualStylePanel;
@@ -1161,7 +1119,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set visual style selector
      *
      * @param JComboBox visualStyleSelector
-     * @return null
      */
     public void setVisualStyleSelector(JComboBox visualStyleSelector) {
         this.visualStyleSelector = visualStyleSelector;
@@ -1171,7 +1128,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Set visual style selector type.
      *
      * @param int visualStyleType
-     * @return null
      */
     public void setVisualStyleSelectorType(int visualStyleType) {
         this.visualStyleSelectorType = visualStyleType;
@@ -1181,7 +1137,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Swap visual style selector to given type
      *
      * @param int type
-     * @return null
      */
     public void swapVisualStyleSelector(int visualStyleSelectorType) {
         if (this.getVisualStyleSelectorType() != visualStyleSelectorType) {
@@ -1198,7 +1153,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Update network summary panel (for Academia networks only)
      *
      * @param SocialNetwork socialNetwork
-     * @return null
      */
     public void updateNetworkSummaryPanel(SocialNetwork socialNetwork) {
         String networkName = "DEFAULT", networkSummary = "N/A";

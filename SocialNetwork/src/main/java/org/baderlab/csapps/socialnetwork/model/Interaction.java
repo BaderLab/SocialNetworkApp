@@ -106,7 +106,7 @@ public class Interaction {
             ArrayList<AbstractEdge> edgeList = null;
             AbstractNode node1 = null;
             AbstractNode node2 = null;
-            // Link each node to a consortium consisting of all the other nodes
+            // Link each node to a collaboration consisting of all the other nodes
             // it is attached to via this edge
             while (i < edge.getNodes().size()) {
                 node1 = edge.getNodes().get(i);
@@ -134,8 +134,8 @@ public class Interaction {
     /**
      * Create new Academia hash-map
      *
-     * @param facultyName
      * @param ArrayList abstractEdgeList
+     * @param int maxAuthor
      * @return Map academiaMap
      */
     private Map<Collaboration, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends AbstractEdge> results) {

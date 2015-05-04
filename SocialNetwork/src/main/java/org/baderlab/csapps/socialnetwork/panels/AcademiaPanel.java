@@ -40,6 +40,8 @@ package org.baderlab.csapps.socialnetwork.panels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
@@ -55,6 +57,7 @@ import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
 
@@ -64,26 +67,28 @@ import org.cytoscape.util.swing.FileUtil;
  * @author Victor Kofia
  */
 public class AcademiaPanel {
-
     /**
      * Reference to academia info panel
      */
     private JPanel academiaInfoPanelRef = null;
-
     /**
      * A reference to the faculty text field. Used to verify correct faculty
      * input.
      */
     private JTextField facultyTextFieldRef = new JTextField();
-
     /**
      * A reference to the load data text field. Used to verify correct file
      * path.
      */
     private JTextField pathTextFieldRef = new JTextField();
-
+    /**
+     * A reference to the max author threshold text field. Used to set the max
+     * # of authors in a publication that the app will build a network out of.
+     */
+    private JTextField thresholdTextFieldRef = new JTextField();
     private JRadioButton incitesRadioButton = null;
     private JRadioButton scopusRadioButton = null;
+    private JRadioButton thresholdRadioButton = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -114,25 +119,59 @@ public class AcademiaPanel {
      * Create academia info panel. In addition to Pubmed specific features, this
      * panel will also enable users to load Incites data.
      *
-     * @param null
      * @return {@link JPanel} academiaInfoPanel
      */
     public JPanel createAcademiaInfoPanel() {
         JPanel academiaInfoPanel = new JPanel();
+
+        JPanel wrapperPanel = new JPanel();
+        wrapperPanel.setLayout(new BorderLayout());
+        wrapperPanel.add(this.createDatabaseInfoPanel(), BorderLayout.NORTH);
+        wrapperPanel.add(this.createAdvancedOptionsPanel(), BorderLayout.SOUTH);
+
         academiaInfoPanel.setLayout(new BorderLayout());
         academiaInfoPanel.setName("Academia");
         academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-        academiaInfoPanel.add(this.createDatabaseInfoPanel(), BorderLayout.NORTH);
+        academiaInfoPanel.add(wrapperPanel, BorderLayout.NORTH);
         // Set a reference to this panel for later access
         this.setAcademiaInfoPanelRef(academiaInfoPanel);
+
         return academiaInfoPanel;
+    }
+
+    /**
+     * Create an advanced options panel that will enable users to have additional
+     * control on how networks are generated. Hidden by default.
+     *
+     * @return {@link BasicCollapsiblePanel} advancedOptionsPanel
+     */
+    public BasicCollapsiblePanel createAdvancedOptionsPanel() {
+        BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
+        advancedOptionsPanel.setCollapsed(true);;
+        JPanel innerPanel = new JPanel();
+        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
+        this.thresholdRadioButton = new JRadioButton("Set max authors per pub");
+        this.thresholdRadioButton.setToolTipText("Set the maximum # of authors to be considered per publication. "
+                + "Network will be generated using the first X authors.");
+        this.thresholdRadioButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    // TODO:
+                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    // TODO:
+                }
+            }
+        });
+        innerPanel.add(this.thresholdRadioButton);
+        innerPanel.add(getThresholdTextFieldRef());
+        advancedOptionsPanel.add(innerPanel);
+        return advancedOptionsPanel;
     }
 
     /**
      * Create Database info panel. Allows user to load Incites or Scopus derived
      * data files
      *
-     * @param null
      * @return {@link JPanel} databaseInfoPanel
      */
     public JPanel createDatabaseInfoPanel() {
@@ -165,7 +204,6 @@ public class AcademiaPanel {
     /**
      * Create database panel
      *
-     * @param null
      * @return {@link JPanel} databasePanel
      */
     public JPanel createDatabasePanel() {
@@ -201,7 +239,6 @@ public class AcademiaPanel {
      * Create load button. Load button loads data file onto Cytoscape for
      * parsing
      *
-     * @param null
      * @return {@link JButton} load
      */
     public JButton createLoadButton() {
@@ -243,7 +280,6 @@ public class AcademiaPanel {
      * Create new load data panel. Allows user to specify path of desired data
      * file
      *
-     * @param null
      * @return {@link JPanel} loadDataPanel
      */
     public JPanel createLoadDataPanel() {
@@ -266,7 +302,6 @@ public class AcademiaPanel {
      * Create 'create network button'. Create network button attempts to create
      * a network out of a file specified by the user.
      *
-     * @param null
      * @return {@link JButton} createNetworkButton
      */
     public JButton createNetworkButton() {
@@ -312,7 +347,6 @@ public class AcademiaPanel {
     /**
      * Create specify network name panel.
      *
-     * @param null
      * @return {@link JPanel} networkNamePanel
      */
     public JPanel createSpecifyNetworkNamePanel() {
@@ -332,7 +366,6 @@ public class AcademiaPanel {
     /**
      * Get academia info panel reference
      *
-     * @param null
      * @return {@link JPanel} academiaInfoPanelRef
      */
     public JPanel getAcademiaInfoPanelRef() {
@@ -342,7 +375,6 @@ public class AcademiaPanel {
     /**
      * Get faculty text field
      *
-     * @param null
      * @return {@link JTextField} facultyTextField
      */
     public JTextField getFacultyTextFieldRef() {
@@ -352,7 +384,6 @@ public class AcademiaPanel {
     /**
      * Get path text field
      *
-     * @param null
      * @return {@link JTextField} pathTextField
      */
     public JTextField getPathTextFieldRef() {
@@ -362,11 +393,21 @@ public class AcademiaPanel {
     /**
      * Get selected data file
      *
-     * @param null
      * @return {@link File} selectedFile
      */
     public File getSelectedFileRef() {
         return this.selectedFileRef;
+    }
+
+    /**
+     *
+     * @return {@link JTextField} thresholdTextFieldRef
+     */
+    public JTextField getThresholdTextFieldRef() {
+        if (this.thresholdTextFieldRef == null) {
+            setThresholdTextFieldRef(new JTextField("100"));
+        }
+        return this.thresholdTextFieldRef;
     }
 
     /**
@@ -388,7 +429,6 @@ public class AcademiaPanel {
      * Set academia info panel reference
      *
      * @param {@link JPanel} academiaInfoPanelRef
-     * @return null
      */
     public void setAcademiaInfoPanelRef(JPanel academiaInfoPanelRef) {
         this.academiaInfoPanelRef = academiaInfoPanelRef;
@@ -398,7 +438,6 @@ public class AcademiaPanel {
      * Set selected data file
      *
      * @param {@link File} data
-     * @return null
      */
     public void setDataFile(File selectedFile) {
         this.selectedFileRef = selectedFile;
@@ -408,7 +447,6 @@ public class AcademiaPanel {
      * Set faculty text field
      *
      * @param {@link JTextField} facultyTextField
-     * @return null
      */
     public void setFacultyTextFieldRef(JTextField facultyTextField) {
         this.facultyTextFieldRef = facultyTextField;
@@ -418,10 +456,17 @@ public class AcademiaPanel {
      * Set path text field
      *
      * @param {@link JTextField} pathTextField
-     * @return null
      */
     public void setLoadTextField(JTextField pathTextField) {
         this.pathTextFieldRef = pathTextField;
+    }
+
+    /**
+     *
+     * @param {@link JTextField} thresholdTextFieldRef
+     */
+    public void setThresholdTextFieldRef(JTextField thresholdTextFieldRef) {
+        this.thresholdTextFieldRef = thresholdTextFieldRef;
     }
 
 }
