@@ -331,8 +331,11 @@ public class AcademiaPanel {
                             CytoscapeUtilities.notifyUser("Please specify network name.");
                         } else {
                             try {
-                                // Create network
-                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef());
+                                int threshold = -1;
+                                if (thresholdIsSelected()) {
+                                    threshold = Integer.parseInt(getThresholdTextFieldRef().getText());
+                                }
+                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), threshold);
                             } catch (FileNotFoundException e) {
                                 CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
                             }
@@ -467,6 +470,19 @@ public class AcademiaPanel {
      */
     public void setThresholdTextFieldRef(JTextField thresholdTextFieldRef) {
         this.thresholdTextFieldRef = thresholdTextFieldRef;
+    }
+
+    /**
+     * Return true iff user wants a threshold to be applied
+     *
+     * @return boolean
+     */
+    public boolean thresholdIsSelected() {
+        if (this.thresholdRadioButton == null) {
+            return false;
+        } else {
+            return this.thresholdRadioButton.isSelected();
+        }
     }
 
 }

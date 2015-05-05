@@ -46,8 +46,8 @@ import org.baderlab.csapps.socialnetwork.model.academia.Copublications;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 /**
- * This class is used to create maps that will later on function as building
- * blocks for networks.
+ * A group of interactions in a network. This class is used to create maps that will
+ * later on function as building blocks for networks.
  *
  * @author Victor Kofia
  */
@@ -55,18 +55,24 @@ public class Interaction {
 
     /**
      * Abstract map <br>
-     * Key: <i>Consortium</i> <br>
+     * Key: <i>Collaboration</i> <br>
      * Value: <i>Interaction</i>
      */
     private Map<Collaboration, ArrayList<AbstractEdge>> map = null;
+    /**
+     * ??
+     */
+    private int threshold;
 
     /**
      * Create a new {@link Interaction}
      *
      * @param List<AbstractEdge> edgeList
-     * @param Integer type
+     * @param int type
+     * @param int threshold
      */
-    public Interaction(List<? extends AbstractEdge> edgeList, int type) {
+    public Interaction(List<? extends AbstractEdge> edgeList, int type, int threshold) {
+        this.setThreshold(threshold);
         switch (type) {
             case Category.PUBMED:
                 this.setAbstractMap(this.loadAcademiaMap(edgeList));
@@ -88,6 +94,14 @@ public class Interaction {
      */
     public Map<Collaboration, ArrayList<AbstractEdge>> getAbstractMap() {
         return this.map;
+    }
+
+    /**
+     *
+     * @return int threshold
+     */
+    public int getThreshold() {
+        return this.threshold;
     }
 
     /**
@@ -150,6 +164,7 @@ public class Interaction {
         Author author1 = null, author2 = null;
         Copublications copublications = null;
         Publication publication = null;
+        List<Author> listOfNodes = null;
         // Iterate through each publication
         while (h <= results.size() - 1) {
             i = 0;
@@ -158,10 +173,20 @@ public class Interaction {
             author1 = null;
             author2 = null;
             copublications = null;
+            listOfNodes = null;
             publication = (Publication) results.get(h);
-            while (i < publication.getNodes().size()) {
+            // Reduce the size of listOfNodes if the threshold is smaller than the size of the list
+            if ((this.threshold > -1) && (this.threshold < publication.getNodes().size())) {
+                listOfNodes = (List<Author>) publication.getNodes().subList(0, this.threshold);
+                if (this.threshold == 1) {
+                    listOfNodes.add(listOfNodes.get(0));
+                }
+            } else {
+                listOfNodes = (List<Author>) publication.getNodes();
+            }
+            while (i < listOfNodes.size()) {
                 // Add author#1 to map if he / she is not present
-                author1 = (Author) publication.getNodes().get(i);
+                author1 = listOfNodes.get(i);
                 if (authorMap.get(author1) == null) {
                     authorMap.put(author1, author1);
                 }
@@ -171,9 +196,9 @@ public class Interaction {
                 // automatically
                 authorMap.get(author1).addPublication(publication);
                 j = i + 1;
-                while (j < publication.getNodes().size()) {
+                while (j < listOfNodes.size()) {
                     // Add author#2 to map if he / she is not present
-                    author2 = (Author) publication.getNodes().get(j);
+                    author2 = listOfNodes.get(j);
                     if (authorMap.get(author2) == null) {
                         authorMap.put(author2, author2);
                     }
@@ -213,6 +238,14 @@ public class Interaction {
      */
     private void setAbstractMap(Map<Collaboration, ArrayList<AbstractEdge>> abstractMap) {
         this.map = abstractMap;
+    }
+
+    /**
+     *
+     * @param int threshold
+     */
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
 
 }

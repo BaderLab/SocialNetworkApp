@@ -195,8 +195,9 @@ public class SocialNetworkAppManager {
      * Create a network from file
      *
      * @param File networkFile
+     * @param int threshold
      */
-    public void createNetwork(File networkFile) throws FileNotFoundException {
+    public void createNetwork(File networkFile, int threshold) throws FileNotFoundException {
         // Verify that network name is valid
         String networkName = this.userPanelRef.getAcademiaPanel().getFacultyTextFieldRef().getText().trim();
         if (!this.isNameValid(networkName)) {
@@ -265,7 +266,7 @@ public class SocialNetworkAppManager {
             }
         }
         // Create interaction
-        Interaction interaction = new Interaction(pubList, Category.ACADEMIA);
+        Interaction interaction = new Interaction(pubList, Category.ACADEMIA, threshold);
         // Create map
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         if (map.size() == 0) {
@@ -285,8 +286,9 @@ public class SocialNetworkAppManager {
      *
      * @param String searchTerm
      * @param int category
+     * @param int threshold
      */
-    public void createNetwork(String searchTerm, int category) {
+    public void createNetwork(String searchTerm, int category, int threshold) {
         // Verify that network name is valid
         if (!this.isNameValid(searchTerm)) {
             CytoscapeUtilities.notifyUser("Network " + this.networkName + " already exists in Cytoscape." + " Please enter a new name.");
@@ -316,7 +318,7 @@ public class SocialNetworkAppManager {
                 // Change category (to Pubmed)
                 // This is only temporary ~
                 category = Category.PUBMED;
-                interaction = new Interaction(results, category);
+                interaction = new Interaction(results, category, threshold);
                 socialNetwork = new SocialNetwork(searchTerm, category);
                 // TODO:figure out how to add publications from pubmed search
                 // socialNetwork.setPublications(search.getTotalHits());

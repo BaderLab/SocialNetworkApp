@@ -594,7 +594,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(), getSelectedCategory());
+                    int threshold = -1;
+                    if (getAcademiaPanel().thresholdIsSelected()) {
+                        threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                    }
+                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
+                            getSelectedCategory(),
+                            threshold);
                 }
             }
         });
@@ -623,8 +629,13 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. " + "Please enter a valid search term.");
                 } else {
-                    // Create a network
-                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(), getSelectedCategory());
+                    int threshold = -1;
+                    if (getAcademiaPanel().thresholdIsSelected()) {
+                        threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                    }
+                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
+                            getSelectedCategory(),
+                            threshold);
                 }
             }
         });
