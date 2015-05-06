@@ -74,7 +74,6 @@ public class SocialNetworkAppManager {
     /**
      * Get apply view task factory
      *
-     * @param null
      * @return ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
      */
     public static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {

@@ -63,7 +63,6 @@ public class Search {
      *
      * @param String searchTerm
      * @param int website
-     * @return null
      */
     public Search(String searchTerm, int website, SocialNetworkAppManager appManager) {
         appManager.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -82,7 +81,6 @@ public class Search {
     /**
      * Get results
      *
-     * @param null
      * @return List results
      */
     public List<? extends AbstractEdge> getResults() {
@@ -92,8 +90,7 @@ public class Search {
     /**
      * Get total number of hits
      *
-     * @param null
-     * @return in totalHits
+     * @return int totalHits
      */
     public int getTotalHits() {
         return this.totalHits;

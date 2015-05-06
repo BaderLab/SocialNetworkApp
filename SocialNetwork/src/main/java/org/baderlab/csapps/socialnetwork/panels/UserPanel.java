@@ -596,7 +596,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     int threshold = -1;
                     if (getAcademiaPanel().thresholdIsSelected()) {
-                        threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                        String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
+                        if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
+                            threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                        } else {
+                            CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
+                        }
                     }
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),
@@ -622,7 +627,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         JButton searchButton = new JButton(iconSearch);
         searchButton.setToolTipText("Search");
         searchButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent event) {
                 if (getSearchBox().getText().trim().isEmpty()) {
                     CytoscapeUtilities.notifyUser("Please enter a search term");
@@ -631,7 +635,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     int threshold = -1;
                     if (getAcademiaPanel().thresholdIsSelected()) {
-                        threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                        String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
+                        if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
+                            threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                        } else {
+                            CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
+                        }
                     }
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),

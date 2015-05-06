@@ -176,7 +176,7 @@ public class Interaction {
             listOfNodes = null;
             publication = (Publication) results.get(h);
             // Reduce the size of listOfNodes if the threshold is smaller than the size of the list
-            if ((this.threshold > -1) && (this.threshold < publication.getNodes().size())) {
+            if ((this.threshold > 0) && (this.threshold < publication.getNodes().size())) {
                 listOfNodes = (List<Author>) publication.getNodes().subList(0, this.threshold);
                 if (this.threshold == 1) {
                     listOfNodes.add(listOfNodes.get(0));

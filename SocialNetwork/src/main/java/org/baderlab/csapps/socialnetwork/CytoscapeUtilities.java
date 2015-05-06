@@ -53,7 +53,6 @@ public class CytoscapeUtilities {
      * Notify user of an issue
      *
      * @param String message
-     * @return null
      */
     public static void notifyUser(String message) {
         JOptionPane.showMessageDialog(new JPanel(),
