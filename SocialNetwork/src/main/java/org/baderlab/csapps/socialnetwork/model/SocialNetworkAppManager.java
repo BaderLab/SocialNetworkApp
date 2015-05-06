@@ -65,7 +65,7 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
 
 /**
- * The app manager. Contains useful static methods and variables.
+ * Manager for the Social Network app. Contains useful static methods and variables.
  *
  * @author Victor Kofia
  */
@@ -81,7 +81,7 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * A reference to the 'apply visual style' task factory
+     * A reference to the <i>ApplyVisualStyle</i> task factory
      */
     private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
     /**

@@ -49,6 +49,12 @@ import javax.swing.JPanel;
  */
 public class CytoscapeUtilities {
 
+    public static String buildId = "";
+    public static String pluginReleaseSuffix = "";
+    public static String pluginUrl = "";
+    public static String pluginVersion = "";
+    public static String userManualUrl = "";
+
     /**
      * Notify user of an issue
      *
@@ -58,12 +64,6 @@ public class CytoscapeUtilities {
         JOptionPane.showMessageDialog(new JPanel(),
                 "<html><body style='width: 200px'>" + message);
     }
-    public static String buildId = "";
-    public static String pluginReleaseSuffix = "";
-    public static String pluginUrl = "";
-    public static String pluginVersion = "";
-
-    public static String userManualUrl = "";
 
     public Properties build_props = new Properties();
     public Properties plugin_props = new Properties();

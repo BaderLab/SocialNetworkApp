@@ -152,7 +152,7 @@ public class AcademiaPanel {
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
         this.thresholdRadioButton = new JRadioButton("Set max authors per pub");
         this.thresholdRadioButton.setToolTipText("Set the maximum # of authors to be considered per publication. "
-                + "Network will be generated using the first X authors.");
+                + "Publications that exceed the threshold will be excluded.");
         this.thresholdRadioButton.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {

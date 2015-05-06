@@ -44,6 +44,8 @@ import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
+import org.baderlab.csapps.socialnetwork.listeners.RestoreStateFile;
+import org.baderlab.csapps.socialnetwork.listeners.SaveStateFile;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
@@ -72,6 +74,8 @@ import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.session.events.SessionAboutToBeSavedListener;
+import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
@@ -217,6 +221,12 @@ public class CyActivator extends AbstractCyActivator {
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
+
+        SaveStateFile saveSession = new SaveStateFile(appManager);
+        registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
+
+        RestoreStateFile restoreSession = new RestoreStateFile(appManager, cyNetworkViewManagerServiceRef);
+        registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 
         // Create and register task factories
         ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef =

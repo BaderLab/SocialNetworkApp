@@ -47,15 +47,33 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
+/**
+ *
+ * @author
+ */
 public class ShowAboutPanelAction extends AbstractCyAction {
 
+    /**
+     *
+     */
     private CySwingApplication application;
+    /**
+     *
+     */
     private OpenBrowser browser;
     /**
      *
      */
     private static final long serialVersionUID = 1341062331014243704L;
 
+    /**
+     *
+     * @param Map configProps
+     * @param CyApplicationManager applicationManager
+     * @param CyNetworkViewManager networkViewManager
+     * @param CySwingApplication application
+     * @param OpenBrowser openBrowserRef
+     */
     public ShowAboutPanelAction(Map<String, String> configProps, CyApplicationManager applicationManager, CyNetworkViewManager networkViewManager,
             CySwingApplication application, OpenBrowser openBrowserRef) {
         super(configProps, applicationManager, networkViewManager);
@@ -64,6 +82,10 @@ public class ShowAboutPanelAction extends AbstractCyAction {
         this.browser = openBrowserRef;
     }
 
+    /**
+     *
+     * @param ActionEvent event
+     */
     public void actionPerformed(ActionEvent event) {
         // Open new dialog
         AboutPanel aboutPanel = new AboutPanel(this.application, this.browser);
