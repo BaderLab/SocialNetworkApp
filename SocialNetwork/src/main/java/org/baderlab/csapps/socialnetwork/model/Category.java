@@ -176,6 +176,36 @@ public class Category {
         }
         return category;
     }
+    
+    /**
+     * Return category represented by string
+     *
+     * @param String categoryID
+     * @return int category
+     * @throws UnableToIdentifyCategoryException 
+     */
+    public static int toCategory(String categoryID) throws UnableToIdentifyCategoryException {
+    	if (categoryID.equalsIgnoreCase("academia")) {
+    		return Category.ACADEMIA;
+    	} else if (categoryID.equalsIgnoreCase("default")) {
+    		return Category.DEFAULT;
+    	} else if (categoryID.equalsIgnoreCase("faculty")) {
+    		return Category.FACULTY;
+    	} else if (categoryID.equalsIgnoreCase("incites")) {
+    		return Category.INCITES;
+    	} else if (categoryID.equalsIgnoreCase("linkedin")) {
+    		return Category.LINKEDIN;
+    	} else if (categoryID.equalsIgnoreCase("pubmed")) {
+    		return Category.PUBMED;
+    	} else if (categoryID.equalsIgnoreCase("scopus")) {
+    		return Category.SCOPUS;
+    	} else if (categoryID.equalsIgnoreCase("twitter")) {
+    		return Category.TWITTER;
+    	} else if (categoryID.equalsIgnoreCase("youtube")) {
+    		return Category.YOUTUBE;
+    	}
+    	throw new UnableToIdentifyCategoryException(categoryID);
+    }
 
     /**
      * Academia (IP = 74.125.226.112)

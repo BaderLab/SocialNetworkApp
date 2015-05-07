@@ -49,17 +49,22 @@ public class RestoreStateFile implements SessionLoadedListener {
 
             BufferedReader in = new BufferedReader(new FileReader(propFile));
 
-            String socialNetworks = in.readLine();
+            String socialNetworks = in.readLine(), networkTypes = in.readLine();
 
             ArrayList<String> listOfSocialNetworks = new ArrayList<String>(Arrays.asList(socialNetworks.split("\\?")));
+            ArrayList<String> listOfTypes = new ArrayList<String>(Arrays.asList(networkTypes.split("\\?")));
 
             SocialNetwork socialNetwork = null;
             CyNetworkView networkView = null;
             Collection<CyNetworkView> views = null;
+            
+            int index = -1;
 
+            // Identify the social networks in the loaded session
             for (CyNetwork n : e.getLoadedSession().getNetworks()) {
-                if (listOfSocialNetworks.contains(n.toString())) {
-                    socialNetwork = new SocialNetwork(n.toString(), Category.PUBMED);
+            	index = listOfSocialNetworks.indexOf(n.toString());
+                if (index > -1) {
+                    socialNetwork = new SocialNetwork(n.toString(), Category.toCategory(listOfTypes.get(index)));
                     socialNetwork.setCyNetwork(n);
                     views = this.viewManager.getNetworkViews(n);
                     if (views.size() != 0) {

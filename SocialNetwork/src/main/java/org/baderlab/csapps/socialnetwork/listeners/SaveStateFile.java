@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.session.events.SessionAboutToBeSavedEvent;
 import org.cytoscape.session.events.SessionAboutToBeSavedListener;
@@ -28,9 +31,21 @@ public class SaveStateFile implements SessionAboutToBeSavedListener {
         File propFile = new File(tmpDir, "socialnetwork.props");
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(propFile));
+            // Save social networks in current session to file
             for (String networkName : this.appManager.getSocialNetworkMap().keySet()) {
                 writer.write(networkName);
-                writer.write("?");
+                writer.write("?"); // TODO: question mark being used as separator. wise decision?
+            }
+            writer.newLine();
+            for (SocialNetwork socialNetwork : this.appManager.getSocialNetworkMap().values()) {
+            	if (socialNetwork.getNetworkType() == Category.INCITES) {
+            		writer.write("INCITES");
+            	} else if (socialNetwork.getNetworkType() == Category.PUBMED) {
+            		writer.write("PUBMED");
+            	} else if (socialNetwork.getNetworkType() == Category.SCOPUS) {
+            		writer.write("SCOPUS");
+            	}
+            	writer.write("?");
             }
             writer.newLine();
             writer.close();
