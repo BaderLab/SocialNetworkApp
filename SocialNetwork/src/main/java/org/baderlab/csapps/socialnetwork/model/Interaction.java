@@ -60,19 +60,25 @@ public class Interaction {
      */
     private Map<Collaboration, ArrayList<AbstractEdge>> map = null;
     /**
-     * ??
+     * A threshold specified by the user that sets limits on the # of collaborators
      */
-    private int threshold;
+    private int maxThreshold; // TODO: Make this generic so that it can function for any type of social network
+    /**
+     * List containing publications that could not be visualized because the
+     * # of authors who were involved exceeded the threshold specified by the
+     * user (only for use in <i>Academia</i> networks).
+     */
+    private ArrayList<AbstractEdge> excludedPublications = null;
 
     /**
      * Create a new {@link Interaction}
      *
      * @param List<AbstractEdge> edgeList
      * @param int type
-     * @param int threshold
+     * @param int maxAuthorThreshold
      */
-    public Interaction(List<? extends AbstractEdge> edgeList, int type, int threshold) {
-        this.setThreshold(threshold);
+    public Interaction(List<? extends AbstractEdge> edgeList, int type, int maxAuthorThreshold) {
+        this.setMaxThreshold(maxAuthorThreshold);
         switch (type) {
             case Category.PUBMED:
                 this.setAbstractMap(this.loadAcademiaMap(edgeList));
@@ -98,10 +104,25 @@ public class Interaction {
 
     /**
      *
-     * @return int threshold
+     * Get the list of excluded publications (only for use in <i>Academia</i> networks)
+     *
+     * @return ArrayList excludedPublications
      */
-    public int getThreshold() {
-        return this.threshold;
+    public ArrayList<AbstractEdge> getExcludedPublications() {
+        if (this.excludedPublications == null) {
+            this.excludedPublications = new ArrayList<AbstractEdge>();
+        }
+        return this.excludedPublications;
+    }
+
+    /**
+     *
+     * Get the max threshold
+     *
+     * @return int maxThreshold
+     */
+    public int getMaxThreshold() {
+        return this.maxThreshold;
     }
 
     /**
@@ -165,60 +186,58 @@ public class Interaction {
         Copublications copublications = null;
         Publication publication = null;
         List<Author> listOfNodes = null;
+        setExcludedPublications(new ArrayList<AbstractEdge>());
         // Iterate through each publication
         while (h <= results.size() - 1) {
-            i = 0;
-            j = 0;
-            collaboration = null;
-            author1 = null;
-            author2 = null;
-            copublications = null;
-            listOfNodes = null;
             publication = (Publication) results.get(h);
-            // Reduce the size of listOfNodes if the threshold is smaller than the size of the list
-            if ((this.threshold > 0) && (this.threshold < publication.getNodes().size())) {
-                listOfNodes = (List<Author>) publication.getNodes().subList(0, this.threshold);
-                if (this.threshold == 1) {
-                    listOfNodes.add(listOfNodes.get(0));
+            // Include publication only if the # of authors does not exceed the threshold
+            if ((this.maxThreshold > 0) && (publication.getNodes().size() <= this.maxThreshold)) {
+                i = 0;
+                j = 0;
+                collaboration = null;
+                author1 = null;
+                author2 = null;
+                copublications = null;
+                listOfNodes = null;
+                listOfNodes = (List<Author>) publication.getNodes();
+                while (i < listOfNodes.size()) {
+                    // Add author#1 to map if he / she is not present
+                    author1 = listOfNodes.get(i);
+                    if (authorMap.get(author1) == null) {
+                        authorMap.put(author1, author1);
+                    }
+                    // Add current publication to author's total list
+                    // of publications
+                    // NOTE: Author's time cited value will be updated
+                    // automatically
+                    authorMap.get(author1).addPublication(publication);
+                    j = i + 1;
+                    while (j < listOfNodes.size()) {
+                        // Add author#2 to map if he / she is not present
+                        author2 = listOfNodes.get(j);
+                        if (authorMap.get(author2) == null) {
+                            authorMap.put(author2, author2);
+                        }
+                        // Create collaboration out of both authors
+                        collaboration = new Collaboration(authorMap.get(author1), authorMap.get(author2));
+                        // Check for collaboration's existence before it's entered
+                        // into map
+                        if (!academiaMap.containsKey(collaboration)) {
+                            copublications = new Copublications(collaboration, publication);
+                            ArrayList<AbstractEdge> edgeList = new ArrayList<AbstractEdge>();
+                            edgeList.add(copublications);
+                            academiaMap.put(collaboration, edgeList);
+                        } else {
+                            ArrayList<AbstractEdge> array = academiaMap.get(collaboration);
+                            copublications = (Copublications) array.get(0);
+                            copublications.addPublication(publication);
+                        }
+                        j++;
+                    }
+                    i++;
                 }
             } else {
-                listOfNodes = (List<Author>) publication.getNodes();
-            }
-            while (i < listOfNodes.size()) {
-                // Add author#1 to map if he / she is not present
-                author1 = listOfNodes.get(i);
-                if (authorMap.get(author1) == null) {
-                    authorMap.put(author1, author1);
-                }
-                // Add current publication to author's total list
-                // of publications
-                // NOTE: Author's time cited value will be updated
-                // automatically
-                authorMap.get(author1).addPublication(publication);
-                j = i + 1;
-                while (j < listOfNodes.size()) {
-                    // Add author#2 to map if he / she is not present
-                    author2 = listOfNodes.get(j);
-                    if (authorMap.get(author2) == null) {
-                        authorMap.put(author2, author2);
-                    }
-                    // Create collaboration out of both authors
-                    collaboration = new Collaboration(authorMap.get(author1), authorMap.get(author2));
-                    // Check for collaboration's existence before it's entered
-                    // into map
-                    if (!academiaMap.containsKey(collaboration)) {
-                        copublications = new Copublications(collaboration, publication);
-                        ArrayList<AbstractEdge> edgeList = new ArrayList<AbstractEdge>();
-                        edgeList.add(copublications);
-                        academiaMap.put(collaboration, edgeList);
-                    } else {
-                        ArrayList<AbstractEdge> array = academiaMap.get(collaboration);
-                        copublications = (Copublications) array.get(0);
-                        copublications.addPublication(publication);
-                    }
-                    j++;
-                }
-                i++;
+                this.excludedPublications.add(publication);
             }
             h++;
         }
@@ -241,11 +260,21 @@ public class Interaction {
     }
 
     /**
+     * Set the list of excluded publications (only for use in <i>Academia</i> networks)
      *
-     * @param int threshold
+     * @param ArrayList excludedPublications
      */
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
+    public void setExcludedPublications(ArrayList<AbstractEdge> excludedPublications) {
+        this.excludedPublications = excludedPublications;
+    }
+
+    /**
+     * Set the max threshold
+     *
+     * @param int maxThreshold
+     */
+    public void setMaxThreshold(int maxThreshold) {
+        this.maxThreshold = maxThreshold;
     }
 
 }

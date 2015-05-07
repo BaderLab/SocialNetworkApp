@@ -72,7 +72,7 @@ import org.cytoscape.work.TaskManager;
 public class SocialNetworkAppManager {
 
     /**
-     * Get apply view task factory
+     * Get <i>ApplyView</i> task factory
      *
      * @return ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
      */
@@ -95,11 +95,11 @@ public class SocialNetworkAppManager {
     private CyApplicationManager cyAppManagerServiceRef = null;
     /**
      * A reference to the cytoscape service registrar. Necessary for
-     * unregistering services at user's convenience.
+     * unregistering services.
      */
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     /**
-     * A reference to the 'destroy network' task factory
+     * A reference to the <i>DestroyNetwork</i> task factory
      */
     private DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = null;
     /**
@@ -112,7 +112,7 @@ public class SocialNetworkAppManager {
      */
     private String networkName = null;
     /**
-     * A reference to the 'create network' task factory
+     * A reference to the <i>CreateNetwork</i> task factory
      */
     private CreateNetworkTaskFactory networkTaskFactoryRef = null;
     /**
@@ -194,9 +194,9 @@ public class SocialNetworkAppManager {
      * Create a network from file
      *
      * @param File networkFile
-     * @param int threshold
+     * @param int maxAuthorThreshold
      */
-    public void createNetwork(File networkFile, int threshold) throws FileNotFoundException {
+    public void createNetwork(File networkFile, int maxAuthorThreshold) throws FileNotFoundException {
         // Verify that network name is valid
         String networkName = this.userPanelRef.getAcademiaPanel().getFacultyTextFieldRef().getText().trim();
         if (!this.isNameValid(networkName)) {
@@ -265,7 +265,8 @@ public class SocialNetworkAppManager {
             }
         }
         // Create interaction
-        Interaction interaction = new Interaction(pubList, Category.ACADEMIA, threshold);
+        Interaction interaction = new Interaction(pubList, Category.ACADEMIA, maxAuthorThreshold);
+        socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
         // Create map
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         if (map.size() == 0) {
@@ -285,9 +286,9 @@ public class SocialNetworkAppManager {
      *
      * @param String searchTerm
      * @param int category
-     * @param int threshold
+     * @param int maxAuthorThreshold
      */
-    public void createNetwork(String searchTerm, int category, int threshold) {
+    public void createNetwork(String searchTerm, int category, int maxAuthorThreshold) {
         // Verify that network name is valid
         if (!this.isNameValid(searchTerm)) {
             CytoscapeUtilities.notifyUser("Network " + this.networkName + " already exists in Cytoscape." + " Please enter a new name.");
@@ -296,8 +297,7 @@ public class SocialNetworkAppManager {
         // Create new search session
         Search search = new Search(searchTerm, category, this);
         // Get a list of the results that are going to serve as edges. Exact
-        // result type
-        // may vary with website
+        // result type may vary with website
         List<? extends AbstractEdge> results = search.getResults();
         if (results == null) {
             this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -317,8 +317,11 @@ public class SocialNetworkAppManager {
                 // Change category (to Pubmed)
                 // This is only temporary ~
                 category = Category.PUBMED;
-                interaction = new Interaction(results, category, threshold);
+                interaction = new Interaction(results, category, maxAuthorThreshold);
                 socialNetwork = new SocialNetwork(searchTerm, category);
+                ArrayList<Publication> pubList = (ArrayList<Publication>) results;
+                socialNetwork.setPublications(pubList);
+                socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
                 // TODO:figure out how to add publications from pubmed search
                 // socialNetwork.setPublications(search.getTotalHits());
 
@@ -346,6 +349,11 @@ public class SocialNetworkAppManager {
         this.getTaskManager().execute(this.getDestroyNetworkTaskFactoryRef().createTaskIterator());
     }
 
+    /**
+     * Get the type of the analysis being performed
+     *
+     * @return int analysis_type
+     */
     public int getAnalysis_type() {
         return this.analysis_type;
     }
@@ -444,6 +452,13 @@ public class SocialNetworkAppManager {
         return this.cyServiceRegistrarRef;
     }
 
+    /**
+     * Given the name of a network returns the SocialNetwork object associated
+     * with that network name returns null otherwise.
+     *
+     * @param String name
+     * @return SocialNetwork socialNetwork
+     */
     public SocialNetwork getSocialNetwork(String name) {
         if (this.socialNetworkMap != null && this.socialNetworkMap.containsKey(name)) {
             return this.socialNetworkMap.get(name);
@@ -451,11 +466,6 @@ public class SocialNetworkAppManager {
             return null;
         }
     }
-
-    /*
-     * Given the name of a network returns the SocialNetwork object associated
-     * with that network name returns null otherwise.
-     */
 
     /**
      * Get social network map
@@ -523,7 +533,7 @@ public class SocialNetworkAppManager {
      * Return true iff visual style is currently supported by app
      *
      * @param String visualStyleName
-     * @return boolean bool
+     * @return boolean
      */
     public boolean isValidVisualStyle(String visualStyleName) {
         if (this.visualStyleSet == null) {
@@ -534,12 +544,17 @@ public class SocialNetworkAppManager {
         return this.visualStyleSet.contains(visualStyleName);
     }
 
+    /**
+     * Set the type of analysis
+     *
+     * @param int analysis_type
+     */
     public void setAnalysis_type(int analysis_type) {
         this.analysis_type = analysis_type;
     }
 
     /**
-     * Set 'apply view' task factory
+     * Set <i>ApplyView</i> task factory
      *
      * @param ApplyViewTaskFactory applyViewTaskFactoryRef
      */
@@ -576,7 +591,7 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Set 'destroy network' task factory
+     * Set <i>DestroyNetwork</i> task factory
      *
      * @param DestroyNetworkTaskFActory destroyNetworkTaskFactory
      */

@@ -89,10 +89,16 @@ public class CreateNetworkTask extends AbstractTask {
     private int totalSteps = 0;
 
     /**
-     * Create a new network task
      *
-     * @param null
-     * @return null
+     * Create a new <i>CreateNetworkTask</i> object
+     *
+     * @param {@link CyNetworkNaming} cyNetworkNamingServiceRef
+     * @param {@link CyNetworkFactory} cyNetworkFactoryServiceRef
+     * @param {@link CyNetworkManager} cyNetworkManagerServiceRef
+     * @param {@link CyNetworkViewFactory} cyNetworkViewFactoryServiceRef
+     * @param {@link CyNetworkViewManager} cyNetworkViewManagerServiceRef
+     * @param {@link CyLayoutAlgorithmManager} cyLayoutManagerServiceRef
+     * @param {@link SocialNetworkAppManager} appManager
      */
     public CreateNetworkTask(CyNetworkNaming cyNetworkNamingServiceRef, CyNetworkFactory cyNetworkFactoryServiceRef,
             CyNetworkManager cyNetworkManagerServiceRef, CyNetworkViewFactory cyNetworkViewFactoryServiceRef,
@@ -263,7 +269,6 @@ public class CreateNetworkTask extends AbstractTask {
      * Run network task
      *
      * @param TaskMonitor taskMonitor
-     * @return null
      */
     @Override
     public void run(TaskMonitor monitor) throws Exception {
@@ -336,7 +341,6 @@ public class CreateNetworkTask extends AbstractTask {
      * @param TaskMonitor taskMonitor
      * @param String taskName
      * @param int totalSteps
-     * @return null
      */
     private void setProgressMonitor(TaskMonitor taskMonitor, String taskName, int totalSteps) {
         taskMonitor.setTitle(taskName);
@@ -361,7 +365,6 @@ public class CreateNetworkTask extends AbstractTask {
      * Update progress monitor
      *
      * @param int currentSteps
-     * @return null
      */
     private void updateProgress(TaskMonitor taskMonitor) {
         this.currentSteps += 1;

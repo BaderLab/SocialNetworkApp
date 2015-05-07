@@ -215,82 +215,89 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      */
     public void addNetworkToNetworkPanel(SocialNetwork socialNetwork) {
 
-        CyNetwork network = socialNetwork.getCyNetwork();
-        String networkName = socialNetwork.getNetworkName();
-        int networkType = socialNetwork.getNetworkType();
+        try {
 
-        // Create a new table and add network's info if there's none
-        if (getNetworkTableRef() == null) {
+            CyNetwork network = socialNetwork.getCyNetwork();
+            String networkName = socialNetwork.getNetworkName();
+            int networkType = socialNetwork.getNetworkType();
 
-            DefaultTableModel model = new DefaultTableModel();
-            JTable networkTable = new JTable(model);
-            networkTable.setEnabled(true);
+            // Create a new table and add network's info if there's none
+            if (getNetworkTableRef() == null) {
 
-            // Add columns to table
-            for (String columnName : this.appManager.getNetworkTableColumnNames()) {
-                model.addColumn(columnName);
+                DefaultTableModel model = new DefaultTableModel();
+                JTable networkTable = new JTable(model);
+                networkTable.setEnabled(true);
+
+                // Add columns to table
+                for (String columnName : this.appManager.getNetworkTableColumnNames()) {
+                    model.addColumn(columnName);
+                }
+
+                // Add row to table
+                model.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
+
+                // Set table reference
+                this.setNetworkTableRef(networkTable);
+
+                // Context menu. Displayed to user on the event of a click (on the
+                // network table)
+                final JPopupMenu destroyNetworkContextMenu = new JPopupMenu();
+                destroyNetworkContextMenu.add(this.createDestroyNetworkMenuItem());
+
+                networkTable.addMouseListener(new MouseAdapter() {
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+
+                        // Clicking on a network once causes it to be selected
+                        if (e.getClickCount() == 1) {
+
+                            JTable target = (JTable) e.getSource();
+                            int row = target.getSelectedRow();
+
+                            // Get selected network name
+                            String networkName = (String) getNetworkTableRef().getModel().getValueAt(row, 0);
+                            setSelectedNetwork(networkName);
+                            // Change network visual style
+                            changeNetworkVisualStyle(networkName);
+                            // Show network view
+                            UserPanel.this.appManager.setCurrentNetworkView(networkName);
+                        }
+                        // Right clicking on a network will bring up
+                        // the destroy network context menu
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            // Display context menu to user with all associated
+                            // options.
+                            destroyNetworkContextMenu.show(getNetworkTableRef(), e.getX(), e.getY());
+                        }
+                    }
+                });
+
+                JScrollPane networkTablePane = new JScrollPane(this.getNetworkTableRef());
+                networkTablePane.setPreferredSize(new Dimension(200, 100));
+                this.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
+
+                this.setNetworkSummaryPanelRef(this.createNetworkSummaryPanel(socialNetwork));
+                this.getNetworkPanelRef().add(this.getNetworkSummaryPanelRef(), BorderLayout.CENTER);
+
+                // Add network info to table
+            } else {
+                DefaultTableModel networkTableModel = (DefaultTableModel) getNetworkTableRef().getModel();
+                networkTableModel.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
+
             }
 
-            // Add row to table
-            model.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
+            this.updateNetworkSummaryPanel(socialNetwork);
+            this.addNetworkVisualStyle(socialNetwork);
 
-            // Set table reference
-            this.setNetworkTableRef(networkTable);
+            this.getNetworkPanelRef().revalidate();
+            this.getNetworkPanelRef().repaint();
 
-            // Context menu. Displayed to user on the event of a click (on the
-            // network table)
-            final JPopupMenu destroyNetworkContextMenu = new JPopupMenu();
-            destroyNetworkContextMenu.add(this.createDestroyNetworkMenuItem());
-
-            networkTable.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-
-                    // Clicking on a network once causes it to be selected
-                    if (e.getClickCount() == 1) {
-
-                        JTable target = (JTable) e.getSource();
-                        int row = target.getSelectedRow();
-
-                        // Get selected network name
-                        String networkName = (String) getNetworkTableRef().getModel().getValueAt(row, 0);
-                        setSelectedNetwork(networkName);
-                        // Change network visual style
-                        changeNetworkVisualStyle(networkName);
-                        // Show network view
-                        UserPanel.this.appManager.setCurrentNetworkView(networkName);
-                    }
-                    // Right clicking on a network will bring up
-                    // the destroy network context menu
-                    if (e.getButton() == MouseEvent.BUTTON3) {
-                        // Display context menu to user with all associated
-                        // options.
-                        destroyNetworkContextMenu.show(getNetworkTableRef(), e.getX(), e.getY());
-                    }
-                }
-            });
-
-            JScrollPane networkTablePane = new JScrollPane(this.getNetworkTableRef());
-            networkTablePane.setPreferredSize(new Dimension(200, 100));
-            this.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
-
-            this.setNetworkSummaryPanelRef(this.createNetworkSummaryPanel(socialNetwork));
-            this.getNetworkPanelRef().add(this.getNetworkSummaryPanelRef(), BorderLayout.CENTER);
-
-            // Add network info to table
-        } else {
-            DefaultTableModel networkTableModel = (DefaultTableModel) getNetworkTableRef().getModel();
-            networkTableModel.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            // TODO: Better error message
+            CytoscapeUtilities.notifyUser(String.format("An error occurred while adding %s to the network table", socialNetwork.getNetworkName()));
         }
-
-        this.updateNetworkSummaryPanel(socialNetwork);
-        this.addNetworkVisualStyle(socialNetwork);
-
-        this.getNetworkPanelRef().revalidate();
-        this.getNetworkPanelRef().repaint();
-
     }
 
     /**
@@ -352,7 +359,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Create bottom panel. Bottom panel will contain main panel controls
      * (reset, close). As well as a network panel that will allow the user to
-     * change network parameters at their convenience.
+     * change network parameters.
      *
      * @return JPanel bottomPanel
      */
@@ -594,18 +601,18 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int threshold = -1;
+                    int maxAuthorThreshold = -1;
                     if (getAcademiaPanel().thresholdIsSelected()) {
                         String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
                         if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
-                            threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                            maxAuthorThreshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
                         } else {
                             CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
                         }
                     }
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),
-                            threshold);
+                            maxAuthorThreshold);
                 }
             }
         });
@@ -631,20 +638,20 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 if (getSearchBox().getText().trim().isEmpty()) {
                     CytoscapeUtilities.notifyUser("Please enter a search term");
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
-                    CytoscapeUtilities.notifyUser("Illegal characters present. " + "Please enter a valid search term.");
+                    CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int threshold = -1;
+                    int maxAuthorThreshold = -1;
                     if (getAcademiaPanel().thresholdIsSelected()) {
                         String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
                         if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
-                            threshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
+                            maxAuthorThreshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
                         } else {
                             CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
                         }
                     }
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),
-                            threshold);
+                            maxAuthorThreshold);
                 }
             }
         });
@@ -715,6 +722,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         /**
          * NOTE: DISABLED TEMPORARILY
          */
+        // TODO: Enable at future date
         // topPanel.add(UserPanel.createCategoryPanel(), BorderLayout.NORTH);
         topPanel.add(this.createSearchPanel(), BorderLayout.SOUTH);
 
