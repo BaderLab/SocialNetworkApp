@@ -154,8 +154,9 @@ public class Category {
      *
      * @param int categoryID
      * @return String category
+     * @throws UnableToIdentifyCategoryException 
      */
-    public static String toString(int categoryID) {
+    public static String toString(int categoryID) throws UnableToIdentifyCategoryException {
         String category = null;
         switch (categoryID) {
             case Category.DEFAULT:
@@ -164,15 +165,29 @@ public class Category {
             case Category.ACADEMIA:
                 category = "Academia";
                 break;
+            case Category.FACULTY:
+            	category = "Faculty";
+            	break;
             case Category.INCITES:
                 category = "Incites";
                 break;
+            case Category.LINKEDIN:
+            	category = "LinkedIn";
+            	break;
+            case Category.PUBMED:
+            	category = "Pubmed";
+            	break;
             case Category.SCOPUS:
                 category = "Scopus";
                 break;
-            case Category.PUBMED:
-                category = "Pubmed";
-                break;
+            case Category.TWITTER:
+            	category = "Twitter";
+            	break;
+            case Category.YOUTUBE:
+            	category = "Youtube";
+            	break;
+            default:
+            	throw new UnableToIdentifyCategoryException("Unknown");
         }
         return category;
     }

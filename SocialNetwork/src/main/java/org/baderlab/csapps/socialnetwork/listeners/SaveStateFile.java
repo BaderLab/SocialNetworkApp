@@ -38,13 +38,7 @@ public class SaveStateFile implements SessionAboutToBeSavedListener {
             }
             writer.newLine();
             for (SocialNetwork socialNetwork : this.appManager.getSocialNetworkMap().values()) {
-            	if (socialNetwork.getNetworkType() == Category.INCITES) {
-            		writer.write("INCITES");
-            	} else if (socialNetwork.getNetworkType() == Category.PUBMED) {
-            		writer.write("PUBMED");
-            	} else if (socialNetwork.getNetworkType() == Category.SCOPUS) {
-            		writer.write("SCOPUS");
-            	}
+            	writer.write(Category.toString(socialNetwork.getNetworkType()));
             	writer.write("?");
             }
             writer.newLine();
