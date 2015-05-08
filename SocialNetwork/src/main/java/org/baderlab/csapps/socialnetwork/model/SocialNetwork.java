@@ -165,7 +165,8 @@ public class SocialNetwork {
     }
 
     /**
-     * Get the publications that were excluded from this social network
+     * Get the publications that were excluded from this <i>social network</i>.
+     * Only valid for <i>Academia</i> networks.
      *
      * @return ArrayList excludedPubs
      */
@@ -258,7 +259,11 @@ public class SocialNetwork {
     }
 
     /**
-     * Get network summary
+     * Get a summary of this <i>social network</i>. Contents of summary
+     * varies depending on the type of the network. For <i>Academia</i>
+     * networks, the summary may contain the total # of publications
+     * represented in the network, and also a list of all excluded
+     * publications.
      *
      * @return String summary
      */
@@ -363,7 +368,8 @@ public class SocialNetwork {
     }
 
     /**
-     * Set the publications that were excluded from this <i>social network</i>
+     * Set the publications that were excluded from this <i>social network</i>.
+     * Only valid for <i>Academia</i> networks.
      *
      * @param ArrayList excludedPubs
      */

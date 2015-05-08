@@ -110,7 +110,7 @@ public class Interaction {
      */
     public ArrayList<AbstractEdge> getExcludedPublications() {
         if (this.excludedPublications == null) {
-            this.excludedPublications = new ArrayList<AbstractEdge>();
+            setExcludedPublications(new ArrayList<AbstractEdge>());
         }
         return this.excludedPublications;
     }
@@ -186,12 +186,11 @@ public class Interaction {
         Copublications copublications = null;
         Publication publication = null;
         List<Author> listOfNodes = null;
-        setExcludedPublications(new ArrayList<AbstractEdge>());
         // Iterate through each publication
         while (h <= results.size() - 1) {
             publication = (Publication) results.get(h);
             // Include publication only if the # of authors does not exceed the threshold
-            if ((this.maxThreshold > 0) && (publication.getNodes().size() <= this.maxThreshold)) {
+            if ((this.maxThreshold < 0) || (publication.getNodes().size() <= this.maxThreshold)) {
                 i = 0;
                 j = 0;
                 collaboration = null;
@@ -237,7 +236,7 @@ public class Interaction {
                     i++;
                 }
             } else {
-                this.excludedPublications.add(publication);
+                this.getExcludedPublications().add(publication);
             }
             h++;
         }
@@ -252,7 +251,6 @@ public class Interaction {
      * Key: <i>Collaboration</i> <br>
      * Value: <i>Interaction</i>
      *
-     * @param null
      * @return Map abstractMap
      */
     private void setAbstractMap(Map<Collaboration, ArrayList<AbstractEdge>> abstractMap) {

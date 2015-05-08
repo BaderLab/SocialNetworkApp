@@ -97,7 +97,7 @@ public class GenerateReports {
     private HashMap<String, Integer> citationsByLocation_distinct = new HashMap<String, Integer>();
 
     /**
-     * ??
+     * Constructor for {@link GenerateReports}
      *
      * @param ArrayList pubs
      * @param String networkName
@@ -111,7 +111,7 @@ public class GenerateReports {
     }
 
     /**
-     * ??
+     * Constructor for {@link GenerateReports}
      *
      * @param ArrayList pubs
      * @param String outputDir
@@ -124,7 +124,7 @@ public class GenerateReports {
         this.outputDir = outputDir;
     }
 
-    /*
+    /**
      * for each publication in the set of publications for this network For each
      * publication get its set of Authors. For each Author get their location
      * and add a count to that location (publication counts will be duplicated
@@ -155,8 +155,8 @@ public class GenerateReports {
         this.pubByLocation = pubs_summary;
     }
 
-    /*
-     * for each publication in the set of publications for this network For each
+    /**
+     * For each publication in the set of publications for this network For each
      * publication get its set of Authors. For each Author get their location
      * For each unique location on the given publication add a count to that
      * location (counts will be duplicated but only once per location for each
@@ -194,10 +194,10 @@ public class GenerateReports {
         this.pubByLocation_distinct = pubs_summary;
     }
 
-    /*
-     * for each publication in the set of publications for this network Each
+    /**
+     * For each publication in the set of publications for this network Each
      * publication is assigned a majority rules location Add up the publications
-     * based on location. Return hashamp of location --> total publications
+     * based on location. Return hashmap of location --> total publications
      */
     private void calculateTotals_unique() {
         HashMap<String, Integer> pubs_summary = new HashMap<String, Integer>();
@@ -267,9 +267,14 @@ public class GenerateReports {
         return filenames;
     }
 
-    /*
+    /**
      * Given : a directory, file name and map - generate an html file with
      * header and footer - and a text file with the information
+     *
+     * @param String directory
+     * @param String fileName
+     * @param HashMap data
+     * @param String title
      */
     private void generateFiles(String directory, String fileName, HashMap<String, Integer> data, String title) {
 

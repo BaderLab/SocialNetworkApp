@@ -96,6 +96,24 @@ import org.cytoscape.util.swing.FileUtil;
 public class UserPanel extends JPanel implements CytoPanelComponent {
 
     /**
+     *
+     * Returns a valid threshold iff user has set one
+     *
+     * @return int threshold
+     */
+    public static int getValidThreshold(int threshold, boolean isSelected, String text) {
+        if (isSelected) {
+            String thresholdText = text;
+            if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
+                threshold = Integer.parseInt(text);
+            } else {
+                CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
+            }
+        }
+        return threshold;
+    }
+
+    /**
      * Reference to control panel
      */
     private JPanel controlPanelRef = null;
@@ -156,6 +174,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Reference to network summary panel
      */
     private JPanel networkSummaryPanelRef = null;
+
     /**
      * Reference to network summary pane
      */
@@ -165,12 +184,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Reference to network summary pane
      */
     private JTextPane fileSummaryPaneRef = null;
-
     /**
      * Reference to the main appManager
      */
     private SocialNetworkAppManager appManager = null;
     private FileUtil fileUtil = null;
+
     private CySwingApplication cySwingAppRef = null;
 
     /**
@@ -601,15 +620,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int maxAuthorThreshold = -1;
-                    if (getAcademiaPanel().thresholdIsSelected()) {
-                        String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
-                        if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
-                            maxAuthorThreshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
-                        } else {
-                            CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
-                        }
-                    }
+                    int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
+                            getAcademiaPanel().getThresholdTextFieldRef().getText());
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),
                             maxAuthorThreshold);
@@ -640,15 +652,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int maxAuthorThreshold = -1;
-                    if (getAcademiaPanel().thresholdIsSelected()) {
-                        String thresholdText = getAcademiaPanel().getThresholdTextFieldRef().getText();
-                        if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
-                            maxAuthorThreshold = Integer.parseInt(getAcademiaPanel().getThresholdTextFieldRef().getText());
-                        } else {
-                            CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
-                        }
-                    }
+                    int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
+                            getAcademiaPanel().getThresholdTextFieldRef().getText());
                     UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
                             getSelectedCategory(),
                             maxAuthorThreshold);
@@ -710,7 +715,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
     /**
      * Create new top panel for use in main app panel. Top panel will contain
-     * search box and category option seelctor.
+     * search box and category option selector.
      *
      * @return JPanel topPanel
      */

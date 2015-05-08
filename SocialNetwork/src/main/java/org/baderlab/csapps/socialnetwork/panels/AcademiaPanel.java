@@ -299,8 +299,8 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create 'create network button'. Create network button attempts to create
-     * a network out of a file specified by the user.
+     * Create <i>CreateNetwork</i> button. When pressed, the <i>CreateNetwork</i> button
+     * attempts to create a network out of a file specified by the user.
      *
      * @return {@link JButton} createNetworkButton
      */
@@ -331,11 +331,9 @@ public class AcademiaPanel {
                             CytoscapeUtilities.notifyUser("Please specify network name.");
                         } else {
                             try {
-                                int threshold = -1;
-                                if (thresholdIsSelected()) {
-                                    threshold = Integer.parseInt(getThresholdTextFieldRef().getText());
-                                }
-                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), threshold);
+                                int maxAuthorThreshold = UserPanel.getValidThreshold(-1, thresholdIsSelected(),
+                                        getThresholdTextFieldRef().getText());
+                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
                             } catch (FileNotFoundException e) {
                                 CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
                             }
@@ -473,7 +471,7 @@ public class AcademiaPanel {
     }
 
     /**
-     * Return true iff user wants a threshold to be applied
+     * Return {@code true} iff user wants a threshold to be applied
      *
      * @return boolean
      */
