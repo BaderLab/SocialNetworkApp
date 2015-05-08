@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -165,7 +166,8 @@ public class Pubmed {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             if (this.search) {
-                if (Integer.parseInt(this.totalPubs) > 500) {
+                if ((this.totalPubs == null) || (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs)
+                        && Integer.parseInt(this.totalPubs) > 500) {
                     // WIP (Work In Progress)
                     // On the event that a search yields 500+ publications,
                     // these publications will

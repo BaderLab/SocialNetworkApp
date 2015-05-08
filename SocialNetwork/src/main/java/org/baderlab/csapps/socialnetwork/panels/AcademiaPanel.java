@@ -331,7 +331,7 @@ public class AcademiaPanel {
                             CytoscapeUtilities.notifyUser("Please specify network name.");
                         } else {
                             try {
-                                int maxAuthorThreshold = UserPanel.getValidThreshold(-1, thresholdIsSelected(),
+                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
                                         getThresholdTextFieldRef().getText());
                                 AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
                             } catch (FileNotFoundException e) {

@@ -96,12 +96,39 @@ import org.cytoscape.util.swing.FileUtil;
 public class UserPanel extends JPanel implements CytoPanelComponent {
 
     /**
+     * Apply a threshold (if applicable) and create a network
      *
+     * @param {@link SocialNetworkAppManager} appManager
+     * @param {@code boolean} isSelected
+     * @param String text
+     * @param {@code int} categoryType
+     */
+    public static void createNetwork(SocialNetworkAppManager appManager, boolean isSelected,
+            String thresholdText,
+            String searchTerm,
+            int categoryType) {
+        int threshold = -1;
+        if (isSelected) {
+            if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
+                threshold = Integer.parseInt(thresholdText);
+                appManager.createNetwork(searchTerm, categoryType, threshold);
+            } else {
+                CytoscapeUtilities.notifyUser("Illegal input for max threshold. Please specify a "
+                        + "valid threshold value. Threshold must be a positive integer.");
+                return;
+            }
+        } else {
+            appManager.createNetwork(searchTerm, categoryType, threshold);
+        }
+    }
+
+    /**
      * Returns a valid threshold iff user has set one
      *
      * @return int threshold
      */
-    public static int getValidThreshold(int threshold, boolean isSelected, String text) {
+    public static int getValidThreshold(boolean isSelected, String text) {
+        int threshold = -1;
         if (isSelected) {
             String thresholdText = text;
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
@@ -113,7 +140,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         }
         return threshold;
     }
-
     /**
      * Reference to control panel
      */
@@ -171,6 +197,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * The visual style selector type currently being displayed to the user
      */
     private int visualStyleSelectorType = Category.DEFAULT;
+
     /**
      * Reference to network summary panel
      */
@@ -180,7 +207,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Reference to network summary pane
      */
     private JTextPane networkSummaryPaneRef = null;
-
     /**
      * Reference to network summary pane
      */
@@ -189,6 +215,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Reference to the main appManager
      */
     private SocialNetworkAppManager appManager = null;
+
     private FileUtil fileUtil = null;
 
     private CySwingApplication cySwingAppRef = null;
@@ -621,13 +648,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
-                            getAcademiaPanel().getThresholdTextFieldRef().getText());
-                    if (maxAuthorThreshold != -1) {
-                        UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
-                                getSelectedCategory(),
-                                maxAuthorThreshold);
-                    }
+                    createNetwork(UserPanel.this.appManager,
+                            getAcademiaPanel().thresholdIsSelected(),
+                            getAcademiaPanel().getThresholdTextFieldRef().getText().trim(),
+                            getSearchBox().getText().trim(),
+                            getSelectedCategory());
                 }
             }
         });
@@ -655,13 +680,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else if (!isValidInput(getSearchBox().getText().trim())) {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
-                    int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
-                            getAcademiaPanel().getThresholdTextFieldRef().getText());
-                    if (maxAuthorThreshold != -1) {
-                        UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
-                                getSelectedCategory(),
-                                maxAuthorThreshold);
-                    }
+                    createNetwork(UserPanel.this.appManager,
+                            getAcademiaPanel().thresholdIsSelected(),
+                            getAcademiaPanel().getThresholdTextFieldRef().getText().trim(),
+                            getSearchBox().getText().trim(),
+                            getSelectedCategory());
                 }
             }
         });

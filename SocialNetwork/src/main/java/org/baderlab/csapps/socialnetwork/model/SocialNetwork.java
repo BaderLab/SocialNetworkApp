@@ -111,7 +111,7 @@ public class SocialNetwork {
     private String unidentified_faculty = "";
 
     /**
-     * Create a new social network
+     * Create a new {@link SocialNetwork}
      *
      * @param String networkName
      * @param int networkType
@@ -268,19 +268,26 @@ public class SocialNetwork {
      * @return String summary
      */
     public String getSummary() {
-        String info = null;
+        String info = "<html>";
         // Print out the summary information
         switch(this.networkType) {
             case Category.INCITES:
-                info = "<html>" + "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty + "<br>"
-                        + "Total # of unidentified faculty: " + this.num_uniden_faculty + "<br>" + "<hr><br>UNIDENTIFIED FACULTY"
-                        + this.unidentified_faculty;
+                info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty + "<br>"
+                        + "Total # of unidentified faculty: " + this.num_uniden_faculty + "<br>";
+                if (this.num_uniden_faculty > 0) {
+                    info += "<hr><br>UNIDENTIFIED FACULTY" + this.unidentified_faculty;
+                }
+                if (this.getExcludedPubs().size() > 0) {
+                    info += "EXCLUDED PUBLICATIONS <br>" + getSummaryOfExcludedPubs();
+                }
                 break;
             case Category.PUBMED:
             case Category.SCOPUS:
             default:
-                info = "<html>" + "Total # of publications: " + this.num_publications + "<br><br>"
-                        + "EXCLUDED PUBLICATIONS <br>" + getSummaryOfExcludedPubs();
+                info = "<html>" + "Total # of publications: " + this.num_publications + "<br><br>";
+                if (this.getExcludedPubs().size() > 0) {
+                    info += "EXCLUDED PUBLICATIONS <br>" + getSummaryOfExcludedPubs();
+                }
         }
         this.networkSummary = info + "</html>";
         return this.networkSummary;
