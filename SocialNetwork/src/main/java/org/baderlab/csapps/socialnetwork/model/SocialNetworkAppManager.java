@@ -266,6 +266,11 @@ public class SocialNetworkAppManager {
         }
         // Create interaction
         Interaction interaction = new Interaction(pubList, Category.ACADEMIA, maxAuthorThreshold);
+        if (interaction.getExcludedPublications().size() == pubList.size()) {
+            this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold");
+            return;
+        }
         socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
         // Create map
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
@@ -318,6 +323,11 @@ public class SocialNetworkAppManager {
                 // This is only temporary ~
                 category = Category.PUBMED;
                 interaction = new Interaction(results, category, maxAuthorThreshold);
+                if (interaction.getExcludedPublications().size() == results.size()) {
+                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold.");
+                    return;
+                }
                 socialNetwork = new SocialNetwork(searchTerm, category);
                 ArrayList<Publication> pubList = (ArrayList<Publication>) results;
                 socialNetwork.setPublications(pubList);
@@ -329,14 +339,24 @@ public class SocialNetworkAppManager {
                 map = interaction.getAbstractMap();
                 // Set social network attributes
                 // ??
+
+                this.setNetworkName(searchTerm);
+                this.getSocialNetworkMap().put(searchTerm, socialNetwork);
+                // Transfer map to Cytoscape's map variable
+                this.setMap(map);
+                // Create network using map
+                this.createNetwork();
                 break;
         }
+        /*
         this.setNetworkName(searchTerm);
         this.getSocialNetworkMap().put(searchTerm, socialNetwork);
         // Transfer map to Cytoscape's map variable
         this.setMap(map);
         // Create network using map
         this.createNetwork();
+         */
+        // TODO: Include when support for other types of social networks is added
     }
 
     /**

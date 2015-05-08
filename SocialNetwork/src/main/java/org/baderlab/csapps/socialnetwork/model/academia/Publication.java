@@ -91,7 +91,6 @@ public class Publication extends AbstractEdge {
      * @param String timesCited
      * @param String expectedCitations
      * @param List coauthorList
-     * @return null
      */
     public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
         this.pubDate = pubDate;
@@ -142,9 +141,6 @@ public class Publication extends AbstractEdge {
 
     /**
      * Construct edge attribute map for use in Cytoscape
-     *
-     * @param null
-     * @return null
      */
     @Override
     public void constructEdgeAttrMap() {
@@ -167,7 +163,6 @@ public class Publication extends AbstractEdge {
     /**
      * Return a text representation of all of publication's authors
      *
-     * @paran null
      * @return String authors
      */
     public String getAuthors() {
@@ -182,7 +177,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get CyEdge
      *
-     * @param null
      * @return CyEdge cyEdge
      */
     @Override
@@ -193,7 +187,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get edge attribute map
      *
-     * @param null
      * @return Map edgeAttrMap
      */
     @Override
@@ -204,7 +197,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get expected citations
      *
-     * @param null
      * @return String expectedCitations
      */
     public String getExpectedCitations() {
@@ -233,7 +225,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get publication date
      *
-     * @param null
      * @return String pubDate
      */
     public String getPubDate() {
@@ -243,7 +234,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get times cited
      *
-     * @param null
      * @return int timesCited
      */
     public int getTimesCited() {
@@ -253,7 +243,6 @@ public class Publication extends AbstractEdge {
     /**
      * Get publication title
      *
-     * @param null
      * @return String title
      */
     public String getTitle() {
@@ -263,7 +252,6 @@ public class Publication extends AbstractEdge {
     /**
      * Return true iff publication was authored by a single individual
      *
-     * @param null
      * @return boolean bool
      */
     public boolean isSingleAuthored() {
@@ -283,7 +271,6 @@ public class Publication extends AbstractEdge {
      * Set publication authors
      *
      * @param ArrayList authors
-     * @return null
      */
     public void setAuthors(ArrayList<Author> authors) {
         this.authorList = authors;
@@ -293,7 +280,6 @@ public class Publication extends AbstractEdge {
      * Set CyEdge
      *
      * @param CyEdge cyEdge
-     * @return null
      */
     @Override
     public void setCyEdge(CyEdge cyEdge) {
@@ -304,7 +290,6 @@ public class Publication extends AbstractEdge {
      * Set expected citations
      *
      * @param String expectedCitations
-     * @return null
      */
     public void setExpectedCitations(String expectedCitations) {
         this.expectedCitations = expectedCitations;
@@ -323,7 +308,6 @@ public class Publication extends AbstractEdge {
      * Set publication pub date
      *
      * @param String date
-     * @return null
      */
     public void setPubDate(String date) {
         this.pubDate = date;
@@ -333,7 +317,6 @@ public class Publication extends AbstractEdge {
      * Set times cited
      *
      * @param int timesCited
-     * @return null
      */
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
@@ -343,7 +326,6 @@ public class Publication extends AbstractEdge {
      * Set publication title
      *
      * @param String title
-     * @return null
      */
     public void setTitle(String title) {
         this.title = title;
@@ -355,7 +337,6 @@ public class Publication extends AbstractEdge {
      * Pub-Date: <i>pubdate</i> <br>
      * Authors: <i>author</i>
      *
-     * @param null
      * @return String publication
      */
     @Override

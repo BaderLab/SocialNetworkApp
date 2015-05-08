@@ -107,7 +107,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
                 threshold = Integer.parseInt(text);
             } else {
-                CytoscapeUtilities.notifyUser("Max author threshold could not be applied to network. Illegal input.");
+                CytoscapeUtilities.notifyUser("Illegal input for max threshold. Please specify a "
+                        + "valid threshold value. Threshold must be a positive integer.");
             }
         }
         return threshold;
@@ -622,9 +623,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
                             getAcademiaPanel().getThresholdTextFieldRef().getText());
-                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
-                            getSelectedCategory(),
-                            maxAuthorThreshold);
+                    if (maxAuthorThreshold != -1) {
+                        UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
+                                getSelectedCategory(),
+                                maxAuthorThreshold);
+                    }
                 }
             }
         });
@@ -654,9 +657,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     int maxAuthorThreshold = getValidThreshold(-1, getAcademiaPanel().thresholdIsSelected(),
                             getAcademiaPanel().getThresholdTextFieldRef().getText());
-                    UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
-                            getSelectedCategory(),
-                            maxAuthorThreshold);
+                    if (maxAuthorThreshold != -1) {
+                        UserPanel.this.appManager.createNetwork(getSearchBox().getText(),
+                                getSelectedCategory(),
+                                maxAuthorThreshold);
+                    }
                 }
             }
         });
