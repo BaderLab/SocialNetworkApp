@@ -542,16 +542,16 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 System.out.println(getVisualStyleSelectorType());
                 switch (getVisualStyleSelectorType()) {
                     case VisualStyles.DEFAULT_VISUAL_STYLE:
-                        help("Default visual style", VisualStyles.DEFAULT_VISUAL_STYLE_HELP);
+                        help("Default visual style", VisualStyles.getHelpMessage(VisualStyles.DEFAULT_VISUAL_STYLE));
                         break;
-                    case VisualStyles.INCITES_LITE_VISUAL_STYLE:
-                        help("Incites 'Lite' Visual Style", VisualStyles.INCITES_LITE_VISUAL_STYLE_HELP);
+                    case VisualStyles.INCITES_VISUAL_STYLE:
+                        help("InCites Visual Style", VisualStyles.getHelpMessage(VisualStyles.INCITES_VISUAL_STYLE));
                         break;
-                    case VisualStyles.PUBMED_LITE_VISUAL_STYLE:
-                        help("Pubmed 'Lite' Visual Style", VisualStyles.PUBMED_LITE_VISUAL_STYLE_HELP);
+                    case VisualStyles.PUBMED_VISUAL_STYLE:
+                        help("PubMed Visual Style", VisualStyles.getHelpMessage(VisualStyles.PUBMED_VISUAL_STYLE));
                         break;
-                    case VisualStyles.SCOPUS_LITE_VISUAL_STYLE:
-                        help("Pubmed 'Lite' Visual Style", VisualStyles.SCOPUS_LITE_VISUAL_STYLE_HELP);
+                    case VisualStyles.SCOPUS_VISUAL_STYLE:
+                        help("Scopus Visual Style", VisualStyles.getHelpMessage(VisualStyles.SCOPUS_VISUAL_STYLE));
                         break;
                 }
             }

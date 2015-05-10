@@ -72,9 +72,9 @@ import org.cytoscape.work.TaskManager;
 public class SocialNetworkAppManager {
 
     /**
-     * Get <i>ApplyView</i> task factory
+     * Get <i>ApplyVisualStyle</i> task factory
      *
-     * @return ApplyViewTaskFactory applyVisualStyleTaskFactoryRef
+     * @return ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef
      */
     public static ApplyVisualStyleTaskFactory getApplyVisualStyleTaskFactoryRef() {
         return SocialNetworkAppManager.applyVisualStyleTaskFactoryRef;

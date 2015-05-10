@@ -429,19 +429,19 @@ public class ApplyVisualStyleTask extends AbstractTask {
             case Category.DEFAULT:
                 this.vmmServiceRef.setCurrentVisualStyle(this.getDefaultVisualStyle());
                 break;
-            case VisualStyles.INCITES_LITE_VISUAL_STYLE:
+            case VisualStyles.INCITES_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading Incites Lite Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
                 this.vmmServiceRef.setCurrentVisualStyle(this.getIncitesLiteVisualStyle());
                 break;
-            case VisualStyles.PUBMED_LITE_VISUAL_STYLE:
+            case VisualStyles.PUBMED_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading Pubmed Lite Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
                 this.vmmServiceRef.setCurrentVisualStyle(this.getPubmedLiteVisualStyle());
                 break;
-            case VisualStyles.SCOPUS_LITE_VISUAL_STYLE:
+            case VisualStyles.SCOPUS_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading Scopus Lite Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");

@@ -122,13 +122,13 @@ public class SocialNetwork {
         // Set default visual styles
         switch (networkType) {
             case Category.INCITES:
-                this.setDefaultVisualStyle(VisualStyles.INCITES_LITE_VISUAL_STYLE);
+                this.setDefaultVisualStyle(VisualStyles.INCITES_VISUAL_STYLE);
                 break;
             case Category.SCOPUS:
-                this.setDefaultVisualStyle(VisualStyles.SCOPUS_LITE_VISUAL_STYLE);
+                this.setDefaultVisualStyle(VisualStyles.SCOPUS_VISUAL_STYLE);
                 break;
             case Category.PUBMED:
-                this.setDefaultVisualStyle(VisualStyles.PUBMED_LITE_VISUAL_STYLE);
+                this.setDefaultVisualStyle(VisualStyles.PUBMED_VISUAL_STYLE);
                 break;
         }
     }
@@ -272,21 +272,21 @@ public class SocialNetwork {
         // Print out the summary information
         switch(this.networkType) {
             case Category.INCITES:
-                info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty + "<br>"
-                        + "Total # of unidentified faculty: " + this.num_uniden_faculty + "<br>";
+                info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty
+                + "<br<Total # of unidentified faculty: " + this.num_uniden_faculty;
                 if (this.num_uniden_faculty > 0) {
-                    info += "<hr><br>UNIDENTIFIED FACULTY" + this.unidentified_faculty;
+                    info += "<hr><br>Unidentified Faculty (see below)<br>" + this.unidentified_faculty;
                 }
                 if (this.getExcludedPubs().size() > 0) {
-                    info += "EXCLUDED PUBLICATIONS <br>" + getSummaryOfExcludedPubs();
+                    info += "<br>Excluded publications (see below)<br>" + getSummaryOfExcludedPubs();
                 }
                 break;
             case Category.PUBMED:
             case Category.SCOPUS:
             default:
-                info = "<html>" + "Total # of publications: " + this.num_publications + "<br><br>";
+                info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
                 if (this.getExcludedPubs().size() > 0) {
-                    info += "EXCLUDED PUBLICATIONS <br>" + getSummaryOfExcludedPubs();
+                    info += "<br>Excluded publications (see below)<br>" + getSummaryOfExcludedPubs();
                 }
         }
         this.networkSummary = info + "</html>";

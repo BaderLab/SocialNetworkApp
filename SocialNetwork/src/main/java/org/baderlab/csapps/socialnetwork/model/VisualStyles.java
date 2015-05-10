@@ -37,8 +37,15 @@
 
 package org.baderlab.csapps.socialnetwork.model;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
  * Examples of visual styles currently in use by the app
@@ -48,86 +55,63 @@ import java.util.Map;
 public class VisualStyles {
 
     /**
+     * Get the help message associated with the visual style type
+     */
+    public static String getHelpMessage(int visualStyleType) {
+        String fileName = null;
+        switch(visualStyleType) {
+            case VisualStyles.INCITES_VISUAL_STYLE:
+                fileName = "incites";
+                break;
+            case VisualStyles.PUBMED_VISUAL_STYLE:
+                fileName = "pubmed";
+                break;
+            case VisualStyles.SCOPUS_VISUAL_STYLE:
+                fileName = "scopus";
+                break;
+            case VisualStyles.DEFAULT_VISUAL_STYLE:
+            default:
+                fileName = "default";
+        }
+        fileName = fileName + "_visual_style_help.txt";
+        String helpMssg = "";
+        try {
+            URL url = VisualStyles.class.getResource(fileName);
+            InputStream in = url.openStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String sCurrentLine = null;
+            while ((sCurrentLine = br.readLine()) != null) {
+                helpMssg += sCurrentLine;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser(String.format("Failed to load %s. FileNotFoundException.", fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser(String.format("Failed to load %s. IOException.", fileName));
+        }
+        return helpMssg;
+    }
+
+    /**
      * Default visual style
      */
     final public static int DEFAULT_VISUAL_STYLE = -99;
 
     /**
-     * Default visual style help message
+     * <i>PubMed</i> visual style
      */
-    final public static String DEFAULT_VISUAL_STYLE_HELP =  "The default visual style is the bas" +
-            "e visual style. It makes use of no " +
-            "network attributes.";
+    final public static int PUBMED_VISUAL_STYLE = -100;
 
     /**
-     * Pubmed 'Lite' visual style
+     * <i>Scopus</i> visual style
      */
-    final public static int PUBMED_LITE_VISUAL_STYLE = -100;
+    final public static int SCOPUS_VISUAL_STYLE = -101;
 
     /**
-     * Pubmed 'Lite' visual style help message
+     * <i>InCites</i> visual style
      */
-    final public static String PUBMED_LITE_VISUAL_STYLE_HELP =  "The Pubmed 'Lite' visual style is d" +
-            "esigned for Pubmed networks. Pubmed" +
-            " networks typically lack institutio" +
-            "n information. Thus, no color codin" +
-            "g is present. However they do conta" +
-            "in all the standard list of attribu" +
-            "tes found in Academia data-sets. In" +
-            "formation on the total citation cou" +
-            "nt and total co-publication count o" +
-            "f each individual author is present" +
-            " and can be visualized via node-siz" +
-            "e and edge width respectively.";
-
-    /**
-     * Scopus 'Lite' visual style
-     */
-    final public static int SCOPUS_LITE_VISUAL_STYLE = -101;
-
-    /**
-     * Scopus 'Lite' visual style help message
-     */
-    final public static String SCOPUS_LITE_VISUAL_STYLE_HELP =  "The Scopus 'Lite' visual style is d" +
-            "esigned for Scopus networks. Scopus" +
-            " networks typically lack institutio" +
-            "n information. Thus, no color codin" +
-            "g is present. However they do conta" +
-            "in all the standard list of attribu" +
-            "tes found in Academia data-sets. In" +
-            "formation on the total citation cou" +
-            "nt and total co-publication count o" +
-            "f each individual author is present" +
-            " and can be visualized via node-siz" +
-            "e and edge width respectively.";
-
-    /**
-     * Incites 'Lite' visual style
-     */
-    final public static int INCITES_LITE_VISUAL_STYLE = -103;
-
-    /**
-     * Incites 'Lite' visual style help message
-     */
-    final public static String INCITES_LITE_VISUAL_STYLE_HELP = "The Incites 'Lite' visual style is " +
-            "designed for Incites networks. Inci" +
-            "tes networks are fully annotated. T" +
-            "his means that in addition to the s" +
-            "tandard list of attributes typicall" +
-            "y found in Academia data-sets they " +
-            "also contain institution informatio" +
-            "n. The Incites 'Lite' visual style " +
-            "works by matching institutions to t" +
-            "heir respective locations and color" +
-            "-coding them. Institutions for whic" +
-            "h no location has been found are cl" +
-            "assified as 'other' (purple). Locat" +
-            "ion matching is determined by a loc" +
-            "al map and as such may or may not b" +
-            "e adequate. To add an institution a" +
-            "nd it's associated location go to:<" +
-            "br> <b>Tools</b> - <b>Incites</b> -" +
-            " <b>Add institution</b>.";
+    final public static int INCITES_VISUAL_STYLE = -103;
 
     /**
      * A visual style map
@@ -138,6 +122,7 @@ public class VisualStyles {
 
     /**
      * Get unique id (numeral) associated with visual style
+     *
      * @param String visualStyle
      * @return int visualStyleID
      */
@@ -145,15 +130,16 @@ public class VisualStyles {
         if (this.visualStyleMap == null) {
             this.visualStyleMap = new HashMap<String, Integer>();
             this.visualStyleMap.put("--SELECT NETWORK VISUAL STYLE--", Category.DEFAULT);
-            this.visualStyleMap.put("Incites 'Lite'", INCITES_LITE_VISUAL_STYLE);
-            this.visualStyleMap.put("Pubmed 'Lite'", PUBMED_LITE_VISUAL_STYLE);
-            this.visualStyleMap.put("Scopus 'Lite'", PUBMED_LITE_VISUAL_STYLE);
+            this.visualStyleMap.put("InCites", INCITES_VISUAL_STYLE);
+            this.visualStyleMap.put("PubMed", PUBMED_VISUAL_STYLE);
+            this.visualStyleMap.put("Scopus", PUBMED_VISUAL_STYLE);
         }
         return this.visualStyleMap.get(visualStyle);
     }
 
     /**
      * Get visual style list of a certain type
+     *
      * @param int visualStyleSelectorType
      * @return String[] visualStyleList
      */
@@ -163,18 +149,17 @@ public class VisualStyles {
             case VisualStyles.DEFAULT_VISUAL_STYLE:
                 visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
                 break;
-            case VisualStyles.INCITES_LITE_VISUAL_STYLE:
-                visualStyleList = new String[] {"Incites 'Lite'"};
+            case VisualStyles.INCITES_VISUAL_STYLE:
+                visualStyleList = new String[] {"InCites"};
                 break;
-            case VisualStyles.PUBMED_LITE_VISUAL_STYLE:
-                visualStyleList = new String[] {"Pubmed 'Lite'"};
+            case VisualStyles.PUBMED_VISUAL_STYLE:
+                visualStyleList = new String[] {"PubMed"};
                 break;
-            case VisualStyles.SCOPUS_LITE_VISUAL_STYLE:
-                visualStyleList = new String[] {"Scopus 'Lite'"};
+            case VisualStyles.SCOPUS_VISUAL_STYLE:
+                visualStyleList = new String[] {"Scopus"};
                 break;
         }
         return visualStyleList;
     }
-
 }
 
