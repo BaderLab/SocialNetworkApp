@@ -107,7 +107,7 @@ public class VisualStyles {
 	 * @param String fileName
 	 * @return String helpMssg
 	 */
-	public static String loadHelpMessage(String fileName) {
+	private static String loadHelpMessage(String fileName) {
 	    String helpMssg = "";
 	    try {
 	        URL url = getInstance().getClass().getResource(fileName);

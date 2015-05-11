@@ -38,6 +38,7 @@
 package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -47,13 +48,19 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -85,7 +92,7 @@ public class AcademiaPanel {
      * A reference to the max author threshold text field. Used to set the max
      * # of authors in a publication that the app will build a network out of.
      */
-    private JTextField thresholdTextFieldRef = new JTextField();
+    private JTextArea thresholdTextAreaRef = null;
     private JRadioButton incitesRadioButton = null;
     private JRadioButton scopusRadioButton = null;
     private JRadioButton thresholdRadioButton = null;
@@ -151,6 +158,7 @@ public class AcademiaPanel {
         JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
         this.thresholdRadioButton = new JRadioButton("Set max authors per pub");
+        this.thresholdRadioButton.setEnabled(true); // Set the ?? as true
         this.thresholdRadioButton.setToolTipText("Set the maximum # of authors to be considered per publication. "
                 + "Publications that exceed the threshold will be excluded.");
         this.thresholdRadioButton.addItemListener(new ItemListener() {
@@ -162,8 +170,12 @@ public class AcademiaPanel {
                 }
             }
         });
-        innerPanel.add(this.thresholdRadioButton);
-        innerPanel.add(getThresholdTextFieldRef());
+        // TODO: Hide the radio button to prevent users from disabling it
+        // innerPanel.add(this.thresholdRadioButton);
+        innerPanel.add(Box.createHorizontalStrut(5));
+        innerPanel.add(new JLabel("Max authors per pub"));
+        innerPanel.add(Box.createHorizontalStrut(5));
+        innerPanel.add(getThresholdTextAreaRef());
         advancedOptionsPanel.add(innerPanel);
         return advancedOptionsPanel;
     }
@@ -308,9 +320,7 @@ public class AcademiaPanel {
         JButton createNetworkButton = new JButton("Create Network");
         createNetworkButton.setToolTipText("Create network");
         createNetworkButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent event) {
-
                 // check to see which analysis type is selected
                 if (AcademiaPanel.this.incitesRadioButton.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
@@ -318,7 +328,6 @@ public class AcademiaPanel {
                 if (AcademiaPanel.this.scopusRadioButton.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
                 }
-
                 if (!AcademiaPanel.this.incitesRadioButton.isSelected() && !AcademiaPanel.this.scopusRadioButton.isSelected()) {
                     CytoscapeUtilities.notifyUser("Please select a database");
                 } else {
@@ -331,8 +340,9 @@ public class AcademiaPanel {
                             CytoscapeUtilities.notifyUser("Please specify network name.");
                         } else {
                             try {
-                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
-                                        getThresholdTextFieldRef().getText());
+                            	int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
+//                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
+//                                        getThresholdTextFieldRef().getText());
                                 AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
                             } catch (FileNotFoundException e) {
                                 CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
@@ -402,13 +412,17 @@ public class AcademiaPanel {
 
     /**
      *
-     * @return {@link JTextField} thresholdTextFieldRef
+     * @return {@link JTextArea} thresholdTextFieldRef
      */
-    public JTextField getThresholdTextFieldRef() {
-        if (this.thresholdTextFieldRef == null) {
-            setThresholdTextFieldRef(new JTextField("100"));
+    public JTextArea getThresholdTextAreaRef() {
+        if (this.thresholdTextAreaRef == null) {
+        	JTextArea textArea = new JTextArea("500");
+        	Border border = BorderFactory.createLineBorder(Color.GRAY);
+        	textArea.setBorder(BorderFactory.createCompoundBorder(border, 
+        	            BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+            setThresholdTextAreaRef(textArea);
         }
-        return this.thresholdTextFieldRef;
+        return this.thresholdTextAreaRef;
     }
 
     /**
@@ -464,10 +478,10 @@ public class AcademiaPanel {
 
     /**
      *
-     * @param {@link JTextField} thresholdTextFieldRef
+     * @param {@link JTextArea} thresholdTextFieldRef
      */
-    public void setThresholdTextFieldRef(JTextField thresholdTextFieldRef) {
-        this.thresholdTextFieldRef = thresholdTextFieldRef;
+    public void setThresholdTextAreaRef(JTextArea thresholdTextFieldRef) {
+        this.thresholdTextAreaRef = thresholdTextFieldRef;
     }
 
     /**

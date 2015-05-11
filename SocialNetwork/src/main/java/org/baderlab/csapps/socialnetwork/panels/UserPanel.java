@@ -111,6 +111,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         if (isSelected) {
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
                 threshold = Integer.parseInt(thresholdText);
+                if (threshold > 500) {
+                	CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
+                			+ "set to a value greater than 500. This may lead to computer slowdown.");
+                }
                 appManager.createNetwork(searchTerm, categoryType, threshold);
             } else {
                 CytoscapeUtilities.notifyUser("Illegal input for max threshold. Please specify a "
@@ -133,6 +137,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             String thresholdText = text;
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
                 threshold = Integer.parseInt(text);
+                if (threshold > 500) {
+                	CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
+                			+ "set to a value greater than 500. This may lead to computer slowdown.");
+                }
             } else {
                 CytoscapeUtilities.notifyUser("Illegal input for max threshold. Please specify a "
                         + "valid threshold value. Threshold must be a positive integer.");
@@ -342,7 +350,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO: Better error message
+            // TODO: Add a better error message
             CytoscapeUtilities.notifyUser(String.format("An error occurred while adding %s to the network table", socialNetwork.getNetworkName()));
         }
     }
@@ -503,7 +511,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     }
 
     /**
-     * Create 'destroy menu item'. Function is self-evident.
+     * Create <i>DestroyMenuItem</i>. Function is self-evident.
      *
      * @return JMenuItem destroyNetworkMenuItem
      */
@@ -539,7 +547,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         helpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                System.out.println(getVisualStyleSelectorType());
                 switch (getVisualStyleSelectorType()) {
                     case VisualStyles.DEFAULT_VISUAL_STYLE:
                         help("Default visual style", VisualStyles.getHelpMessage(VisualStyles.DEFAULT_VISUAL_STYLE));
@@ -649,8 +656,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
                     createNetwork(UserPanel.this.appManager,
-                            getAcademiaPanel().thresholdIsSelected(),
-                            getAcademiaPanel().getThresholdTextFieldRef().getText().trim(),
+                            //getAcademiaPanel().thresholdIsSelected(),
+                    		true, // TODO: Suppose that the threshold radio button is always selected
+                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
                             getSearchBox().getText().trim(),
                             getSelectedCategory());
                 }
@@ -681,8 +689,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
                     createNetwork(UserPanel.this.appManager,
-                            getAcademiaPanel().thresholdIsSelected(),
-                            getAcademiaPanel().getThresholdTextFieldRef().getText().trim(),
+                            //getAcademiaPanel().thresholdIsSelected(),
+                    		true, // TODO: Suppose that the threshold radio button is always selected
+                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
                             getSearchBox().getText().trim(),
                             getSelectedCategory());
                 }
