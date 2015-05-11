@@ -137,46 +137,46 @@ public class ApplyVisualStyleTask extends AbstractTask {
     /**
      * Create InCites visual style
      *
-     * @return VisualStyle incitesLiteVisualStyle
+     * @return VisualStyle incitesVisualStyle
      */
     private VisualStyle createIncitesVisualStyle() {
-        VisualStyle incitesLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("InCites");
-        addNodeLabels(incitesLiteVisualStyle);
-        modifyEdgeWidth(incitesLiteVisualStyle);
-        modifyNodeSize(incitesLiteVisualStyle);
-        modifyEdgeOpacity(incitesLiteVisualStyle);
-        modifyNodeColor(incitesLiteVisualStyle);
-        modifyNodeBorder(incitesLiteVisualStyle);
-        modifyNodeShape(incitesLiteVisualStyle);
-        return incitesLiteVisualStyle;
+        VisualStyle incitesVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("InCites");
+        addNodeLabels(incitesVisualStyle);
+        modifyEdgeWidth(incitesVisualStyle);
+        modifyNodeSize(incitesVisualStyle);
+        modifyEdgeOpacity(incitesVisualStyle);
+        modifyNodeColor(incitesVisualStyle);
+        modifyNodeBorder(incitesVisualStyle);
+        modifyNodeShape(incitesVisualStyle);
+        return incitesVisualStyle;
     }
 
     /**
      * Create PubMed visual style
      *
-     * @return VisualStyle pubmedLiteVisualStyle
+     * @return VisualStyle pubmedVisualStyle
      */
     private VisualStyle createPubmedVisualStyle() {
-        VisualStyle pubmedLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("PubMed");
-        addNodeLabels(pubmedLiteVisualStyle);
-        modifyNodeSize(pubmedLiteVisualStyle);
-        modifyEdgeWidth(pubmedLiteVisualStyle);
-        modifyEdgeOpacity(pubmedLiteVisualStyle);
-        return pubmedLiteVisualStyle;
+        VisualStyle pubmedVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("PubMed");
+        addNodeLabels(pubmedVisualStyle);
+        modifyNodeSize(pubmedVisualStyle);
+        modifyEdgeWidth(pubmedVisualStyle);
+        modifyEdgeOpacity(pubmedVisualStyle);
+        return pubmedVisualStyle;
     }
 
     /**
      * Create Scopus visual style
      *
-     * @return VisualStyle scopusLiteVisualStyle
+     * @return VisualStyle scopusVisualStyle
      */
     private VisualStyle createScopusLiteVisualStyle() {
-        VisualStyle scopusLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Scopus");
-        addNodeLabels(scopusLiteVisualStyle);
-        modifyNodeSize(scopusLiteVisualStyle);
-        modifyEdgeWidth(scopusLiteVisualStyle);
-        modifyEdgeOpacity(scopusLiteVisualStyle);
-        return scopusLiteVisualStyle;
+        VisualStyle scopusVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Scopus");
+        addNodeLabels(scopusVisualStyle);
+        modifyNodeSize(scopusVisualStyle);
+        modifyEdgeWidth(scopusVisualStyle);
+        modifyEdgeOpacity(scopusVisualStyle);
+        return scopusVisualStyle;
     }
 
     /**
@@ -194,7 +194,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
     /**
      * Get InCites visual style
      *
-     * @return VisualStyle incitesLiteVisualStyle
+     * @return VisualStyle incitesVisualStyle
      */
     private VisualStyle getIncitesStyle() {
         if (this.incitesVisualStyle == null) {
@@ -445,7 +445,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * Set task monitor
      *
      * @param TaskMonitor taskMonitor
-     * @return null
      */
     private void setTaskMonitor(TaskMonitor taskMonitor) {
         this.taskMonitor = taskMonitor;

@@ -71,7 +71,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 
 /**
- * ??
+ * Extends AbstractTask and is used to generate networks
  *
  * @author Victor Kofia
  */

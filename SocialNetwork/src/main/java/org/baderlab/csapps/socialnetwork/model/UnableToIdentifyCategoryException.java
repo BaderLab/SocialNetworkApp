@@ -51,23 +51,37 @@ public class UnableToIdentifyCategoryException extends Exception {
 
     private String categoryName;
 
+    /**
+     * Create a new exception for the category with the specified name
+     * 
+     * @param String categoryName
+     */
     public UnableToIdentifyCategoryException(String categoryName) {
         this.categoryName = categoryName;
     }
 
     @Override
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#getMessage()
+     */
     public String getMessage() {
         // TODO Auto-generated method stub
         return this.categoryName;
     }
 
     @Override
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#getStackTrace()
+     */
     public StackTraceElement[] getStackTrace() {
         // TODO Auto-generated method stub
         return super.getStackTrace();
     }
 
     @Override
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#toString()
+     */
     public String toString() {
         // TODO Auto-generated method stub
         return super.toString();

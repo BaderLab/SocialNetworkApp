@@ -54,7 +54,6 @@ public class Category {
     /**
      * Create default info panel
      *
-     * @param null
      * @return JPanel defaultInfoPanel
      */
     public static JPanel createDefaultInfoPanel() {
@@ -65,7 +64,6 @@ public class Category {
     /**
      * Create LinkedIn info panel
      *
-     * @param null
      * @return JPanel linkedInInfoPanel
      */
     public static JPanel createLinkedInInfoPanel() {
@@ -78,7 +76,6 @@ public class Category {
     /**
      * Create Twitter info panel
      *
-     * @param null
      * @return JPanel twitterInfoPanel
      */
     public static JPanel createTwitterInfoPanel() {
@@ -91,7 +88,6 @@ public class Category {
     /**
      * Create Youtube info panel
      *
-     * @param null
      * @return JPanel youtubeInfoPanel
      */
     public static JPanel createYoutubeInfoPanel() {
@@ -122,7 +118,6 @@ public class Category {
     /**
      * Get list of all categories currently supported by app
      *
-     * @param null
      * @return List categoryList
      */
     public static String[] getCategoryList() {

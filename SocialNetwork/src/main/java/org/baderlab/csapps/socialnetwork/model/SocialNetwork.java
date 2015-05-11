@@ -368,7 +368,6 @@ public class SocialNetwork {
      * Set network's default visual style
      *
      * @param int defaultVisualStyle
-     * @return null
      */
     public void setDefaultVisualStyle(int defaultVisualStyle) {
         this.defaultVisualStyle = defaultVisualStyle;
