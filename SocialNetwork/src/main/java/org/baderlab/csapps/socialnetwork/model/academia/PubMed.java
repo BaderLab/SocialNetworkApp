@@ -56,7 +56,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Victor Kofia
  */
-public class Pubmed {
+public class PubMed {
 
     /**
      * The author of a specific publication. This variable is globally
@@ -123,7 +123,7 @@ public class Pubmed {
      * @param String searchTerm
      * @return null
      */
-    public Pubmed(String searchTerm) {
+    public PubMed(String searchTerm) {
 
         if (searchTerm.endsWith(".xml")) {
             this.search = false;
@@ -226,27 +226,27 @@ public class Pubmed {
             @Override
             public void characters(char ch[], int start, int length) throws SAXException {
                 if (this.isPubDate) {
-                    Pubmed.this.pubDate = new String(ch, start, length);
+                    PubMed.this.pubDate = new String(ch, start, length);
                     this.isPubDate = false;
                 }
                 if (this.isAuthor) {
-                    Pubmed.this.author = new Author(new String(ch, start, length), Category.PUBMED);
+                    PubMed.this.author = new Author(new String(ch, start, length), Category.PUBMED);
                     // Add author to publication author list
-                    if (!Pubmed.this.pubAuthorList.contains(Pubmed.this.author)) {
-                        Pubmed.this.pubAuthorList.add(Pubmed.this.author);
+                    if (!PubMed.this.pubAuthorList.contains(PubMed.this.author)) {
+                        PubMed.this.pubAuthorList.add(PubMed.this.author);
                     }
                     this.isAuthor = false;
                 }
                 if (this.isJournal) {
-                    Pubmed.this.journal = new String(ch, start, length);
+                    PubMed.this.journal = new String(ch, start, length);
                     this.isJournal = false;
                 }
                 if (this.isTitle) {
-                    Pubmed.this.title = new String(ch, start, length);
+                    PubMed.this.title = new String(ch, start, length);
                     this.isTitle = false;
                 }
                 if (this.isTimesCited) {
-                    Pubmed.this.timesCited = new String(ch, start, length);
+                    PubMed.this.timesCited = new String(ch, start, length);
                     this.isTimesCited = false;
                 }
             }
@@ -271,8 +271,8 @@ public class Pubmed {
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("DocSum")) {
-                    Pubmed.this.pubList.add(new Publication(Pubmed.this.title, Pubmed.this.pubDate, Pubmed.this.journal, Pubmed.this.timesCited, null, Pubmed.this.pubAuthorList));
-                    Pubmed.this.pubAuthorList.clear();
+                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                    PubMed.this.pubAuthorList.clear();
                 }
             }
 
@@ -320,35 +320,35 @@ public class Pubmed {
             @Override
             public void characters(char ch[], int start, int length) throws SAXException {
                 if (this.isPubDate) {
-                    Pubmed.this.pubDate = new String(ch, start, length);
+                    PubMed.this.pubDate = new String(ch, start, length);
                     this.isPubDate = false;
                 }
                 if (this.isAuthor) {
-                    Pubmed.this.author = new Author(new String(ch, start, length), Category.PUBMED);
+                    PubMed.this.author = new Author(new String(ch, start, length), Category.PUBMED);
                     this.isAuthor = false;
                 }
                 if (this.isFirstName) {
-                    Pubmed.this.firstName = new String(ch, start, length);
+                    PubMed.this.firstName = new String(ch, start, length);
                     this.isFirstName = false;
                 }
                 if (this.isLastName) {
-                    Pubmed.this.lastName = new String(ch, start, length);
+                    PubMed.this.lastName = new String(ch, start, length);
                     this.isLastName = false;
                 }
                 if (this.isMiddleInitial) {
-                    Pubmed.this.middleInitials = new String(ch, start, length);
+                    PubMed.this.middleInitials = new String(ch, start, length);
                     this.isMiddleInitial = false;
                 }
                 if (this.isJournal) {
-                    Pubmed.this.journal = new String(ch, start, length);
+                    PubMed.this.journal = new String(ch, start, length);
                     this.isJournal = false;
                 }
                 if (this.isTitle) {
-                    Pubmed.this.title = new String(ch, start, length);
+                    PubMed.this.title = new String(ch, start, length);
                     this.isTitle = false;
                 }
                 if (this.isTimesCited) {
-                    Pubmed.this.timesCited = new String(ch, start, length);
+                    PubMed.this.timesCited = new String(ch, start, length);
                     this.isTimesCited = false;
                 }
             }
@@ -374,25 +374,25 @@ public class Pubmed {
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
                     // only add the publication if it has less than 30 authors
-                    if (Pubmed.this.pubAuthorList.size() <= 270) {
-                        Pubmed.this.pubList.add(new Publication(Pubmed.this.title, Pubmed.this.pubDate, Pubmed.this.journal, Pubmed.this.timesCited, null, Pubmed.this.pubAuthorList));
-                        Pubmed.this.pubAuthorList.clear();
+                    if (PubMed.this.pubAuthorList.size() <= 270) {
+                        PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                        PubMed.this.pubAuthorList.clear();
                     } else {
-                        System.out.println(Pubmed.this.title + ";; with ;;" + Pubmed.this.pubAuthorList.size() + " authors");
-                        Pubmed.this.pubAuthorList.clear();
+                        System.out.println(PubMed.this.title + ";; with ;;" + PubMed.this.pubAuthorList.size() + " authors");
+                        PubMed.this.pubAuthorList.clear();
                     }
                 }
                 if (qName.equals("Author")) {
                     // add the firstname,lastname, initial to the author
-                    Pubmed.this.author.setFirstName(Pubmed.this.firstName);
-                    Pubmed.this.author.setLastName(Pubmed.this.lastName);
-                    Pubmed.this.author.setMiddleInitial(Pubmed.this.middleInitials);
-                    Pubmed.this.author.setFirstInitial(Pubmed.this.firstName.substring(0, 1));
-                    Pubmed.this.author.setLabel(Pubmed.this.author.getFirstInitial() + " " + Pubmed.this.author.getLastName());
+                    PubMed.this.author.setFirstName(PubMed.this.firstName);
+                    PubMed.this.author.setLastName(PubMed.this.lastName);
+                    PubMed.this.author.setMiddleInitial(PubMed.this.middleInitials);
+                    PubMed.this.author.setFirstInitial(PubMed.this.firstName.substring(0, 1));
+                    PubMed.this.author.setLabel(PubMed.this.author.getFirstInitial() + " " + PubMed.this.author.getLastName());
 
                     // Add author to publication author list
-                    if (!Pubmed.this.pubAuthorList.contains(Pubmed.this.author)) {
-                        Pubmed.this.pubAuthorList.add(Pubmed.this.author);
+                    if (!PubMed.this.pubAuthorList.contains(PubMed.this.author)) {
+                        PubMed.this.pubAuthorList.add(PubMed.this.author);
                     }
 
                 }
@@ -450,15 +450,15 @@ public class Pubmed {
             @Override
             public void characters(char ch[], int start, int length) throws SAXException {
                 if (this.isTotalPubs) {
-                    Pubmed.this.totalPubs = new String(ch, start, length);
+                    PubMed.this.totalPubs = new String(ch, start, length);
                     this.isTotalPubs = false;
                 }
                 if (this.isQueryKey) {
-                    Pubmed.this.queryKey = new String(ch, start, length);
+                    PubMed.this.queryKey = new String(ch, start, length);
                     this.isQueryKey = false;
                 }
                 if (this.isWebEnv) {
-                    Pubmed.this.webEnv = new String(ch, start, length);
+                    PubMed.this.webEnv = new String(ch, start, length);
                     this.isWebEnv = false;
                 }
             }

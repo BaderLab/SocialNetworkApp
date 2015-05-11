@@ -116,8 +116,8 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create academia info panel. In addition to Pubmed specific features, this
-     * panel will also enable users to load Incites data.
+     * Create academia info panel. In addition to PubMed specific features, this
+     * panel will also enable users to load InCites data.
      *
      * @return {@link JPanel} academiaInfoPanel
      */
@@ -169,7 +169,7 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create Database info panel. Allows user to load Incites or Scopus derived
+     * Create Database info panel. Allows user to load InCites or Scopus derived
      * data files
      *
      * @return {@link JPanel} databaseInfoPanel
@@ -215,8 +215,8 @@ public class AcademiaPanel {
         // Organize panel horizontally.
         databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
 
-        // Create Incites radio button
-        this.incitesRadioButton = new JRadioButton("Incites", true);
+        // Create InCites radio button
+        this.incitesRadioButton = new JRadioButton("InCites", true);
         this.incitesRadioButton.setFocusable(true);
 
         // Create Scopus radio button
@@ -244,7 +244,7 @@ public class AcademiaPanel {
     public JButton createLoadButton() {
 
         JButton loadButton = new JButton("...");
-        loadButton.setToolTipText("Load Incites / Scopus data");
+        loadButton.setToolTipText("Load InCites / Scopus data");
 
         // Clicking of button results in the popping up of a dialog box that
         // implores the user

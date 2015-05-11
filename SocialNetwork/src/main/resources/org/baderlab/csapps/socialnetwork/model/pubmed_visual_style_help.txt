@@ -1,0 +1,1 @@
+No color coding is present in the default PubMed visual style because PubMed networks typically lack institution information. PubMed networks do, however, contain all the standard list of attributes found in Academia data-sets. For instance, information on the total citation count of each individual author is present and can be visually represented through node size.

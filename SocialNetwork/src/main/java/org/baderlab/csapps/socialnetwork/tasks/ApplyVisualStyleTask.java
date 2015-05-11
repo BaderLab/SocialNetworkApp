@@ -70,9 +70,9 @@ public class ApplyVisualStyleTask extends AbstractTask {
     private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
     private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-    private VisualStyle incitesLiteVisualStyle;
-    private VisualStyle pubmedLiteVisualStyle;
-    private VisualStyle scopusLiteVisualStyle;
+    private VisualStyle incitesVisualStyle;
+    private VisualStyle pubmedVisualStyle;
+    private VisualStyle scopusVisualStyle;
     private VisualStyle defaultVisualStyle;
     private TaskMonitor taskMonitor;
 
@@ -89,7 +89,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @param passthroughMappingFactoryServiceRef
      * @param continuousMappingFactoryServiceRef
      * @param discreteMappingFactoryServiceRef
-     * @return null
      */
 
     public ApplyVisualStyleTask(VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingManager vmmServiceRef,
@@ -136,13 +135,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
     }
 
     /**
-     * Create Incites 'Lite' visual style
+     * Create InCites visual style
      *
-     * @param null
      * @return VisualStyle incitesLiteVisualStyle
      */
-    private VisualStyle createIncitesLiteVisualStyle() {
-        VisualStyle incitesLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Incites 'Lite'");
+    private VisualStyle createIncitesVisualStyle() {
+        VisualStyle incitesLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("InCites");
         addNodeLabels(incitesLiteVisualStyle);
         modifyEdgeWidth(incitesLiteVisualStyle);
         modifyNodeSize(incitesLiteVisualStyle);
@@ -154,13 +152,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
     }
 
     /**
-     * Create Pubmed 'Lite' visual style
+     * Create PubMed visual style
      *
-     * @param null
      * @return VisualStyle pubmedLiteVisualStyle
      */
-    private VisualStyle createPubmedLiteVisualStyle() {
-        VisualStyle pubmedLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Pubmed 'Lite'");
+    private VisualStyle createPubmedVisualStyle() {
+        VisualStyle pubmedLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("PubMed");
         addNodeLabels(pubmedLiteVisualStyle);
         modifyNodeSize(pubmedLiteVisualStyle);
         modifyEdgeWidth(pubmedLiteVisualStyle);
@@ -169,13 +166,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
     }
 
     /**
-     * Create Scopus 'Lite' visual style
+     * Create Scopus visual style
      *
-     * @param null
      * @return VisualStyle scopusLiteVisualStyle
      */
     private VisualStyle createScopusLiteVisualStyle() {
-        VisualStyle scopusLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Scopus 'Lite'");
+        VisualStyle scopusLiteVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Scopus");
         addNodeLabels(scopusLiteVisualStyle);
         modifyNodeSize(scopusLiteVisualStyle);
         modifyEdgeWidth(scopusLiteVisualStyle);
@@ -186,7 +182,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
     /**
      * Get Default visual style
      *
-     * @param null
      * @return VisualStyle defaultVisualStyle
      */
     private VisualStyle getDefaultVisualStyle() {
@@ -197,48 +192,44 @@ public class ApplyVisualStyleTask extends AbstractTask {
     }
 
     /**
-     * Get Incites 'Lite' visual style
+     * Get InCites visual style
      *
-     * @param null
      * @return VisualStyle incitesLiteVisualStyle
      */
-    private VisualStyle getIncitesLiteVisualStyle() {
-        if (this.incitesLiteVisualStyle == null) {
-            this.incitesLiteVisualStyle = this.createIncitesLiteVisualStyle();
+    private VisualStyle getIncitesStyle() {
+        if (this.incitesVisualStyle == null) {
+            this.incitesVisualStyle = this.createIncitesVisualStyle();
         }
-        return this.incitesLiteVisualStyle;
+        return this.incitesVisualStyle;
     }
 
     /**
-     * Get Pubmed 'Lite' visual style
+     * Get PubMed visual style
      *
-     * @param null
-     * @return VisualStyle pubmedLiteVisualStyle
+     * @return VisualStyle pubmedVisualStyle
      */
-    private VisualStyle getPubmedLiteVisualStyle() {
-        if (this.pubmedLiteVisualStyle == null) {
-            this.pubmedLiteVisualStyle = this.createPubmedLiteVisualStyle();
+    private VisualStyle getPubmedVisualStyle() {
+        if (this.pubmedVisualStyle == null) {
+            this.pubmedVisualStyle = this.createPubmedVisualStyle();
         }
-        return this.pubmedLiteVisualStyle;
+        return this.pubmedVisualStyle;
     }
 
     /**
-     * Get Scopus 'Lite' visual style
+     * Get Scopus visual style
      *
-     * @param null
-     * @return VisualStyle scopusLiteVisualStyle
+     * @return VisualStyle scopusVisualStyle
      */
-    private VisualStyle getScopusLiteVisualStyle() {
-        if (this.scopusLiteVisualStyle == null) {
-            this.scopusLiteVisualStyle = this.createScopusLiteVisualStyle();
+    private VisualStyle getScopusVisualStyle() {
+        if (this.scopusVisualStyle == null) {
+            this.scopusVisualStyle = this.createScopusLiteVisualStyle();
         }
-        return this.scopusLiteVisualStyle;
+        return this.scopusVisualStyle;
     }
 
     /**
      * Get task monitor
      *
-     * @param null
      * @return TaskMonitor taskMonitor
      */
     private TaskMonitor getTaskMonitor() {
@@ -420,7 +411,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * Apply selected network view
      *
      * @param TaskMonitor taskMonitor
-     * @return null
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
@@ -430,22 +420,22 @@ public class ApplyVisualStyleTask extends AbstractTask {
                 this.vmmServiceRef.setCurrentVisualStyle(this.getDefaultVisualStyle());
                 break;
             case VisualStyles.INCITES_VISUAL_STYLE:
-                this.getTaskMonitor().setTitle("Loading Incites Lite Visual Style ... ");
+                this.getTaskMonitor().setTitle("Loading InCites Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getIncitesLiteVisualStyle());
+                this.vmmServiceRef.setCurrentVisualStyle(this.getIncitesStyle());
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
-                this.getTaskMonitor().setTitle("Loading Pubmed Lite Visual Style ... ");
+                this.getTaskMonitor().setTitle("Loading PubMed Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getPubmedLiteVisualStyle());
+                this.vmmServiceRef.setCurrentVisualStyle(this.getPubmedVisualStyle());
                 break;
             case VisualStyles.SCOPUS_VISUAL_STYLE:
-                this.getTaskMonitor().setTitle("Loading Scopus Lite Visual Style ... ");
+                this.getTaskMonitor().setTitle("Loading Scopus Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getScopusLiteVisualStyle());
+                this.vmmServiceRef.setCurrentVisualStyle(this.getScopusVisualStyle());
                 break;
         }
         return;

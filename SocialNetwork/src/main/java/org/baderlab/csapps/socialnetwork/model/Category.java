@@ -110,7 +110,7 @@ public class Category {
     public static int getCategoryID(String category) {
         if (Category.categoryMap == null) {
             Category.categoryMap = new HashMap<String, Integer>();
-            String[] columns = new String[] { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube", "Incites", "Scopus", "Pubmed" };
+            String[] columns = new String[] { "--SELECT CATEGORY--", "Academia", "Twitter", "LinkedIn", "Youtube", "InCites", "Scopus", "PubMed" };
             int[] ids = new int[] { DEFAULT, ACADEMIA, TWITTER, LINKEDIN, YOUTUBE, INCITES, SCOPUS, PUBMED };
             for (int i = 0; i < 7; i++) {
                 categoryMap.put(columns[i], ids[i]);
@@ -169,13 +169,13 @@ public class Category {
             	category = "Faculty";
             	break;
             case Category.INCITES:
-                category = "Incites";
+                category = "InCites";
                 break;
             case Category.LINKEDIN:
             	category = "LinkedIn";
             	break;
             case Category.PUBMED:
-            	category = "Pubmed";
+            	category = "PubMed";
             	break;
             case Category.SCOPUS:
                 category = "Scopus";
@@ -238,7 +238,7 @@ public class Category {
     final public static int FACULTY = -2;
 
     /**
-     * Incites (IP = 84.18.180.87)
+     * InCites (IP = 84.18.180.87)
      */
     final public static int INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
 
@@ -248,7 +248,7 @@ public class Category {
     final public static int LINKEDIN = (216 << 24) + (52 << 16) + (242 << 8) + 80;
 
     /**
-     * Pubmed (IP = 130.14.29.110)
+     * PubMed (IP = 130.14.29.110)
      */
     final public static int PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 

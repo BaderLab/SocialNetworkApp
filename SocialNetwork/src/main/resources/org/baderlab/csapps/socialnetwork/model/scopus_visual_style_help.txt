@@ -1,0 +1,1 @@
+Scopus networks lack institution information and as a result, no color coding is present in the default Scopus visual style. Scopus networks do, however, contain all the standard list of attributes found in Academia data-sets. For instance, information on the total citation count of each individual author is present and can be visually represented through node size.

@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -277,10 +278,10 @@ public class CyActivator extends AbstractCyActivator {
 
         registerService(bc, aboutAction, CyAction.class,new Properties());
 
-        // Incites Action
+        // InCites Action
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
-        serviceProperties.put("preferredMenu", "Tools.Incites");
+        serviceProperties.put("preferredMenu", "Tools.InCites");
         AddInstitutionAction incitesAction = new AddInstitutionAction(serviceProperties,
                 cyApplicationManagerServiceRef,
                 cyNetworkViewManagerServiceRef);
@@ -299,7 +300,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         registerService(bc, autoAnnotationPanelAction, CyAction.class, new Properties());
-         */
+        */
 
         //Auto-annotate Display Options Panel Action - opens display options panel
         /*
@@ -311,7 +312,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         autoAnnotationManager.setDisplayOptionsPanelAction(displayOptionsPanelAction);
-         */
+        */ 
 
     }
 }

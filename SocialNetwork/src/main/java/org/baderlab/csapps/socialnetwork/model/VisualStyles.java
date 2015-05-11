@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -56,57 +57,105 @@ public class VisualStyles {
 
     /**
      * Get the help message associated with the visual style type
+     * 
+     * @param int visualStyleType
+     * @return String helpMssg
      */
     public static String getHelpMessage(int visualStyleType) {
         String fileName = null;
         switch(visualStyleType) {
             case VisualStyles.INCITES_VISUAL_STYLE:
-                fileName = "incites";
-                break;
+            	if (INCITES_VISUAL_STYLE_HELP == null) {
+            		fileName = "incites_visual_style_help.txt";
+            		INCITES_VISUAL_STYLE_HELP = VisualStyles.loadHelpMessage(fileName);
+            	}
+            	return INCITES_VISUAL_STYLE_HELP;
             case VisualStyles.PUBMED_VISUAL_STYLE:
-                fileName = "pubmed";
-                break;
+                if (PUBMED_VISUAL_STYLE_HELP == null) {
+                	fileName = "pubmed_visual_style_help.txt";
+                	PUBMED_VISUAL_STYLE_HELP = VisualStyles.loadHelpMessage(fileName);
+                }
+                return PUBMED_VISUAL_STYLE_HELP;
             case VisualStyles.SCOPUS_VISUAL_STYLE:
-                fileName = "scopus";
-                break;
+            	if (SCOPUS_VISUAL_STYLE_HELP == null) {
+            		fileName = "scopus_visual_style_help.txt";
+            		SCOPUS_VISUAL_STYLE_HELP = VisualStyles.loadHelpMessage(fileName);
+            	}
+                return SCOPUS_VISUAL_STYLE_HELP;
             case VisualStyles.DEFAULT_VISUAL_STYLE:
             default:
-                fileName = "default";
+            	if (DEFAULT_VISUAL_STYLE_HELP == null) {
+            		fileName = "default_visual_style_help.txt";
+            		DEFAULT_VISUAL_STYLE_HELP = VisualStyles.loadHelpMessage(fileName);
+            	}
+                return DEFAULT_VISUAL_STYLE_HELP;
         }
-        fileName = fileName + "_visual_style_help.txt";
-        String helpMssg = "";
-        try {
-            URL url = VisualStyles.class.getResource(fileName);
-            InputStream in = url.openStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String sCurrentLine = null;
-            while ((sCurrentLine = br.readLine()) != null) {
-                helpMssg += sCurrentLine;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            CytoscapeUtilities.notifyUser(String.format("Failed to load %s. FileNotFoundException.", fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-            CytoscapeUtilities.notifyUser(String.format("Failed to load %s. IOException.", fileName));
-        }
-        return helpMssg;
+    }
+    
+    /**
+     * Get an instance of {@link VisualStyles}. Useful for loading resources.
+     * 
+     * @return {@link VisualStyles} instance
+     */
+    private static VisualStyles getInstance() {
+    	return new VisualStyles();
     }
 
     /**
-     * Default visual style
+	 * Load the help message from fileName
+	 * 
+	 * @param String fileName
+	 * @return String helpMssg
+	 */
+	public static String loadHelpMessage(String fileName) {
+	    String helpMssg = "";
+	    try {
+	        URL url = getInstance().getClass().getResource(fileName);
+	        InputStream in = url.openStream();
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	        String sCurrentLine = null;
+	        while ((sCurrentLine = br.readLine()) != null) {
+	            helpMssg += sCurrentLine;
+	        }
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	        CytoscapeUtilities.notifyUser(String.format("Failed to load %s. FileNotFoundException.", fileName));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        CytoscapeUtilities.notifyUser(String.format("Failed to load %s. IOException.", fileName));
+	    }
+	    return helpMssg;
+	}
+
+    /**
+     * <i>Default</i> visual style
      */
     final public static int DEFAULT_VISUAL_STYLE = -99;
+    
+    /**
+     * <i>Default</i> visual style help message
+     */
+    private static String DEFAULT_VISUAL_STYLE_HELP = null;
 
     /**
      * <i>PubMed</i> visual style
      */
     final public static int PUBMED_VISUAL_STYLE = -100;
+    
+    /**
+     * <i>PubMed</i> visual style help message
+     */
+    private static String PUBMED_VISUAL_STYLE_HELP = null;
 
     /**
      * <i>Scopus</i> visual style
      */
     final public static int SCOPUS_VISUAL_STYLE = -101;
+    
+    /**
+     * <i>Scopus</i> visual style help message
+     */
+    private static String SCOPUS_VISUAL_STYLE_HELP = null;
 
     /**
      * <i>InCites</i> visual style
@@ -114,12 +163,17 @@ public class VisualStyles {
     final public static int INCITES_VISUAL_STYLE = -103;
 
     /**
+     * <i>InCites</i> visual style help message
+     */
+    private static String INCITES_VISUAL_STYLE_HELP = null;
+
+    /**
      * A visual style map
      * <br> Key: string representation of visual style
      * <br> Value: visual style ID
      */
     private Map<String, Integer> visualStyleMap = null;
-
+    
     /**
      * Get unique id (numeral) associated with visual style
      *
@@ -137,7 +191,7 @@ public class VisualStyles {
         return this.visualStyleMap.get(visualStyle);
     }
 
-    /**
+	/**
      * Get visual style list of a certain type
      *
      * @param int visualStyleSelectorType

@@ -722,7 +722,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         // Organize panel horizontally.
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 
-        searchPanel.setBorder(BorderFactory.createTitledBorder("Pubmed Search"));
+        searchPanel.setBorder(BorderFactory.createTitledBorder("PubMed Search"));
 
         // Add search box to panel
         this.setSearchBox(this.createSearchBox());

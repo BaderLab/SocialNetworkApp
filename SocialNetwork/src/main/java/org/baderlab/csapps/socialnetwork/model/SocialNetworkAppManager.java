@@ -210,7 +210,7 @@ public class SocialNetworkAppManager {
         String extension = null;
         SocialNetwork socialNetwork = null;
         String departmentName = null;
-        // Create network out of Incites data
+        // Create network out of InCites data
         if (this.analysis_type == this.ANALYSISTYPE_INCITES) {
             extension = FilenameUtils.getExtension(networkFile.getPath());
             IncitesParser incitesParser = null;
@@ -222,19 +222,19 @@ public class SocialNetworkAppManager {
                     CytoscapeUtilities.notifyUser("Some rows could not be parsed.");
                 }
                 if (incitesParser.getIdentifiedFacultyList().size() == 0) {
-                    CytoscapeUtilities.notifyUser("Unable to identify faculty." + "Please verify that Incites data file is valid");
+                    CytoscapeUtilities.notifyUser("Unable to identify faculty." + "Please verify that InCites data file is valid");
                 }
                 pubList = incitesParser.getPubList();
                 departmentName = incitesParser.getDepartmentName();
                 if (pubList == null) {
                     this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. This Incites file is corrupt.");
+                    CytoscapeUtilities.notifyUser("Invalid file. This InCites file is corrupt.");
                     return;
                 }
                 // Notify user of inappropriate file type
             } else {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. Incite data files either have to be excel " + "spreadsheets or text files.");
+                CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel " + "spreadsheets or text files.");
                 return;
             }
             // Add summary attributes
@@ -319,7 +319,7 @@ public class SocialNetworkAppManager {
         SocialNetwork socialNetwork = null;
         switch (category) {
             case Category.ACADEMIA:
-                // Change category (to Pubmed)
+                // Change category (to PubMed)
                 // This is only temporary ~
                 category = Category.PUBMED;
                 interaction = new Interaction(results, category, maxAuthorThreshold);

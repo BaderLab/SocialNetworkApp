@@ -40,7 +40,7 @@ package org.baderlab.csapps.socialnetwork.model;
 import java.awt.Cursor;
 import java.util.List;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.academia.Pubmed;
+import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 
 /**
  * A search session
@@ -71,7 +71,7 @@ public class Search {
                 CytoscapeUtilities.notifyUser("Click --SELECT CATEGORY-- to select a category");
                 break;
             case Category.ACADEMIA:
-                Pubmed pubmed = new Pubmed(searchTerm);
+                PubMed pubmed = new PubMed(searchTerm);
                 this.results = pubmed.getListOfPublications();
                 this.totalHits = pubmed.getListOfPublications().size();
                 break;

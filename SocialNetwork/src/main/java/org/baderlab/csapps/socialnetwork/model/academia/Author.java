@@ -175,7 +175,7 @@ public class Author extends AbstractNode {
                 this.setLabel(this.getFirstInitial() + " " + this.getLastName());
                 break;
             case Category.PUBMED:
-                // Initialize attribute map for Pubmed author (~ same as Scopus)
+                // Initialize attribute map for PubMed author (~ same as Scopus)
                 this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
                 String[] pubmedNames = rawAuthorText.split("\\s");
                 if (pubmedNames.length == 1) {
@@ -294,7 +294,7 @@ public class Author extends AbstractNode {
         boolean isEqual = false, isEqualFirstName = false, isEqualLastName = false;
         int distance = 0;
         double similarity = 0;
-        // Incites
+        // InCites
         if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.INCITES) {
             boolean isEqualInstitution = false;
             // Determine whether or not last names are equal
@@ -310,7 +310,7 @@ public class Author extends AbstractNode {
                 isEqualInstitution = true;
             }
             isEqual = isEqualLastName && isEqualFirstName && isEqualInstitution;
-            // Incites (~ Faculty)
+            // InCites (~ Faculty)
         } else if ((this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.FACULTY)
                 || (this.getOrigin() == Category.FACULTY && otherAuthor.getOrigin() == Category.INCITES)) {
             isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
@@ -324,7 +324,7 @@ public class Author extends AbstractNode {
             if (isEqual) {
                 otherAuthor.setIdenfitication(true);
             }
-            // Pubmed / Scopus
+            // PubMed / Scopus
         } else if (this.getOrigin() == Category.PUBMED && otherAuthor.getOrigin() == Category.PUBMED || this.getOrigin() == Category.SCOPUS
                 && otherAuthor.getOrigin() == Category.SCOPUS) {
             isEqualLastName = this.getLastName().equalsIgnoreCase(otherAuthor.getLastName());
