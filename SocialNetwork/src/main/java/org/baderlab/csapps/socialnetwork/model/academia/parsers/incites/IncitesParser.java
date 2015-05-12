@@ -179,7 +179,7 @@ public class IncitesParser {
     private Incites_InstitutionLocationMap locationMap = null;
 
     /**
-     * Create new Incites parser object
+     * Constructor for {@link IncitesParser}
      *
      * @param File xlsx
      */

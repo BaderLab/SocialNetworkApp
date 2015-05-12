@@ -49,14 +49,8 @@ import javax.swing.JPanel;
  */
 public class CytoscapeUtilities {
 
-    public static String buildId = "";
-    public static String pluginReleaseSuffix = "";
-    public static String pluginUrl = "";
-    public static String pluginVersion = "";
-    public static String userManualUrl = "";
-
     /**
-     * Notify user of an issue
+     * Notify user of an issue (indicated by message)
      *
      * @param String message
      */
@@ -64,21 +58,28 @@ public class CytoscapeUtilities {
         JOptionPane.showMessageDialog(new JPanel(),
                 "<html><body style='width: 200px'>" + message);
     }
+    public static String buildId = "";
+    public static String pluginReleaseSuffix = "";
+    public static String pluginUrl = "";
+    public static String pluginVersion = "";
+
+    public static String userManualUrl = "";
 
     public Properties build_props = new Properties();
     public Properties plugin_props = new Properties();
 
     public String pluginName = "";
 
+    /**
+     * Create a new {@link CytsocapeUtilities} object to store important information
+     */
     public CytoscapeUtilities() {
-
         try {
             this.plugin_props = getPropertiesFromClasspath("plugin.props",
                     false);
         } catch (IOException ei) {
             System.out.println("Neither of the configuration files could be found");
         }
-
         CytoscapeUtilities.pluginUrl = this.plugin_props.getProperty(
                 "pluginURL", "http://baderlab.org/Software/SocialNetworkApp");
         CytoscapeUtilities.userManualUrl = CytoscapeUtilities.pluginUrl
@@ -89,7 +90,6 @@ public class CytoscapeUtilities {
                 "pluginReleaseSuffix", "");
         this.pluginName = this.plugin_props.getProperty("pluginName",
                 "SocialNetworkApp");
-
         // read buildId properties:
         // properties available in revision.txt ( git.branch,git.commit.id,
         // git.build.user.name,
@@ -117,22 +117,27 @@ public class CytoscapeUtilities {
 
     }
 
+    /**
+     * Examine the classpath and retrieve the properties file
+     *
+     * @param String propFileName
+     * @param boolean inMaindir
+     * @return Properties properties
+     * @throws IOException
+     */
     private Properties getPropertiesFromClasspath(String propFileName, boolean inMaindir) throws IOException {
         // Loading properties file from the classpath
         Properties props = new Properties();
         InputStream inputStream;
-
         if (inMaindir) {
             inputStream = this.getClass().getClassLoader().getResourceAsStream(propFileName);
         } else {
             inputStream = this.getClass().getResourceAsStream(propFileName);
         }
-
         if (inputStream == null) {
             throw new FileNotFoundException("property file '" + propFileName
                     + "' not found in the classpath");
         }
-
         props.load(inputStream);
         return props;
     }

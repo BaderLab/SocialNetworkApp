@@ -79,7 +79,6 @@ public class Tag {
      * @param String webEnv
      * @param String retStart
      * @param String retMax
-     * @return null
      */
     public Tag(String queryKey, String webEnv, String retStart, String retMax) {
         this.tag = "";
@@ -90,7 +89,6 @@ public class Tag {
     /**
      * Return string representation of tag
      *
-     * @param null
      * @return String tag
      */
     @Override

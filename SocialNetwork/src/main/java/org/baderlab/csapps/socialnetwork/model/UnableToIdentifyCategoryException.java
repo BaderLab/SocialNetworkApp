@@ -38,7 +38,7 @@
 package org.baderlab.csapps.socialnetwork.model;
 
 /**
- * This exception is thrown when a category can't be identified
+ * This exception is thrown when a category cannot be identified
  *
  * @author Victor Kofia
  */
@@ -53,7 +53,7 @@ public class UnableToIdentifyCategoryException extends Exception {
 
     /**
      * Create a new exception for the category with the specified name
-     * 
+     *
      * @param String categoryName
      */
     public UnableToIdentifyCategoryException(String categoryName) {

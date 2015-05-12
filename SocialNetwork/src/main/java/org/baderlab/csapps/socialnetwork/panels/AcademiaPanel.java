@@ -48,7 +48,6 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -60,7 +59,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -110,6 +108,7 @@ public class AcademiaPanel {
     protected CySwingApplication cySwingAppRef = null;
 
     /**
+     * Constructor for {@link AcademiaPanel}
      *
      * @param {@link SocialNetworkAppManager} appManager
      * @param {@link FileUtil} fileUtil
@@ -340,9 +339,9 @@ public class AcademiaPanel {
                             CytoscapeUtilities.notifyUser("Please specify network name.");
                         } else {
                             try {
-                            	int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
-//                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
-//                                        getThresholdTextFieldRef().getText());
+                                int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
+                                //                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
+                                //                                        getThresholdTextFieldRef().getText());
                                 AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
                             } catch (FileNotFoundException e) {
                                 CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
@@ -416,10 +415,10 @@ public class AcademiaPanel {
      */
     public JTextArea getThresholdTextAreaRef() {
         if (this.thresholdTextAreaRef == null) {
-        	JTextArea textArea = new JTextArea("500");
-        	Border border = BorderFactory.createLineBorder(Color.GRAY);
-        	textArea.setBorder(BorderFactory.createCompoundBorder(border, 
-        	            BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+            JTextArea textArea = new JTextArea("500");
+            Border border = BorderFactory.createLineBorder(Color.GRAY);
+            textArea.setBorder(BorderFactory.createCompoundBorder(border,
+                    BorderFactory.createEmptyBorder(0, 5, 0, 5)));
             setThresholdTextAreaRef(textArea);
         }
         return this.thresholdTextAreaRef;

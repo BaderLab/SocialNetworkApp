@@ -80,20 +80,16 @@ public class FacultySheetHandler extends DefaultHandler {
     }
 
     // Collect tag contents
-    /*
-     * (non-Javadoc)
-     *
+    @Override
+    /*(non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
-    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         this.cellID += new String(ch, start, length);
     }
 
     @Override
-    /*
-     * (non-Javadoc)
-     *
+    /*(non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
@@ -126,9 +122,7 @@ public class FacultySheetHandler extends DefaultHandler {
     }
 
     @Override
-    /*
-     * (non-Javadoc)
-     *
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */

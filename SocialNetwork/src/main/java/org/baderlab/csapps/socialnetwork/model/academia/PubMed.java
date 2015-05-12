@@ -121,7 +121,6 @@ public class PubMed {
      * Create a new Pubmed search session
      *
      * @param String searchTerm
-     * @return null
      */
     public PubMed(String searchTerm) {
 
@@ -158,9 +157,6 @@ public class PubMed {
 
     /**
      * Commit search using: (queryKey, webEnv, retStart and retMax)
-     *
-     * @param null
-     * @return null
      */
     private void commitPubMedSearch() {
         try {
@@ -201,7 +197,6 @@ public class PubMed {
      * Return a list of all the publications (& co-authors) found for User's
      * specified authorName, MeSH term or Institution name.
      *
-     * @param null
      * @return List pubList
      */
     public List<Publication> getListOfPublications() { // Return all results
@@ -211,7 +206,6 @@ public class PubMed {
     /**
      * Get publication handler
      *
-     * @param null
      * @return DefaultHandler publicationHandler
      */
     private DefaultHandler getPublicationHandler() {
@@ -304,7 +298,6 @@ public class PubMed {
     /**
      * Get publication handler
      *
-     * @param null
      * @return DefaultHandler publicationHandler
      */
     private DefaultHandler getPublicationHandlerFile() {
@@ -318,6 +311,9 @@ public class PubMed {
 
             // Collect tag contents (if applicable)
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+             */
             public void characters(char ch[], int start, int length) throws SAXException {
                 if (this.isPubDate) {
                     PubMed.this.pubDate = new String(ch, start, length);
@@ -371,6 +367,9 @@ public class PubMed {
 
             // Create new publication and add it to overall publist
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+             */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
                     // only add the publication if it has less than 30 authors
@@ -400,6 +399,9 @@ public class PubMed {
 
             // Reset variable contents
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+             */
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                 if (qName.equals("Author")) {
                     this.isAuthor = true;
@@ -435,7 +437,6 @@ public class PubMed {
     /**
      * Get search handler
      *
-     * @param null
      * @return DefaultHandler searchHandler
      */
     private DefaultHandler getSearchHandler() throws SAXException, IOException, ParserConfigurationException {
@@ -448,6 +449,9 @@ public class PubMed {
 
             // Collect tag contents (if applicable)
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+             */
             public void characters(char ch[], int start, int length) throws SAXException {
                 if (this.isTotalPubs) {
                     PubMed.this.totalPubs = new String(ch, start, length);
@@ -464,12 +468,18 @@ public class PubMed {
             }
 
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+             */
             public void endElement(String uri, String localName, String qName) throws SAXException {
 
             }
 
             // Reset XML variables
             @Override
+            /* (non-Javadoc)
+             * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+             */
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                 if (qName.equalsIgnoreCase("Count")) {
                     this.isTotalPubs = true;
@@ -491,7 +501,6 @@ public class PubMed {
     /**
      * Return total # of publications yielded from search.
      *
-     * @param null
      * @return int totalPubs
      */
     public int getTotalPubs() {

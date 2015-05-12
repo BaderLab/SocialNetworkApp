@@ -40,13 +40,12 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
-import org.baderlab.csapps.socialnetwork.listeners.RestoreStateFile;
-import org.baderlab.csapps.socialnetwork.listeners.SaveStateFile;
+import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
+import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProf;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
@@ -223,10 +222,10 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
-        SaveStateFile saveSession = new SaveStateFile(appManager);
+        SaveNetworkToProf saveSession = new SaveNetworkToProf(appManager);
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
-        RestoreStateFile restoreSession = new RestoreStateFile(appManager, cyNetworkViewManagerServiceRef);
+        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, cyNetworkViewManagerServiceRef);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 
         // Create and register task factories
@@ -288,6 +287,7 @@ public class CyActivator extends AbstractCyActivator {
 
         registerService(bc, incitesAction, CyAction.class, new Properties());
 
+        // TODO: Disabled the auto-annotator temporarily
         // Auto-annotate Panel Action - opens Annotation panel
         /*
         serviceProperties = new HashMap<String, String>();
@@ -300,7 +300,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         registerService(bc, autoAnnotationPanelAction, CyAction.class, new Properties());
-        */
+         */
 
         //Auto-annotate Display Options Panel Action - opens display options panel
         /*
@@ -312,7 +312,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         autoAnnotationManager.setDisplayOptionsPanelAction(displayOptionsPanelAction);
-        */ 
+         */
 
     }
 }

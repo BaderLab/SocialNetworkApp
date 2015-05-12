@@ -46,7 +46,8 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
- * ??
+ * Contains attributes present in every visual style in use by
+ * the app. Every social network visual style extends this class.
  *
  * @author risserlin
  */
@@ -66,7 +67,7 @@ public class BasicSocialNetworkVisualstyle {
     private SocialNetwork socialNetwork;
 
     /**
-     * ??
+     * Apply an edge style to every edge in network
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork
@@ -91,7 +92,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * ??
+     * Apply a node style to every node in network
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork
@@ -113,7 +114,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * ??
+     * Apply a visual style to network
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork

@@ -53,7 +53,7 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
- * Display or hide the main app panel
+ * Enables users to view / hide the Social Network Cytoscape app panel
  *
  * @author Victor Kofia
  */
@@ -65,7 +65,7 @@ public class ShowUserPanelAction extends AbstractCyAction {
     private UserPanel userPanel = null;
 
     /**
-     * Create new Cytoscape action.
+     * Constructor for {@link ShowUserPanelAction}
      *
      * @param Map configProps
      * @param CyApplicationManager cyApplicationManagerServiceRef
@@ -86,9 +86,9 @@ public class ShowUserPanelAction extends AbstractCyAction {
     }
 
     /**
-     * Display / Hide the main panel
+     * Invoked when an action is performed
      *
-     * @param ActionEvent event
+     * @param {@link ActionEvent} event
      */
     public void actionPerformed(ActionEvent event) {
         String currentName = (String) getValue(Action.NAME);

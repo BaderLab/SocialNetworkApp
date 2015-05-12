@@ -48,6 +48,11 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.OpenBrowser;
 
+/**
+ * The Social Network app About panel
+ *
+ * @author Victor Kofia
+ */
 public class AboutPanel extends JDialog {
 
     private class HyperlinkAction implements HyperlinkListener {
@@ -56,7 +61,7 @@ public class AboutPanel extends JDialog {
         JEditorPane pane;
 
         /**
-         * ??
+         * Constructor for {@link HyperlinkAction}
          *
          * @param {@link JEditorPane} pane
          */
@@ -65,7 +70,7 @@ public class AboutPanel extends JDialog {
         }
 
         /**
-         * ??
+         * Launch in browser if link is activated
          *
          * @param {@link HyperlinkEvent} event
          */
@@ -82,22 +87,24 @@ public class AboutPanel extends JDialog {
      */
     private static final long serialVersionUID = -4271722804183280880L;
     private CySwingApplication application;
-
     private OpenBrowser browser;
 
+    /**
+     * Constructor for {@link AboutPanel}
+     *
+     * @param {@link CySwingApplication} application
+     * @param {@link OpenBrowser} browser
+     */
     public AboutPanel(CySwingApplication application, OpenBrowser browser) {
         super(application.getJFrame(), "About Social Network App", false);
         this.application = application;
         this.browser = browser;
         setResizable(false);
-
         // Initialize instance of CytoscapeUtilities
         CytoscapeUtilities util = new CytoscapeUtilities();
-
         String pluginUrl = CytoscapeUtilities.pluginUrl;
         String pluginVersion = CytoscapeUtilities.pluginVersion;
         String pluginReleaseSuffix = CytoscapeUtilities.pluginReleaseSuffix;
-
         // Main panel for dialog box
         JEditorPane editorPane = new JEditorPane();
         editorPane.setMargin(new Insets(10, 10, 10, 10));
@@ -106,9 +113,11 @@ public class AboutPanel extends JDialog {
         editorPane.addHyperlinkListener(new HyperlinkAction(editorPane));
         // URL logoURL =
         // Enrichment_Map_Plugin.class.getResource("enrichmentmap_logo.png");
+        // TODO: Add logo details here
         URL logoURL = Thread.currentThread().getContextClassLoader().getResource("socialNetwork_logo.png");
         // URL logoURL =
         // Enrichment_Map_Plugin.class.getResource("enrichmentmap_logo.png");
+        // TODO: Add logo details here
         if (pluginReleaseSuffix != null && !pluginReleaseSuffix.contentEquals("")) {
             pluginReleaseSuffix = " (" + pluginReleaseSuffix + ")";
         }

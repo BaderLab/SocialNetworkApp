@@ -59,7 +59,7 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
 /**
- * ??
+ * For applying visual styles
  *
  * @author Victor Kofia
  */
@@ -90,7 +90,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @param continuousMappingFactoryServiceRef
      * @param discreteMappingFactoryServiceRef
      */
-
     public ApplyVisualStyleTask(VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingManager vmmServiceRef,
             VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
             VisualMappingFunctionFactory discreteMappingFactoryServiceRef, SocialNetworkAppManager appManager) {

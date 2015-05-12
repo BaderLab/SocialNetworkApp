@@ -66,11 +66,10 @@ public class Copublications extends AbstractEdge {
     private Map<String, Object> edgeAttrMap = null;
 
     /**
-     * Create new Copublications tracker
+     * Create new {@link Copublications} tracker
      *
      * @param Collaboration collaboration
      * @param Publication publication
-     * @return null
      */
     public Copublications(Collaboration collaboration, Publication publication) {
         this.setPubList(new ArrayList<Publication>());
@@ -82,7 +81,6 @@ public class Copublications extends AbstractEdge {
      * Add a publication
      *
      * @param Publication publication
-     * @return null
      */
     public void addPublication(Publication publication) {
         this.getPubList().add(publication);
@@ -92,9 +90,6 @@ public class Copublications extends AbstractEdge {
 
     /**
      * Construct an edge attribute map
-     *
-     * @param null
-     * @return null
      */
     @Override
     public void constructEdgeAttrMap() {
@@ -106,6 +101,9 @@ public class Copublications extends AbstractEdge {
     }
 
     @Override
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getCyEdge()
+     */
     public CyEdge getCyEdge() {
         return this.cyEdge;
     }
@@ -113,7 +111,6 @@ public class Copublications extends AbstractEdge {
     /**
      * Get the edge attribute map
      *
-     * @param null
      * @return Map edgeAttrMap
      */
     @Override
@@ -161,7 +158,6 @@ public class Copublications extends AbstractEdge {
      * Set the edge attribute map
      *
      * @param Map edgeAttrMap
-     * @return null
      */
     public void setEdgeAttrMap(Map<String, Object> edgeAttrMap) {
         this.edgeAttrMap = edgeAttrMap;
@@ -171,7 +167,6 @@ public class Copublications extends AbstractEdge {
      * Set publist
      *
      * @param ArrayList pubList
-     * @return null
      */
     private void setPubList(ArrayList<Publication> pubList) {
         this.pubList = pubList;

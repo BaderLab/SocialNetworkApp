@@ -57,7 +57,7 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
- * Add a new institution to the location map
+ * Enables users to add a new institution to a local location map
  *
  * @author Victor Kofia
  */
@@ -73,6 +73,13 @@ public class AddInstitutionAction extends AbstractCyAction {
      */
     private HashSet<String> locationSet = null;
 
+    /**
+     * Add an institution
+     *
+     * @param Map configProps
+     * @param {@link CyApplicationManager} applicationManager
+     * @param {@link CyNetworkViewManager} networkViewManager
+     */
     public AddInstitutionAction(Map<String, String> configProps,
             CyApplicationManager applicationManager,
             CyNetworkViewManager networkViewManager) {
@@ -87,6 +94,11 @@ public class AddInstitutionAction extends AbstractCyAction {
         this.setLocationSet(set);
     }
 
+    /**
+     * Invoked when an action is performed
+     *
+     * @param {@link ActionEvent} arg0
+     */
     public void actionPerformed(ActionEvent arg0) {
         JTextField institutionTextField = new JTextField(5);
         JTextField locationTextField = new JTextField(5);

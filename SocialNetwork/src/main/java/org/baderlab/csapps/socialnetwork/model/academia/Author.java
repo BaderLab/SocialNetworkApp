@@ -60,7 +60,6 @@ public class Author extends AbstractNode {
     /**
      * Construct Incites attribute map
      *
-     * @param null
      * @return Map nodeAttrMap
      */
     public static HashMap<String, Object> constructIncitesAttrMap() {
@@ -144,7 +143,6 @@ public class Author extends AbstractNode {
      *
      * @param String rawAuthorText
      * @param int origin
-     * @return null
      */
     public Author(String rawAuthorText, int origin) {
         this.setOrigin(origin);
@@ -253,7 +251,6 @@ public class Author extends AbstractNode {
      * Add publication
      *
      * @param Publication publication
-     * @return null
      */
     public void addPublication(Publication publication) {
         // Only add publication if publication was not authored by
@@ -338,9 +335,6 @@ public class Author extends AbstractNode {
      * Capitalize the first letter of string and return. If string is a single
      * character letter, it will be capitalized. Empty strings will yield empty
      * strings.
-     *
-     * @param null
-     * @return null
      */
     public void format() {
         // Verify that the first letters in both first and last names are
@@ -358,7 +352,6 @@ public class Author extends AbstractNode {
     /**
      * Get {@link CyNode}
      *
-     * @param null
      * @return CyNode cyNode
      */
     @Override
@@ -369,7 +362,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's department
      *
-     * @param null
      * @return String department
      */
     public String getDepartment() {
@@ -379,7 +371,6 @@ public class Author extends AbstractNode {
     /**
      * Get first initial
      *
-     * @param null
      * @return String firstInitial
      */
     public String getFirstInitial() {
@@ -389,7 +380,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's first name
      *
-     * @param null
      * @return String firstName
      */
     public String getFirstName() {
@@ -399,7 +389,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's institution
      *
-     * @param null
      * @return String institution
      */
     public String getInstitution() {
@@ -409,7 +398,6 @@ public class Author extends AbstractNode {
     /**
      * Get label
      *
-     * @param null
      * @return String label
      */
     @Override
@@ -420,7 +408,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's last name
      *
-     * @param null
      * @return String lastName
      */
     public String getLastName() {
@@ -430,7 +417,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's location
      *
-     * @param null
      * @return String location
      */
     public String getLocation() {
@@ -440,7 +426,6 @@ public class Author extends AbstractNode {
     /**
      * Get middle initial
      *
-     * @param null
      * @return String middleInitial
      */
     private String getMiddleInitial() {
@@ -450,7 +435,6 @@ public class Author extends AbstractNode {
     /**
      * Get attribute map
      *
-     * @param null
      * @return Map attrMap
      */
     @Override
@@ -464,7 +448,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's origin
      *
-     * @param null
      * @return int origin
      */
     public int getOrigin() {
@@ -474,7 +457,6 @@ public class Author extends AbstractNode {
     /**
      * Get author publist
      *
-     * @param null
      * @return ArrayList pubList
      */
     public List<String> getPubList() {
@@ -487,7 +469,6 @@ public class Author extends AbstractNode {
     /**
      * Get author's total number of citations
      *
-     * @param null
      * @return int timesCited
      */
     public int getTimesCited() {
@@ -497,7 +478,6 @@ public class Author extends AbstractNode {
     /**
      * True iff publication has already been added
      *
-     * @param null
      * @return Boolean alreadyBeenAdded
      */
     public boolean hasAlreadyBeenAdded() {
@@ -509,7 +489,6 @@ public class Author extends AbstractNode {
      * name - first initial combo. Individuals with matching last names and
      * first initials are considered to be the same.
      *
-     * @param null
      * @return int hashCode
      */
     @Override
@@ -532,7 +511,6 @@ public class Author extends AbstractNode {
      * Returns true iff author is a faculty member and has been successfully
      * identified
      *
-     * @param null
      * @return boolean identified
      */
     public boolean isIdentified() {
@@ -581,7 +559,6 @@ public class Author extends AbstractNode {
      *
      * @param {@link Author} author
      * @param {@link Author} other
-     * @return null
      */
     public void prioritizeInstitution(Author author, Author otherAuthor) {
         String location = author.getLocation();
@@ -616,7 +593,6 @@ public class Author extends AbstractNode {
      * is being parsed
      *
      * @param boolean alreadyBeenAdded
-     * @return null
      */
     public void setAlreadyBeenAdded(boolean alreadyBeenAdded) {
         this.alreadyBeenAdded = alreadyBeenAdded;
@@ -626,7 +602,6 @@ public class Author extends AbstractNode {
      * Set {@link CyNode}
      *
      * @param {@link CyNode} cyNode
-     * @return null
      */
     @Override
     public void setCyNode(CyNode cyNode) {
@@ -637,7 +612,6 @@ public class Author extends AbstractNode {
      * Set author's department
      *
      * @param String department
-     * @return null
      */
     public void setFaculty(String department) {
         this.department = department;
@@ -648,7 +622,6 @@ public class Author extends AbstractNode {
      * Set first initial
      *
      * @param String firstInitial
-     * @return null
      */
     public void setFirstInitial(String firstInitial) {
         this.firstInitial = firstInitial;
@@ -658,7 +631,6 @@ public class Author extends AbstractNode {
      * Set first name
      *
      * @param String firstName
-     * @return null
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -669,7 +641,6 @@ public class Author extends AbstractNode {
      * Set identification
      *
      * @param boolean bool
-     * @return null
      */
     private void setIdenfitication(boolean bool) {
         this.identified = bool;
@@ -679,7 +650,6 @@ public class Author extends AbstractNode {
      * Set institution
      *
      * @param String institution
-     * @return null
      */
     public void setInstitution(String institution) {
         this.institution = institution;
@@ -690,7 +660,6 @@ public class Author extends AbstractNode {
      * Set label
      *
      * @param String label
-     * @return null
      */
     @Override
     public void setLabel(String label) {
@@ -703,7 +672,6 @@ public class Author extends AbstractNode {
      * Set last name
      *
      * @param String lastName
-     * @return null
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
@@ -715,7 +683,6 @@ public class Author extends AbstractNode {
      * assumed that author's not in academia
      *
      * @param String location
-     * @return null
      */
     public void setLocation(String location) {
         if (location == null) {
@@ -734,19 +701,15 @@ public class Author extends AbstractNode {
      * Set middle initial
      *
      * @param String middleInitial
-     * @return null
      */
     public void setMiddleInitial(String middleInitial) {
         this.middleInitial = middleInitial;
     }
 
-    /**
-     * Set attribute map
-     *
-     * @param Map attrMap
-     * @return null
-     */
     @Override
+    /*(non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java.util.Map)
+     */
     public void setNodeAttrMap(Map<String, Object> attrMap) {
         this.nodeAttrMap = attrMap;
     }
@@ -755,7 +718,6 @@ public class Author extends AbstractNode {
      * Set author's origin
      *
      * @param int origin
-     * @return null
      */
     public void setOrigin(int origin) {
         this.origin = origin;
@@ -765,7 +727,6 @@ public class Author extends AbstractNode {
      * Set author publist
      *
      * @param ArrayList pubList
-     * @return null
      */
     public void setPubList(List<String> pubList) {
         this.pubList = pubList;
@@ -777,7 +738,6 @@ public class Author extends AbstractNode {
      * Set author's total number of citations
      *
      * @param int timesCited
-     * @return null
      */
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
@@ -788,7 +748,6 @@ public class Author extends AbstractNode {
      * Return a string representation of author in the format: <br>
      * <b><i>Last Name, First Name</i></b>
      *
-     * @param null
      * @return String author
      */
     @Override

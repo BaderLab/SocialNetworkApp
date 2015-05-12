@@ -42,7 +42,7 @@ import java.util.Map;
 import org.cytoscape.model.CyEdge;
 
 /**
- * A Cytoscape edge
+ * Wrapper class for a Cytoscape edge {@link CyEdge}
  *
  * @author Victor Kofia
  */
@@ -60,16 +60,12 @@ public abstract class AbstractEdge {
 
     /**
      * Construct an attribute map for edge
-     *
-     * @param null
-     * @return null
      */
     public abstract void constructEdgeAttrMap();
 
     /**
      * Get CyEdge
      *
-     * @param null
      * @return {@link CyEdge} cyEdge
      */
     public abstract CyEdge getCyEdge();
@@ -77,7 +73,6 @@ public abstract class AbstractEdge {
     /**
      * Return map containing all of edge's attributes
      *
-     * @param null
      * @return Map attrMap
      */
     public abstract Map<String, Object> getEdgeAttrMap();
@@ -85,7 +80,6 @@ public abstract class AbstractEdge {
     /**
      * Return all nodes attached to edge
      *
-     * @param null
      * @return List nodes
      */
     public abstract List<? extends AbstractNode> getNodes();
@@ -94,7 +88,6 @@ public abstract class AbstractEdge {
      * Set CyEdge
      *
      * @param {@link CyEdge} cyEdge
-     * @return null
      */
     public abstract void setCyEdge(CyEdge cyEdge);
 

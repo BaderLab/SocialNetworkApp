@@ -107,6 +107,9 @@ public class Publication extends AbstractEdge {
         this.calculateLocation();
     }
 
+    /**
+     * Calculate the location
+     */
     public void calculateLocation() {
         String maxlocation = "N/A";
         Integer max = 0;

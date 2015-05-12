@@ -41,7 +41,7 @@ import java.util.Map;
 import org.cytoscape.model.CyNode;
 
 /**
- * A Cytoscape node
+ * Wrapper class for a Cytoscape node {@link CyNode}
  *
  * @author Victor Kofia
  */
@@ -65,7 +65,6 @@ public abstract class AbstractNode {
     /**
      * Get CyNode
      *
-     * @param null
      * @return CyNode cyNode
      */
     public abstract CyNode getCyNode();
@@ -73,7 +72,6 @@ public abstract class AbstractNode {
     /**
      * Get label
      *
-     * @param null
      * @return String label
      */
     public abstract String getLabel();
@@ -81,7 +79,6 @@ public abstract class AbstractNode {
     /**
      * Return map containing all of node's attributes
      *
-     * @param null
      * @return Map attrMap
      */
     public abstract Map<String, Object> getNodeAttrMap();
@@ -90,7 +87,6 @@ public abstract class AbstractNode {
      * Set CyNode
      *
      * @param CyNode cyNode
-     * @return null
      */
     public abstract void setCyNode(CyNode cyNode);
 
@@ -98,7 +94,6 @@ public abstract class AbstractNode {
      * Set label
      *
      * @param String label
-     * @return null
      */
     public abstract void setLabel(String label);
 
@@ -106,7 +101,6 @@ public abstract class AbstractNode {
      * Set map containing all of node's attributes
      *
      * @param Map attrMap
-     * @return null
      */
     public abstract void setNodeAttrMap(Map<String, Object> attrMap);
 

@@ -65,7 +65,8 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskManager;
 
 /**
- * Manager for the Social Network app. Contains useful static methods and variables.
+ * Manager for the Social Network app. Contains useful static methods and variables
+ * for developers.
  *
  * @author Victor Kofia
  */

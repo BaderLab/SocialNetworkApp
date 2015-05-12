@@ -44,7 +44,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -70,7 +69,6 @@ public class Incites_InstitutionLocationMap {
      * Initialize the map with values from a file stored in the jar File is
      * currently stored as binary hashmap
      */
-    // TODO: Convert to text file so it is easily updatable.
     public Incites_InstitutionLocationMap() {
         if (this.locationMap == null) {
             try {
@@ -106,7 +104,6 @@ public class Incites_InstitutionLocationMap {
     /**
      * Get location map
      *
-     * @param null
      * @return Map locationMap
      */
     public Map<String, String> getLocationMap() {
@@ -116,7 +113,6 @@ public class Incites_InstitutionLocationMap {
     /**
      * Get location ranking map
      *
-     * @param null
      * @return Map locationRankingMap
      */
     public Map<String, Integer> getLocationRankingMap() {
@@ -135,7 +131,6 @@ public class Incites_InstitutionLocationMap {
      * Set location map
      *
      * @param Map locationMap
-     * @return null
      */
     public void setLocationMap(Map<String, String> locationMap) {
         this.locationMap = locationMap;
@@ -145,7 +140,6 @@ public class Incites_InstitutionLocationMap {
      * Set location ranking map
      *
      * @param Map locationRankingMap
-     * @return null
      */
     private void setLocationRankingMap(Map<String, Integer> map) {
         this.locationRankingMap = map;

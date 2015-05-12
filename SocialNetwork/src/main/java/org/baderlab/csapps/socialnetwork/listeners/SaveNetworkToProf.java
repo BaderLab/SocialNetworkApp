@@ -37,55 +37,71 @@
 
 package org.baderlab.csapps.socialnetwork.listeners;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import org.cytoscape.application.events.SetSelectedNetworksEvent;
-import org.cytoscape.application.events.SetSelectedNetworksListener;
-import org.cytoscape.model.CyNetwork;
+import org.cytoscape.session.events.SessionAboutToBeSavedEvent;
+import org.cytoscape.session.events.SessionAboutToBeSavedListener;
 
 /**
- * Listens for social networks that have been selected by the user and
- * displays any relevant information on the UI
+ * Scans the session about to be saved for any social networks and
+ * saves any important information to a property file that can be
+ * accessed later on.
  *
  * @author Victor Kofia
  */
-public class SocialNetworkSelectedListener implements SetSelectedNetworksListener {
+public class SaveNetworkToProf implements SessionAboutToBeSavedListener {
 
-    private SocialNetworkAppManager appManager;
-    private UserPanel userPanel;
+    private SocialNetworkAppManager appManager = null;
 
     /**
-     * Creates a new {@link SocialNetworkAppManager} object
+     * Constructor for {@link SaveNetworkToProf}
      *
      * @param {@link SocialNetworkAppManager} appManager
      */
-    public SocialNetworkSelectedListener(SocialNetworkAppManager appManager) {
+    public SaveNetworkToProf(SocialNetworkAppManager appManager) {
         super();
         this.appManager = appManager;
-        this.userPanel = this.appManager.getUserPanelRef();
     }
 
     /**
-     * Updates the user interface
+     * Invoked when a session is about to be saved
      *
-     * @param {@link SetSelectedNetworksEvent} event
+     * @param {@link SessionAboutToBeSavedEvent} e
      */
-    public void handleEvent(SetSelectedNetworksEvent event) {
-        String name = null;
-        for (CyNetwork network : event.getNetworks()) {
-            name = this.appManager.getNetworkName(network);
-            // Update UI iff a social network has been selected
-            if (this.appManager.getSocialNetworkMap().containsKey(name)) {
-                SocialNetwork socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-                this.userPanel.updateNetworkSummaryPanel(socialNetwork);
-                this.userPanel.addNetworkVisualStyle(socialNetwork);
-                this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
-                return;
+    public void handleEvent(SessionAboutToBeSavedEvent e){
+
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        File propFile = new File(tmpDir, "socialnetwork.props");
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(propFile));
+            // Save social networks in current session to file
+            for (String networkName : this.appManager.getSocialNetworkMap().keySet()) {
+                writer.write(networkName);
+                writer.write("?"); // TODO: question mark being used as separator. Wise decision?
             }
+            writer.newLine();
+            for (SocialNetwork socialNetwork : this.appManager.getSocialNetworkMap().values()) {
+                writer.write(Category.toString(socialNetwork.getNetworkType()));
+                writer.write("?");
+            }
+            writer.newLine();
+            writer.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        this.appManager.setCurrentlySelectedSocialNetwork(null);
-        this.userPanel.addNetworkVisualStyle(null);
-        this.userPanel.updateNetworkSummaryPanel(null);
+
+        ArrayList<File> files = new ArrayList<File>();
+        files.add(propFile);
+        try {
+            e.addAppFiles("socialnetwork", files);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }

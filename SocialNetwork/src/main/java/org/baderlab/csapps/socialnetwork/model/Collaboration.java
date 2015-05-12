@@ -54,7 +54,7 @@ public class Collaboration {
     private AbstractNode node2 = null;
 
     /**
-     * Create a new Collaboration object composed of node1 and node2
+     * Create a new {@link Collaboration} object composed of node1 and node2
      *
      * @param AbstractNode node1
      * @param AbstractNode node2

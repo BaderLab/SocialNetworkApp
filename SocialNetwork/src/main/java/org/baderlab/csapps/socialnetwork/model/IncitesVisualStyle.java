@@ -50,7 +50,7 @@ import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
- * ??
+ * A visual style for InCites networks
  *
  * @author risserlin
  */
@@ -76,7 +76,7 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
     private SocialNetwork socialNetwork;
 
     /**
-     *
+     * Apply the InCites visual style to every node in the network
      */
     private void applyIncitesNodeStyle(){
         // Node table reference

@@ -49,7 +49,7 @@ import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 
 /**
- * Tools for manipulating Scopus data
+ * Tools for manipulating Scopus data (for developer use)
  *
  * @author Victor Kofia
  */
@@ -69,7 +69,6 @@ public class Scopus {
     /**
      * Construct Scopus attribute map
      *
-     * @param null
      * @return Map nodeAttrMap
      */
     public static HashMap<String, Object> constructScopusAttrMap(Author author) {
@@ -97,7 +96,6 @@ public class Scopus {
      * Create new Scopus object
      *
      * @param File csv
-     * @return null
      */
     public Scopus(File csv) {
         this.parseScopusPubList(csv);
@@ -106,7 +104,6 @@ public class Scopus {
     /**
      * Get publication list
      *
-     * @param null
      * @return ArrayList pubList
      */
     public ArrayList<Publication> getPubList() {
@@ -210,7 +207,6 @@ public class Scopus {
      * Set publication list
      *
      * @param ArrayList pubList
-     * @return null
      */
     private void setPubList(ArrayList<Publication> pubList) {
         this.pubList = pubList;
@@ -222,7 +218,7 @@ public class Scopus {
      * @param String quote
      * @param String separator
      * @param String s
-     * @return
+     * @return String[] array
      */
     private String[] splitQuoted(String quote, String separator, String s) {
         // Scopus file has 14 fields.

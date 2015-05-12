@@ -45,7 +45,7 @@ import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 /**
- * ??
+ * For creating {@link ApplyVisualStyleTask} objects
  *
  * @author Victor Kofia
  */

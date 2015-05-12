@@ -53,7 +53,6 @@ public class Query {
      * Create new valid query from rawQuery
      *
      * @param String rawQuery
-     * @return null
      */
     public Query(String rawQuery) {
         rawQuery = rawQuery.replace(",", "");
@@ -69,7 +68,6 @@ public class Query {
      * @param String journal
      * @param String year
      * @param String limit
-     * @return null
      */
     public Query(String rawQuery, String journal, String year, String limit) {
         rawQuery = rawQuery.replace(" ", "+");
@@ -134,7 +132,6 @@ public class Query {
     /**
      * Return string representation of query
      *
-     * @param null
      * @return String query
      */
     @Override

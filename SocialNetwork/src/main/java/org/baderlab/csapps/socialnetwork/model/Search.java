@@ -43,7 +43,8 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 
 /**
- * A search session
+ * Represents a generic Social Network app search session
+ * (to build Academia, Facebook, Twitter networks)
  *
  * @author Victor Kofia
  */

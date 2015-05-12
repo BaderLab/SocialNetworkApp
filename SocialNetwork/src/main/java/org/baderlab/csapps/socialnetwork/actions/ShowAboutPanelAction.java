@@ -48,8 +48,9 @@ import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
+ * Enables users to view the Social Network Cytoscape app <i>About</i> panel
  *
- * @author
+ * @author risserlin
  */
 public class ShowAboutPanelAction extends AbstractCyAction {
 
@@ -67,6 +68,7 @@ public class ShowAboutPanelAction extends AbstractCyAction {
     private static final long serialVersionUID = 1341062331014243704L;
 
     /**
+     * Constructor for {@link ShowAboutPanelAction}
      *
      * @param Map configProps
      * @param CyApplicationManager applicationManager
@@ -74,8 +76,11 @@ public class ShowAboutPanelAction extends AbstractCyAction {
      * @param CySwingApplication application
      * @param OpenBrowser openBrowserRef
      */
-    public ShowAboutPanelAction(Map<String, String> configProps, CyApplicationManager applicationManager, CyNetworkViewManager networkViewManager,
-            CySwingApplication application, OpenBrowser openBrowserRef) {
+    public ShowAboutPanelAction(Map<String, String> configProps,
+            CyApplicationManager applicationManager,
+            CyNetworkViewManager networkViewManager,
+            CySwingApplication application,
+            OpenBrowser openBrowserRef) {
         super(configProps, applicationManager, networkViewManager);
         putValue(NAME, "About ...");
         this.application = application;
@@ -83,8 +88,9 @@ public class ShowAboutPanelAction extends AbstractCyAction {
     }
 
     /**
+     * Invoked when an action is performed
      *
-     * @param ActionEvent event
+     * @param {@link ActionEvent} event
      */
     public void actionPerformed(ActionEvent event) {
         // Open new dialog
