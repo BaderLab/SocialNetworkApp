@@ -54,16 +54,16 @@ import org.cytoscape.session.events.SessionAboutToBeSavedListener;
  *
  * @author Victor Kofia
  */
-public class SaveNetworkToProf implements SessionAboutToBeSavedListener {
+public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
 
     private SocialNetworkAppManager appManager = null;
 
     /**
-     * Constructor for {@link SaveNetworkToProf}
+     * Constructor for {@link SaveNetworkToProp}
      *
      * @param {@link SocialNetworkAppManager} appManager
      */
-    public SaveNetworkToProf(SocialNetworkAppManager appManager) {
+    public SaveNetworkToProp(SocialNetworkAppManager appManager) {
         super();
         this.appManager = appManager;
     }
