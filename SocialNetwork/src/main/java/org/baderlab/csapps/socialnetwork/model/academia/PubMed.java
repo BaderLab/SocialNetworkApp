@@ -40,7 +40,6 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -81,7 +80,7 @@ public class PubMed {
     /**
      * A list containing all the results that search session has yielded
      */
-    private List<Publication> pubList = new ArrayList<Publication>();
+    private ArrayList<Publication> pubList = new ArrayList<Publication>();
     /**
      * Unique queryKey. Necessary for retrieving search results
      */
@@ -112,10 +111,25 @@ public class PubMed {
     private String webEnv = null;
 
     /**
-     * Variable to indicate that pubmed search should be done.
+     * Create a new {@link PubMed} session
+     *
+     * @param String searchTerm
      */
-    private boolean search = true;
-    private String filename = "";
+    public PubMed(File xmlFile) {
+        try {
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            saxParser.parse(xmlFile, getPublicationHandlerFile());
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (SAXException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
+        }
+    }
 
     /**
      * Create a new Pubmed search session
@@ -123,35 +137,25 @@ public class PubMed {
      * @param String searchTerm
      */
     public PubMed(String searchTerm) {
-
-        if (searchTerm.endsWith(".xml")) {
-            this.search = false;
-            this.filename = searchTerm;
-        }
-        if (this.search) {
-
-            // Query
-            Query query = new Query(searchTerm);
-            try {
-                // Create new SAXParser
-                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-                // Get Query Key & Web Env
-                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
-                saxParser.parse(url, getSearchHandler());
-                // Once all required fields have been filled commit to search
-                commitPubMedSearch();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-                CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            } catch (SAXException e) {
-                e.printStackTrace();
-                CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            } catch (IOException e) {
-                e.printStackTrace();
-                CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
-            }
-        } else {
+        // Query
+        Query query = new Query(searchTerm);
+        try {
+            // Create new SAXParser
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            // Get Query Key & Web Env
+            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
+            saxParser.parse(url, getSearchHandler());
+            // Once all required fields have been filled commit to search
             commitPubMedSearch();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (SAXException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
     }
 
@@ -161,25 +165,20 @@ public class PubMed {
     private void commitPubMedSearch() {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if (this.search) {
-                if ((this.totalPubs == null) || (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs)
-                        && Integer.parseInt(this.totalPubs) > 500) {
-                    // WIP (Work In Progress)
-                    // On the event that a search yields 500+ publications,
-                    // these publications will
-                    // need to be accessed incrementally as pubmed places
-                    // sanctions on users with
-                    // extremely large requests
-                } else {
-                    // Use newly discovered queryKey and webEnv to build a tag
-                    Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
-                    // Load all publications at once
-                    String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                    saxParser.parse(url, getPublicationHandler());
-                }
+            if ((this.totalPubs == null) || (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs)
+                    && Integer.parseInt(this.totalPubs) > 500) {
+                // WIP (Work In Progress)
+                // On the event that a search yields 500+ publications,
+                // these publications will
+                // need to be accessed incrementally as pubmed places
+                // sanctions on users with
+                // extremely large requests
             } else {
-                File XmlFile = new File(this.filename);
-                saxParser.parse(XmlFile, getPublicationHandlerFile());
+                // Use newly discovered queryKey and webEnv to build a tag
+                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
+                // Load all publications at once
+                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+                saxParser.parse(url, getPublicationHandler());
             }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -197,9 +196,9 @@ public class PubMed {
      * Return a list of all the publications (& co-authors) found for User's
      * specified authorName, MeSH term or Institution name.
      *
-     * @return List pubList
+     * @return ArrayList pubList
      */
-    public List<Publication> getListOfPublications() { // Return all results
+    public ArrayList<Publication> getPubList() { // Return all results
         return this.pubList;
     }
 

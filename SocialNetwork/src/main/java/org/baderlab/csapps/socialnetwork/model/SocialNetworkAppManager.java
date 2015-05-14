@@ -49,6 +49,7 @@ import javax.swing.Action;
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
@@ -150,8 +151,9 @@ public class SocialNetworkAppManager {
      * Set of all visual styles currently supported by app
      */
     private HashSet<String> visualStyleSet = null;
-    public static final int ANALYSISTYPE_INCITES = 0;
-    public static final int ANALYSISTYPE_SCOPUS = 1;
+    public static final int ANALYSISTYPE_INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
+    public static final int ANALYSISTYPE_SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
+    public static final int ANALYSISTYPE_PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 
     private int analysis_type = SocialNetworkAppManager.ANALYSISTYPE_INCITES;
 
@@ -223,7 +225,7 @@ public class SocialNetworkAppManager {
                     CytoscapeUtilities.notifyUser("Some rows could not be parsed.");
                 }
                 if (incitesParser.getIdentifiedFacultyList().size() == 0) {
-                    CytoscapeUtilities.notifyUser("Unable to identify faculty." + "Please verify that InCites data file is valid");
+                    CytoscapeUtilities.notifyUser("Unable to identify faculty. Please verify that InCites data file is valid");
                 }
                 pubList = incitesParser.getPubList();
                 departmentName = incitesParser.getDepartmentName();
@@ -235,7 +237,7 @@ public class SocialNetworkAppManager {
                 // Notify user of inappropriate file type
             } else {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel " + "spreadsheets or text files.");
+                CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
                 return;
             }
             // Add summary attributes
@@ -247,6 +249,23 @@ public class SocialNetworkAppManager {
             // Add info to social network map(s)
             socialNetwork.getAttrMap().put(IncitesVisualStyle.nodeattr_dept, departmentName);
             // Create network out of Scopus data
+        } else if (this.analysis_type == this.ANALYSISTYPE_PUBMED) {
+            extension = FilenameUtils.getExtension(networkFile.getPath());
+            PubMed pubmed = null;
+            if (extension.trim().equalsIgnoreCase("xml")) {
+                socialNetwork = new SocialNetwork(networkName, Category.PUBMED);
+                pubmed = new PubMed(networkFile);
+                pubList = pubmed.getPubList();
+                socialNetwork.setPublications(pubmed.getPubList());
+                if (pubList == null) {
+                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    return;
+                }
+            } else {
+                this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
+                return;
+            }
         } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
             extension = FilenameUtils.getExtension(networkFile.getPath());
             Scopus scopus = null;
@@ -261,7 +280,7 @@ public class SocialNetworkAppManager {
                 }
             } else {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv " + "spreadsheets");
+                CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
                 return;
             }
         }
@@ -559,8 +578,9 @@ public class SocialNetworkAppManager {
     public boolean isValidVisualStyle(String visualStyleName) {
         if (this.visualStyleSet == null) {
             this.visualStyleSet = new HashSet<String>();
-            this.visualStyleSet.add("Chipped");
-            this.visualStyleSet.add("Vanue");
+            this.visualStyleSet.add("Scopus");
+            this.visualStyleSet.add("PubMed");
+            this.visualStyleSet.add("InCites");
         }
         return this.visualStyleSet.contains(visualStyleName);
     }
@@ -639,7 +659,7 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Set network task factory
+     * Set <i>CreateNetwork</i> task factory
      *
      * @param CreateNetworkTaskFactory networkTaskFactory
      */

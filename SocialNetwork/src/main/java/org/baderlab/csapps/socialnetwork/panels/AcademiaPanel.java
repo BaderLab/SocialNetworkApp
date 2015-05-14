@@ -92,6 +92,7 @@ public class AcademiaPanel {
      */
     private JTextArea thresholdTextAreaRef = null;
     private JRadioButton incitesRadioButton = null;
+    private JRadioButton pubmedRadioButton = null;
     private JRadioButton scopusRadioButton = null;
     private JRadioButton thresholdRadioButton = null;
 
@@ -230,6 +231,10 @@ public class AcademiaPanel {
         this.incitesRadioButton = new JRadioButton("InCites", true);
         this.incitesRadioButton.setFocusable(true);
 
+        // Create PubMed radio button
+        this.pubmedRadioButton = new JRadioButton("PubMed", false);
+        this.pubmedRadioButton.setFocusable(true);
+
         // Create Scopus radio button
         this.scopusRadioButton = new JRadioButton("Scopus", false);
         this.scopusRadioButton.setFocusable(false);
@@ -237,9 +242,11 @@ public class AcademiaPanel {
         // Ensures that only one button is selected at a time
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(this.incitesRadioButton);
+        buttonGroup.add(this.pubmedRadioButton);
         buttonGroup.add(this.scopusRadioButton);
 
         databasePanel.add(this.incitesRadioButton);
+        databasePanel.add(this.pubmedRadioButton);
         databasePanel.add(this.scopusRadioButton);
 
         return databasePanel;
@@ -272,11 +279,13 @@ public class AcademiaPanel {
                 FileChooserFilter filter2 = new FileChooserFilter("excel spreadsheet(xls)", "xls");
                 FileChooserFilter filter3 = new FileChooserFilter("excel spreadsheet(xlsx)", "xlsx");
                 FileChooserFilter filter4 = new FileChooserFilter("excel spreadsheet(csv)", "csv");
+                FileChooserFilter filter5 = new FileChooserFilter("pubmed report(xml)", "xml");
                 HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
                 filters.add(filter1);
                 filters.add(filter2);
                 filters.add(filter3);
                 filters.add(filter4);
+                filters.add(filter5);
                 File textFile = AcademiaPanel.this.fileUtil.getFile(AcademiaPanel.this.cySwingAppRef.getJFrame(), "Data File Selection", FileUtil.LOAD, filters);
 
                 setDataFile(textFile);
@@ -324,28 +333,27 @@ public class AcademiaPanel {
                 if (AcademiaPanel.this.incitesRadioButton.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
                 }
+                if (AcademiaPanel.this.pubmedRadioButton.isSelected()) {
+                    AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_PUBMED);
+                }
                 if (AcademiaPanel.this.scopusRadioButton.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
                 }
-                if (!AcademiaPanel.this.incitesRadioButton.isSelected() && !AcademiaPanel.this.scopusRadioButton.isSelected()) {
-                    CytoscapeUtilities.notifyUser("Please select a database");
+                if (getSelectedFileRef() == null || getFacultyTextFieldRef().getText() == null) {
+                    CytoscapeUtilities.notifyUser("Please select a file and/or specify network name.");
                 } else {
-                    if (getSelectedFileRef() == null || getFacultyTextFieldRef().getText() == null) {
-                        CytoscapeUtilities.notifyUser("Please select a file and/or specify network name.");
+                    if (!getSelectedFileRef().getAbsolutePath().trim().equalsIgnoreCase(getPathTextFieldRef().getText().trim())) {
+                        CytoscapeUtilities.notifyUser("Please select a file.");
+                    } else if (getFacultyTextFieldRef().getText().trim().isEmpty()) {
+                        CytoscapeUtilities.notifyUser("Please specify network name.");
                     } else {
-                        if (!getSelectedFileRef().getAbsolutePath().trim().equalsIgnoreCase(getPathTextFieldRef().getText().trim())) {
-                            CytoscapeUtilities.notifyUser("Please select a file.");
-                        } else if (getFacultyTextFieldRef().getText().trim().isEmpty()) {
-                            CytoscapeUtilities.notifyUser("Please specify network name.");
-                        } else {
-                            try {
-                                int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
-                                //                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
-                                //                                        getThresholdTextFieldRef().getText());
-                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
-                            } catch (FileNotFoundException e) {
-                                CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
-                            }
+                        try {
+                            int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
+                            //                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
+                            //                                        getThresholdTextFieldRef().getText());
+                            AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
+                        } catch (FileNotFoundException e) {
+                            CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
                         }
                     }
                 }
@@ -431,7 +439,7 @@ public class AcademiaPanel {
      * @return String filename
      */
     public String parseFileName(String path) {
-        Pattern pattern = Pattern.compile("([^\\\\/]+?)(\\.xlsx|\\.txt|\\.csv)$");
+        Pattern pattern = Pattern.compile("([^\\\\/]+?)(\\.xlsx|\\.txt|\\.csv||\\.xml)$");
         Matcher matcher = pattern.matcher(path);
         if (matcher.find()) {
             return matcher.group(1);
