@@ -111,9 +111,9 @@ public class PubMed {
     private String webEnv = null;
 
     /**
-     * Create a new {@link PubMed} session
+     * Create a new {@link PubMed} session from xmlFile
      *
-     * @param String searchTerm
+     * @param File xmlFile
      */
     public PubMed(File xmlFile) {
         try {
@@ -167,6 +167,10 @@ public class PubMed {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             if ((this.totalPubs == null) || (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs)
                     && Integer.parseInt(this.totalPubs) > 500) {
+                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
+                // Load all publications at once
+                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+                saxParser.parse(url, getPublicationHandler());
                 // WIP (Work In Progress)
                 // On the event that a search yields 500+ publications,
                 // these publications will
@@ -190,16 +194,6 @@ public class PubMed {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
-    }
-
-    /**
-     * Return a list of all the publications (& co-authors) found for User's
-     * specified authorName, MeSH term or Institution name.
-     *
-     * @return ArrayList pubList
-     */
-    public ArrayList<Publication> getPubList() { // Return all results
-        return this.pubList;
     }
 
     /**
@@ -431,6 +425,16 @@ public class PubMed {
 
         return publicationHandler;
 
+    }
+
+    /**
+     * Return a list of all the publications (& co-authors) found for User's
+     * specified authorName, MeSH term or Institution name.
+     *
+     * @return ArrayList pubList
+     */
+    public ArrayList<Publication> getPubList() { // Return all results
+        return this.pubList;
     }
 
     /**

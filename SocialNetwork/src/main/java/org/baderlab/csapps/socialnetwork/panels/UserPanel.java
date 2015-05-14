@@ -112,8 +112,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
                 threshold = Integer.parseInt(thresholdText);
                 if (threshold > 500) {
-                	CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
-                			+ "set to a value greater than 500. This may lead to computer slowdown.");
+                    CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
+                            + "set to a value greater than 500. This may lead to computer slowdown.");
                 }
                 appManager.createNetwork(searchTerm, categoryType, threshold);
             } else {
@@ -138,8 +138,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
                 threshold = Integer.parseInt(text);
                 if (threshold > 500) {
-                	CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
-                			+ "set to a value greater than 500. This may lead to computer slowdown.");
+                    CytoscapeUtilities.notifyUser("Warning! The max author threshold has been "
+                            + "set to a value greater than 500. This may lead to computer slowdown.");
                 }
             } else {
                 CytoscapeUtilities.notifyUser("Illegal input for max threshold. Please specify a "
@@ -657,7 +657,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     createNetwork(UserPanel.this.appManager,
                             //getAcademiaPanel().thresholdIsSelected(),
-                    		true, // TODO: Suppose that the threshold radio button is always selected
+                            true, // TODO: Suppose that the threshold radio button is always selected
                             getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
                             getSearchBox().getText().trim(),
                             getSelectedCategory());
@@ -690,7 +690,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 } else {
                     createNetwork(UserPanel.this.appManager,
                             //getAcademiaPanel().thresholdIsSelected(),
-                    		true, // TODO: Suppose that the threshold radio button is always selected
+                            true, // TODO: Suppose that the threshold radio button is always selected
                             getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
                             getSearchBox().getText().trim(),
                             getSelectedCategory());
@@ -1231,17 +1231,35 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             if (networkName.length() >= 10) {
                 networkName = networkName.substring(0, 9) + " ...";
             }
-            networkSummary = socialNetwork.getSummary();
+            networkSummary = socialNetwork.getNetworkSummary();
         }
         this.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
         this.getNetworkSummaryPaneRef().setText(networkSummary);
         this.getFileSummaryPaneRef().setText("");
 
-        // if this is an incites network add the summaries
-        if (socialNetwork.getNetworkType() == Category.INCITES) {
-            GenerateReports gr = new GenerateReports(socialNetwork.getPublications(), socialNetwork.getNetworkName());
-            HashMap<String, String> files = gr.createReports();
+        GenerateReports gr = new GenerateReports(socialNetwork);
 
+        HashMap<String, String> files = new HashMap<String, String>();
+
+        switch(socialNetwork.getNetworkType()) {
+            case Category.INCITES:
+                files = gr.createIncitesReports();
+                break;
+            case Category.PUBMED:
+                if (socialNetwork.getExcludedPubs().size() > 0) {
+                    files = gr.createPubmedReports();
+                }
+                break;
+            case Category.SCOPUS:
+                if (socialNetwork.getExcludedPubs().size() > 0) {
+                    files = gr.createScopusReports();
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (files.size() > 0) {
             Object[] keys = files.keySet().toArray();
             Arrays.sort(keys);
 

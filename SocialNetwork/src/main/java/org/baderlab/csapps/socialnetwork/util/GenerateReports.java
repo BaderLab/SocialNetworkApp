@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
@@ -70,6 +71,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 public class GenerateReports {
 
     private ArrayList<Publication> publications = null;
+    private ArrayList<Publication> excludedPubs = null;
 
     private String outputDir = "";
     private String networkName = "";
@@ -99,13 +101,13 @@ public class GenerateReports {
     /**
      * Constructor for {@link GenerateReports}
      *
-     * @param ArrayList pubs
-     * @param String networkName
+     * @param SocialNetwork network
      */
-    public GenerateReports(ArrayList<Publication> pubs, String networkName) {
+    public GenerateReports(SocialNetwork network) {
         super();
-        this.publications = pubs;
-        this.networkName = networkName;
+        this.publications = network.getPublications();
+        this.networkName = network.getNetworkName();
+        this.excludedPubs = network.getExcludedPubs();
         // create an outputDir in the temp directory
         this.outputDir = System.getProperty("java.io.tmpdir");
     }
@@ -113,19 +115,18 @@ public class GenerateReports {
     /**
      * Constructor for {@link GenerateReports}
      *
-     * @param ArrayList pubs
-     * @param String outputDir
-     * @param String networkName
+     * @param SocialNetwork network
      */
-    public GenerateReports(ArrayList<Publication> pubs, String outputDir, String networkName) {
+    public GenerateReports(SocialNetwork network, String outputDir) {
         super();
-        this.publications = pubs;
-        this.networkName = networkName;
+        this.publications = network.getPublications();
+        this.networkName = network.getNetworkName();
+        this.excludedPubs = network.getExcludedPubs();
         this.outputDir = outputDir;
     }
 
     /**
-     * for each publication in the set of publications for this network For each
+     * For each publication in the set of publications for this network For each
      * publication get its set of Authors. For each Author get their location
      * and add a count to that location (publication counts will be duplicated
      * based on this method) Do the same for the times cited Add up the
@@ -228,11 +229,11 @@ public class GenerateReports {
     }
 
     /**
-     * Create and return the reports
+     * Create and return the reports (for InCites)
      *
      * @return HashMap reports
      */
-    public HashMap<String, String> createReports() {
+    public HashMap<String, String> createIncitesReports() {
 
         this.calculateTotals();
         this.calculateTotals_unique();
@@ -241,6 +242,8 @@ public class GenerateReports {
 
         String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
 
+        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
+        filenames.put("0a. Excluded publications", basename + "_excluded_pubs.html");
         this.generateFiles(this.outputDir, this.networkName + "_pubByLocation_distinct", this.pubByLocation_distinct,
                 "Publications by Location - counting publications once for every distinct location");
         filenames.put("1a. Pub by location(txt) - distinct locations publication counts", basename + "_pubByLocation_distinct.txt");
@@ -265,6 +268,66 @@ public class GenerateReports {
         filenames.put("6b. Citation by location(html)- unique publication counts", basename + "_citationByLocation_unique.html");
 
         return filenames;
+    }
+
+    /**
+     * Create and return the reports (for PubMed)
+     *
+     * @return HashMap reports
+     */
+    public HashMap<String, String> createPubmedReports() {
+        HashMap<String, String> filenames = new HashMap<String, String>();
+        String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
+        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
+        filenames.put("1a. Excluded publications", basename + "_excluded_pubs.html");
+        return filenames;
+    }
+
+    /**
+     * Create and return the reports (for Scopus)
+     *
+     * @return HashMap reports
+     */
+    public HashMap<String, String> createScopusReports() {
+        HashMap<String, String> filenames = new HashMap<String, String>();
+        String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
+        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
+        filenames.put("1a. Excluded publications", basename + "_excluded_pubs.html");
+        return filenames;
+    }
+
+    /**
+     * Generate a report of all the excluded publications. Publications are
+     * presented in a table and users can click on the title to view the
+     * abstract, citations (and full text perhaps) on PubMed.
+     *
+     * @param String directory
+     * @param String fileName
+     * @param String title
+     */
+    private void generateExcludedPubsReport(String directory, String fileName) {
+        String base_name = directory + System.getProperty("file.separator") + fileName;
+        // generate html file
+        try {
+            PrintWriter html_writer = new PrintWriter(base_name + ".html", "UTF-8");
+            String root = "http://www.ncbi.nlm.nih.gov/pubmed/?term=", url = null;
+            // Add the html_header
+            html_writer.println("<table border=\"1\">");
+            html_writer.println("<td><b>Publication</b></td><td><b># of authors</b></td><td><b>Times Cited</b></td>");
+            for (Publication pub : this.excludedPubs) {
+                html_writer.println("<tr>");
+                url = root + "\"" + pub.getTitle() + "[Title]\"";
+                html_writer.println("<td><a href=" + url.replace(" ", "%20") + ">" + pub.getTitle() + "</a></td>");
+                html_writer.println("<td>" + pub.getAuthorList().size() + "</td>");
+                html_writer.println("<td>" + pub.getTimesCited() + "</td>");
+                html_writer.println("</tr");
+            }
+            html_writer.println("</table>");
+            html_writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Failed to create file. IOException. - " + base_name);
+        }
     }
 
     /**

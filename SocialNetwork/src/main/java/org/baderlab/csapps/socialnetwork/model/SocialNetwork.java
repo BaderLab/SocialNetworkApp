@@ -92,7 +92,7 @@ public class SocialNetwork {
      * The network's set of publications used to create it
      */
     private ArrayList<Publication> publications = null;
-    private ArrayList<AbstractEdge> excludedPubs = null;
+    private ArrayList<Publication> excludedPubs = null;
     private ArrayList<Author> identifiedFaculty = null;
     private ArrayList<Author> unidentifiedFaculty = null;
     private HashSet<Author> faculty = null;
@@ -170,9 +170,9 @@ public class SocialNetwork {
      *
      * @return ArrayList excludedPubs
      */
-    public ArrayList<AbstractEdge> getExcludedPubs() {
+    public ArrayList<Publication> getExcludedPubs() {
         if (this.excludedPubs == null) {
-            this.excludedPubs = new ArrayList<AbstractEdge>();
+            this.excludedPubs = new ArrayList<Publication>();
         }
         return this.excludedPubs;
     }
@@ -202,6 +202,41 @@ public class SocialNetwork {
      */
     public String getNetworkName() {
         return this.networkName;
+    }
+
+    /**
+     * Get a summary of this <i>social network</i>. Contents of summary
+     * varies depending on the type of the network. For <i>Academia</i>
+     * networks, the summary may contain the total # of publications
+     * represented in the network, and also a list of all excluded
+     * publications.
+     *
+     * @return String summary
+     */
+    public String getNetworkSummary() {
+        String info = "<html>";
+        // Print out the summary information
+        switch(this.networkType) {
+            case Category.INCITES:
+                info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty
+                + "<br<Total # of unidentified faculty: " + this.num_uniden_faculty;
+                if (this.num_uniden_faculty > 0) {
+                    info += "<hr><br>Unidentified Faculty (see below)<br>" + this.unidentified_faculty;
+                }
+                if (this.getExcludedPubs().size() > 0) {
+                    info += "Total # of excluded publications: " + this.getExcludedPubs().size();
+                }
+                break;
+            case Category.PUBMED:
+            case Category.SCOPUS:
+            default:
+                info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
+                if (this.getExcludedPubs().size() > 0) {
+                    info += "Total # of excluded publications: " + this.getExcludedPubs().size();
+                }
+        }
+        this.networkSummary = info + "</html>";
+        return this.networkSummary;
     }
 
     /**
@@ -256,41 +291,6 @@ public class SocialNetwork {
      */
     public ArrayList<Publication> getPublications() {
         return this.publications;
-    }
-
-    /**
-     * Get a summary of this <i>social network</i>. Contents of summary
-     * varies depending on the type of the network. For <i>Academia</i>
-     * networks, the summary may contain the total # of publications
-     * represented in the network, and also a list of all excluded
-     * publications.
-     *
-     * @return String summary
-     */
-    public String getSummary() {
-        String info = "<html>";
-        // Print out the summary information
-        switch(this.networkType) {
-            case Category.INCITES:
-                info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty
-                + "<br<Total # of unidentified faculty: " + this.num_uniden_faculty;
-                if (this.num_uniden_faculty > 0) {
-                    info += "<hr><br>Unidentified Faculty (see below)<br>" + this.unidentified_faculty;
-                }
-                if (this.getExcludedPubs().size() > 0) {
-                    info += "<br>Excluded publications (see below)<br>" + getSummaryOfExcludedPubs();
-                }
-                break;
-            case Category.PUBMED:
-            case Category.SCOPUS:
-            default:
-                info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
-                if (this.getExcludedPubs().size() > 0) {
-                    info += "<br>Excluded publications (see below)<br>" + getSummaryOfExcludedPubs();
-                }
-        }
-        this.networkSummary = info + "</html>";
-        return this.networkSummary;
     }
 
     /**
@@ -379,7 +379,7 @@ public class SocialNetwork {
      *
      * @param ArrayList excludedPubs
      */
-    public void setExcludedPubs(ArrayList<AbstractEdge> excludedPubs) {
+    public void setExcludedPubs(ArrayList<Publication> excludedPubs) {
         this.excludedPubs = excludedPubs;
     }
 

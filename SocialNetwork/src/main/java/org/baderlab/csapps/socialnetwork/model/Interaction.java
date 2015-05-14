@@ -68,7 +68,7 @@ public class Interaction {
      * # of authors who were involved exceeded the threshold specified by the
      * user (only for use in <i>Academia</i> networks).
      */
-    private ArrayList<AbstractEdge> excludedPublications = null;
+    private ArrayList<Publication> excludedPublications = null;
 
     /**
      * Create a new {@link Interaction}
@@ -108,9 +108,9 @@ public class Interaction {
      *
      * @return ArrayList excludedPublications
      */
-    public ArrayList<AbstractEdge> getExcludedPublications() {
+    public ArrayList<Publication> getExcludedPublications() {
         if (this.excludedPublications == null) {
-            setExcludedPublications(new ArrayList<AbstractEdge>());
+            setExcludedPublications(new ArrayList<Publication>());
         }
         return this.excludedPublications;
     }
@@ -262,7 +262,7 @@ public class Interaction {
      *
      * @param ArrayList excludedPublications
      */
-    public void setExcludedPublications(ArrayList<AbstractEdge> excludedPublications) {
+    public void setExcludedPublications(ArrayList<Publication> excludedPublications) {
         this.excludedPublications = excludedPublications;
     }
 
