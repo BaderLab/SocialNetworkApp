@@ -230,10 +230,11 @@ public class SocialNetwork {
             case Category.PUBMED:
             case Category.SCOPUS:
             default:
-                info = "<html>" + "Total # of publications: " + this.num_publications + "<br>";
+                info = "<html>" + "Total # of publications: " + this.num_publications;
                 if (this.getExcludedPubs().size() > 0) {
-                    info += "Total # of excluded publications: " + this.getExcludedPubs().size();
+                    info += "<br>Total # of excluded publications: " + this.getExcludedPubs().size();
                 }
+                break;
         }
         this.networkSummary = info + "</html>";
         return this.networkSummary;
@@ -553,7 +554,6 @@ public class SocialNetwork {
                 // counts
                 // get author locations
                 String current_location = pub.getLocation();
-
                 if (locations_summary.containsKey(current_location)) {
                     Integer count = locations_summary.get(current_location) + 1;
                     locations_summary.put(current_location, count);

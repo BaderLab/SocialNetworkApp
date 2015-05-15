@@ -132,7 +132,7 @@ public class PubMed {
     }
 
     /**
-     * Create a new Pubmed search session
+     * Create a new PubMed search session
      *
      * @param String searchTerm
      */
@@ -360,14 +360,8 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
-                    // only add the publication if it has less than 30 authors
-                    if (PubMed.this.pubAuthorList.size() <= 270) {
-                        PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
-                        PubMed.this.pubAuthorList.clear();
-                    } else {
-                        System.out.println(PubMed.this.title + ";; with ;;" + PubMed.this.pubAuthorList.size() + " authors");
-                        PubMed.this.pubAuthorList.clear();
-                    }
+                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                    PubMed.this.pubAuthorList.clear();
                 }
                 if (qName.equals("Author")) {
                     // add the firstname,lastname, initial to the author
