@@ -107,6 +107,9 @@ public class GenerateReports {
         super();
         this.publications = network.getPublications();
         this.networkName = network.getNetworkName();
+        if (network.getNetworkName().length() > 10) {
+        	this.networkName = network.getNetworkName().substring(0, 9);        	
+        }
         this.excludedPubs = network.getExcludedPubs();
         // create an outputDir in the temp directory
         this.outputDir = System.getProperty("java.io.tmpdir");

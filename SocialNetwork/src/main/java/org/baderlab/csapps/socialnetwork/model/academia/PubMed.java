@@ -169,14 +169,9 @@ public class PubMed {
                     && Integer.parseInt(this.totalPubs) > 500) {
                 Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
                 // Load all publications at once
+                // TODO: Temporary. Large requests have to be handled differently.
                 String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
                 saxParser.parse(url, getPublicationHandler());
-                // WIP (Work In Progress)
-                // On the event that a search yields 500+ publications,
-                // these publications will
-                // need to be accessed incrementally as pubmed places
-                // sanctions on users with
-                // extremely large requests
             } else {
                 // Use newly discovered queryKey and webEnv to build a tag
                 Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
