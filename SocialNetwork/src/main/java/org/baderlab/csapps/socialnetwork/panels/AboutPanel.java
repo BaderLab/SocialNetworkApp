@@ -111,13 +111,7 @@ public class AboutPanel extends JDialog {
         editorPane.setEditable(false);
         editorPane.setEditorKit(new HTMLEditorKit());
         editorPane.addHyperlinkListener(new HyperlinkAction(editorPane));
-        // URL logoURL =
-        // Enrichment_Map_Plugin.class.getResource("enrichmentmap_logo.png");
-        // TODO: Add logo details here
-        URL logoURL = Thread.currentThread().getContextClassLoader().getResource("socialNetwork_logo.png");
-        // URL logoURL =
-        // Enrichment_Map_Plugin.class.getResource("enrichmentmap_logo.png");
-        // TODO: Add logo details here
+        URL logoURL = this.getClass().getResource("socialNetwork_logo.png");
         if (pluginReleaseSuffix != null && !pluginReleaseSuffix.contentEquals("")) {
             pluginReleaseSuffix = " (" + pluginReleaseSuffix + ")";
         }
@@ -129,9 +123,8 @@ public class AboutPanel extends JDialog {
                 + "A Cytoscape App<BR>"
                 + "<BR></p>"
                 + "</td>"
-                +
-                // "<td width='125'><div align='right'><img height='77' width='125' src=\""+
-                // logoURL.toString() +"\" ></div></td>"+
+                + "<td width='177'><div align='right'><img height='97' width='127' src=\""+
+                  logoURL.toString() +"\" ></div></td>"+
                 "</tr></table>" + "<p align=center>Social Network app is a method to visualize<BR>"
                 + "and interpret social networks from publication records.<BR>" + "<BR>" + "by Victor Kofia, Ruth Isserlin and Gary Bader<BR>"
                 + "(<a href='http://www.baderlab.org/'>Bader Lab</a>, University of Toronto)<BR>" + "<BR>" + "Plugin Homepage:<BR>" + "<a href='"

@@ -221,9 +221,7 @@
                 <filtering>false</filtering>
                 <includes>
                     <include>**/*.gif</include>                
-                    <include>**/*.sn</include>
-                    <include>**/search.png</include>
-                    <include>**/help.png</include>
+                    <include>**/*.png</include>
                 </includes>
             </resource>
         </resources> 
