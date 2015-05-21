@@ -174,7 +174,7 @@ public class Author extends AbstractNode {
                 break;
             case Category.PUBMED:
                 // Initialize attribute map for PubMed author (~ same as Scopus)
-                this.setNodeAttrMap(Scopus.constructScopusAttrMap(this));
+                this.setNodeAttrMap(PubMed.constructPubMedAttrMap(this));
                 String[] pubmedNames = rawAuthorText.split("\\s");
                 if (pubmedNames.length == 1) {
                     this.lastName = pubmedNames[0];
@@ -653,7 +653,7 @@ public class Author extends AbstractNode {
      */
     public void setInstitution(String institution) {
         this.institution = institution;
-        this.getNodeAttrMap().put(IncitesVisualStyle.nodeattr_inst, institution);
+        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institution);
     }
 
     /**

@@ -40,11 +40,15 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -58,6 +62,28 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PubMed {
 
     /**
+     * Construct PubMed attribute map
+     *
+     * @return Map nodeAttrMap
+     */
+    public static HashMap<String, Object> constructPubMedAttrMap(Author author) {
+        HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
+        String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
+                BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_timescited,
+                BasicSocialNetworkVisualstyle.nodeattr_inst, BasicSocialNetworkVisualstyle.nodeattr_numpub,
+                BasicSocialNetworkVisualstyle.nodeattr_pub };
+        int i = 0;
+        for (i = 0; i < 5; i++) {
+            nodeAttrMap.put(columns[i], "");
+        }
+        // Initialize the num publication attribute (~Integer)
+        nodeAttrMap.put(columns[i], 0);
+        i++;
+        // Initialize Publications attribute (~ ArrayList)
+        nodeAttrMap.put(columns[i], new ArrayList<String>());
+        return nodeAttrMap;
+    }
+    /**
      * The author of a specific publication. This variable is globally
      * referenced to allow for multiple additions in to a publication
      */
@@ -65,6 +91,7 @@ public class PubMed {
     private String lastName = null;
     private String firstName = null;
     private String middleInitials = null;
+    private String institution = null;
     /**
      * A publication's journal
      */
@@ -105,11 +132,12 @@ public class PubMed {
      * The total number of publications found in search
      */
     private String totalPubs = null;
+
     /**
      * Unique WebEnv. Necessary for retrieving search results
      */
     private String webEnv = null;
-
+    
     /**
      * Create a new {@link PubMed} session from xmlFile
      *
@@ -118,7 +146,7 @@ public class PubMed {
     public PubMed(File xmlFile) {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.parse(xmlFile, getPublicationHandlerFile());
+            saxParser.parse(xmlFile, getPubmedExportHandler());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
@@ -132,7 +160,7 @@ public class PubMed {
     }
 
     /**
-     * Create a new PubMed search session
+     * Create a new {@link PubMed} search session
      *
      * @param String searchTerm
      */
@@ -171,13 +199,13 @@ public class PubMed {
                 // Load all publications at once
                 // TODO: Temporary. Large requests have to be handled differently.
                 String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, getPublicationHandler());
+                saxParser.parse(url, getEntrezUtilitiesHandler());
             } else {
                 // Use newly discovered queryKey and webEnv to build a tag
                 Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
                 // Load all publications at once
                 String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, getPublicationHandler());
+                saxParser.parse(url, getEntrezUtilitiesHandler());
             }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -192,11 +220,11 @@ public class PubMed {
     }
 
     /**
-     * Get publication handler
+     * Returns handler for parsing eUtils output
      *
-     * @return DefaultHandler publicationHandler
+     * @return DefaultHandler eUtilsHandler
      */
-    private DefaultHandler getPublicationHandler() {
+    private DefaultHandler getEntrezUtilitiesHandler() {
         DefaultHandler publicationHandler = new DefaultHandler() {
 
             /**
@@ -253,7 +281,8 @@ public class PubMed {
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("DocSum")) {
-                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
+                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
                     PubMed.this.pubAuthorList.clear();
                 }
             }
@@ -284,18 +313,28 @@ public class PubMed {
     }
 
     /**
-     * Get publication handler
+     * Return a list of all the publications (& co-authors) found for User's
+     * specified authorName, MeSH term or Institution name.
      *
-     * @return DefaultHandler publicationHandler
+     * @return ArrayList pubList
      */
-    private DefaultHandler getPublicationHandlerFile() {
+    public ArrayList<Publication> getPubList() { // Return all results
+        return this.pubList;
+    }
+
+    /**
+     * Return handler for parsing data exported directly from PubMed 
+     *
+     * @return DefaultHandler pubmedExportHandler
+     */
+    private DefaultHandler getPubmedExportHandler() {
         DefaultHandler publicationHandler = new DefaultHandler() {
 
             /**
              * XML Parsing variables. Used to temporarily store data.
              */
-            boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, isTimesCited = false, isFirstName = false,
-                    isLastName = false, isMiddleInitial = false;
+            boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, isTimesCited = false, 
+            		isFirstName = false, isLastName = false, isMiddleInitial = false, isInstitution = false;
 
             // Collect tag contents (if applicable)
             @Override
@@ -310,6 +349,10 @@ public class PubMed {
                 if (this.isAuthor) {
                     PubMed.this.author = new Author(new String(ch, start, length), Category.PUBMED);
                     this.isAuthor = false;
+                }
+                if (this.isInstitution) {
+                	PubMed.this.institution = new String(ch, start, length);
+                	this.isInstitution = false;
                 }
                 if (this.isFirstName) {
                     PubMed.this.firstName = new String(ch, start, length);
@@ -360,7 +403,8 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
-                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
+                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
                     PubMed.this.pubAuthorList.clear();
                 }
                 if (qName.equals("Author")) {
@@ -370,6 +414,7 @@ public class PubMed {
                     PubMed.this.author.setMiddleInitial(PubMed.this.middleInitials);
                     PubMed.this.author.setFirstInitial(PubMed.this.firstName.substring(0, 1));
                     PubMed.this.author.setLabel(PubMed.this.author.getFirstInitial() + " " + PubMed.this.author.getLastName());
+                    PubMed.this.author.setInstitution(PubMed.this.institution);
 
                     // Add author to publication author list
                     if (!PubMed.this.pubAuthorList.contains(PubMed.this.author)) {
@@ -387,6 +432,9 @@ public class PubMed {
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                 if (qName.equals("Author")) {
                     this.isAuthor = true;
+                }
+                if (qName.equals("Affiliation")) {
+                	this.isInstitution = true;
                 }
                 if (qName.equals("LastName")) {
                     this.isLastName = true;
@@ -414,16 +462,6 @@ public class PubMed {
 
         return publicationHandler;
 
-    }
-
-    /**
-     * Return a list of all the publications (& co-authors) found for User's
-     * specified authorName, MeSH term or Institution name.
-     *
-     * @return ArrayList pubList
-     */
-    public ArrayList<Publication> getPubList() { // Return all results
-        return this.pubList;
     }
 
     /**
