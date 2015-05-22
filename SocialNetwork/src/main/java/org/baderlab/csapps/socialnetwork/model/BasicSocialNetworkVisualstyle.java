@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
@@ -56,11 +57,11 @@ public class BasicSocialNetworkVisualstyle {
     public static final String nodeattr_label = "Label";
     public static final String nodeattr_fname = "First Name";
     public static final String nodeattr_lname = "Last Name";
+    public static final String nodeattr_inst = "Institution";
     public static final String nodeattr_pub = "Publications";
     public static final String nodeattr_numpub = "# of Publications";
     public static final String edgeattr_numcopubs = "# of copubs";
     public static final String nodeattr_timescited = "Times Cited";
-
     public static final String networkattr_totalPub = "Total Publications";
 
     private CyNetwork network;
