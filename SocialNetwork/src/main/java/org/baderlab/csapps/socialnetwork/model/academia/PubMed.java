@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -82,6 +83,55 @@ public class PubMed {
         nodeAttrMap.put(columns[i], new ArrayList<String>());
         return nodeAttrMap;
     }
+    
+    /**
+     * Get the # of times pub has been cited on PubMed.
+     * 
+     * @param String publicationTitle
+     * @return String timesCited
+     */
+    public static String getTimesCited(String publicationTitle) {
+    	PubMed pubmed = new PubMed();
+    	return pubmed.findTimesCited(publicationTitle);
+    }
+    
+    /**
+     * Return the citation count of the publication with the specified title,
+     * and null if no valid publication is found.
+     * 
+     * @param String publicationTitle
+     * @return String timesCited
+     */
+    public String findTimesCited(String publicationTitle) {
+        Query query = new Query(publicationTitle);
+        try {
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
+            saxParser.parse(url, getSearchHandler());
+            saxParser = SAXParserFactory.newInstance().newSAXParser();
+            if ((this.totalPubs != null)) {
+                // Use newly discovered queryKey and webEnv to build a tag
+                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
+                // Load all publications at once
+                url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+                saxParser.parse(url, getTimesCitedHandler(publicationTitle));
+            }
+            if (this.timesCited != null) {
+            	return Pattern.matches("[0-9]+", this.timesCited) ? this.timesCited : null;            	
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (SAXException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
+        }
+    	return null;
+    }
+    
     /**
      * The author of a specific publication. This variable is globally
      * referenced to allow for multiple additions in to a publication
@@ -138,6 +188,13 @@ public class PubMed {
     private String webEnv = null;
     
     /**
+     * Create a new {@link PubMed} session
+     */
+    public PubMed() {
+    	
+    }
+    
+    /**
      * Create a new {@link PubMed} session from xmlFile
      *
      * @param File xmlFile
@@ -145,7 +202,7 @@ public class PubMed {
     public PubMed(File xmlFile) {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.parse(xmlFile, getPubmedExportHandler());
+            saxParser.parse(xmlFile, getXmlExportHandler());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
@@ -305,6 +362,70 @@ public class PubMed {
         return publicationHandler;
 
     }
+    
+    /**
+     * Returns handler for getting the times cited value of a publication
+     *
+     * @param String publicationTitle
+     * @return DefaultHandler timesCitedHandler
+     */
+    private DefaultHandler getTimesCitedHandler(final String publicationTitle) {
+        DefaultHandler publicationHandler = new DefaultHandler() {
+
+            /**
+             * XML Parsing variables. Used to temporarily store data.
+             */
+            boolean isTitle = false, isTimesCited = false;
+
+            // Collect tag contents (if applicable)
+            @Override
+            public void characters(char ch[], int start, int length) throws SAXException {
+                if (this.isTitle) {
+                    PubMed.this.title = new String(ch, start, length);
+                    this.isTitle = false;
+                }
+                if (this.isTimesCited && PubMed.this.title.equals(publicationTitle)) {
+                    PubMed.this.timesCited = new String(ch, start, length);
+                    this.isTimesCited = false;
+                }
+            }
+
+            /**
+             * Returns true iff attributes contains the specified text
+             *
+             * @param Attribute attributes
+             * @param String text
+             * @return Boolean bool
+             */
+            public boolean contains(Attributes attributes, String text) {
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    if (attributes.getValue(i).equalsIgnoreCase(text)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+
+            }
+
+            // Reset variable contents
+            @Override
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                if (contains(attributes, "Title")) {
+                    this.isTitle = true;
+                }
+                if (contains(attributes, "PmcRefCount")) {
+                    this.isTimesCited = true;
+                }
+            }
+        };
+
+        return publicationHandler;
+
+    }
 
     /**
      * Return a list of all the publications (& co-authors) found for User's
@@ -319,9 +440,9 @@ public class PubMed {
     /**
      * Return handler for parsing data exported directly from PubMed 
      *
-     * @return DefaultHandler pubmedExportHandler
+     * @return DefaultHandler xmlExportHandler
      */
-    private DefaultHandler getPubmedExportHandler() {
+    private DefaultHandler getXmlExportHandler() {
         DefaultHandler publicationHandler = new DefaultHandler() {
 
             /**
@@ -397,6 +518,7 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
+                	PubMed.this.timesCited = PubMed.getTimesCited(PubMed.this.title);
                     PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
                     		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
                     PubMed.this.pubAuthorList.clear();

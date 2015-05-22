@@ -289,8 +289,6 @@ public class Author extends AbstractNode {
 
         Author otherAuthor = (Author) other;
         boolean isEqual = false, isEqualFirstName = false, isEqualLastName = false;
-        int distance = 0;
-        double similarity = 0;
         // InCites
         if (this.getOrigin() == Category.INCITES && otherAuthor.getOrigin() == Category.INCITES) {
             boolean isEqualInstitution = false;
