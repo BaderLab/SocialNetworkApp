@@ -191,15 +191,9 @@ public class IncitesParser {
 		try {
 			pkg = OPCPackage.open(file.getAbsolutePath());
 			XSSFWorkbook workbook = new XSSFWorkbook(pkg);
-			switch(workbook.getNumberOfSheets()) {
-				case 1:
-					this.parsePubsRawXLSX(pkg);
-					break;
-				default:
-					this.parseFacultyXLSX(pkg);
-					this.parsePubsXLSX(pkg);
-					break;
-			}
+			int numSheets = workbook.getNumberOfSheets();
+			this.parsePubsXLSX(pkg, numSheets);
+			this.parseFacultyXLSX(pkg, numSheets);
 			this.calculateSummary();
 		} catch (InvalidFormatException e) {
 			// TODO Auto-generated catch block
@@ -209,40 +203,6 @@ public class IncitesParser {
 			e.printStackTrace();
 		}
     }
-    
-    /**
-     * Parse all publications (as well as all associated author info) contained
-     * in xlsx data file. Note that each publication serves as an edge and each
-     * author a node. Node info is embedded inside each edge.
-     *
-     * @param OPCPackage pkg
-     */
-    private void parsePubsRawXLSX(OPCPackage pkg) {
-        try {
-            XSSFReader r = new XSSFReader(pkg);
-            SharedStringsTable sst = r.getSharedStringsTable();
-            // Publication data is found in sheet#3 of spreadsheet
-            XMLReader parser = fetchSheetParser(sst, 1);
-            InputStream sheet = r.getSheet("rId1");
-            InputSource sheetSource = new InputSource(sheet);
-            parser.parse(sheetSource);
-            sheet.close();
-        // Users do not have to be notified about these exceptions
-        // but printed stack traces are useful (i.e. debugging)
-        } catch (IOException e) {
-            e.printStackTrace();
-            this.setPubList(null);
-        } catch (SAXException e) {
-            e.printStackTrace();
-            this.setPubList(null);
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
-            this.setPubList(null);
-        } catch (OpenXML4JException e) {
-            e.printStackTrace();
-            this.setPubList(null);
-        }		
-	}
 
 	/**
      * Return true iff author in authorList
@@ -307,7 +267,7 @@ public class IncitesParser {
         switch (sheet) {
             // Sheet#1: ??
             case 1:
-            	parser.setContentHandler(new RawPubSheetHandler(sst, this));
+                parser.setContentHandler(new PubSheetHandler(sst, this));
         	    break;
             // Sheet#3: publication data
             case 3:
@@ -451,8 +411,12 @@ public class IncitesParser {
      * Parse all faculty contained in xlsx data file
      *
      * @param OPCPackage pkg
+     * @param int numSheets
      */
-    private void parseFacultyXLSX(OPCPackage pkg) {
+    private void parseFacultyXLSX(OPCPackage pkg, int numSheets) {
+    	if (numSheets == 1) {
+    		return; // Exit. No faculty sheet exists.
+    	}
         try {
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
@@ -500,14 +464,15 @@ public class IncitesParser {
      * author a node. Node info is embedded inside each edge.
      *
      * @param OPCPackage pkg
+     * @param int numSheets
      */
-    private void parsePubsXLSX(OPCPackage pkg) {
+    private void parsePubsXLSX(OPCPackage pkg, int numSheets) {
         try {
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
             // Publication data is found in sheet#3 of spreadsheet
-            XMLReader parser = fetchSheetParser(sst, 3);
-            InputStream sheet = r.getSheet("rId3");
+            XMLReader parser = fetchSheetParser(sst, numSheets == 1 ? 1 : 3);
+            InputStream sheet = r.getSheet(numSheets == 1 ? "rId1" : "rId3");
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
             sheet.close();
