@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -193,20 +192,15 @@ public class PubMed {
     private void commitPubMedSearch() {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if ((this.totalPubs == null) || (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs)
-                    && Integer.parseInt(this.totalPubs) > 500) {
-                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
-                // Load all publications at once
-                // TODO: Temporary. Large requests have to be handled differently.
-                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, getEntrezUtilitiesHandler());
-            } else {
+            if ((this.totalPubs != null)) {
                 // Use newly discovered queryKey and webEnv to build a tag
                 Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
                 // Load all publications at once
                 String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
                 saxParser.parse(url, getEntrezUtilitiesHandler());
             }
+            // TODO: Is it necessary to handle requests with > 500 results differently?
+            // (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs) && Integer.parseInt(this.totalPubs) > 500
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
