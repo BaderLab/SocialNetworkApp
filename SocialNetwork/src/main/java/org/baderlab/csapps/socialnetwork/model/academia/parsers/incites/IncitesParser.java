@@ -44,11 +44,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
@@ -181,16 +183,68 @@ public class IncitesParser {
     /**
      * Constructor for {@link IncitesParser}
      *
-     * @param File xlsx
+     * @param File file
      */
-    public IncitesParser(File xlsx) {
+    public IncitesParser(File file) {
         this.locationMap = new Incites_InstitutionLocationMap();
-        this.parseFaculty(xlsx);
-        this.parsePublications(xlsx);
-        this.calculateSummary();
+        OPCPackage pkg;
+		try {
+			pkg = OPCPackage.open(file.getAbsolutePath());
+			XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+			switch(workbook.getNumberOfSheets()) {
+				case 1:
+					this.parsePubsRawXLSX(pkg);
+					break;
+				default:
+					this.parseFacultyXLSX(pkg);
+					this.parsePubsXLSX(pkg);
+					break;
+			}
+			this.calculateSummary();
+		} catch (InvalidFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
-
+    
     /**
+     * Parse all publications (as well as all associated author info) contained
+     * in xlsx data file. Note that each publication serves as an edge and each
+     * author a node. Node info is embedded inside each edge.
+     *
+     * @param OPCPackage pkg
+     */
+    private void parsePubsRawXLSX(OPCPackage pkg) {
+        try {
+            XSSFReader r = new XSSFReader(pkg);
+            SharedStringsTable sst = r.getSharedStringsTable();
+            // Publication data is found in sheet#3 of spreadsheet
+            XMLReader parser = fetchSheetParser(sst, 1);
+            InputStream sheet = r.getSheet("rId1");
+            InputSource sheetSource = new InputSource(sheet);
+            parser.parse(sheetSource);
+            sheet.close();
+        // Users do not have to be notified about these exceptions
+        // but printed stack traces are useful (i.e. debugging)
+        } catch (IOException e) {
+            e.printStackTrace();
+            this.setPubList(null);
+        } catch (SAXException e) {
+            e.printStackTrace();
+            this.setPubList(null);
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+            this.setPubList(null);
+        } catch (OpenXML4JException e) {
+            e.printStackTrace();
+            this.setPubList(null);
+        }		
+	}
+
+	/**
      * Return true iff author in authorList
      *
      * @param List authorList
@@ -251,11 +305,15 @@ public class IncitesParser {
     private XMLReader fetchSheetParser(SharedStringsTable sst, int sheet) throws SAXException {
         XMLReader parser = XMLReaderFactory.createXMLReader();
         switch (sheet) {
+            // Sheet#1: ??
+            case 1:
+            	parser.setContentHandler(new RawPubSheetHandler(sst, this));
+        	    break;
             // Sheet#3: publication data
             case 3:
                 parser.setContentHandler(new PubSheetHandler(sst, this));
                 break;
-                // Sheet#4: faculty data
+            // Sheet#4: faculty data
             case 4:
                 parser.setContentHandler(new FacultySheetHandler(sst, this));
                 break;
@@ -390,13 +448,12 @@ public class IncitesParser {
     }
 
     /**
-     * Parse all faculty contained in data file
+     * Parse all faculty contained in xlsx data file
      *
-     * @param File xlsxFile
+     * @param OPCPackage pkg
      */
-    private void parseFaculty(File xlsxFile) {
+    private void parseFacultyXLSX(OPCPackage pkg) {
         try {
-            OPCPackage pkg = OPCPackage.open(xlsxFile.getAbsolutePath());
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
             // Faculty data found in sheet#4 of spreadsheet
@@ -405,8 +462,8 @@ public class IncitesParser {
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
             sheet.close();
-            // Users do not have to be notified about these errors
-            // but printed stack traces are useful (i.e. debugging)
+        // Users do not have to be notified about these errors
+        // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
             e.printStackTrace();
             this.setDepartmentName("N/A");
@@ -439,14 +496,13 @@ public class IncitesParser {
 
     /**
      * Parse all publications (as well as all associated author info) contained
-     * in data file. Note that each publication serves as an edge and each
+     * in xlsx data file. Note that each publication serves as an edge and each
      * author a node. Node info is embedded inside each edge.
      *
-     * @param File xlsxFile
+     * @param OPCPackage pkg
      */
-    private void parsePublications(File xlsxFile) {
+    private void parsePubsXLSX(OPCPackage pkg) {
         try {
-            OPCPackage pkg = OPCPackage.open(xlsxFile.getAbsolutePath());
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
             // Publication data is found in sheet#3 of spreadsheet
@@ -455,8 +511,8 @@ public class IncitesParser {
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
             sheet.close();
-            // Users do not have to be notified about these exceptions
-            // but printed stack traces are useful (i.e. debugging)
+        // Users do not have to be notified about these exceptions
+        // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
             e.printStackTrace();
             this.setPubList(null);

@@ -215,10 +215,10 @@ public class SocialNetworkAppManager {
         String departmentName = null;
         // Create network out of InCites data
         if (this.analysis_type == this.ANALYSISTYPE_INCITES) {
-            extension = FilenameUtils.getExtension(networkFile.getPath());
+            extension = FilenameUtils.getExtension(networkFile.getPath()).trim();
             IncitesParser incitesParser = null;
             // Load data from text file
-            if (extension.trim().equalsIgnoreCase("xlsx")) {
+            if (extension.equalsIgnoreCase("xlsx")) {
                 socialNetwork = new SocialNetwork(networkName, Category.INCITES);
                 incitesParser = new IncitesParser(networkFile);
                 if (incitesParser.getIgnoredRows() >= 1) {
@@ -234,7 +234,7 @@ public class SocialNetworkAppManager {
                     CytoscapeUtilities.notifyUser("Invalid file. This InCites file is corrupt.");
                     return;
                 }
-                // Notify user of inappropriate file type
+            // Notify user of inappropriate file type
             } else {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
@@ -248,7 +248,6 @@ public class SocialNetworkAppManager {
 
             // Add info to social network map(s)
             socialNetwork.getAttrMap().put(IncitesVisualStyle.nodeattr_dept, departmentName);
-            // Create network out of Scopus data
         } else if (this.analysis_type == this.ANALYSISTYPE_PUBMED) {
             extension = FilenameUtils.getExtension(networkFile.getPath());
             PubMed pubmed = null;
@@ -266,6 +265,7 @@ public class SocialNetworkAppManager {
                 CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
                 return;
             }
+        // Create network out of Scopus data
         } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
             extension = FilenameUtils.getExtension(networkFile.getPath());
             Scopus scopus = null;
