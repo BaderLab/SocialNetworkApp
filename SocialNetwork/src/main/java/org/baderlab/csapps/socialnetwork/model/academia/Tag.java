@@ -45,28 +45,6 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 public class Tag {
 
     /**
-     * Augment query with query key
-     *
-     * @param String query
-     * @param String queryKey
-     * @return String query
-     */
-    public static String augmentQueryKey(String query, String queryKey) {
-        return String.format("%s&query_key=%s", query, queryKey);
-    }
-
-    /**
-     * Augment query with WebEnv
-     *
-     * @param String query
-     * @param String webEnv
-     * @return String query
-     */
-    public static String augmentWebEnv(String query, String webEnv) {
-        return String.format("%s&WebEnv=%s", query, webEnv);
-    }
-
-    /**
      * Tag consists of queryKey, webEnv, retStart and retMax values. Necessary
      * to recover document summaries from PubMed
      */
@@ -77,16 +55,64 @@ public class Tag {
      *
      * @param String queryKey
      * @param String webEnv
-     * @param String retStart
-     * @param String retMax
+     * @param int retStart
+     * @param int retMax
      */
-    public Tag(String queryKey, String webEnv, String retStart, String retMax) {
+    public Tag(String queryKey, String webEnv, int retStart, int retMax) {
         this.tag = "";
         this.tag = augmentQueryKey(this.tag, queryKey);
         this.tag = augmentWebEnv(this.tag, webEnv);
+        this.tag = augmentRetStart(this.tag, String.valueOf(retStart));
+        this.tag = augmentRetMax(this.tag, String.valueOf(retMax));
     }
 
     /**
+     * Augment query with query key
+     *
+     * @param String query
+     * @param String queryKey
+     * @return String query
+     */
+    private String augmentQueryKey(String query, String queryKey) {
+        return String.format("%s&query_key=%s", query, queryKey);
+    }
+
+    /**
+     * Augment query with RetMax
+     * 
+     * @param String query
+     * @param String retMax
+     * 
+     * @return String query
+     */
+    private String augmentRetMax(String query, String retMax) {
+    	return String.format("%s&RetMax=%s", query, retMax);
+	}
+
+    /**
+     * Augment query with RetStart
+     * 
+     * @param String query
+     * @param String retStart
+     * 
+     * @return String query
+     */
+	private String augmentRetStart(String query, String retStart) {
+    	return String.format("%s&RetStart=%s", query, retStart);
+	}
+
+    /**
+     * Augment query with WebEnv
+     *
+     * @param String query
+     * @param String webEnv
+     * @return String query
+     */
+    private String augmentWebEnv(String query, String webEnv) {
+        return String.format("%s&WebEnv=%s", query, webEnv);
+    }
+
+	/**
      * Return string representation of tag
      *
      * @return String tag

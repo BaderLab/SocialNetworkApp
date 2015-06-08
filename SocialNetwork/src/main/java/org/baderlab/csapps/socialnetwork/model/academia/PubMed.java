@@ -109,12 +109,18 @@ public class PubMed {
             String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
             saxParser.parse(url, getSearchHandler());
             saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if ((this.totalPubs != null)) {
-                // Use newly discovered queryKey and webEnv to build a tag
-                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
-                // Load all publications at once
-                url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, getTimesCitedHandler(publicationTitle));
+            if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
+            	int total = Integer.parseInt(this.totalPubs);
+            	int retStart = 0;
+            	int retMax = total > 500 ? 500 : total;
+            	while (!(retStart > total)) {
+            		// Use newly discovered queryKey and webEnv to build a tag
+            		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
+            		// Load all publications at once
+            		url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+            		saxParser.parse(url, getTimesCitedHandler(publicationTitle));
+            		retStart += retMax;
+            	}
             }
             if (this.timesCited != null) {
             	return Pattern.matches("[0-9]+", this.timesCited) ? this.timesCited : null;            	
@@ -161,14 +167,6 @@ public class PubMed {
      * Unique queryKey. Necessary for retrieving search results
      */
     private String queryKey = null;
-    /**
-     * The number of UIDs returned in search at one go
-     */
-    private String retMax = null;
-    /**
-     * The index of the first record returned in search
-     */
-    private String retStart = null;
     /**
      * A publication's total number of citations
      */
@@ -249,15 +247,19 @@ public class PubMed {
     private void commitPubMedSearch() {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if ((this.totalPubs != null)) {
-                // Use newly discovered queryKey and webEnv to build a tag
-                Tag tag = new Tag(this.queryKey, this.webEnv, this.retStart, this.retMax);
-                // Load all publications at once
-                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, getEntrezUtilitiesHandler());
+            if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
+            	int total = Integer.parseInt(this.totalPubs);
+            	int retStart = 0;
+            	int retMax = total > 500 ? 500 : total;
+            	while (retStart < total) {
+            		// Use newly discovered queryKey and webEnv to build a tag
+            		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
+            		// Load all publications at once
+            		String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+            		saxParser.parse(url, getEntrezUtilitiesHandler());
+            		retStart += retMax;
+            	}
             }
-            // TODO: Is it necessary to handle requests with > 500 results differently?
-            // (this.totalPubs != null) && Pattern.matches("[0-9]+", this.totalPubs) && Integer.parseInt(this.totalPubs) > 500
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
@@ -587,7 +589,11 @@ public class PubMed {
      */
     private DefaultHandler getSearchHandler() throws SAXException, IOException, ParserConfigurationException {
         DefaultHandler searchHandler = new DefaultHandler() {
-
+        	
+        	public void DefaultHandler() {
+        		PubMed.this.totalPubs = null;
+        	}
+ 
             /**
              * XML Parsing variables. Used to temporarily store data.
              */
@@ -627,7 +633,7 @@ public class PubMed {
              * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
              */
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                if (qName.equalsIgnoreCase("Count")) {
+                if (qName.equalsIgnoreCase("Count") && PubMed.this.totalPubs == null) {
                     this.isTotalPubs = true;
                 }
                 if (qName.equalsIgnoreCase("QueryKey")) {
