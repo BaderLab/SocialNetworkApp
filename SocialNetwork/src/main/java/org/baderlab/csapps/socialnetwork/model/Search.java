@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.awt.Cursor;
 import java.util.List;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 

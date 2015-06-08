@@ -45,7 +45,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.Action;
+
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;

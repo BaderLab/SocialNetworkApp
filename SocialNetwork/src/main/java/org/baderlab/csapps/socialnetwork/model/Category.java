@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 

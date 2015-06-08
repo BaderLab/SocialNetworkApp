@@ -38,6 +38,7 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
+
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;

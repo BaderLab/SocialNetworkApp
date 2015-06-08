@@ -3,7 +3,9 @@ package org.baderlab.csapps.socialnetwork.autoannotate.action;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.swing.JOptionPane;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.view.DisplayOptionsPanel;
 import org.cytoscape.application.CyApplicationManager;

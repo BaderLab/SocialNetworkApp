@@ -50,6 +50,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**

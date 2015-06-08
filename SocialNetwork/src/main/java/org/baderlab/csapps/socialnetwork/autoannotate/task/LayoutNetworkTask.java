@@ -2,13 +2,12 @@ package org.baderlab.csapps.socialnetwork.autoannotate.task;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;
-import org.baderlab.csapps.socialnetwork.autoannotate.view.AutoAnnotationPanel;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTableManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
@@ -17,7 +16,6 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
-import org.cytoscape.work.swing.DialogTaskManager;
 
 public class LayoutNetworkTask extends AbstractTask {
 	

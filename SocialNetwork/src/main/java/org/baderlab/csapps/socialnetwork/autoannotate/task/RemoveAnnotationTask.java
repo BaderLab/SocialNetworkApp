@@ -2,7 +2,9 @@ package org.baderlab.csapps.socialnetwork.autoannotate.task;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import javax.swing.JTable;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;

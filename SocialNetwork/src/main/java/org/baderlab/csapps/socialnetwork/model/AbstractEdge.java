@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.List;
 import java.util.Map;
+
 import org.cytoscape.model.CyEdge;
 
 /**

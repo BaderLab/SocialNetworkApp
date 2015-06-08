@@ -38,6 +38,7 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import java.util.List;
+
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;

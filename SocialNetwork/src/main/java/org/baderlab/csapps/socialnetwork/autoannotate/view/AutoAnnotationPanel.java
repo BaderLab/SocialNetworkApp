@@ -12,6 +12,7 @@ import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -28,6 +29,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.action.AnnotateButtonActionListener;

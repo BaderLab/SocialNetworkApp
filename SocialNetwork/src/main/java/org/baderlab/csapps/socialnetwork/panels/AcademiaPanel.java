@@ -48,17 +48,20 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -95,6 +98,8 @@ public class AcademiaPanel {
     private JRadioButton pubmedRadioButton = null;
     private JRadioButton scopusRadioButton = null;
     private JRadioButton thresholdRadioButton = null;
+    private JPanel nghborDegreePanel = null;
+    private JTextField neighborDegree = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -155,8 +160,10 @@ public class AcademiaPanel {
     public BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setCollapsed(true);;
-        JPanel innerPanel = new JPanel();
-        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
+        
+        
+        JPanel thresholdPanel = new JPanel();
+        thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
         this.thresholdRadioButton = new JRadioButton("Set max authors per pub");
         this.thresholdRadioButton.setEnabled(true); // Set the ?? as true
         this.thresholdRadioButton.setToolTipText("Set the maximum # of authors to be considered per publication. "
@@ -172,12 +179,67 @@ public class AcademiaPanel {
         });
         // TODO: Hide the radio button to prevent users from disabling it
         // innerPanel.add(this.thresholdRadioButton);
-        innerPanel.add(Box.createHorizontalStrut(5));
-        innerPanel.add(new JLabel("Max authors per pub"));
-        innerPanel.add(Box.createHorizontalStrut(5));
-        innerPanel.add(getThresholdTextAreaRef());
-        advancedOptionsPanel.add(innerPanel);
+        thresholdPanel.add(Box.createHorizontalStrut(5));
+        thresholdPanel.add(new JLabel("Max authors per pub"));
+        thresholdPanel.add(Box.createHorizontalStrut(5));
+        thresholdPanel.add(getThresholdTextAreaRef());
+        
+        JPanel exportNghborPanel = new JPanel();
+        exportNghborPanel.setLayout(new BoxLayout(exportNghborPanel, BoxLayout.X_AXIS));
+        JButton exportNghborButton = new JButton("Export neighbors");
+        exportNghborButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				
+        		int outcome = JOptionPane.OK_OPTION;
+        		while (outcome == JOptionPane.OK_OPTION) {
+        			outcome = JOptionPane.showConfirmDialog(null, getNghborDegreePanel(), "Login",
+        					JOptionPane.OK_CANCEL_OPTION);
+        			if (outcome == JOptionPane.OK_OPTION) {
+        				System.out.println(AcademiaPanel.this.neighborDegree.getText());
+        				// TODO: Access CyNetwork to obtain nth degree neighbors
+        				outcome = JOptionPane.CANCEL_OPTION;
+        			}
+        		}
+			}
+        });
+        exportNghborPanel.add(Box.createHorizontalStrut(5));
+        exportNghborPanel.add(exportNghborButton);
+        exportNghborPanel.add(Box.createHorizontalStrut(5));
+        
+        advancedOptionsPanel.add(thresholdPanel);
+        advancedOptionsPanel.add(Box.createVerticalStrut(5));
+        advancedOptionsPanel.add(exportNghborPanel);
         return advancedOptionsPanel;
+    }
+    
+    /**
+     * Create a panel that allows the user to select the degree of the neighbors
+     * he or she wants to export
+     * 
+     * @return JPanel nghborDegreePanel
+     */
+    private JPanel createNghborDegreePanel() {
+		JPanel nghborDegreePanel = new JPanel();
+		JPanel innerPanel = new JPanel();
+		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
+		neighborDegree = new JTextField(5);
+		neighborDegree.setText("1");
+		innerPanel.add(new JLabel("Please specify the degree:"));
+		innerPanel.add(neighborDegree);
+		nghborDegreePanel.add(innerPanel, BorderLayout.NORTH);
+		return nghborDegreePanel;
+    }
+    
+    /**
+     * Get a panel that allows the user to select the degree of the neighbors
+     * he or she wants to export
+     * 
+     * @return JPanel nghborDegreePanel
+     */
+    private JPanel getNghborDegreePanel() {
+    	if (this.nghborDegreePanel == null) {
+    		this.nghborDegreePanel = this.createNghborDegreePanel();
+    	}
+    	return this.nghborDegreePanel;
     }
 
     /**
@@ -419,7 +481,7 @@ public class AcademiaPanel {
 
     /**
      *
-     * @return {@link JTextArea} thresholdTextFieldRef
+     * @return {@link JTextArea} thresholdTextAreaRef
      */
     public JTextArea getThresholdTextAreaRef() {
         if (this.thresholdTextAreaRef == null) {

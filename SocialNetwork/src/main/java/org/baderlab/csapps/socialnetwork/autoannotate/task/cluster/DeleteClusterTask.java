@@ -1,15 +1,16 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task.cluster;
 
 import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.ClusterTableModel;
 import org.baderlab.csapps.socialnetwork.autoannotate.task.UpdateAnnotationsTaskFactory;
-import org.baderlab.csapps.socialnetwork.autoannotate.view.AutoAnnotationPanel;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.work.AbstractTask;

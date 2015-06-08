@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.action.DisplayOptionsPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.view.AutoAnnotationPanel;
 import org.baderlab.csapps.socialnetwork.autoannotate.view.DisplayOptionsPanel;

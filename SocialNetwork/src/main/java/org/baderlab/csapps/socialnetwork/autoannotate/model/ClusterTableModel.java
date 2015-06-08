@@ -4,9 +4,11 @@ package org.baderlab.csapps.socialnetwork.autoannotate.model;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.task.cluster.DrawClusterLabelTask;
 import org.cytoscape.work.TaskIterator;

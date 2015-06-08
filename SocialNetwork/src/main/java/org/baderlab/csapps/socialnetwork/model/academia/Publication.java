@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;

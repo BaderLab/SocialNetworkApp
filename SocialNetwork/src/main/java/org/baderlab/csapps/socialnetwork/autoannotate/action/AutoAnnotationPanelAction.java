@@ -43,6 +43,12 @@
 
 package org.baderlab.csapps.socialnetwork.autoannotate.action;
 
+import java.awt.event.ActionEvent;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.view.AutoAnnotationPanel;
 import org.cytoscape.application.CyApplicationManager;
@@ -55,10 +61,6 @@ import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.presentation.annotations.AnnotationManager;
-import java.awt.event.ActionEvent;
-import java.util.Map;
-import java.util.Properties;
-import javax.swing.JOptionPane;
 
 /**
  * Created by

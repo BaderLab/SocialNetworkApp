@@ -42,6 +42,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;

@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
@@ -123,6 +124,7 @@ public class CreateNetworkTask extends AbstractTask {
         try {
             // Create an empty network
             CyNetwork myNet = this.cyNetworkFactoryServiceRef.createNetwork();
+            
             // Get network node table
             CyTable nodeTable = null;
             // Get network edge table

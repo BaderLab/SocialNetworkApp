@@ -9,6 +9,7 @@ package org.baderlab.csapps.socialnetwork.autoannotate;
 
 import java.util.HashMap;
 import java.util.Set;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;
 import org.baderlab.csapps.socialnetwork.autoannotate.task.cluster.DrawClusterLabelTask;

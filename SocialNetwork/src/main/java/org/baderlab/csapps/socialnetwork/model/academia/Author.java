@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;

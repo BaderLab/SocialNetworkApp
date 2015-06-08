@@ -39,7 +39,9 @@ package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.Map;
+
 import javax.swing.WindowConstants;
+
 import org.baderlab.csapps.socialnetwork.panels.AboutPanel;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;

@@ -1,7 +1,9 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task;
 
 import java.util.List;
+
 import javax.swing.JOptionPane;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;

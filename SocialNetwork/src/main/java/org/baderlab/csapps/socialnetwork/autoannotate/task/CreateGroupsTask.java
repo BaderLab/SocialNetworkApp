@@ -1,6 +1,7 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task;
 
 import java.util.ArrayList;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;

@@ -38,8 +38,10 @@
 package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
+
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.junit.After;

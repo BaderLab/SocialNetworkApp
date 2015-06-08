@@ -6,7 +6,6 @@ import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 

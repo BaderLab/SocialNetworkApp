@@ -39,11 +39,13 @@ package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.Insets;
 import java.net.URL;
+
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.OpenBrowser;

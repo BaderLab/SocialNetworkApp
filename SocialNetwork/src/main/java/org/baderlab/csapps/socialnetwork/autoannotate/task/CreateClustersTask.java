@@ -3,6 +3,7 @@ package org.baderlab.csapps.socialnetwork.autoannotate.task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationUtils;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;

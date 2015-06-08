@@ -8,6 +8,7 @@ package org.baderlab.csapps.socialnetwork.autoannotate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;

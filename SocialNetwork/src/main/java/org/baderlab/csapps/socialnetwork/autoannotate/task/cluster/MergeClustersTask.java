@@ -1,8 +1,10 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task.cluster;
 
 import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;

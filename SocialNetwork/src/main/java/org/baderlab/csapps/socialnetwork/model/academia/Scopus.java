@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;

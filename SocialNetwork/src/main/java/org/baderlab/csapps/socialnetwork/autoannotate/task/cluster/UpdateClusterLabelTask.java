@@ -1,12 +1,11 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task.cluster;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.Cluster;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.WordInfo;
-import org.baderlab.csapps.socialnetwork.autoannotate.model.WordInfoNumberComparator;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;

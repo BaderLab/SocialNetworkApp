@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
+
 import javax.swing.JTable;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.session.CySession;

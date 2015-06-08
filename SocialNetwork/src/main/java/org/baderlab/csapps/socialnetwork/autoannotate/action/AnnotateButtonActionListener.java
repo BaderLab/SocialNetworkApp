@@ -2,6 +2,7 @@ package org.baderlab.csapps.socialnetwork.autoannotate.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.task.AutoAnnotationTask;

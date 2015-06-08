@@ -42,6 +42,7 @@ import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
