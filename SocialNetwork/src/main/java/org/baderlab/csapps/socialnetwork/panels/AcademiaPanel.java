@@ -45,6 +45,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +57,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,8 +67,12 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
@@ -98,7 +106,7 @@ public class AcademiaPanel {
     private JRadioButton pubmedRadioButton = null;
     private JRadioButton scopusRadioButton = null;
     private JRadioButton thresholdRadioButton = null;
-    private JPanel nghborDegreePanel = null;
+    private JPanel neighborDegreePanel = null;
     private JTextField neighborDegree = null;
 
     /**
@@ -184,40 +192,89 @@ public class AcademiaPanel {
         thresholdPanel.add(Box.createHorizontalStrut(5));
         thresholdPanel.add(getThresholdTextAreaRef());
         
-        JPanel exportNghborPanel = new JPanel();
-        exportNghborPanel.setLayout(new BoxLayout(exportNghborPanel, BoxLayout.X_AXIS));
-        JButton exportNghborButton = new JButton("Export neighbors");
-        exportNghborButton.addActionListener(new ActionListener() {
+        JPanel exportNeighborPanel = new JPanel();
+        exportNeighborPanel.setLayout(new BoxLayout(exportNeighborPanel, BoxLayout.X_AXIS));
+        JButton exportNeighborButton = new JButton("Export neighbors");
+        exportNeighborButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
         		int outcome = JOptionPane.OK_OPTION;
         		while (outcome == JOptionPane.OK_OPTION) {
-        			outcome = JOptionPane.showConfirmDialog(null, getNghborDegreePanel(), "Login",
+        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanel(), "Login",
         					JOptionPane.OK_CANCEL_OPTION);
         			if (outcome == JOptionPane.OK_OPTION) {
-        				System.out.println(AcademiaPanel.this.neighborDegree.getText());
-        				// TODO: Access CyNetwork to obtain nth degree neighbors
+        				String text = AcademiaPanel.this.neighborDegree.getText().trim();
+        				if (!Pattern.matches("[0-9]+", text)) {
+        					CytoscapeUtilities.notifyUser("Invalid input. Please enter an integer value.");
+        					continue;
+        				}
+        				SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
+        				if (network == null) {
+        					CytoscapeUtilities.notifyUser("Unable to export. No network selected.");
+        				} else {
+        					exportNeighborsToCSV(network.getCyNetwork(), Integer.parseInt(text));
+        				}
         				outcome = JOptionPane.CANCEL_OPTION;
         			}
         		}
 			}
         });
-        exportNghborPanel.add(Box.createHorizontalStrut(5));
-        exportNghborPanel.add(exportNghborButton);
-        exportNghborPanel.add(Box.createHorizontalStrut(5));
+        exportNeighborPanel.add(Box.createHorizontalStrut(5));
+        exportNeighborPanel.add(exportNeighborButton);
+        exportNeighborPanel.add(Box.createHorizontalStrut(5));
         
         advancedOptionsPanel.add(thresholdPanel);
         advancedOptionsPanel.add(Box.createVerticalStrut(5));
-        advancedOptionsPanel.add(exportNghborPanel);
+        advancedOptionsPanel.add(exportNeighborPanel);
         return advancedOptionsPanel;
+    }
+    
+    /**
+     * Export the nth degree neighbors of the specified network to CSV
+     * 
+     * @param CyNetwork cyNetwork
+     * @param int degree
+     */
+    private void exportNeighborsToCSV(CyNetwork cyNetwork, int degree) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int rVal = chooser.showSaveDialog(this.cySwingAppRef.getJFrame());
+        if (rVal == JFileChooser.APPROVE_OPTION) {
+    	    try {
+    	    	// TODO: watch for slash direction
+				FileWriter writer = new FileWriter(chooser.getSelectedFile().getAbsolutePath() + "/neighbor_list.csv");
+				writer.append("Author");
+				writer.append(',');
+				writer.append("Neighbors");
+				writer.append('\n');
+				for (CyNode node : cyNetwork.getNodeList()) {
+					writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
+					writer.append(',');
+					// TODO: n^th degree authors
+					for (CyNode neighbour : cyNetwork.getNeighborList(node, CyEdge.Type.ANY)) {
+						writer.append(cyNetwork.getDefaultNodeTable().getRow(neighbour.getSUID()).get("name", String.class));
+						writer.append(" - ");
+					}
+					writer.append('\n');
+				}
+				writer.flush();
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
+			}
+        }
+        if (rVal == JFileChooser.CANCEL_OPTION) {
+          System.out.println("CANCELLED");
+        }    
     }
     
     /**
      * Create a panel that allows the user to select the degree of the neighbors
      * he or she wants to export
      * 
-     * @return JPanel nghborDegreePanel
+     * @return JPanel neighborDegreePanel
      */
-    private JPanel createNghborDegreePanel() {
+    private JPanel createNeighborDegreePanel() {
 		JPanel nghborDegreePanel = new JPanel();
 		JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
@@ -233,13 +290,13 @@ public class AcademiaPanel {
      * Get a panel that allows the user to select the degree of the neighbors
      * he or she wants to export
      * 
-     * @return JPanel nghborDegreePanel
+     * @return JPanel neighborDegreePanel
      */
-    private JPanel getNghborDegreePanel() {
-    	if (this.nghborDegreePanel == null) {
-    		this.nghborDegreePanel = this.createNghborDegreePanel();
+    private JPanel getNeighborDegreePanel() {
+    	if (this.neighborDegreePanel == null) {
+    		this.neighborDegreePanel = this.createNeighborDegreePanel();
     	}
-    	return this.nghborDegreePanel;
+    	return this.neighborDegreePanel;
     }
 
     /**
