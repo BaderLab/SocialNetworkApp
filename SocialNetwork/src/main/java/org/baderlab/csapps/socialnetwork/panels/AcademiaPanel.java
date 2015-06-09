@@ -262,10 +262,7 @@ public class AcademiaPanel {
 				e.printStackTrace();
 				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
 			}
-        }
-        if (rVal == JFileChooser.CANCEL_OPTION) {
-          System.out.println("CANCELLED");
-        }    
+        }   
     }
     
     /**
