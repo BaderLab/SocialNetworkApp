@@ -375,13 +375,13 @@ public class AcademiaPanel {
      */
     private JPanel createNeighborDegreePanel() {
 		JPanel nghborDegreePanel = new JPanel();
-		JPanel innerPanel = new JPanel();
-		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
+		JPanel degreeInputPanel = new JPanel();
+		degreeInputPanel.setLayout(new BoxLayout(degreeInputPanel, BoxLayout.X_AXIS));
 		neighborDegree = new JTextField(5);
 		neighborDegree.setText("1");
-		innerPanel.add(new JLabel("Please specify the degree:"));
-		innerPanel.add(neighborDegree);
-		nghborDegreePanel.add(innerPanel, BorderLayout.NORTH);
+		degreeInputPanel.add(new JLabel("Please specify the degree:"));
+		degreeInputPanel.add(neighborDegree);
+		nghborDegreePanel.add(degreeInputPanel, BorderLayout.NORTH);
 		return nghborDegreePanel;
     }
 
