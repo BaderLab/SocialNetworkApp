@@ -73,6 +73,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTable;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
@@ -454,14 +455,15 @@ public class AcademiaPanel {
      * @param int degree
      */
     private void exportNeighborsToCSV(CyNetwork cyNetwork, int degree) {
-    	String os = System.getProperty("os.name").toLowerCase();
+    	if (degree == 0) {
+    		return; // No neighbors to export if degree is equal to 0
+    	}
     	JFileChooser fc = new JFileChooser();
     	fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     	fc.setDialogTitle("Select a folder");
     	fc.setApproveButtonText("SELECT");
         if (fc.showOpenDialog(this.cySwingAppRef.getJFrame()) == JFileChooser.APPROVE_OPTION) {
     	    try {
-    	    	// TODO: watch for slash direction
     	        String fileName = "/neighbor_list.csv";
 				FileWriter writer = new FileWriter(fc.getSelectedFile().getAbsolutePath() + fileName);
 				writer.append("Author");
@@ -471,11 +473,7 @@ public class AcademiaPanel {
 				for (CyNode node : cyNetwork.getNodeList()) {
 					writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
 					writer.append(',');
-					// TODO: n^th degree authors
-					for (CyNode neighbour : cyNetwork.getNeighborList(node, CyEdge.Type.ANY)) {
-						writer.append(cyNetwork.getDefaultNodeTable().getRow(neighbour.getSUID()).get("name", String.class));
-						writer.append(" - ");
-					}
+					writeNthDegreeNode(node, cyNetwork, writer, degree);
 					writer.append('\n');
 				}
 				writer.flush();
@@ -485,6 +483,30 @@ public class AcademiaPanel {
 				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
 			}
         }   
+    }
+    
+    /**
+     * Write the nth degree neighbors of {@code node} into a text file
+     * 
+     * @param CyNode node
+     * @param CyNetwork network
+     * @param FileWriter writer
+     * @param {@code int} depth
+     */
+    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, int depth) {
+    	if (depth == 0) {
+			try {
+				writer.append(network.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
+				writer.append(" - ");
+			} catch (IOException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
+			}
+			return;
+    	}
+    	for (CyNode neighbour : network.getNeighborList(node, CyEdge.Type.ANY)) {
+    		writeNthDegreeNode(neighbour, network, writer, depth - 1);    		
+    	}
     }
 
     /**
