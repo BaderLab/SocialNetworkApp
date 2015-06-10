@@ -229,74 +229,6 @@ public class AcademiaPanel {
     }
     
     /**
-     * Export the nth degree neighbors of the specified network to CSV
-     * 
-     * @param CyNetwork cyNetwork
-     * @param int degree
-     */
-    private void exportNeighborsToCSV(CyNetwork cyNetwork, int degree) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int rVal = chooser.showSaveDialog(this.cySwingAppRef.getJFrame());
-        if (rVal == JFileChooser.APPROVE_OPTION) {
-    	    try {
-    	    	// TODO: watch for slash direction
-				FileWriter writer = new FileWriter(chooser.getSelectedFile().getAbsolutePath() + "/neighbor_list.csv");
-				writer.append("Author");
-				writer.append(',');
-				writer.append("Neighbors");
-				writer.append('\n');
-				for (CyNode node : cyNetwork.getNodeList()) {
-					writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
-					writer.append(',');
-					// TODO: n^th degree authors
-					for (CyNode neighbour : cyNetwork.getNeighborList(node, CyEdge.Type.ANY)) {
-						writer.append(cyNetwork.getDefaultNodeTable().getRow(neighbour.getSUID()).get("name", String.class));
-						writer.append(" - ");
-					}
-					writer.append('\n');
-				}
-				writer.flush();
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
-			}
-        }   
-    }
-    
-    /**
-     * Create a panel that allows the user to select the degree of the neighbors
-     * he or she wants to export
-     * 
-     * @return JPanel neighborDegreePanel
-     */
-    private JPanel createNeighborDegreePanel() {
-		JPanel nghborDegreePanel = new JPanel();
-		JPanel innerPanel = new JPanel();
-		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
-		neighborDegree = new JTextField(5);
-		neighborDegree.setText("1");
-		innerPanel.add(new JLabel("Please specify the degree:"));
-		innerPanel.add(neighborDegree);
-		nghborDegreePanel.add(innerPanel, BorderLayout.NORTH);
-		return nghborDegreePanel;
-    }
-    
-    /**
-     * Get a panel that allows the user to select the degree of the neighbors
-     * he or she wants to export
-     * 
-     * @return JPanel neighborDegreePanel
-     */
-    private JPanel getNeighborDegreePanel() {
-    	if (this.neighborDegreePanel == null) {
-    		this.neighborDegreePanel = this.createNeighborDegreePanel();
-    	}
-    	return this.neighborDegreePanel;
-    }
-
-    /**
      * Create Database info panel. Allows user to load InCites or Scopus derived
      * data files
      *
@@ -328,7 +260,7 @@ public class AcademiaPanel {
 
         return databaseInfoPanel;
     }
-
+    
     /**
      * Create database panel
      *
@@ -368,7 +300,7 @@ public class AcademiaPanel {
         return databasePanel;
 
     }
-
+    
     /**
      * Create load button. Load button loads data file onto Cytoscape for
      * parsing
@@ -435,6 +367,24 @@ public class AcademiaPanel {
     }
 
     /**
+     * Create a panel that allows the user to select the degree of the neighbors
+     * he or she wants to export
+     * 
+     * @return JPanel neighborDegreePanel
+     */
+    private JPanel createNeighborDegreePanel() {
+		JPanel nghborDegreePanel = new JPanel();
+		JPanel innerPanel = new JPanel();
+		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.X_AXIS));
+		neighborDegree = new JTextField(5);
+		neighborDegree.setText("1");
+		innerPanel.add(new JLabel("Please specify the degree:"));
+		innerPanel.add(neighborDegree);
+		nghborDegreePanel.add(innerPanel, BorderLayout.NORTH);
+		return nghborDegreePanel;
+    }
+
+    /**
      * Create <i>CreateNetwork</i> button. When pressed, the <i>CreateNetwork</i> button
      * attempts to create a network out of a file specified by the user.
      *
@@ -498,6 +448,46 @@ public class AcademiaPanel {
     }
 
     /**
+     * Export the nth degree neighbors of the specified network to CSV
+     * 
+     * @param CyNetwork cyNetwork
+     * @param int degree
+     */
+    private void exportNeighborsToCSV(CyNetwork cyNetwork, int degree) {
+    	String os = System.getProperty("os.name").toLowerCase();
+    	JFileChooser fc = new JFileChooser();
+    	fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	fc.setDialogTitle("Select a folder");
+    	fc.setApproveButtonText("SELECT");
+        if (fc.showOpenDialog(this.cySwingAppRef.getJFrame()) == JFileChooser.APPROVE_OPTION) {
+    	    try {
+    	    	// TODO: watch for slash direction
+    	        String fileName = "/neighbor_list.csv";
+				FileWriter writer = new FileWriter(fc.getSelectedFile().getAbsolutePath() + fileName);
+				writer.append("Author");
+				writer.append(',');
+				writer.append("Neighbors");
+				writer.append('\n');
+				for (CyNode node : cyNetwork.getNodeList()) {
+					writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
+					writer.append(',');
+					// TODO: n^th degree authors
+					for (CyNode neighbour : cyNetwork.getNeighborList(node, CyEdge.Type.ANY)) {
+						writer.append(cyNetwork.getDefaultNodeTable().getRow(neighbour.getSUID()).get("name", String.class));
+						writer.append(" - ");
+					}
+					writer.append('\n');
+				}
+				writer.flush();
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
+			}
+        }   
+    }
+
+    /**
      * Get academia info panel reference
      *
      * @return {@link JPanel} academiaInfoPanelRef
@@ -513,6 +503,19 @@ public class AcademiaPanel {
      */
     public JTextField getFacultyTextFieldRef() {
         return this.facultyTextFieldRef;
+    }
+
+    /**
+     * Get a panel that allows the user to select the degree of the neighbors
+     * he or she wants to export
+     * 
+     * @return JPanel neighborDegreePanel
+     */
+    private JPanel getNeighborDegreePanel() {
+    	if (this.neighborDegreePanel == null) {
+    		this.neighborDegreePanel = this.createNeighborDegreePanel();
+    	}
+    	return this.neighborDegreePanel;
     }
 
     /**
