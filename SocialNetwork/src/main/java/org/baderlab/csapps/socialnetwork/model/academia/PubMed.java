@@ -525,8 +525,8 @@ public class PubMed {
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
                 	// TODO:
-                	System.out.println(PubMed.this.title);
-                    System.out.println("");
+                	//System.out.println(PubMed.this.title);
+                    //System.out.println("");
                 	//PubMed.this.timesCited = null;
                 	Publication pub = new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
                     		PubMed.this.timesCited, null, PubMed.this.pubAuthorList);
