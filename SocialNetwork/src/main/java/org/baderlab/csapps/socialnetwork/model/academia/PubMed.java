@@ -113,7 +113,7 @@ public class PubMed {
             	int total = Integer.parseInt(this.totalPubs);
             	int retStart = 0;
             	int retMax = total > 500 ? 500 : total;
-            	while (!(retStart > total)) {
+            	while (!(retStart >= total)) {
             		// Use newly discovered queryKey and webEnv to build a tag
             		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
             		// Load all publications at once
@@ -520,7 +520,8 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
-                	PubMed.this.timesCited = PubMed.getTimesCited(PubMed.this.title);
+                	//PubMed.this.timesCited = PubMed.getTimesCited(PubMed.this.title);
+                	PubMed.this.timesCited = null;
                     PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
                     		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
                     PubMed.this.pubAuthorList.clear();
