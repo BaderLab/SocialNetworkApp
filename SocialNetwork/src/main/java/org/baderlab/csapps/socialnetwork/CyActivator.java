@@ -301,7 +301,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         registerService(bc, autoAnnotationPanelAction, CyAction.class, new Properties());
-         */
+        */
 
         //Auto-annotate Display Options Panel Action - opens display options panel
         /*
@@ -313,7 +313,7 @@ public class CyActivator extends AbstractCyActivator {
                 annotationManager,
                 cyServiceRegistrar);
         autoAnnotationManager.setDisplayOptionsPanelAction(displayOptionsPanelAction);
-         */
+        */
 
     }
 }

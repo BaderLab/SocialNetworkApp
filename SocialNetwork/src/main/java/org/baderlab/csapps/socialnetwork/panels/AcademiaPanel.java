@@ -47,7 +47,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +55,9 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -70,10 +71,10 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
@@ -109,6 +110,7 @@ public class AcademiaPanel {
     private JRadioButton thresholdRadioButton = null;
     private JPanel neighborDegreePanel = null;
     private JTextField neighborDegree = null;
+    private JComboBox<String> nodeAttrComboBox = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -166,7 +168,7 @@ public class AcademiaPanel {
      *
      * @return {@link BasicCollapsiblePanel} advancedOptionsPanel
      */
-    public BasicCollapsiblePanel createAdvancedOptionsPanel() {
+    private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setCollapsed(true);;
         
@@ -200,7 +202,7 @@ public class AcademiaPanel {
 			public void actionPerformed(ActionEvent e) {				
         		int outcome = JOptionPane.OK_OPTION;
         		while (outcome == JOptionPane.OK_OPTION) {
-        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanel(), "Login",
+        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanel(), "Export neighbor list options",
         					JOptionPane.OK_CANCEL_OPTION);
         			if (outcome == JOptionPane.OK_OPTION) {
         				String text = AcademiaPanel.this.neighborDegree.getText().trim();
@@ -235,7 +237,7 @@ public class AcademiaPanel {
      *
      * @return {@link JPanel} databaseInfoPanel
      */
-    public JPanel createDatabaseInfoPanel() {
+    private JPanel createDatabaseInfoPanel() {
 
         // Create new Database info panel.
         JPanel databaseInfoPanel = new JPanel();
@@ -267,7 +269,7 @@ public class AcademiaPanel {
      *
      * @return {@link JPanel} databasePanel
      */
-    public JPanel createDatabasePanel() {
+    private JPanel createDatabasePanel() {
         JPanel databasePanel = new JPanel();
 
         // Set bordered title
@@ -308,7 +310,7 @@ public class AcademiaPanel {
      *
      * @return {@link JButton} load
      */
-    public JButton createLoadButton() {
+    private JButton createLoadButton() {
 
         JButton loadButton = new JButton("...");
         loadButton.setToolTipText("Load InCites / Scopus data");
@@ -351,7 +353,7 @@ public class AcademiaPanel {
      *
      * @return {@link JPanel} loadDataPanel
      */
-    public JPanel createLoadDataPanel() {
+    private JPanel createLoadDataPanel() {
         JPanel loadDataPanel = new JPanel();
         loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
         loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
@@ -374,15 +376,37 @@ public class AcademiaPanel {
      * @return JPanel neighborDegreePanel
      */
     private JPanel createNeighborDegreePanel() {
-		JPanel nghborDegreePanel = new JPanel();
+		JPanel neighborDegreePanel = new JPanel();
+		neighborDegreePanel.setLayout(new BoxLayout(neighborDegreePanel, BoxLayout.Y_AXIS));
+		
 		JPanel degreeInputPanel = new JPanel();
 		degreeInputPanel.setLayout(new BoxLayout(degreeInputPanel, BoxLayout.X_AXIS));
 		neighborDegree = new JTextField(5);
 		neighborDegree.setText("1");
 		degreeInputPanel.add(new JLabel("Please specify the degree:"));
 		degreeInputPanel.add(neighborDegree);
-		nghborDegreePanel.add(degreeInputPanel, BorderLayout.NORTH);
-		return nghborDegreePanel;
+		
+		JPanel nodeAttrPanel = new JPanel();
+		nodeAttrPanel.setLayout(new BoxLayout(nodeAttrPanel, BoxLayout.X_AXIS));
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
+		if (network == null) {
+			model.addElement("N/A");
+		} else {
+			for (CyColumn col : network.getCyNetwork().getDefaultNodeTable().getColumns()) {
+				if (col.getType() == String.class) {
+					model.addElement(col.getName());								
+				}
+			}			
+		}
+		nodeAttrComboBox = new JComboBox<String>(model);
+		nodeAttrPanel.add(new JLabel("Select node attribute:"));
+		nodeAttrPanel.add(nodeAttrComboBox);
+		// TODO:
+		
+		neighborDegreePanel.add(degreeInputPanel);
+		neighborDegreePanel.add(nodeAttrPanel);
+		return neighborDegreePanel;
     }
 
     /**
@@ -391,7 +415,7 @@ public class AcademiaPanel {
      *
      * @return {@link JButton} createNetworkButton
      */
-    public JButton createNetworkButton() {
+    private JButton createNetworkButton() {
         JButton createNetworkButton = new JButton("Create Network");
         createNetworkButton.setToolTipText("Create network");
         createNetworkButton.addActionListener(new ActionListener() {
@@ -434,7 +458,7 @@ public class AcademiaPanel {
      *
      * @return {@link JPanel} networkNamePanel
      */
-    public JPanel createSpecifyNetworkNamePanel() {
+    private JPanel createSpecifyNetworkNamePanel() {
         JPanel specifyNetworkNamePanel = new JPanel();
         specifyNetworkNamePanel.setBorder(BorderFactory.createTitledBorder("Specify Network Name"));
         specifyNetworkNamePanel.setLayout(new BoxLayout(specifyNetworkNamePanel, BoxLayout.X_AXIS));
@@ -470,11 +494,15 @@ public class AcademiaPanel {
 				writer.append(',');
 				writer.append("Neighbors");
 				writer.append('\n');
-				for (CyNode node : cyNetwork.getNodeList()) {
-					writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
-					writer.append(',');
-					writeNthDegreeNode(node, cyNetwork, writer, degree);
-					writer.append('\n');
+				String attr = (String) nodeAttrComboBox.getSelectedItem();
+				if (!attr.equalsIgnoreCase("N/A")) {
+					for (CyNode node : cyNetwork.getNodeList()) {
+						// column is assumed to be of type String
+						writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class));
+						writer.append(',');
+						writeNthDegreeNode(node, cyNetwork, writer, attr, degree);
+						writer.append('\n');
+					}					
 				}
 				writer.flush();
 				writer.close();
@@ -491,13 +519,13 @@ public class AcademiaPanel {
      * @param CyNode node
      * @param CyNetwork network
      * @param FileWriter writer
+     * @param String attr
      * @param {@code int} depth
      */
-    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, int depth) {
+    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, String attr, int depth) {
     	if (depth == 0) {
 			try {
-				writer.append(network.getDefaultNodeTable().getRow(node.getSUID()).get("name", String.class));
-				writer.append(" - ");
+				writer.append("(" + network.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class) + ") ");
 			} catch (IOException e) {
 				e.printStackTrace();
 				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
@@ -505,7 +533,7 @@ public class AcademiaPanel {
 			return;
     	}
     	for (CyNode neighbour : network.getNeighborList(node, CyEdge.Type.ANY)) {
-    		writeNthDegreeNode(neighbour, network, writer, depth - 1);    		
+    		writeNthDegreeNode(neighbour, network, writer, attr, depth - 1);    		
     	}
     }
 
@@ -545,7 +573,7 @@ public class AcademiaPanel {
      *
      * @return {@link JTextField} pathTextField
      */
-    public JTextField getPathTextFieldRef() {
+    private JTextField getPathTextFieldRef() {
         return this.pathTextFieldRef;
     }
 
@@ -554,7 +582,7 @@ public class AcademiaPanel {
      *
      * @return {@link File} selectedFile
      */
-    public File getSelectedFileRef() {
+    private File getSelectedFileRef() {
         return this.selectedFileRef;
     }
 
@@ -579,7 +607,7 @@ public class AcademiaPanel {
      * @param String path
      * @return String filename
      */
-    public String parseFileName(String path) {
+    private String parseFileName(String path) {
         Pattern pattern = Pattern.compile("([^\\\\/]+?)(\\.xlsx|\\.txt|\\.csv||\\.xml)$");
         Matcher matcher = pattern.matcher(path);
         if (matcher.find()) {
@@ -602,7 +630,7 @@ public class AcademiaPanel {
      *
      * @param {@link File} data
      */
-    public void setDataFile(File selectedFile) {
+    private void setDataFile(File selectedFile) {
         this.selectedFileRef = selectedFile;
     }
 
@@ -611,7 +639,7 @@ public class AcademiaPanel {
      *
      * @param {@link JTextField} facultyTextField
      */
-    public void setFacultyTextFieldRef(JTextField facultyTextField) {
+    private void setFacultyTextFieldRef(JTextField facultyTextField) {
         this.facultyTextFieldRef = facultyTextField;
     }
 
@@ -620,7 +648,7 @@ public class AcademiaPanel {
      *
      * @param {@link JTextField} pathTextField
      */
-    public void setLoadTextField(JTextField pathTextField) {
+    private void setLoadTextField(JTextField pathTextField) {
         this.pathTextFieldRef = pathTextField;
     }
 
@@ -628,7 +656,7 @@ public class AcademiaPanel {
      *
      * @param {@link JTextArea} thresholdTextFieldRef
      */
-    public void setThresholdTextAreaRef(JTextArea thresholdTextFieldRef) {
+    private void setThresholdTextAreaRef(JTextArea thresholdTextFieldRef) {
         this.thresholdTextAreaRef = thresholdTextFieldRef;
     }
 
