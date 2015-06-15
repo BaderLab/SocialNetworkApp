@@ -83,6 +83,10 @@ public class Publication extends AbstractEdge {
      * Publication's title
      */
     private String title = null;
+    /**
+     * A unique identifier for this publication
+     */
+    private String pmid = null;
 
     /**
      * Create new publication
@@ -228,6 +232,15 @@ public class Publication extends AbstractEdge {
     }
 
     /**
+     * Get the PMID of this publication
+     * 
+     * @return String pmid
+     */
+	public String getPMID() {
+		return this.pmid;
+	}
+
+    /**
      * Get publication date
      *
      * @return String pubDate
@@ -310,6 +323,15 @@ public class Publication extends AbstractEdge {
     }
 
     /**
+	 * Set the PMID of this publication
+	 * 
+	 * @param String pmid
+	 */
+	public void setPMID(String pmid) {
+		this.pmid = pmid;
+	}
+    
+    /**
      * Set publication pub date
      *
      * @param String date
@@ -326,7 +348,7 @@ public class Publication extends AbstractEdge {
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
     }
-    
+
     /**
      * Set times cited
      * 
@@ -347,7 +369,7 @@ public class Publication extends AbstractEdge {
         this.title = title;
     }
 
-    /**
+	/**
      * Return a string representation of the publication in the format: <br>
      * Title: <i>title</i> <br>
      * Pub-Date: <i>pubdate</i> <br>

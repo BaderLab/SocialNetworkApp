@@ -104,7 +104,7 @@ public class PubMed {
      * @return String timesCited
      */
     public String findTimesCited(Publication publication) {
-        Query query = new Query(publication.getTitle());
+        Query query = new Query(publication.getPMID());
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
@@ -112,9 +112,6 @@ public class PubMed {
             saxParser = SAXParserFactory.newInstance().newSAXParser();
             if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
             	int total = Integer.parseInt(this.totalPubs);
-            	if (total > 1) {
-            		return null;
-            	}
             	int retStart = 0;
             	int retMax = total > 500 ? 500 : total;
             	while (!(retStart >= total)) {
@@ -167,6 +164,10 @@ public class PubMed {
      * A list containing all the results that search session has yielded
      */
     private ArrayList<Publication> pubList = new ArrayList<Publication>();
+    /**
+     * A publication's unique identifier
+     */
+    private String pmid = null;
     /**
      * Unique queryKey. Necessary for retrieving search results
      */
@@ -455,7 +456,7 @@ public class PubMed {
              * XML Parsing variables. Used to temporarily store data.
              */
             boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, isTimesCited = false, 
-            		isFirstName = false, isLastName = false, isMiddleInitial = false, isInstitution = false;
+            		isFirstName = false, isLastName = false, isMiddleInitial = false, isInstitution = false, isPMID = false;
 
             // Collect tag contents (if applicable)
             @Override
@@ -499,6 +500,10 @@ public class PubMed {
                     PubMed.this.timesCited = new String(ch, start, length);
                     this.isTimesCited = false;
                 }
+                if (this.isPMID && PubMed.this.pmid == null) {
+                	PubMed.this.pmid = new String(ch, start, length);
+                	this.isPMID = false;
+                }
             }
 
             /**
@@ -530,7 +535,9 @@ public class PubMed {
                 	//PubMed.this.timesCited = null;
                 	Publication pub = new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
                     		PubMed.this.timesCited, null, PubMed.this.pubAuthorList);
+                	pub.setPMID(PubMed.this.pmid);
                 	pub.setTimesCited(PubMed.getTimesCited(pub));
+                	PubMed.this.pmid = null;
                     PubMed.this.pubList.add(pub);
                     PubMed.this.pubAuthorList.clear();
                 }
@@ -583,6 +590,9 @@ public class PubMed {
                 }
                 if (qName.equals("PmcRefCount")) {
                     this.isTimesCited = true;
+                }
+                if (qName.equals("PMID")) {
+                	this.isPMID = true;
                 }
             }
         };
