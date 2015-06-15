@@ -85,25 +85,26 @@ public class PubMed {
     }
     
     /**
-     * Get the # of times pub has been cited on PubMed.
+     * Get the # of times that the specified publication has been cited on 
+     * PubMed Central.
      * 
-     * @param String publicationTitle
+     * @param Publication publication
      * @return String timesCited
      */
-    public static String getTimesCited(String publicationTitle) {
+    public static String getTimesCited(Publication publication) {
     	PubMed pubmed = new PubMed();
-    	return pubmed.findTimesCited(publicationTitle);
+    	return pubmed.findTimesCited(publication);
     }
     
     /**
-     * Return the citation count of the publication with the specified title,
-     * and null if no valid publication is found.
+     * Return the citation count of the specified publication,
+     * and null if no valid publication is found in eUtils.
      * 
-     * @param String publicationTitle
+     * @param Publication publication
      * @return String timesCited
      */
-    public String findTimesCited(String publicationTitle) {
-        Query query = new Query(publicationTitle);
+    public String findTimesCited(Publication publication) {
+        Query query = new Query(publication.getTitle());
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
@@ -111,6 +112,9 @@ public class PubMed {
             saxParser = SAXParserFactory.newInstance().newSAXParser();
             if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
             	int total = Integer.parseInt(this.totalPubs);
+            	if (total > 1) {
+            		return null;
+            	}
             	int retStart = 0;
             	int retMax = total > 500 ? 500 : total;
             	while (!(retStart >= total)) {
@@ -118,7 +122,7 @@ public class PubMed {
             		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
             		// Load all publications at once
             		url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-            		saxParser.parse(url, getTimesCitedHandler(publicationTitle));
+            		saxParser.parse(url, getTimesCitedHandler(publication.getTitle()));
             		retStart += retMax;
             	}
             }
@@ -520,10 +524,14 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
-                	//PubMed.this.timesCited = PubMed.getTimesCited(PubMed.this.title);
-                	PubMed.this.timesCited = null;
-                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
-                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                	// TODO:
+                	System.out.println(PubMed.this.title);
+                    System.out.println("");
+                	//PubMed.this.timesCited = null;
+                	Publication pub = new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
+                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList);
+                	pub.setTimesCited(PubMed.getTimesCited(pub));
+                    PubMed.this.pubList.add(pub);
                     PubMed.this.pubAuthorList.clear();
                 }
                 if (qName.equals("Author")) {

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
@@ -324,6 +325,17 @@ public class Publication extends AbstractEdge {
      */
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
+    }
+    
+    /**
+     * Set times cited
+     * 
+     * @param String timesCited
+     */
+    public void setTimesCited(String timesCited) {
+    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {
+    		this.timesCited = Integer.parseInt(timesCited);
+    	}
     }
 
     /**
