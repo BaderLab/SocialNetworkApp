@@ -192,14 +192,12 @@ public class IncitesParser {
 			pkg = OPCPackage.open(file.getAbsolutePath());
 			XSSFWorkbook workbook = new XSSFWorkbook(pkg);
 			int numSheets = workbook.getNumberOfSheets();
-			this.parsePubsXLSX(pkg, numSheets);
 			this.parseFacultyXLSX(pkg, numSheets);
+			this.parsePubsXLSX(pkg, numSheets);
 			this.calculateSummary();
 		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
