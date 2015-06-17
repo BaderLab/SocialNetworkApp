@@ -78,7 +78,7 @@ public class Publication extends AbstractEdge {
     /**
      * The total amount of times Publication has been cited
      */
-    private int timesCited = 0;
+    private String timesCited = null;
     /**
      * Publication's title
      */
@@ -103,8 +103,8 @@ public class Publication extends AbstractEdge {
         this.title = title;
         this.journal = journal;
         this.authorList.addAll(coauthorList);
-        if (timesCited != null) {
-            this.timesCited = Integer.parseInt(timesCited);
+    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {        	
+    		this.timesCited = timesCited;        	
         }
         this.expectedCitations = expectedCitations;
         constructEdgeAttrMap();
@@ -255,7 +255,7 @@ public class Publication extends AbstractEdge {
      * @return int timesCited
      */
     public int getTimesCited() {
-        return this.timesCited;
+        return Integer.parseInt(this.timesCited);
     }
 
     /**
@@ -346,7 +346,7 @@ public class Publication extends AbstractEdge {
      * @param int timesCited
      */
     public void setTimesCited(int timesCited) {
-        this.timesCited = timesCited;
+    	this.timesCited = String.valueOf(timesCited);
     }
 
     /**
@@ -355,9 +355,7 @@ public class Publication extends AbstractEdge {
      * @param String timesCited
      */
     public void setTimesCited(String timesCited) {
-    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {
-    		this.timesCited = Integer.parseInt(timesCited);
-    	}
+    	this.timesCited = timesCited;
     }
 
     /**

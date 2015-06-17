@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,61 +83,6 @@ public class PubMed {
         // Initialize Publications attribute (~ ArrayList)
         nodeAttrMap.put(columns[i], new ArrayList<String>());
         return nodeAttrMap;
-    }
-    
-    /**
-     * Get the # of times that the specified publication has been cited on 
-     * PubMed Central.
-     * 
-     * @param Publication publication
-     * @return String timesCited
-     */
-    public static String getTimesCited(Publication publication) {
-    	PubMed pubmed = new PubMed();
-    	return pubmed.findTimesCited(publication);
-    }
-    
-    /**
-     * Return the citation count of the specified publication,
-     * and null if no valid publication is found in eUtils.
-     * 
-     * @param Publication publication
-     * @return String timesCited
-     */
-    public String findTimesCited(Publication publication) {
-        Query query = new Query(publication.getPMID());
-        try {
-            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
-            saxParser.parse(url, getSearchHandler());
-            saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
-            	int total = Integer.parseInt(this.totalPubs);
-            	int retStart = 0;
-            	int retMax = total > 500 ? 500 : total;
-            	while (!(retStart >= total)) {
-            		// Use newly discovered queryKey and webEnv to build a tag
-            		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
-            		// Load all publications at once
-            		url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-            		saxParser.parse(url, getTimesCitedHandler(publication.getTitle()));
-            		retStart += retMax;
-            	}
-            }
-            if (this.timesCited != null) {
-            	return Pattern.matches("[0-9]+", this.timesCited) ? this.timesCited : null;            	
-            }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-        } catch (SAXException e) {
-            e.printStackTrace();
-            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
-        }
-    	return null;
     }
     
     /**
@@ -206,6 +152,54 @@ public class PubMed {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(xmlFile, getXmlExportHandler());
+            setPmcRefCount(this.pubList);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (SAXException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
+        }
+    }
+    
+    /**
+     * Set the PmcRefCount of the publications in the list.
+     * 
+     * @param ArrayList pubList
+     */
+    private void setPmcRefCount(ArrayList<Publication> pubList) {
+    	StringBuilder query = new StringBuilder();
+    	Iterator<Publication> it = pubList.iterator();
+    	Publication pub = null;
+    	while (it.hasNext()) {
+    		pub = it.next();
+    		query.append(pub.getPMID());
+    		query.append("[UID]");
+    		if (it.hasNext()) {
+    			query.append(" OR ");    			
+    		}
+    	}
+        try {
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", new Query(query.toString()));
+            saxParser.parse(url, getSearchHandler());
+            saxParser = SAXParserFactory.newInstance().newSAXParser();
+            if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
+            	int total = Integer.parseInt(this.totalPubs);
+            	int retStart = 0;
+            	int retMax = total > 500 ? 500 : total;
+            	while (!(retStart >= total)) {
+            		// Use newly discovered queryKey and webEnv to build a tag
+            		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
+            		// Load all publications at once
+            		url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+            		saxParser.parse(url, getTimesCitedHandler(pubList));
+            		retStart += retMax;
+            	}
+            }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
@@ -370,7 +364,7 @@ public class PubMed {
                 if (contains(attributes, "PmcRefCount")) {
                     this.isTimesCited = true;
                 }
-                if (contains(attributes, "eid")) {
+                if (qName.equals("Id")) {
                 	this.isPMID = true;
                 }
              }
@@ -386,24 +380,29 @@ public class PubMed {
      * @param String publicationTitle
      * @return DefaultHandler timesCitedHandler
      */
-    private DefaultHandler getTimesCitedHandler(final String publicationTitle) {
+    private DefaultHandler getTimesCitedHandler(final ArrayList<Publication> pubList) {
         DefaultHandler publicationHandler = new DefaultHandler() {
 
             /**
              * XML Parsing variables. Used to temporarily store data.
              */
-            boolean isTitle = false, isTimesCited = false;
+            boolean isTimesCited = false, isPMID = false;
+            int index = 0;
 
             // Collect tag contents (if applicable)
             @Override
             public void characters(char ch[], int start, int length) throws SAXException {
-                if (this.isTitle) {
-                    PubMed.this.title = new String(ch, start, length);
-                    this.isTitle = false;
-                }
-                if (this.isTimesCited && PubMed.this.title.equals(publicationTitle)) {
-                    PubMed.this.timesCited = new String(ch, start, length);
-                    this.isTimesCited = false;
+            	if (this.isPMID) {
+            		PubMed.this.pmid = new String(ch, start, length);
+            		this.isPMID = false;
+            	}
+                if (this.isTimesCited) {
+                	if (PubMed.this.pmid.equals(pubList.get(index).getPMID())) {
+                		PubMed.this.timesCited = new String(ch, start, length);
+                		this.isTimesCited = false;
+                	} else {
+                		// TODO: Store ids of ignored publications in a log file             		
+                	}
                 }
             }
 
@@ -425,17 +424,21 @@ public class PubMed {
 
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
-
+                if (qName.equalsIgnoreCase("DocSum")) {
+                	// TODO:
+                	pubList.get(index).setTimesCited(PubMed.this.timesCited);
+                	index++;
+                }
             }
 
             // Reset variable contents
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                if (contains(attributes, "Title")) {
-                    this.isTitle = true;
-                }
                 if (contains(attributes, "PmcRefCount")) {
                     this.isTimesCited = true;
+                }
+                if (qName.equals("Id")) {
+                	this.isPMID = true;
                 }
             }
         };
@@ -539,14 +542,9 @@ public class PubMed {
              */
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("PubmedArticle")) {
-                	// TODO:
-                	//System.out.println(PubMed.this.title);
-                    //System.out.println("");
-                	//PubMed.this.timesCited = null;
                 	Publication pub = new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
                     		PubMed.this.timesCited, null, PubMed.this.pubAuthorList);
                 	pub.setPMID(PubMed.this.pmid);
-                	pub.setTimesCited(PubMed.getTimesCited(pub));
                 	PubMed.this.pmid = null;
                     PubMed.this.pubList.add(pub);
                     PubMed.this.pubAuthorList.clear();
