@@ -41,7 +41,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -62,7 +64,7 @@ public class TestInteraction {
     @After
     public void tearDown() throws Exception {
     }
-
+    
     @Test
     /**
      * Verify the correct calculation of times cited in two publications
@@ -73,10 +75,20 @@ public class TestInteraction {
         IncitesParser incitesParser = new IncitesParser(timesCitedFile);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
-        Collaboration cons = (Collaboration) map.keySet().toArray()[0];
-        Author authorA = (Author) cons.getNode1();
-        Author authorB = (Author) cons.getNode2();
-        assertTrue(authorA.getTimesCited() == 9 && authorB.getTimesCited() == 7);
+        boolean status = true;
+        Iterator it = map.entrySet().iterator();
+        Map.Entry<Collaboration, ArrayList<AbstractEdge>> pair = null;
+        Collaboration cons = null;
+        Author authorA = null, authorB = null;
+        while (it.hasNext() && status == true) {
+        	pair = (Map.Entry<Collaboration, ArrayList<AbstractEdge>>) it.next();
+        	cons = pair.getKey();
+        	authorA = (Author) cons.getNode1();
+        	authorB = (Author) cons.getNode2();
+        	status = status && verifyAuthor(authorA);
+        	status = status && verifyAuthor(authorB);
+        }
+        assertTrue(status);
     }
 
     @Test
@@ -94,6 +106,28 @@ public class TestInteraction {
         Author authorA = (Author) cons.getNode1();
         Author authorB = (Author) cons.getNode2();
         assertTrue(authorA.getTimesCited() == 2 && authorB.getTimesCited() == 2);
+    }
+
+    /**
+     * Returns true iff author's identity is legitimate.
+     * 
+     * @param Author author
+     * @return boolean
+     */
+    private boolean verifyAuthor(Author author) {
+    	boolean status = true;
+	    switch (author.getTimesCited()) {
+			case 2:
+				status = status && author.getLabel().equals("Julian Bashir");
+				break;
+			case 7:
+				status = status && author.getLabel().equals("Kira Nerys");
+				break;
+			case 9:
+				status = status && author.getLabel().equals("Benjamin Sisko");
+				break;
+		}
+    	return status;
     }
 
 }
