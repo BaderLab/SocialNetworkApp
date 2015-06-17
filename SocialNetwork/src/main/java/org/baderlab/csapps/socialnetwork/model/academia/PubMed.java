@@ -288,7 +288,8 @@ public class PubMed {
             /**
              * XML Parsing variables. Used to temporarily store data.
              */
-            boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, isTimesCited = false;
+            boolean isPubDate = false, isAuthor = false, isTitle = false, isJournal = false, isTimesCited = false,
+            		isPMID = false;
 
             // Collect tag contents (if applicable)
             @Override
@@ -317,6 +318,10 @@ public class PubMed {
                     PubMed.this.timesCited = new String(ch, start, length);
                     this.isTimesCited = false;
                 }
+                if (this.isPMID) {
+                	PubMed.this.pmid = new String(ch, start, length);
+                	this.isPMID = false;
+                }
             }
 
             /**
@@ -339,8 +344,10 @@ public class PubMed {
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
                 if (qName.equalsIgnoreCase("DocSum")) {
-                    PubMed.this.pubList.add(new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
-                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList));
+                	Publication publication = new Publication(PubMed.this.title, PubMed.this.pubDate, PubMed.this.journal, 
+                    		PubMed.this.timesCited, null, PubMed.this.pubAuthorList);
+                	publication.setPMID(PubMed.this.pmid);
+                    PubMed.this.pubList.add(publication);
                     PubMed.this.pubAuthorList.clear();
                 }
             }
@@ -363,7 +370,10 @@ public class PubMed {
                 if (contains(attributes, "PmcRefCount")) {
                     this.isTimesCited = true;
                 }
-            }
+                if (contains(attributes, "eid")) {
+                	this.isPMID = true;
+                }
+             }
         };
 
         return publicationHandler;

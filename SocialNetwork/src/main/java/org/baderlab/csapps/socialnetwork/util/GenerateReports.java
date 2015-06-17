@@ -320,7 +320,7 @@ public class GenerateReports {
             html_writer.println("<td><b>Publication</b></td><td><b># of authors</b></td><td><b>Times Cited</b></td>");
             for (Publication pub : this.excludedPubs) {
                 html_writer.println("<tr>");
-                url = root + "\"" + pub.getTitle() + "[Title]\"";
+                url = root + pub.getPMID();
                 html_writer.println("<td><a href=" + url.replace(" ", "%20") + ">" + pub.getTitle() + "</a></td>");
                 html_writer.println("<td>" + pub.getAuthorList().size() + "</td>");
                 html_writer.println("<td>" + pub.getTimesCited() + "</td>");
