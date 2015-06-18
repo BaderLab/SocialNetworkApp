@@ -171,35 +171,36 @@ public class PubMed {
      * @param ArrayList pubList
      */
     private void setPmcRefCount(ArrayList<Publication> pubList) {
-    	StringBuilder query = new StringBuilder();
-    	Iterator<Publication> it = pubList.iterator();
+
     	Publication pub = null;
-    	while (it.hasNext()) {
-    		pub = it.next();
-    		query.append(pub.getPMID());
-    		query.append("[UID]");
-    		if (it.hasNext()) {
-    			query.append(" OR ");    			
+    	int retStart = 0;
+    	int total = pubList.size();
+    	int retMax = total > 400 ? 400 : total;
+    	while (retStart < total) {
+        	StringBuilder query = new StringBuilder();
+    		for(int i =retStart;i<retMax;i++) {    			
+    			pub = pubList.get(i);
+    			query.append(pub.getPMID());
+    			query.append("[UID]");
+    			if (i<(retMax-1)) {
+    				query.append(" OR ");    			
+    			}
     		}
-    	}
-        try {
-            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", new Query(query.toString()));
-            saxParser.parse(url, getSearchHandler());
-            saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
-            	int total = Integer.parseInt(this.totalPubs);
-            	int retStart = 0;
-            	int retMax = total > 500 ? 500 : total;
-            	while (!(retStart >= total)) {
-            		// Use newly discovered queryKey and webEnv to build a tag
-            		Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
-            		// Load all publications at once
-            		url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-            		saxParser.parse(url, getTimesCitedHandler(pubList));
-            		retStart += retMax;
-            	}
-            }
+    		try {
+    			SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+    			String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", new Query(query.toString()));
+    			saxParser.parse(url, getSearchHandler());
+    			saxParser = SAXParserFactory.newInstance().newSAXParser();
+                      	
+            	// Use newly discovered queryKey and webEnv to build a tag
+            	Tag tag = new Tag(this.queryKey, this.webEnv, retStart, retMax);
+            	// Load all publications at once
+            	url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+            	saxParser.parse(url, getTimesCitedHandler(pubList,retStart));
+            	retStart = retMax;
+            	retMax = retMax+400 <= total ? (retMax + 400) : total;
+            	
+            
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
@@ -211,7 +212,7 @@ public class PubMed {
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
     }
-
+   }
     /**
      * Create a new {@link PubMed} search session
      *
@@ -380,14 +381,14 @@ public class PubMed {
      * @param String publicationTitle
      * @return DefaultHandler timesCitedHandler
      */
-    private DefaultHandler getTimesCitedHandler(final ArrayList<Publication> pubList) {
+    private DefaultHandler getTimesCitedHandler(final ArrayList<Publication> pubList, final int start_index) {
         DefaultHandler publicationHandler = new DefaultHandler() {
 
             /**
              * XML Parsing variables. Used to temporarily store data.
              */
             boolean isTimesCited = false, isPMID = false;
-            int index = 0;
+            int index = start_index;
 
             // Collect tag contents (if applicable)
             @Override

@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
@@ -255,7 +258,13 @@ public class Publication extends AbstractEdge {
      * @return int timesCited
      */
     public int getTimesCited() {
-        return Integer.parseInt(this.timesCited);
+    	int timescited = 0;
+    	try{
+    		timescited = Integer.parseInt(this.timesCited);
+    	} catch (NumberFormatException e) {
+    		//missing the time cited info
+        }  
+        return timescited;
     }
 
     /**
