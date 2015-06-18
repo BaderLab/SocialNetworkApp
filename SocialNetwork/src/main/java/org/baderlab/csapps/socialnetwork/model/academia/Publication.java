@@ -144,11 +144,6 @@ public class Publication extends AbstractEdge {
 
     }
 
-    /*
-     * Go through all the authors on the paper and get the location that occurs
-     * the most on the paper
-     */
-
     /**
      * Construct edge attribute map for use in Cytoscape
      */

@@ -2,6 +2,7 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -10,6 +11,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -76,11 +78,18 @@ public class PubMedXmlParser extends DefaultHandler {
     private String title = null;
     
     /**
+     * Progress bar variables
+     */
+    private int currentSteps = 0;
+    private int totalSteps = 0;
+    private double progress = 0.0;
+    
+    /**
      * Create a new PubMed xml parser
      * 
      * @param File xml
      */
-    public PubMedXmlParser(File xml) {
+    public PubMedXmlParser(File xml, TaskMonitor taskMonitor) {
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(xml, this);
@@ -154,6 +163,7 @@ public class PubMedXmlParser extends DefaultHandler {
      *
      * @param Attribute attributes
      * @param String text
+     * 
      * @return Boolean bool
      */
     public boolean contains(Attributes attributes, String text) {
@@ -167,8 +177,7 @@ public class PubMedXmlParser extends DefaultHandler {
 
     // Create new publication and add it to overall publist
     @Override
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
@@ -246,6 +255,44 @@ public class PubMedXmlParser extends DefaultHandler {
         if (qName.equals("PMID")) {
             this.isPMID = true;
         }
+    }
+    
+    /**
+     * Set progress monitor
+     *
+     * @param TaskMonitor taskMonitor
+     * @param String taskName
+     * @param int totalSteps
+     */
+    private void setProgressMonitor(TaskMonitor taskMonitor, String taskName, int totalSteps) {
+        taskMonitor.setTitle(taskName);
+        taskMonitor.setProgress(0.0);
+        this.currentSteps = 0;
+        this.totalSteps = totalSteps;
+    }
+
+    /**
+     * Update progress monitor
+     *
+     * @param int currentSteps
+     */
+    private void updateProgress(TaskMonitor taskMonitor) {
+        this.currentSteps += 1;
+        this.progress = (double) this.currentSteps / this.totalSteps;
+        taskMonitor.setStatusMessage("Complete: " + toPercent(this.progress));
+        taskMonitor.setProgress(this.progress);
+    }
+    
+    /**
+     * Return progress as a percentage
+     *
+     * @param Double progress
+     * @return String percentage
+     */
+    private String toPercent(double progress) {
+        progress = progress * 100;
+        DecimalFormat df = new DecimalFormat("00");
+        return df.format(progress) + "%";
     }
 
 }

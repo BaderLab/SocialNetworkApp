@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -55,6 +54,7 @@ import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -184,8 +184,11 @@ public class IncitesParser {
      * Constructor for {@link IncitesParser}
      *
      * @param File file
+     * @param TaskMonitor taskMonitor
      */
-    public IncitesParser(File file) {
+    public IncitesParser(File file, TaskMonitor taskMonitor) {
+        // TODO: test cases can't provide a taskMonitor, what
+        // to do in this situation?
         this.locationMap = new Incites_InstitutionLocationMap();
         OPCPackage pkg;
 		try {

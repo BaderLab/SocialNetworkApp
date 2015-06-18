@@ -73,7 +73,7 @@ public class TestIncites {
      */
     public void testDefectiveRowsExist() {
         File defectiveRowsExistFile = new File("src/test/resources/incites/data/defective_rows_exist.xlsx");
-        IncitesParser incitesParser = new IncitesParser(defectiveRowsExistFile);
+        IncitesParser incitesParser = new IncitesParser(defectiveRowsExistFile, null);
         assertTrue(incitesParser.getDefectiveRows() == 7);
     }
 
@@ -83,7 +83,7 @@ public class TestIncites {
      */
     public void testDefectiveRowsNonExistent() {
         File defectiveRowsNotExistFile = new File("src/test/resources/incites/data/no_defective_rows.xlsx");
-        IncitesParser incitesParser = new IncitesParser(defectiveRowsNotExistFile);
+        IncitesParser incitesParser = new IncitesParser(defectiveRowsNotExistFile, null);
         assertTrue(incitesParser.getDefectiveRows() == 0);
     }
 
@@ -93,7 +93,7 @@ public class TestIncites {
      */
     public void testIdentifiedFaculty() {
         File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, null);
         ArrayList<Author> identifiedFacultyList = incitesParser.getIdentifiedFacultyList();
         assertTrue(identifiedFacultyList.size() == 14);
     }
@@ -108,7 +108,7 @@ public class TestIncites {
      */
     public void testIgnoredRowsNonExistent() {
         File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/no_ignored_rows.xlsx");
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, null);
         assertTrue(incitesParser.getIgnoredRows() == 0);
     }
 
@@ -120,7 +120,7 @@ public class TestIncites {
      */
     public void testLoneAuthor() {
         File loneAuthorFile = new File("src/test/resources/incites/data/lone_author_exists.xlsx");
-        IncitesParser incitesParser = new IncitesParser(loneAuthorFile);
+        IncitesParser incitesParser = new IncitesParser(loneAuthorFile, null);
         ArrayList<Author> loneAuthorList = incitesParser.getLoneAuthorList();
         assertTrue(loneAuthorList.size() == 1);
     }
@@ -131,7 +131,7 @@ public class TestIncites {
      */
     public void testUnidentifiedFaculty() {
         File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, null);
         ArrayList<Author> unidentifiedFacultyList = incitesParser.getUnidentifiedFacultyList();
         assertTrue(unidentifiedFacultyList.size() == 13);
     }

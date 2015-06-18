@@ -54,7 +54,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -77,7 +76,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -173,7 +171,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Search filter
      */
-    private JComboBox searchFilter = null;
+    private JComboBox<String> searchFilter = null;
     /**
      * Category that user has selected
      */
@@ -202,7 +200,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Visual style selector
      */
-    private JComboBox visualStyleSelector = null;
+    private JComboBox<String> visualStyleSelector = null;
     /**
      * The visual style selector type currently being displayed to the user
      */
@@ -435,15 +433,16 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @return JComboBox optionSelector
      */
-    private JComboBox createCategoryOptionSelector() {
+    private JComboBox<String> createCategoryOptionSelector() {
         // Create new JComboBox
-        JComboBox categoryOptionSelector = new JComboBox(Category.getCategoryList());
+        JComboBox<String> categoryOptionSelector = new JComboBox<String>(Category.getCategoryList());
         categoryOptionSelector.setEditable(false);
         categoryOptionSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
         categoryOptionSelector.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                JComboBox jcmbType = (JComboBox) e.getSource();
+                @SuppressWarnings("unchecked")
+                JComboBox<String> jcmbType = (JComboBox<String>) e.getSource();
                 String category = (String) jcmbType.getSelectedItem();
                 // Set selected category before performing switcharoo
                 // NOTE: This step is imperative. Not doing this will
@@ -455,26 +454,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                     UserPanel.this.appManager.getUserPanelRef().performSwitcharoo();
                 }
                 // Create new search filter
-                getSearchFilter().setModel(new DefaultComboBoxModel(Category.getSearchFilterList(getSelectedCategory())));
+                getSearchFilter().setModel(new DefaultComboBoxModel<String>(Category.getSearchFilterList(getSelectedCategory())));
 
             }
 
         });
         return categoryOptionSelector;
-    }
-
-    /**
-     * Create new category panel; will allow user to select a particular search
-     * category
-     *
-     * @return JPanel categoryPanel
-     */
-    private JPanel createCategoryPanel() {
-        JPanel categoryPanel = new JPanel();
-        categoryPanel.setBorder(BorderFactory.createTitledBorder("Category"));
-        categoryPanel.setLayout(new BoxLayout(categoryPanel, BoxLayout.X_AXIS));
-        categoryPanel.add(this.createCategoryOptionSelector());
-        return categoryPanel;
     }
 
     /**
@@ -795,14 +780,15 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @param int visualStyleSelectorType
      * @return JComboBox visualStyleSelector
      */
-    public JComboBox createVisualStyleSelector(int visualStyleSelectorType) {
-        JComboBox visualStyleSelector = new JComboBox(new VisualStyles().getVisualStyleList(visualStyleSelectorType));
+    public JComboBox<String> createVisualStyleSelector(int visualStyleSelectorType) {
+        JComboBox<String> visualStyleSelector = new JComboBox<String>(new VisualStyles().getVisualStyleList(visualStyleSelectorType));
         visualStyleSelector.setEditable(false);
         visualStyleSelector.setAlignmentX(Component.LEFT_ALIGNMENT);
         visualStyleSelector.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                JComboBox jcmbType = (JComboBox) e.getSource();
+                @SuppressWarnings("unchecked")
+                JComboBox<String> jcmbType = (JComboBox<String>) e.getSource();
                 String visualStyle = (String) jcmbType.getSelectedItem();
                 int visualStyleID = new VisualStyles().getVisualStyleID(visualStyle);
                 setSelectedVisualStyle(visualStyleID);
@@ -910,7 +896,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @return JComboBox searchFilter
      */
-    private JComboBox getSearchFilter() {
+    private JComboBox<String> getSearchFilter() {
         return this.searchFilter;
     }
 
@@ -982,7 +968,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @return JComboBox visualStyleSelector
      */
-    public JComboBox getVisualStyleSelector() {
+    public JComboBox<String> getVisualStyleSelector() {
         return this.visualStyleSelector;
     }
 
@@ -1129,7 +1115,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @param JComboBox searchFilter
      */
-    private void setSearchFilter(JComboBox searchOptionSelector) {
+    private void setSearchFilter(JComboBox<String> searchOptionSelector) {
         this.searchFilter = searchOptionSelector;
     }
 
@@ -1192,7 +1178,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      *
      * @param JComboBox visualStyleSelector
      */
-    public void setVisualStyleSelector(JComboBox visualStyleSelector) {
+    public void setVisualStyleSelector(JComboBox<String> visualStyleSelector) {
         this.visualStyleSelector = visualStyleSelector;
     }
 

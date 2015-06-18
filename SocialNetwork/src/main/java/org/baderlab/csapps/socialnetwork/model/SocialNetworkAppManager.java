@@ -45,13 +45,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.Action;
-
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
@@ -59,6 +56,7 @@ import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseNetworkFileTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetwork;
@@ -120,6 +118,10 @@ public class SocialNetworkAppManager {
      */
     private CreateNetworkTaskFactory networkTaskFactoryRef = null;
     /**
+     * A reference to the <i>ParseNetworkFile</i> task factory
+     */
+    private ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef = null;
+    /**
      * A network that's just about to be destroyed
      */
     private CyNetwork networkToBeDestroyed = null;
@@ -148,6 +150,12 @@ public class SocialNetworkAppManager {
      * Currently selected visual style ID
      */
     private int visualStyleID = VisualStyles.DEFAULT_VISUAL_STYLE;
+    /**
+     * A data file that's been exported by the user manually.
+     */
+    private File networkFile = null; // TODO:
+    private int maxAuthorThreshold = -1; // TODO:
+    private int networkFileType = -1;
 
     /**
      * Set of all visual styles currently supported by app
@@ -177,7 +185,7 @@ public class SocialNetworkAppManager {
         this.getServiceRegistrar().unregisterService(this.getUserPanelRef(), CytoPanelComponent.class);
         this.getUserPanelAction().putValue(Action.NAME, "Show Social Network");
     }
-
+    
     /**
      * Create a network. Method marked private in order to prevent users from
      * inadvertently creating a network before all pertinent edge and node info
@@ -204,6 +212,7 @@ public class SocialNetworkAppManager {
     public void createNetwork(File networkFile, int maxAuthorThreshold) throws FileNotFoundException {
         // Verify that network name is valid
         String networkName = this.userPanelRef.getAcademiaPanel().getFacultyTextFieldRef().getText().trim();
+        
         if (!this.isNameValid(networkName)) {
             CytoscapeUtilities.notifyUser("Network " + networkName + " already exists in Cytoscape." + " Please enter a new name.");
             return;
@@ -211,101 +220,38 @@ public class SocialNetworkAppManager {
         // Change mouse cursor
         this.getUserPanelRef().setCursor(new Cursor(Cursor.WAIT_CURSOR));
         // Initialize variables
-        List<? extends Publication> pubList = null;
-        String extension = null;
-        SocialNetwork socialNetwork = null;
-        String departmentName = null;
+        String extension = FilenameUtils.getExtension(networkFile.getPath()).trim();
+        
         // Create network out of InCites data
         if (this.analysis_type == this.ANALYSISTYPE_INCITES) {
-            extension = FilenameUtils.getExtension(networkFile.getPath()).trim();
-            IncitesParser incitesParser = null;
             // Load data from text file
-            if (extension.equalsIgnoreCase("xlsx")) {
-                socialNetwork = new SocialNetwork(networkName, Category.INCITES);
-                incitesParser = new IncitesParser(networkFile);
-                if (incitesParser.getIgnoredRows() >= 1) {
-                    CytoscapeUtilities.notifyUser("Some rows could not be parsed.");
-                }
-                if (incitesParser.getIdentifiedFacultyList().size() == 0) {
-                    CytoscapeUtilities.notifyUser("Unable to identify faculty. Please verify that InCites data file is valid");
-                }
-                pubList = incitesParser.getPubList();
-                departmentName = incitesParser.getDepartmentName();
-                if (pubList == null) {
-                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. This InCites file is corrupt.");
-                    return;
-                }
-            // Notify user of inappropriate file type
-            } else {
+            if (!extension.equalsIgnoreCase("xlsx")) {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
                 return;
             }
-            // Add summary attributes
-            socialNetwork.setPublications(incitesParser.getPubList());
-            socialNetwork.setFaculty(incitesParser.getFacultySet());
-            socialNetwork.setUnidentifiedFaculty(incitesParser.getUnidentifiedFacultyList());
-            socialNetwork.setUnidentified_faculty(incitesParser.getUnidentifiedFacultyString());
-
-            // Add info to social network map(s)
-            socialNetwork.getAttrMap().put(IncitesVisualStyle.nodeattr_dept, departmentName);
         } else if (this.analysis_type == this.ANALYSISTYPE_PUBMED) {
-            extension = FilenameUtils.getExtension(networkFile.getPath());
-            PubMed pubmed = null;
-            if (extension.trim().equalsIgnoreCase("xml")) {
-                socialNetwork = new SocialNetwork(networkName, Category.PUBMED);
-                pubmed = new PubMed(networkFile);
-                pubList = pubmed.getPubList();
-                socialNetwork.setPublications(pubmed.getPubList());
-                if (pubList == null) {
-                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    return;
-                }
-            } else {
+            if (!extension.equalsIgnoreCase("xml")) {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
-                return;
             }
+            return;
         // Create network out of Scopus data
         } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
-            extension = FilenameUtils.getExtension(networkFile.getPath());
-            Scopus scopus = null;
-            if (extension.trim().equalsIgnoreCase("csv")) {
-                socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
-                scopus = new Scopus(networkFile);
-                pubList = scopus.getPubList();
-                socialNetwork.setPublications(scopus.getPubList());
-                if (pubList == null) {
-                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    return;
-                }
-            } else {
+            if (!extension.equalsIgnoreCase("csv")) {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
                 return;
             }
         }
-        // Create interaction
-        Interaction interaction = new Interaction(pubList, Category.ACADEMIA, maxAuthorThreshold);
-        if (interaction.getExcludedPublications().size() == pubList.size()) {
-            this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold");
-            return;
-        }
-        socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
-        // Create map
-        Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
-        if (map.size() == 0) {
-            this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            CytoscapeUtilities.notifyUser("Network couldn't be loaded. File is corrupt.");
-            return;
-        }
-        this.setMap(map);
+        
+        // file, name and threshold have to be set before calling
+        // visualizeSocialNetwork().
+        this.setNetworkFile(networkFile);
         this.setNetworkName(networkName);
-        this.getSocialNetworkMap().put(networkName, socialNetwork);
-        // Create network using map
-        this.createNetwork();
+        this.setMaxAuthorThreshold(maxAuthorThreshold);
+
+        this.visualizeSocialNetwork();
     }
 
     /**
@@ -437,6 +383,33 @@ public class SocialNetworkAppManager {
     }
 
     /**
+     * Get the max author threshold
+     * 
+     * @return int maxAuthorThreshold
+     */
+    public int getMaxAuthorThreshold() {
+        return maxAuthorThreshold;
+    }
+
+    /**
+     * Get network file
+     * 
+     * @return File networkFile
+     */
+    public File getNetworkFile() {
+        return this.networkFile;
+    }
+
+    /**
+     * Get the network file type
+     * 
+     * @return int networkFileType
+     */
+    public int getNetworkFileType() {
+        return networkFileType;
+    }
+
+    /**
      * Get network name.
      *
      * @return String networkName
@@ -483,6 +456,15 @@ public class SocialNetworkAppManager {
      */
     public CyNetwork getNetworkToBeDestroyed() {
         return this.networkToBeDestroyed;
+    }
+
+    /**
+     * Get <i>ParseNetworkFile</i> task factory
+     * 
+     * @return ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef
+     */
+    public ParseNetworkFileTaskFactory getParseNetworkFileTaskFactoryRef() {
+        return this.parseNetworkFileTaskFactoryRef;
     }
 
     /**
@@ -652,6 +634,33 @@ public class SocialNetworkAppManager {
     }
 
     /**
+     * Set the max author threshold
+     * 
+     * @param int maxAuthorThreshold
+     */
+    private void setMaxAuthorThreshold(int maxAuthorThreshold) {
+        this.maxAuthorThreshold = maxAuthorThreshold;
+    }
+
+    /**
+     * Set network file
+     * 
+     * @param File networkFile
+     */
+    public void setNetworkFile(File networkFile) {
+        this.networkFile = networkFile;
+    }
+
+    /**
+     * Set the network file type
+     * 
+     * @param int networkFileType
+     */
+    public void setNetworkFileType(int networkFileType) {
+        this.networkFileType = networkFileType;
+    }
+
+    /**
      * Set network name
      *
      * @param String networkName
@@ -676,6 +685,15 @@ public class SocialNetworkAppManager {
      */
     public void setNetworkToBeDestroyed(CyNetwork networkToBeDestroyed) {
         this.networkToBeDestroyed = networkToBeDestroyed;
+    }
+
+    /**
+     * Set <i>ParseNetworkFile</i> task factory
+     * 
+     * @param ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef
+     */
+    public void setParseNetworkFileTaskFactoryRef(ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef) {
+        this.parseNetworkFileTaskFactoryRef = parseNetworkFileTaskFactoryRef;
     }
 
     /**
@@ -730,6 +748,13 @@ public class SocialNetworkAppManager {
      */
     public void setVisualStyleID(int visualStyleID) {
         this.visualStyleID = visualStyleID;
+    }
+
+    /**
+     * Visualize a social network. Method should not be executed directly.
+     */
+    private void visualizeSocialNetwork() {
+        this.getTaskManager().execute(this.getParseNetworkFileTaskFactoryRef().createTaskIterator());
     }
 
 }

@@ -40,7 +40,6 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -56,6 +55,7 @@ import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseNetworkFileTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworkViewsListener;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
@@ -171,7 +171,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, autoAnnotationManager, ColumnDeletedListener.class, new Properties());
         registerService(bc, autoAnnotationManager, ColumnNameChangedListener.class, new Properties());
 
-        // Open browser used by about  panel,
+        // Open browser used by about panel,
         OpenBrowser openBrowserRef = getService(bc, OpenBrowser.class);
 
         VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService
@@ -253,10 +253,15 @@ public class CyActivator extends AbstractCyActivator {
 
         DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef,appManager);
         registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef = new ParseNetworkFileTaskFactory(appManager);
+        registerService(bc, parseNetworkFileTaskFactoryRef, TaskFactory.class, new Properties());
 
         // Add dependencies to app manager
         // TODO:
         // NOTE: Using setters violates dependency injection
+        appManager.setParseNetworkFileTaskFactoryRef(parseNetworkFileTaskFactoryRef);
+        
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 
         appManager.setServiceRegistrar(cyServiceRegistrarRef);

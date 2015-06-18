@@ -45,6 +45,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRet
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedXmlParser;
+import org.cytoscape.work.TaskMonitor;
 
 /**
  * Methods & fields for manipulating PubMed data
@@ -85,9 +86,10 @@ public class PubMed {
      * Create a new {@link PubMed} session from xmlFile
      *
      * @param File xmlFile
+     * @param TaskMonitor taskMonitor
      */
-    public PubMed(File xmlFile) {
-        PubMedXmlParser xmlParser = new PubMedXmlParser(xmlFile);
+    public PubMed(File xmlFile, TaskMonitor taskMonitor) {
+        PubMedXmlParser xmlParser = new PubMedXmlParser(xmlFile, taskMonitor);
         ArrayList<Publication> pubList = xmlParser.getPubList();
         if (pubList.size() < 1) {
             return; // stop here if there are no publications

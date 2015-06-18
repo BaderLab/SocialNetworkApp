@@ -44,10 +44,10 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.cytoscape.work.TaskMonitor;
 
 /**
  * Tools for manipulating Scopus data (for developer use)
@@ -97,8 +97,9 @@ public class Scopus {
      * Create new Scopus object
      *
      * @param File csv
+     * @param TaskMonitor taskMonitor
      */
-    public Scopus(File csv) {
+    public Scopus(File csv, TaskMonitor taskMonitor) {
         this.parseScopusPubList(csv);
     }
 

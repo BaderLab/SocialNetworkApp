@@ -72,7 +72,7 @@ public class TestInteraction {
      */
     public void testTimesCitedMultiplePub() {
         File timesCitedFile = new File("src/test/resources/incites/data/times_cited_multiple_pub.xlsx");
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, null);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         boolean status = true;
@@ -99,7 +99,7 @@ public class TestInteraction {
      */
     public void testTimesCitedSinglePub() {
         File timesCitedFile = new File("src/test/resources/incites/data/times_cited_single_pub.xlsx");
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, null);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         Collaboration cons = (Collaboration) map.keySet().toArray()[0];

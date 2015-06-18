@@ -13,6 +13,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * ??
  * 
  * @author Victor Kofia
  */
@@ -96,6 +97,8 @@ public class EutilsTimesCitedParser extends DefaultHandler {
         	} else {
         		// TODO: Store ids of ignored publications in a log file  
         	    // TODO: Log message
+        	    System.out.println("eUtils: " + this.pmid);
+        	    System.out.println("pubmed: " + pubList.get(index).getPMID());
         	}
         }
     }
