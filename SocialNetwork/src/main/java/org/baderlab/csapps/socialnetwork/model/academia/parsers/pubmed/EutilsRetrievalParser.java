@@ -154,7 +154,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
             Publication publication = new Publication(this.title, this.pubDate, this.journal, this.timesCited, null, this.pubAuthorList);
-            publication.setPMID(this.pmid);
+            publication.setPMID(this.pmid); // TODO: pass this value through the constructor?
             this.pubList.add(publication);
             this.pubAuthorList.clear();
         }

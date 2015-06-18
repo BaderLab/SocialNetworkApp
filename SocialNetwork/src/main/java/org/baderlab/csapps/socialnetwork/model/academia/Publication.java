@@ -43,9 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
@@ -101,7 +98,8 @@ public class Publication extends AbstractEdge {
      * @param String expectedCitations
      * @param List coauthorList
      */
-    public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
+    public Publication(String title, String pubDate, String journal, 
+    		String timesCited, String expectedCitations, List<Author> coauthorList) {
         this.pubDate = pubDate;
         this.title = title;
         this.journal = journal;
@@ -258,13 +256,11 @@ public class Publication extends AbstractEdge {
      * @return int timesCited
      */
     public int getTimesCited() {
-    	int timescited = 0;
-    	try{
-    		timescited = Integer.parseInt(this.timesCited);
-    	} catch (NumberFormatException e) {
-    		//missing the time cited info
-        }  
-        return timescited;
+    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {        	
+    		return Integer.parseInt(this.timesCited);
+    	} else {
+    		return 0;
+    	}
     }
 
     /**
