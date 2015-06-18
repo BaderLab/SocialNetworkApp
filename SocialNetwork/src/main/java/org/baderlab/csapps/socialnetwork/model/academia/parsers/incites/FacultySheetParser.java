@@ -46,11 +46,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Handler for faculty spreadsheet (SAX parser)
+ * Parser for faculty spreadsheet (SAX parser)
  *
  * @author Victor Kofia
  */
-public class FacultySheetHandler extends DefaultHandler {
+public class FacultySheetParser extends DefaultHandler {
 
     /**
      * XML parsing variables. Used to store data temporarily.
@@ -69,12 +69,12 @@ public class FacultySheetHandler extends DefaultHandler {
     private SharedStringsTable sst = null;
 
     /**
-     * Create new faculty sheet handler
+     * Create new faculty sheet parser
      *
      * @param SharedStringsTable sst
      * @param Incites incites
      */
-    public FacultySheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
+    public FacultySheetParser(SharedStringsTable sst, IncitesParser incitesParser) {
         this.sst = sst;
         this.incitesParser = incitesParser;
     }

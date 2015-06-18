@@ -9,8 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.events.RowsSetEvent;

@@ -265,15 +265,15 @@ public class IncitesParser {
         switch (sheet) {
             // Sheet#1: ??
             case 1:
-                parser.setContentHandler(new PubSheetHandler(sst, this));
+                parser.setContentHandler(new PubSheetParser(sst, this));
         	    break;
             // Sheet#3: publication data
             case 3:
-                parser.setContentHandler(new PubSheetHandler(sst, this));
+                parser.setContentHandler(new PubSheetParser(sst, this));
                 break;
             // Sheet#4: faculty data
             case 4:
-                parser.setContentHandler(new FacultySheetHandler(sst, this));
+                parser.setContentHandler(new FacultySheetParser(sst, this));
                 break;
         }
         return parser;

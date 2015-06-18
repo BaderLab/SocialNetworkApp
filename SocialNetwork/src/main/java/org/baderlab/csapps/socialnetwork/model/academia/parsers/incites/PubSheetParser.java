@@ -49,11 +49,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Handler for publications spreadsheet (SAX Parser)
+ * Parser for publications spreadsheet (SAX Parser)
  *
  * @author Victor Kofia
  */
-public class PubSheetHandler extends DefaultHandler {
+public class PubSheetParser extends DefaultHandler {
 
     /**
      * List of authors in each publication
@@ -80,7 +80,7 @@ public class PubSheetHandler extends DefaultHandler {
     /**
      * Reference to individual publication
      */
-    Publication pub;
+    Publication pub = null;
 
     /**
      * Reference to XLSX table. Necessary for extracting cell contents (cell IDs
@@ -96,12 +96,12 @@ public class PubSheetHandler extends DefaultHandler {
     String year = null, subjectArea = null, authors = null;
 
     /**
-     * Create new pub sheet handler
+     * Create new pub sheet parser
      *
      * @param SharedStringsTable sst
      * @param Incites incites
      */
-    public PubSheetHandler(SharedStringsTable sst, IncitesParser incitesParser) {
+    public PubSheetParser(SharedStringsTable sst, IncitesParser incitesParser) {
         this.sst = sst;
         this.incitesParser = incitesParser;
     }
