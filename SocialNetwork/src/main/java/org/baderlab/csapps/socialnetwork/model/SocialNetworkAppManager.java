@@ -45,13 +45,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.Action;
+
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -234,8 +234,8 @@ public class SocialNetworkAppManager {
             if (!extension.equalsIgnoreCase("xml")) {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
+                return;
             }
-            return;
         // Create network out of Scopus data
         } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
             if (!extension.equalsIgnoreCase("csv")) {
@@ -251,7 +251,7 @@ public class SocialNetworkAppManager {
         this.setNetworkName(networkName);
         this.setMaxAuthorThreshold(maxAuthorThreshold);
 
-        this.visualizeSocialNetwork();
+        this.visualizeNetwork();
     }
 
     /**
@@ -751,9 +751,9 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Visualize a social network. Method should not be executed directly.
+     * Visualize a social network. Should not be executed directly.
      */
-    private void visualizeSocialNetwork() {
+    private void visualizeNetwork() {
         this.getTaskManager().execute(this.getParseNetworkFileTaskFactoryRef().createTaskIterator());
     }
 
