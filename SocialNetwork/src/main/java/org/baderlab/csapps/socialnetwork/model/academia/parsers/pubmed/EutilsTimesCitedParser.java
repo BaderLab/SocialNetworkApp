@@ -2,9 +2,12 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Tag;
@@ -33,13 +36,20 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     /**
      * A publication's unique identifier
      */
-    private String pmid = null;
+    private StringBuilder pmid = null;
     /**
      * A publication's total number of citations
      */
-    private String timesCited = null;
-
-    int index = 0;
+    private StringBuilder timesCited = null;
+    // TODO: Write description
+    private HashMap<String, Publication> pmidMap = null;
+    
+    private void createMap(ArrayList<Publication> pubList) {
+    	pmidMap = new HashMap<String, Publication>();
+    	for (Publication pub : pubList) {
+    		pmidMap.put(pub.getPMID(), pub);
+    	}
+    }
     
     /**
      * Create a new eUtils times cited parser
@@ -53,9 +63,10 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      * @param int totalPubs
      */
     public EutilsTimesCitedParser(ArrayList<Publication> pubList, String queryKey, String webEnv, int retStart, int retMax) {
-        int totalPubs = pubList.size();
-    	this.pubList = pubList;
         try {
+        	createMap(pubList);
+        	this.pubList = pubList;
+        	int totalPubs = pubList.size();
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             String url = null;
             while (retStart < totalPubs) {
@@ -87,19 +98,17 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
     	if (this.isPMID) {
-    		this.pmid = new String(ch, start, length);
+    		this.pmid.append(ch, start, length);
+    		String s = "8692900";
+    		if (s.contains(this.pmid.toString())) {
+    			System.out.println("stored pmid: " + s);
+    			System.out.println("pmid found in eUtils: " + this.pmid.toString());
+    		}
     		this.isPMID = false;
     	}
         if (this.isTimesCited) {
-        	if (this.pmid.equals(pubList.get(index).getPMID())) {
-        		this.timesCited = new String(ch, start, length);
-        		this.isTimesCited = false;
-        	} else {
-        		// TODO: Store ids of ignored publications in a log file  
-        	    // TODO: Log message
-        	    System.out.println("eUtils: " + this.pmid);
-        	    System.out.println("pubmed: " + pubList.get(index).getPMID());
-        	}
+        	this.timesCited.append(ch, start, length);
+        	this.isTimesCited = false;
         }
     }
 
@@ -125,9 +134,15 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
-        	// TODO:
-        	this.pubList.get(index).setTimesCited(this.timesCited);
-        	index++;
+        	Publication pub = this.pmidMap.get(this.pmid.toString());
+        	if (pub != null) {
+        		pub.setTimesCited(this.timesCited.toString());
+        		this.pmidMap.remove(this.pmid.toString());
+        	} else {
+        		System.out.println("eUtils: " + this.pmid);
+        	}
+        	this.pmid = null;
+        	this.timesCited = null;
         }
     }
 
@@ -147,9 +162,11 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (contains(attributes, "PmcRefCount")) {
             this.isTimesCited = true;
+            this.timesCited = new StringBuilder();
         }
         if (qName.equals("Id")) {
         	this.isPMID = true;
+        	this.pmid = new StringBuilder();
         }
     }
 	

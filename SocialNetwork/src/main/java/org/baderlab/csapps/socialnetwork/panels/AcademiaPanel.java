@@ -485,7 +485,7 @@ public class AcademiaPanel {
     	JFileChooser fc = new JFileChooser();
     	fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     	fc.setDialogTitle("Select a folder");
-    	fc.setApproveButtonText("SELECT");
+    	fc.setApproveButtonText("Select");
         if (fc.showOpenDialog(this.cySwingAppRef.getJFrame()) == JFileChooser.APPROVE_OPTION) {
     	    try {
     	        String fileName = "/neighbor_list.csv";

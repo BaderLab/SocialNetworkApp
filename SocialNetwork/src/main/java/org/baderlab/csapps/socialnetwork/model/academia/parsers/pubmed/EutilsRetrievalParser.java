@@ -39,7 +39,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
     /**
      * A publication's journal
      */
-    private String journal = null;
+    private StringBuilder journal = null;
     /**
      * A list containing all authors found in a particular publication
      */
@@ -47,7 +47,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
     /**
      * A publication's date
      */
-    private String pubDate = null;
+    private StringBuilder pubDate = null;
     /**
      * A list containing all the results that search session has yielded
      */
@@ -55,15 +55,15 @@ public class EutilsRetrievalParser extends DefaultHandler {
     /**
      * A publication's unique identifier
      */
-    private String pmid = null;
+    private StringBuilder pmid = null;
     /**
      * A publication's total number of citations
      */
-    private String timesCited = null;
+    private StringBuilder timesCited = null;
     /**
      * A publication's title
      */
-    private String title = null;
+    private StringBuilder title = null;
     
     /**
      * Create a new eUtils retrieval parser
@@ -104,7 +104,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.isPubDate) {
-            this.pubDate = new String(ch, start, length);
+            this.pubDate.append(ch, start, length);
             this.isPubDate = false;
         }
         if (this.isAuthor) {
@@ -116,19 +116,19 @@ public class EutilsRetrievalParser extends DefaultHandler {
             this.isAuthor = false;
         }
         if (this.isJournal) {
-            this.journal = new String(ch, start, length);
+            this.journal.append(ch, start, length);
             this.isJournal = false;
         }
         if (this.isTitle) {
-            this.title = new String(ch, start, length);
+            this.title.append(ch, start, length);
             this.isTitle = false;
         }
         if (this.isTimesCited) {
-            this.timesCited = new String(ch, start, length);
+            this.timesCited.append(ch, start, length);
             this.isTimesCited = false;
         }
         if (this.isPMID) {
-            this.pmid = new String(ch, start, length);
+            this.pmid.append(ch, start, length);
             this.isPMID = false;
         }
     }
@@ -153,10 +153,20 @@ public class EutilsRetrievalParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
-            Publication publication = new Publication(this.title, this.pubDate, this.journal, this.timesCited, null, this.pubAuthorList);
-            publication.setPMID(this.pmid); // TODO: pass this value through the constructor?
+            Publication publication = new Publication(this.title != null ? this.title.toString() : null, 
+            		                                  this.pubDate != null ? this.pubDate.toString() : null, 
+            		                                  this.journal != null ? this.journal.toString() : null, 
+            		                                  this.timesCited != null ? this.timesCited.toString() : null, 
+            		                                  null, 
+            		                                  this.pubAuthorList);
+            publication.setPMID(this.pmid.toString()); // TODO: pass this value through the constructor?
             this.pubList.add(publication);
             this.pubAuthorList.clear();
+            this.journal = null;
+            this.pubDate = null;
+            this.title = null;
+            this.timesCited = null;
+            this.pmid = null;
         }
     }
 
@@ -177,18 +187,23 @@ public class EutilsRetrievalParser extends DefaultHandler {
         }
         if (contains(attributes, "FullJournalName")) {
             this.isJournal = true;
+            this.journal = new StringBuilder();
         }
         if (contains(attributes, "PubDate")) {
             this.isPubDate = true;
+            this.pubDate = new StringBuilder();
         }
         if (contains(attributes, "Title")) {
             this.isTitle = true;
+            this.title = new StringBuilder();
         }
         if (contains(attributes, "PmcRefCount")) {
             this.isTimesCited = true;
+            this.timesCited = new StringBuilder();
         }
         if (qName.equals("Id")) {
             this.isPMID = true;
+            this.pmid = new StringBuilder();
         }
     }
 

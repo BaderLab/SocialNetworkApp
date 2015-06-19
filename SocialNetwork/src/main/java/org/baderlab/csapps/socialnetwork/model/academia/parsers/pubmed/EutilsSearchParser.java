@@ -2,9 +2,11 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.xml.sax.Attributes;
@@ -29,15 +31,15 @@ public class EutilsSearchParser extends DefaultHandler {
     /**
      * Unique queryKey. Necessary for retrieving search results
      */
-    private String queryKey = null;
+    private StringBuilder queryKey = null;
     /**
      * The total number of publications found in search
      */
-    private String totalPubs = null;
+    private StringBuilder totalPubs = null;
     /**
      * Unique WebEnv. Necessary for retrieving search results
      */
-    private String webEnv = null;
+    private StringBuilder webEnv = null;
     
     // TODO: Add descriptions for retStart and retMax
     private int retStart = 0;
@@ -79,21 +81,17 @@ public class EutilsSearchParser extends DefaultHandler {
      */
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.isTotalPubs) {
-            this.setTotalPubs(new String(ch, start, length));
+            this.totalPubs.append(ch, start, length);
             this.isTotalPubs = false;
         }
         if (this.isQueryKey) {
-            this.setQueryKey(new String(ch, start, length));
+            this.queryKey.append(ch, start, length);
             this.isQueryKey = false;
         }
         if (this.isWebEnv) {
-            this.setWebEnv(new String(ch, start, length));
+            this.webEnv.append(new String(ch, start, length));
             this.isWebEnv = false;
         }
-    }
-
-    public void DefaultHandler() {
-        this.setTotalPubs(null);
     }
 
     /**
@@ -102,7 +100,7 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return String queryKey
      */
     public String getQueryKey() {
-        return this.queryKey;
+        return this.queryKey.toString();
     }
     
     /**
@@ -131,8 +129,9 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return int totalPubs
      */
     public int getTotalPubs() {
-        if (this.totalPubs != null && Pattern.matches("[0-9]+", this.totalPubs)) {
-            return Integer.parseInt(this.totalPubs);
+    	String total = this.totalPubs.toString();
+        if (total != null && Pattern.matches("[0-9]+", total)) {
+            return Integer.parseInt(total);
         } else {
             return 0;
         }
@@ -144,36 +143,7 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return String webEnv
      */
     public String getWebEnv() {
-        return webEnv;
-    }
-
-    /**
-     * Set query key
-     * 
-     * @param String queryKey
-     */
-    private void setQueryKey(String queryKey) {
-        this.queryKey = queryKey;
-    }
-    
-    
-
-    /**
-     * Set total pubs
-     * 
-     * @param String totalPubs
-     */
-    private void setTotalPubs(String totalPubs) {
-        this.totalPubs = totalPubs;
-    }
-
-    /**
-     * Set web env
-     * 
-     * @param String webEnv
-     */
-    private void setWebEnv(String webEnv) {
-        this.webEnv = webEnv;
+        return webEnv.toString();
     }
     
     // Reset XML variables
@@ -187,12 +157,15 @@ public class EutilsSearchParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("Count") && this.totalPubs == null) {
             this.isTotalPubs = true;
+            this.totalPubs = new StringBuilder();
         }
         if (qName.equalsIgnoreCase("QueryKey")) {
             this.isQueryKey = true;
+            this.queryKey = new StringBuilder();
         }
         if (qName.equalsIgnoreCase("WebEnv")) {
             this.isWebEnv = true;
+            this.webEnv = new StringBuilder();
         }
     }
 
