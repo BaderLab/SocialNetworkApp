@@ -39,11 +39,13 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -66,6 +68,14 @@ public class Scopus {
 
         private static final long serialVersionUID = 1L;
     }
+    
+	/**
+	 * Progress bar variables
+	 */
+	private int currentSteps = 0;
+	private int totalSteps = 0;
+	private double progress = 0.0;
+	private TaskMonitor taskMonitor = null;
 
     /**
      * Construct Scopus attribute map
@@ -100,6 +110,7 @@ public class Scopus {
      * @param TaskMonitor taskMonitor
      */
     public Scopus(File csv, TaskMonitor taskMonitor) {
+    	this.taskMonitor = taskMonitor;
         this.parseScopusPubList(csv);
     }
 
@@ -150,9 +161,9 @@ public class Scopus {
     private void parseScopusPubList(File csv) {
         Scanner in = null;
         try {
+        	setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
             in = new Scanner(csv);
             // Skip column headers
-            in.nextLine();
             String line = null, authors = null, year = null;
             String[] columns = null;
             Publication pub = null;
@@ -163,9 +174,7 @@ public class Scopus {
             while (in.hasNext()) {
                 line = in.nextLine();
                 // only split by commas not contained in quotes.
-                // columns = line.split("(,)(?=(?:[^\"]|\"[^\"]*\")*$)");
                 columns = splitQuoted("\"", ",", line);
-                // columns = line.split("\",|,\"");
                 authors = columns[0].replace("\"", "");
                 coauthorList = this.parseAuthors(authors);
                 title = columns[1].replace("\"", "");
@@ -176,7 +185,6 @@ public class Scopus {
                     // skip this record, print out the line and continue
                     System.out.println("unable to parse scopus line: " + line.toString());
                     continue;
-                    // throw new UnableToParseYearException();
                 }
                 subjectArea = columns[3].replace("\"", "");
                 numericalData = (columns[10] != null) ? columns[10].replace("\"", "") : columns[10];
@@ -191,12 +199,6 @@ public class Scopus {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             CytoscapeUtilities.notifyUser("Unable to locate Scopus data file.\nPlease re-load" + " file and try again.");
-            /*
-             * catch (UnableToParseYearException e) { this.setPubList(null);
-             * e.printStackTrace(); CytoscapeUtilities.notifyUser(
-             * "Scopus data file is corrupt.\nPlease load" +
-             * " a valid file and try again."); }
-             */
         } finally {
             if (in != null) {
                 in.close();
@@ -248,5 +250,43 @@ public class Scopus {
         }
         return columns;
     }
+    
+	/**
+	 * Set progress monitor
+	 *
+	 * @param TaskMonitor taskMonitor
+	 * @param String taskName
+	 * @param int totalSteps
+	 */
+	private void setProgressMonitor(String taskName, int totalSteps) {
+	    this.taskMonitor.setTitle(taskName);
+	    this.taskMonitor.setProgress(0.0);
+	    this.currentSteps = 0;
+	    this.totalSteps = totalSteps;
+	}
+
+	/**
+	 * Return progress as a percentage
+	 *
+	 * @param Double progress
+	 * @return String percentage
+	 */
+	private String toPercent(double progress) {
+	    progress = progress * 100;
+	    DecimalFormat df = new DecimalFormat("00");
+	    return df.format(progress) + "%";
+	}
+
+	/**
+	 * Update progress monitor
+	 *
+	 * @param int currentSteps
+	 */
+	private void updateProgress() {
+	    this.currentSteps += 1;
+	    this.progress = (double) this.currentSteps / this.totalSteps;
+	    this.taskMonitor.setStatusMessage("Complete: " + toPercent(this.progress));
+	    this.taskMonitor.setProgress(this.progress);
+	}
 
 }

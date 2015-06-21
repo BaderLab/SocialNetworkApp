@@ -99,11 +99,6 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     public void characters(char ch[], int start, int length) throws SAXException {
     	if (this.isPMID) {
     		this.pmid.append(ch, start, length);
-    		String s = "8692900";
-    		if (s.contains(this.pmid.toString())) {
-    			System.out.println("stored pmid: " + s);
-    			System.out.println("pmid found in eUtils: " + this.pmid.toString());
-    		}
     		this.isPMID = false;
     	}
         if (this.isTimesCited) {
@@ -139,6 +134,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
         		pub.setTimesCited(this.timesCited.toString());
         		this.pmidMap.remove(this.pmid.toString());
         	} else {
+        		// TODO:
         		System.out.println("eUtils: " + this.pmid);
         	}
         	this.pmid = null;

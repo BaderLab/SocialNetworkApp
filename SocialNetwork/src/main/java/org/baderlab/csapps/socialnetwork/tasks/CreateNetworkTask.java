@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
@@ -201,7 +202,7 @@ public class CreateNetworkTask extends AbstractTask {
             Map<AbstractNode, CyNode> nodeMap = new HashMap<AbstractNode, CyNode>();
 
             // Set 'Load Network' progress monitor
-            this.setProgressMonitor(taskMonitor, "Loading Network", map.size());
+            this.setProgressMonitor(taskMonitor, "Loading Network View ...", map.size());
 
             // Get all collaborations and their corresponding edges
             for (Entry<Collaboration, ArrayList<AbstractEdge>> entry : map.entrySet()) {
@@ -290,7 +291,7 @@ public class CreateNetworkTask extends AbstractTask {
                 return;
             }
 
-            this.setProgressMonitor(monitor, "Loading Network View ...", -1);
+            this.setProgressMonitor(monitor, "Loading Nework ...", -1);
 
             networkManager.addNetwork(network);
 

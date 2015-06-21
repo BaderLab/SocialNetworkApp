@@ -45,6 +45,7 @@ public class ParseNetworkFileTask extends AbstractTask {
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
+    	taskMonitor.setTitle("Loading Network");
         String networkName = this.appManager.getNetworkName();
         
         SocialNetwork socialNetwork = null;
