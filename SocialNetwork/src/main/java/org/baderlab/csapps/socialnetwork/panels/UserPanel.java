@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -76,6 +77,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -93,6 +95,7 @@ import org.cytoscape.util.swing.FileUtil;
  *
  * @author Victor Kofia
  */
+@SuppressWarnings("serial")
 public class UserPanel extends JPanel implements CytoPanelComponent {
 	
 	/**
@@ -184,7 +187,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Visual style that user has selected
      */
     private int selectedVisualStyle = Category.DEFAULT;
-    private final long serialVersionUID = 8292806967891823933L;
     /**
      * Reference to top panel
      */
@@ -843,7 +845,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @return Icon panelIcon
      */
     public Icon getIcon() {
-        return null;
+		URL iconURL = this.getClass().getResource("socialNetwork_logo_small.png");
+        ImageIcon EMIcon = null;
+        if (iconURL != null) {
+            EMIcon = new ImageIcon(iconURL);
+        }
+		return EMIcon;
     }
 
     /**
