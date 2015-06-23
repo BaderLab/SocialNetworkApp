@@ -38,12 +38,12 @@
 package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -51,11 +51,14 @@ import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
+import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestInteraction {
+	
+	private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 
     @Before
     public void setUp() throws Exception {
@@ -72,11 +75,11 @@ public class TestInteraction {
      */
     public void testTimesCitedMultiplePub() {
         File timesCitedFile = new File("src/test/resources/incites/data/times_cited_multiple_pub.xlsx");
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile, null);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         boolean status = true;
-        Iterator it = map.entrySet().iterator();
+        Iterator<Map.Entry<Collaboration, ArrayList<AbstractEdge>>> it = map.entrySet().iterator();
         Map.Entry<Collaboration, ArrayList<AbstractEdge>> pair = null;
         Collaboration cons = null;
         Author authorA = null, authorB = null;
@@ -99,7 +102,7 @@ public class TestInteraction {
      */
     public void testTimesCitedSinglePub() {
         File timesCitedFile = new File("src/test/resources/incites/data/times_cited_single_pub.xlsx");
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile, null);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         Collaboration cons = (Collaboration) map.keySet().toArray()[0];
