@@ -729,15 +729,12 @@ public class SocialNetworkAppManager {
     public void setParseNetworkFileTaskFactoryRef(ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef) {
         this.parseNetworkFileTaskFactoryRef = parseNetworkFileTaskFactoryRef;
     }
-
+    
     /**
-	 * Update the CyNetwork map
-	 */
-	public void updateCyNetworkMap(List<CyNetwork> selectedNetworksList) {
-        this.getCyNetworkMap().clear();
-        for (CyNetwork network : selectedNetworksList) {
-            this.getCyNetworkMap().put(getNetworkName(network), network);
-        }        
+     * Update the network name JComboBox with the info that is currently
+     * in the CyNetworkMap.
+     */
+    public void updateNetworkNameComboBox() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		if (this.getCyNetworkMap().isEmpty()) {
 			model.addElement("N/A");			
@@ -754,6 +751,19 @@ public class SocialNetworkAppManager {
 			}			
 		}
 		this.getUserPanelRef().getAcademiaPanel().getNetworkNameComboBoxRef().setModel(model);
+    }
+
+    /**
+	 * Update the CyNetwork map
+	 * 
+	 * @param List selectedNetworksList
+	 */
+	public void updateCyNetworkMap(List<CyNetwork> selectedNetworksList) {
+        this.getCyNetworkMap().clear();
+        for (CyNetwork network : selectedNetworksList) {
+            this.getCyNetworkMap().put(getNetworkName(network), network);
+        }        
+		updateNetworkNameComboBox();
 	}
 
     /**

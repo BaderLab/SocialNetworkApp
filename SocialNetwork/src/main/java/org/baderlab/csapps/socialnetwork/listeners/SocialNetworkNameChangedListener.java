@@ -49,7 +49,7 @@ public class SocialNetworkNameChangedListener implements RowsSetListener {
     }
 
     /**
-     * Update network summary panel after networks is renamed
+     * Update network summary panel after a social network is renamed
      * 
      * @param RowsSetEvent rowsSetEvent
      */
@@ -75,9 +75,17 @@ public class SocialNetworkNameChangedListener implements RowsSetListener {
     			s = cyNetwork.getSUID();
     			if (suid.equals(s)) {
     				String oldName = network.getNetworkName();
+    				// Update SocialNetwork map
     				network.setNetworkName(updatedName);
     				this.appManager.getSocialNetworkMap().remove(pair.getKey());
     				this.appManager.getSocialNetworkMap().put(updatedName, network);
+    				// Update CyNetwork map
+    				if (this.appManager.getCyNetworkMap().get(oldName) != null) {
+    					this.appManager.getCyNetworkMap().remove(oldName);
+    					this.appManager.getCyNetworkMap().put(updatedName, cyNetwork); 
+    					this.appManager.updateNetworkNameComboBox();
+    				}
+    				// Update network summary panel
     	            DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
     	            int rowIndex = getRow(model, oldName);
     	            if (rowIndex > -1) {
