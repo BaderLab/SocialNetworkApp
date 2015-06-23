@@ -86,7 +86,8 @@ import org.cytoscape.util.swing.FileUtil;
  */
 public class AcademiaPanel {
     /**
-     * Reference to academia info panel
+     * Reference to academia info panel. Shows information specific to academic 
+     * copublication networks.
      */
     private JPanel academiaInfoPanelRef = null;
     /**
@@ -104,13 +105,13 @@ public class AcademiaPanel {
      * # of authors in a publication that the app will build a network out of.
      */
     private JTextArea thresholdTextAreaRef = null;
-    private JRadioButton incitesRadioButton = null;
-    private JRadioButton pubmedRadioButton = null;
-    private JRadioButton scopusRadioButton = null;
-    private JRadioButton thresholdRadioButton = null;
-    private JPanel neighborDegreePanel = null;
-    private JTextField neighborDegree = null;
-    private JComboBox<String> nodeAttrComboBox = null;
+    private JRadioButton incitesRadioButtonRef = null;
+    private JRadioButton pubmedRadioButtonRef = null;
+    private JRadioButton scopusRadioButtonRef = null;
+    private JRadioButton thresholdRadioButtonRef = null;
+    private JPanel neighborDegreePanelRef = null;
+    private JTextField neighborDegreeRef = null;
+    private JComboBox<String> nodeAttrComboBoxRef = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -171,63 +172,9 @@ public class AcademiaPanel {
     private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setCollapsed(true);;
-        
-        
-        JPanel thresholdPanel = new JPanel();
-        thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
-        this.thresholdRadioButton = new JRadioButton("Set max authors per pub");
-        this.thresholdRadioButton.setEnabled(true); // Set the ?? as true
-        this.thresholdRadioButton.setToolTipText("Set the maximum # of authors to be considered per publication. "
-                + "Publications that exceed the threshold will be excluded.");
-        this.thresholdRadioButton.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    // TODO:
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    // TODO:
-                }
-            }
-        });
-        // TODO: Hide the radio button to prevent users from disabling it
-        // innerPanel.add(this.thresholdRadioButton);
-        thresholdPanel.add(Box.createHorizontalStrut(5));
-        thresholdPanel.add(new JLabel("Max authors per pub"));
-        thresholdPanel.add(Box.createHorizontalStrut(5));
-        thresholdPanel.add(getThresholdTextAreaRef());
-        
-        JPanel exportNeighborPanel = new JPanel();
-        exportNeighborPanel.setLayout(new BoxLayout(exportNeighborPanel, BoxLayout.X_AXIS));
-        JButton exportNeighborButton = new JButton("Export neighbors");
-        exportNeighborButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {				
-        		int outcome = JOptionPane.OK_OPTION;
-        		while (outcome == JOptionPane.OK_OPTION) {
-        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanel(), "Export neighbor list options",
-        					JOptionPane.OK_CANCEL_OPTION);
-        			if (outcome == JOptionPane.OK_OPTION) {
-        				String text = AcademiaPanel.this.neighborDegree.getText().trim();
-        				if (!Pattern.matches("[0-9]+", text)) {
-        					CytoscapeUtilities.notifyUser("Invalid input. Please enter an integer value.");
-        					continue;
-        				}
-        				SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
-        				if (network == null) {
-        					CytoscapeUtilities.notifyUser("Unable to export. No network selected.");
-        				} else {
-        					exportNeighborsToCSV(network.getCyNetwork(), Integer.parseInt(text));
-        				}
-        				outcome = JOptionPane.CANCEL_OPTION;
-        			}
-        		}
-			}
-        });
-        exportNeighborPanel.add(Box.createHorizontalStrut(5));
-        exportNeighborPanel.add(exportNeighborButton);
-        exportNeighborPanel.add(Box.createHorizontalStrut(5));
-        
-        advancedOptionsPanel.add(thresholdPanel);
+        advancedOptionsPanel.add(this.createThresholdPanel());
         advancedOptionsPanel.add(Box.createVerticalStrut(5));
-        advancedOptionsPanel.add(exportNeighborPanel);
+        advancedOptionsPanel.add(this.createNetworkPropertiesPanel());
         return advancedOptionsPanel;
     }
     
@@ -279,29 +226,78 @@ public class AcademiaPanel {
         databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
 
         // Create InCites radio button
-        this.incitesRadioButton = new JRadioButton("InCites", true);
-        this.incitesRadioButton.setFocusable(true);
+        this.incitesRadioButtonRef = new JRadioButton("InCites", true);
+        this.incitesRadioButtonRef.setFocusable(true);
 
         // Create PubMed radio button
-        this.pubmedRadioButton = new JRadioButton("PubMed", false);
-        this.pubmedRadioButton.setFocusable(true);
+        this.pubmedRadioButtonRef = new JRadioButton("PubMed", false);
+        this.pubmedRadioButtonRef.setFocusable(true);
 
         // Create Scopus radio button
-        this.scopusRadioButton = new JRadioButton("Scopus", false);
-        this.scopusRadioButton.setFocusable(false);
+        this.scopusRadioButtonRef = new JRadioButton("Scopus", false);
+        this.scopusRadioButtonRef.setFocusable(false);
 
         // Ensures that only one button is selected at a time
         ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(this.incitesRadioButton);
-        buttonGroup.add(this.pubmedRadioButton);
-        buttonGroup.add(this.scopusRadioButton);
+        buttonGroup.add(this.incitesRadioButtonRef);
+        buttonGroup.add(this.pubmedRadioButtonRef);
+        buttonGroup.add(this.scopusRadioButtonRef);
 
-        databasePanel.add(this.incitesRadioButton);
-        databasePanel.add(this.pubmedRadioButton);
-        databasePanel.add(this.scopusRadioButton);
+        databasePanel.add(this.incitesRadioButtonRef);
+        databasePanel.add(this.pubmedRadioButtonRef);
+        databasePanel.add(this.scopusRadioButtonRef);
 
         return databasePanel;
 
+    }
+    
+    /**
+     * Create and return export neighbor button. Enables users to export 
+     * the neighborlist of a specified degree.
+     * 
+     * @return JButton exportNeighborButton
+     */
+    private JButton createExportNeighborButton() {
+        JButton exportNeighborButton = new JButton("Export neighbors");
+        exportNeighborButton.setToolTipText("Export a neighbor list in csv format.");
+        exportNeighborButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				
+        		int outcome = JOptionPane.OK_OPTION;
+        		while (outcome == JOptionPane.OK_OPTION) {
+        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanelRef(), "Export neighbor list options",
+        					JOptionPane.OK_CANCEL_OPTION);
+        			if (outcome == JOptionPane.OK_OPTION) {
+        				String text = AcademiaPanel.this.neighborDegreeRef.getText().trim();
+        				if (!Pattern.matches("[0-9]+", text)) {
+        					CytoscapeUtilities.notifyUser("Invalid input. Please enter an integer value.");
+        					continue;
+        				}
+        				SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
+        				if (network == null) {
+        					CytoscapeUtilities.notifyUser("Unable to export. No network selected.");
+        				} else {
+        					exportNeighborsToCSV(network.getCyNetwork(), Integer.parseInt(text));
+        				}
+        				outcome = JOptionPane.CANCEL_OPTION;
+        			}
+        		}
+			}
+        });
+        return exportNeighborButton;
+    }
+    
+    /**
+     * Create and return the network properties panel. The network 
+     * properties panel is located under the Advanced Options 
+     * collapsible panel. It houses the export neighbors button.
+     * 
+     * @return JPanel networkPropertiesPanel
+     */
+    private JPanel createNetworkPropertiesPanel() {
+        JPanel networkPropertiesPanel = new JPanel(new BorderLayout());
+        networkPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Network Properties"));
+        networkPropertiesPanel.add(this.createExportNeighborButton(), BorderLayout.WEST);
+        return networkPropertiesPanel;
     }
     
     /**
@@ -346,7 +342,7 @@ public class AcademiaPanel {
         });
         return loadButton;
     }
-
+    
     /**
      * Create new load data panel. Allows user to specify path of desired data
      * file
@@ -381,10 +377,10 @@ public class AcademiaPanel {
 		
 		JPanel degreeInputPanel = new JPanel();
 		degreeInputPanel.setLayout(new BoxLayout(degreeInputPanel, BoxLayout.X_AXIS));
-		neighborDegree = new JTextField(5);
-		neighborDegree.setText("1");
+		neighborDegreeRef = new JTextField(5);
+		neighborDegreeRef.setText("1");
 		degreeInputPanel.add(new JLabel("Please specify the degree:"));
-		degreeInputPanel.add(neighborDegree);
+		degreeInputPanel.add(neighborDegreeRef);
 		
 		JPanel nodeAttrPanel = new JPanel();
 		nodeAttrPanel.setLayout(new BoxLayout(nodeAttrPanel, BoxLayout.X_AXIS));
@@ -399,9 +395,9 @@ public class AcademiaPanel {
 				}
 			}			
 		}
-		nodeAttrComboBox = new JComboBox<String>(model);
+		nodeAttrComboBoxRef = new JComboBox<String>(model);
 		nodeAttrPanel.add(new JLabel("Select node attribute:"));
-		nodeAttrPanel.add(nodeAttrComboBox);
+		nodeAttrPanel.add(nodeAttrComboBoxRef);
 		// TODO:
 		
 		neighborDegreePanel.add(degreeInputPanel);
@@ -421,13 +417,13 @@ public class AcademiaPanel {
         createNetworkButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 // check to see which analysis type is selected
-                if (AcademiaPanel.this.incitesRadioButton.isSelected()) {
+                if (AcademiaPanel.this.incitesRadioButtonRef.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
                 }
-                if (AcademiaPanel.this.pubmedRadioButton.isSelected()) {
+                if (AcademiaPanel.this.pubmedRadioButtonRef.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_PUBMED);
                 }
-                if (AcademiaPanel.this.scopusRadioButton.isSelected()) {
+                if (AcademiaPanel.this.scopusRadioButtonRef.isSelected()) {
                     AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
                 }
                 if (getSelectedFileRef() == null || getFacultyTextFieldRef().getText() == null) {
@@ -473,6 +469,39 @@ public class AcademiaPanel {
     }
 
     /**
+     * Create and return the threshold panel. The threshold panel
+     * is located under the Advanced Options collapsible panel. It
+     * allows users to specify a threshold with which they can limit
+     * the number of authors in a publication.
+     * 
+     * @return JPanel thresholdPanel
+     */
+    private JPanel createThresholdPanel() {
+        JPanel thresholdPanel = new JPanel();
+        thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
+        this.thresholdRadioButtonRef = new JRadioButton("Set max authors per pub");
+        this.thresholdRadioButtonRef.setEnabled(true); // Set the ?? as true
+        this.thresholdRadioButtonRef.setToolTipText("Set the maximum # of authors to be considered per publication. "
+                + "Publications that exceed the threshold will be excluded.");
+        this.thresholdRadioButtonRef.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    // TODO:
+                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    // TODO:
+                }
+            }
+        });
+        // TODO: Hide the radio button to prevent users from disabling it
+        // innerPanel.add(this.thresholdRadioButton);
+        thresholdPanel.add(Box.createHorizontalStrut(5));
+        thresholdPanel.add(new JLabel("Max authors per pub"));
+        thresholdPanel.add(Box.createHorizontalStrut(5));
+        thresholdPanel.add(getThresholdTextAreaRef());
+        return thresholdPanel;
+    }
+
+    /**
      * Export the nth degree neighbors of the specified network to CSV
      * 
      * @param CyNetwork cyNetwork
@@ -494,7 +523,7 @@ public class AcademiaPanel {
 				writer.append(',');
 				writer.append("Neighbors");
 				writer.append('\n');
-				String attr = (String) nodeAttrComboBox.getSelectedItem();
+				String attr = (String) nodeAttrComboBoxRef.getSelectedItem();
 				if (!attr.equalsIgnoreCase("N/A")) {
 					for (CyNode node : cyNetwork.getNodeList()) {
 						// column is assumed to be of type String
@@ -513,30 +542,6 @@ public class AcademiaPanel {
         }   
     }
     
-    /**
-     * Write the nth degree neighbors of {@code node} into a text file
-     * 
-     * @param CyNode node
-     * @param CyNetwork network
-     * @param FileWriter writer
-     * @param String attr
-     * @param {@code int} depth
-     */
-    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, String attr, int depth) {
-    	if (depth == 0) {
-			try {
-				writer.append("(" + network.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class) + ") ");
-			} catch (IOException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
-			}
-			return;
-    	}
-    	for (CyNode neighbour : network.getNeighborList(node, CyEdge.Type.ANY)) {
-    		writeNthDegreeNode(neighbour, network, writer, attr, depth - 1);    		
-    	}
-    }
-
     /**
      * Get academia info panel reference
      *
@@ -561,11 +566,11 @@ public class AcademiaPanel {
      * 
      * @return JPanel neighborDegreePanel
      */
-    private JPanel getNeighborDegreePanel() {
-    	if (this.neighborDegreePanel == null) {
-    		this.neighborDegreePanel = this.createNeighborDegreePanel();
+    private JPanel getNeighborDegreePanelRef() {
+    	if (this.neighborDegreePanelRef == null) {
+    		this.neighborDegreePanelRef = this.createNeighborDegreePanel();
     	}
-    	return this.neighborDegreePanel;
+    	return this.neighborDegreePanelRef;
     }
 
     /**
@@ -666,11 +671,35 @@ public class AcademiaPanel {
      * @return boolean
      */
     public boolean thresholdIsSelected() {
-        if (this.thresholdRadioButton == null) {
+        if (this.thresholdRadioButtonRef == null) {
             return false;
         } else {
-            return this.thresholdRadioButton.isSelected();
+            return this.thresholdRadioButtonRef.isSelected();
         }
+    }
+
+    /**
+     * Write the nth degree neighbors of {@code node} into a text file
+     * 
+     * @param CyNode node
+     * @param CyNetwork network
+     * @param FileWriter writer
+     * @param String attr
+     * @param {@code int} depth
+     */
+    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, String attr, int depth) {
+    	if (depth == 0) {
+			try {
+				writer.append("(" + network.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class) + ") ");
+			} catch (IOException e) {
+				e.printStackTrace();
+				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
+			}
+			return;
+    	}
+    	for (CyNode neighbour : network.getNeighborList(node, CyEdge.Type.ANY)) {
+    		writeNthDegreeNode(neighbour, network, writer, attr, depth - 1);    		
+    	}
     }
 
 }

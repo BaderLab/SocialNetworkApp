@@ -20,12 +20,12 @@ import org.cytoscape.model.events.RowsSetListener;
  * 
  * @author Victor Kofia
  */
-public class NetworkNameChangedListener implements RowsSetListener {
+public class SocialNetworkNameChangedListener implements RowsSetListener {
 	
 	private SocialNetworkAppManager appManager = null;
 	private UserPanel userPanel = null;
 	
-	public NetworkNameChangedListener(SocialNetworkAppManager appManager) {
+	public SocialNetworkNameChangedListener(SocialNetworkAppManager appManager) {
 		super();
 		this.appManager = appManager;
 		this.userPanel = appManager.getUserPanelRef();

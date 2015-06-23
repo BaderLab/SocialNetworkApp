@@ -44,7 +44,7 @@ import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
-import org.baderlab.csapps.socialnetwork.listeners.NetworkNameChangedListener;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
@@ -223,7 +223,7 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
         
-        NetworkNameChangedListener networkNameChangedListener = new NetworkNameChangedListener(appManager);
+        SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager);
         registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
 
         SaveNetworkToProp saveSession = new SaveNetworkToProp(appManager);

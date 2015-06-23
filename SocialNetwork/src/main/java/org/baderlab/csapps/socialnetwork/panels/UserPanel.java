@@ -94,8 +94,8 @@ import org.cytoscape.util.swing.FileUtil;
  * @author Victor Kofia
  */
 public class UserPanel extends JPanel implements CytoPanelComponent {
-
-    /**
+	
+	/**
      * Apply a threshold (if applicable) and create a network
      *
      * @param {@link SocialNetworkAppManager} appManager
@@ -451,7 +451,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 // Perform switcharoo iff the panel being switched to is
                 // distinct from the current panel
                 if (!category.trim().equalsIgnoreCase(UserPanel.this.appManager.getUserPanelRef().getSelectedInfoPanel().getName())) {
-                    UserPanel.this.appManager.getUserPanelRef().performSwitcharoo();
+                    UserPanel.this.appManager.getUserPanelRef().performInfoPanelSwitch();
                 }
                 // Create new search filter
                 getSearchFilter().setModel(new DefaultComboBoxModel<String>(Category.getSearchFilterList(getSelectedCategory())));
@@ -618,7 +618,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         resetButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                UserPanel.this.appManager.getUserPanelRef().performSwitcharoo();
+                UserPanel.this.appManager.getUserPanelRef().performInfoPanelSwitch();
             }
         });
         return resetButton;
@@ -1011,7 +1011,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     /**
      * Switch info panel to the new one that user's selected
      */
-    private void performSwitcharoo() {
+    private void performInfoPanelSwitch() {
         // Remove current info panel
         this.remove(this.getSelectedInfoPanel());
         switch (this.getSelectedCategory()) {
