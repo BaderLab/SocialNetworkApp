@@ -234,7 +234,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * instance of academia panel
      */
     private AcademiaPanel academiaPanel = null;
-
+    
     /**
      * Create a new panel
      */

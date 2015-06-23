@@ -66,9 +66,9 @@ public class SocialNetworkNameChangedListener implements RowsSetListener {
         SocialNetwork network = null;
         CyNetwork cyNetwork = null;
         Iterator<Entry<String, SocialNetwork>> it = this.appManager.getSocialNetworkMap().entrySet().iterator();
-        Map.Entry pair = null;
+        Map.Entry<String, SocialNetwork> pair = null;
         while (it.hasNext()) {
-        	pair = (Map.Entry) it.next();
+        	pair = (Map.Entry<String, SocialNetwork>) it.next();
     		network = (SocialNetwork) pair.getValue();
     		cyNetwork = network.getCyNetwork();
     		if (cyNetwork != null) {

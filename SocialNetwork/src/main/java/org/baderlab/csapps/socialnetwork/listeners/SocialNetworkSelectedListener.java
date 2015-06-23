@@ -73,6 +73,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
      */
     public void handleEvent(SetSelectedNetworksEvent event) {
         String name = null;
+        this.appManager.updateCyNetworkMap(event.getNetworks());
         for (CyNetwork network : event.getNetworks()) {
             name = this.appManager.getNetworkName(network);
             // Update UI iff a social network has been selected
@@ -83,7 +84,8 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
                 this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
                 return;
             }
-        }
+            this.appManager.getCyNetworkMap().put(name, network);
+        }        
         this.appManager.setCurrentlySelectedSocialNetwork(null);
         this.userPanel.addNetworkVisualStyle(null);
         this.userPanel.updateNetworkSummaryPanel(null);

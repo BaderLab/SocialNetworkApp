@@ -48,6 +48,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,6 +108,8 @@ public class AcademiaPanel {
      * # of authors in a publication that the app will build a network out of.
      */
     private JTextArea thresholdTextAreaRef = null;
+    
+    // TODO: Write description for these instance variables
     private JRadioButton incitesRadioButtonRef = null;
     private JRadioButton pubmedRadioButtonRef = null;
     private JRadioButton scopusRadioButtonRef = null;
@@ -112,6 +117,7 @@ public class AcademiaPanel {
     private JPanel neighborDegreePanelRef = null;
     private JTextField neighborDegreeRef = null;
     private JComboBox<String> nodeAttrComboBoxRef = null;
+    private JComboBox<String> networkNameComboBoxRef = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -272,11 +278,11 @@ public class AcademiaPanel {
         					CytoscapeUtilities.notifyUser("Invalid input. Please enter an integer value.");
         					continue;
         				}
-        				SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
+        				CyNetwork network = AcademiaPanel.this.appManager.getCyNetworkMap().get(networkNameComboBoxRef.getSelectedItem());
         				if (network == null) {
         					CytoscapeUtilities.notifyUser("Unable to export. No network selected.");
         				} else {
-        					exportNeighborsToCSV(network.getCyNetwork(), Integer.parseInt(text));
+        					exportNeighborsToCSV(network, Integer.parseInt(text));
         				}
         				outcome = JOptionPane.CANCEL_OPTION;
         			}
@@ -375,16 +381,39 @@ public class AcademiaPanel {
 		JPanel neighborDegreePanel = new JPanel();
 		neighborDegreePanel.setLayout(new BoxLayout(neighborDegreePanel, BoxLayout.Y_AXIS));
 		
+		JPanel networkNamePanel = new JPanel();
+		networkNamePanel.setLayout(new BoxLayout(networkNamePanel, BoxLayout.X_AXIS));
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		Map<String, CyNetwork> selectedNetworkList = this.appManager.getCyNetworkMap();
+		if (selectedNetworkList.isEmpty()) {
+			model.addElement("N/A");			
+		} else {
+			Iterator<Entry<String, CyNetwork>> it = this.appManager.getCyNetworkMap().entrySet().iterator();
+			Map.Entry<String, CyNetwork> pair = null;
+			CyNetwork cyNetwork = null;
+			String networkName = null;
+			while (it.hasNext()) {
+				pair = (Map.Entry<String, CyNetwork>) it.next();
+				cyNetwork = (CyNetwork) pair.getValue();
+				networkName = this.appManager.getNetworkName(cyNetwork);
+				model.addElement(networkName);
+			}			
+		}
+
+		networkNameComboBoxRef = new JComboBox<String>(model);
+		networkNamePanel.add(new JLabel("Select network: "));
+		networkNamePanel.add(networkNameComboBoxRef);
+		
 		JPanel degreeInputPanel = new JPanel();
 		degreeInputPanel.setLayout(new BoxLayout(degreeInputPanel, BoxLayout.X_AXIS));
 		neighborDegreeRef = new JTextField(5);
 		neighborDegreeRef.setText("1");
-		degreeInputPanel.add(new JLabel("Please specify the degree:"));
+		degreeInputPanel.add(new JLabel("Please specify the degree: "));
 		degreeInputPanel.add(neighborDegreeRef);
 		
 		JPanel nodeAttrPanel = new JPanel();
 		nodeAttrPanel.setLayout(new BoxLayout(nodeAttrPanel, BoxLayout.X_AXIS));
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model = new DefaultComboBoxModel<String>();
 		SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
 		if (network == null) {
 			model.addElement("N/A");
@@ -396,13 +425,22 @@ public class AcademiaPanel {
 			}			
 		}
 		nodeAttrComboBoxRef = new JComboBox<String>(model);
-		nodeAttrPanel.add(new JLabel("Select node attribute:"));
+		nodeAttrPanel.add(new JLabel("Select node attribute: "));
 		nodeAttrPanel.add(nodeAttrComboBoxRef);
-		// TODO:
 		
-		neighborDegreePanel.add(degreeInputPanel);
+		neighborDegreePanel.add(networkNamePanel);
 		neighborDegreePanel.add(nodeAttrPanel);
+		neighborDegreePanel.add(degreeInputPanel);
 		return neighborDegreePanel;
+    }
+    
+    /**
+     * Get the network name JComboBox reference
+     * 
+     * @return JComboBox networkNameComboBoxRef
+     */
+    public JComboBox<String> getNetworkNameComboBoxRef() {
+    	return this.networkNameComboBoxRef;
     }
 
     /**

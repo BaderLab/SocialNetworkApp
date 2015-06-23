@@ -43,10 +43,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
 
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -131,6 +134,12 @@ public class SocialNetworkAppManager {
      * Value: social network
      */
     private Map<String, SocialNetwork> socialNetworkMap = null;
+    /**
+     * CyNetwork map. <br>
+     * Key: network name <br>
+     * Value: CyNetwork
+     */
+    private Map<String, CyNetwork> cyNetworkMap = null;
     /**
      * A reference to the cytoscape task manager. As the name suggests the task
      * manager is used for executing tasks.
@@ -466,7 +475,7 @@ public class SocialNetworkAppManager {
     public ParseNetworkFileTaskFactory getParseNetworkFileTaskFactoryRef() {
         return this.parseNetworkFileTaskFactoryRef;
     }
-
+	
     /**
      * Get Cytoscape service registrar
      *
@@ -504,6 +513,31 @@ public class SocialNetworkAppManager {
             this.socialNetworkMap.put("DEFAULT", new SocialNetwork("DEFAULT", Category.DEFAULT));
         }
         return this.socialNetworkMap;
+    }
+    
+    /**
+     * Get {@link CyNetwork} map
+     * 
+     * @return Map social networks <br>
+     * <i>key: network name</i> <br>
+     * <i>value: CyNetwork</i>
+     */
+    public Map<String, CyNetwork> getCyNetworkMap() {
+    	if (this.cyNetworkMap == null) {
+    		setCyNetworkMap(new HashMap<String, CyNetwork>());
+    	}
+    	return this.cyNetworkMap;
+    }
+    
+    /**
+     * Set {@link CyNetwork} map
+     * 
+     * @param Map social networks <br>
+     * <i>key: network name</i> <br>
+     * <i>value: CyNetwork</i>
+     */
+    public void setCyNetworkMap(Map<String, CyNetwork> cyNetworkMap) {
+    	this.cyNetworkMap = cyNetworkMap;
     }
 
     /**
@@ -697,6 +731,32 @@ public class SocialNetworkAppManager {
     }
 
     /**
+	 * Update the CyNetwork map
+	 */
+	public void updateCyNetworkMap(List<CyNetwork> selectedNetworksList) {
+        this.getCyNetworkMap().clear();
+        for (CyNetwork network : selectedNetworksList) {
+            this.getCyNetworkMap().put(getNetworkName(network), network);
+        }        
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		if (this.getCyNetworkMap().isEmpty()) {
+			model.addElement("N/A");			
+		} else {
+			Iterator<Entry<String, CyNetwork>> it = this.cyNetworkMap.entrySet().iterator();
+			Map.Entry<String, CyNetwork> pair = null;
+			CyNetwork cyNetwork = null;
+			String networkName = null;
+			while (it.hasNext()) {
+				pair = (Map.Entry<String, CyNetwork>) it.next();
+				cyNetwork = (CyNetwork) pair.getValue();
+				networkName = getNetworkName(cyNetwork);
+				model.addElement(networkName);
+			}			
+		}
+		this.getUserPanelRef().getAcademiaPanel().getNetworkNameComboBoxRef().setModel(model);
+	}
+
+    /**
      * Set Cytoscape service registrar
      *
      * @param CyServiceRegistrar cyServiceRegistrarRef
@@ -750,7 +810,7 @@ public class SocialNetworkAppManager {
         this.visualStyleID = visualStyleID;
     }
 
-    /**
+	/**
      * Visualize a social network. Should not be executed directly.
      */
     private void visualizeNetwork() {

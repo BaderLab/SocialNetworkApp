@@ -87,7 +87,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             int networkID = socialNetwork.getNetworkType();
             switch (networkID) {
                 case Category.INCITES:
-                    // Create instance incites visual style
+                    // Create instance InCites visual style
                     IncitesVisualStyle vs = new IncitesVisualStyle();
                     vs.applyVisualStyle(event.getNetwork(), socialNetwork);
                     break;
