@@ -48,33 +48,22 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -114,10 +103,6 @@ public class AcademiaPanel {
     private JRadioButton pubmedRadioButtonRef = null;
     private JRadioButton scopusRadioButtonRef = null;
     private JRadioButton thresholdRadioButtonRef = null;
-    private JPanel neighborDegreePanelRef = null;
-    private JTextField neighborDegreeRef = null;
-    private JComboBox<String> nodeAttrComboBoxRef = null;
-    private JComboBox<String> networkNameComboBoxRef = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -179,8 +164,6 @@ public class AcademiaPanel {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setCollapsed(true);;
         advancedOptionsPanel.add(this.createThresholdPanel());
-        advancedOptionsPanel.add(Box.createVerticalStrut(5));
-        advancedOptionsPanel.add(this.createNetworkPropertiesPanel());
         return advancedOptionsPanel;
     }
     
@@ -258,55 +241,6 @@ public class AcademiaPanel {
     }
     
     /**
-     * Create and return export neighbor button. Enables users to export 
-     * the neighborlist of a specified degree.
-     * 
-     * @return JButton exportNeighborButton
-     */
-    private JButton createExportNeighborButton() {
-        JButton exportNeighborButton = new JButton("Export neighbors");
-        exportNeighborButton.setToolTipText("Export a neighbor list in csv format.");
-        exportNeighborButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {				
-        		int outcome = JOptionPane.OK_OPTION;
-        		while (outcome == JOptionPane.OK_OPTION) {
-        			outcome = JOptionPane.showConfirmDialog(null, getNeighborDegreePanelRef(), "Export neighbor list options",
-        					JOptionPane.OK_CANCEL_OPTION);
-        			if (outcome == JOptionPane.OK_OPTION) {
-        				String text = AcademiaPanel.this.neighborDegreeRef.getText().trim();
-        				if (!Pattern.matches("[0-9]+", text)) {
-        					CytoscapeUtilities.notifyUser("Invalid input. Please enter an integer value.");
-        					continue;
-        				}
-        				CyNetwork network = AcademiaPanel.this.appManager.getCyNetworkMap().get(networkNameComboBoxRef.getSelectedItem());
-        				if (network == null) {
-        					CytoscapeUtilities.notifyUser("Unable to export. No network selected.");
-        				} else {
-        					exportNeighborsToCSV(network, Integer.parseInt(text));
-        				}
-        				outcome = JOptionPane.CANCEL_OPTION;
-        			}
-        		}
-			}
-        });
-        return exportNeighborButton;
-    }
-    
-    /**
-     * Create and return the network properties panel. The network 
-     * properties panel is located under the Advanced Options 
-     * collapsible panel. It houses the export neighbors button.
-     * 
-     * @return JPanel networkPropertiesPanel
-     */
-    private JPanel createNetworkPropertiesPanel() {
-        JPanel networkPropertiesPanel = new JPanel(new BorderLayout());
-        networkPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Network Properties"));
-        networkPropertiesPanel.add(this.createExportNeighborButton(), BorderLayout.WEST);
-        return networkPropertiesPanel;
-    }
-    
-    /**
      * Create load button. Load button loads data file onto Cytoscape for
      * parsing
      *
@@ -369,78 +303,6 @@ public class AcademiaPanel {
         // Add load data button
         loadDataPanel.add(this.createLoadButton());
         return loadDataPanel;
-    }
-
-    /**
-     * Create a panel that allows the user to select the degree of the neighbors
-     * he or she wants to export
-     * 
-     * @return JPanel neighborDegreePanel
-     */
-    private JPanel createNeighborDegreePanel() {
-		JPanel neighborDegreePanel = new JPanel();
-		neighborDegreePanel.setLayout(new BoxLayout(neighborDegreePanel, BoxLayout.Y_AXIS));
-		
-		JPanel networkNamePanel = new JPanel();
-		networkNamePanel.setLayout(new BoxLayout(networkNamePanel, BoxLayout.X_AXIS));
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Map<String, CyNetwork> selectedNetworkList = this.appManager.getCyNetworkMap();
-		if (selectedNetworkList.isEmpty()) {
-			model.addElement("N/A");			
-		} else {
-			Iterator<Entry<String, CyNetwork>> it = this.appManager.getCyNetworkMap().entrySet().iterator();
-			Map.Entry<String, CyNetwork> pair = null;
-			CyNetwork cyNetwork = null;
-			String networkName = null;
-			while (it.hasNext()) {
-				pair = (Map.Entry<String, CyNetwork>) it.next();
-				cyNetwork = (CyNetwork) pair.getValue();
-				networkName = this.appManager.getNetworkName(cyNetwork);
-				model.addElement(networkName);
-			}			
-		}
-
-		networkNameComboBoxRef = new JComboBox<String>(model);
-		networkNamePanel.add(new JLabel("Select network: "));
-		networkNamePanel.add(networkNameComboBoxRef);
-		
-		JPanel degreeInputPanel = new JPanel();
-		degreeInputPanel.setLayout(new BoxLayout(degreeInputPanel, BoxLayout.X_AXIS));
-		neighborDegreeRef = new JTextField(5);
-		neighborDegreeRef.setText("1");
-		degreeInputPanel.add(new JLabel("Please specify the degree: "));
-		degreeInputPanel.add(neighborDegreeRef);
-		
-		JPanel nodeAttrPanel = new JPanel();
-		nodeAttrPanel.setLayout(new BoxLayout(nodeAttrPanel, BoxLayout.X_AXIS));
-		model = new DefaultComboBoxModel<String>();
-		SocialNetwork network = AcademiaPanel.this.appManager.getCurrentlySelectedSocialNetwork();
-		if (network == null) {
-			model.addElement("N/A");
-		} else {
-			for (CyColumn col : network.getCyNetwork().getDefaultNodeTable().getColumns()) {
-				if (col.getType() == String.class) {
-					model.addElement(col.getName());								
-				}
-			}			
-		}
-		nodeAttrComboBoxRef = new JComboBox<String>(model);
-		nodeAttrPanel.add(new JLabel("Select node attribute: "));
-		nodeAttrPanel.add(nodeAttrComboBoxRef);
-		
-		neighborDegreePanel.add(networkNamePanel);
-		neighborDegreePanel.add(nodeAttrPanel);
-		neighborDegreePanel.add(degreeInputPanel);
-		return neighborDegreePanel;
-    }
-    
-    /**
-     * Get the network name JComboBox reference
-     * 
-     * @return JComboBox networkNameComboBoxRef
-     */
-    public JComboBox<String> getNetworkNameComboBoxRef() {
-    	return this.networkNameComboBoxRef;
     }
 
     /**
@@ -538,47 +400,6 @@ public class AcademiaPanel {
         thresholdPanel.add(getThresholdTextAreaRef());
         return thresholdPanel;
     }
-
-    /**
-     * Export the nth degree neighbors of the specified network to CSV
-     * 
-     * @param CyNetwork cyNetwork
-     * @param int degree
-     */
-    private void exportNeighborsToCSV(CyNetwork cyNetwork, int degree) {
-    	if (degree == 0) {
-    		return; // No neighbors to export if degree is equal to 0
-    	}
-    	JFileChooser fc = new JFileChooser();
-    	fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    	fc.setDialogTitle("Select a folder");
-    	fc.setApproveButtonText("Select");
-        if (fc.showOpenDialog(this.cySwingAppRef.getJFrame()) == JFileChooser.APPROVE_OPTION) {
-    	    try {
-    	        String fileName = "/neighbor_list.csv";
-				FileWriter writer = new FileWriter(fc.getSelectedFile().getAbsolutePath() + fileName);
-				writer.append("Author");
-				writer.append(',');
-				writer.append("Neighbors");
-				writer.append('\n');
-				String attr = (String) nodeAttrComboBoxRef.getSelectedItem();
-				if (!attr.equalsIgnoreCase("N/A")) {
-					for (CyNode node : cyNetwork.getNodeList()) {
-						// column is assumed to be of type String
-						writer.append(cyNetwork.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class));
-						writer.append(',');
-						writeNthDegreeNode(node, cyNetwork, writer, attr, degree);
-						writer.append('\n');
-					}					
-				}
-				writer.flush();
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
-			}
-        }   
-    }
     
     /**
      * Get academia info panel reference
@@ -596,19 +417,6 @@ public class AcademiaPanel {
      */
     public JTextField getFacultyTextFieldRef() {
         return this.facultyTextFieldRef;
-    }
-
-    /**
-     * Get a panel that allows the user to select the degree of the neighbors
-     * he or she wants to export
-     * 
-     * @return JPanel neighborDegreePanel
-     */
-    private JPanel getNeighborDegreePanelRef() {
-    	if (this.neighborDegreePanelRef == null) {
-    		this.neighborDegreePanelRef = this.createNeighborDegreePanel();
-    	}
-    	return this.neighborDegreePanelRef;
     }
 
     /**
@@ -714,30 +522,6 @@ public class AcademiaPanel {
         } else {
             return this.thresholdRadioButtonRef.isSelected();
         }
-    }
-
-    /**
-     * Write the nth degree neighbors of {@code node} into a text file
-     * 
-     * @param CyNode node
-     * @param CyNetwork network
-     * @param FileWriter writer
-     * @param String attr
-     * @param {@code int} depth
-     */
-    private void writeNthDegreeNode(CyNode node, CyNetwork network, FileWriter writer, String attr, int depth) {
-    	if (depth == 0) {
-			try {
-				writer.append("(" + network.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class) + ") ");
-			} catch (IOException e) {
-				e.printStackTrace();
-				CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
-			}
-			return;
-    	}
-    	for (CyNode neighbour : network.getNeighborList(node, CyEdge.Type.ANY)) {
-    		writeNthDegreeNode(neighbour, network, writer, attr, depth - 1);    		
-    	}
     }
 
 }

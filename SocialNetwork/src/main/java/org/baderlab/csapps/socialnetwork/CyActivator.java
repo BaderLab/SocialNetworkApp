@@ -41,14 +41,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
+import org.baderlab.csapps.socialnetwork.actions.ExportNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
-import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
@@ -220,10 +221,10 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef,appManager);
         registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 
-        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager);
+        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
         
-        SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager);
+        SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
         registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
 
         SaveNetworkToProp saveSession = new SaveNetworkToProp(appManager);
@@ -295,6 +296,18 @@ public class CyActivator extends AbstractCyActivator {
                 cyNetworkViewManagerServiceRef);
 
         registerService(bc, incitesAction, CyAction.class, new Properties());
+        
+        // Export neighbors Action
+        serviceProperties = new HashMap<String, String>();
+        serviceProperties.put("inMenuBar", "true");
+        serviceProperties.put("preferredMenu", "Tools.NetworkAnalyzer.Neighbor List");
+        ExportNeighborsAction exportNeighborsAction = new ExportNeighborsAction(serviceProperties,
+                cyApplicationManagerServiceRef,
+                cyNetworkViewManagerServiceRef,
+                cyNetworkManagerServiceRef,
+                cySwingApplicationServiceRef);
+        
+        registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
 
         // TODO: Disabled the auto-annotator temporarily
         // Auto-annotate Panel Action - opens Annotation panel

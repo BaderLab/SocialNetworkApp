@@ -47,10 +47,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Set;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
-
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -134,12 +133,6 @@ public class SocialNetworkAppManager {
      * Value: social network
      */
     private Map<String, SocialNetwork> socialNetworkMap = null;
-    /**
-     * CyNetwork map. <br>
-     * Key: network name <br>
-     * Value: CyNetwork
-     */
-    private Map<String, CyNetwork> cyNetworkMap = null;
     /**
      * A reference to the cytoscape task manager. As the name suggests the task
      * manager is used for executing tasks.
@@ -433,7 +426,7 @@ public class SocialNetworkAppManager {
      * @param CyNetwork network
      * @return String networkName
      */
-    public String getNetworkName(CyNetwork network) {
+    public static String getNetworkName(CyNetwork network) {
         ArrayList<CyRow> rowList = (ArrayList<CyRow>) network.getDefaultNetworkTable().getAllRows();
         CyRow row = rowList.get(0);
         String networkName = (String) row.getAllValues().get("name");
@@ -513,31 +506,6 @@ public class SocialNetworkAppManager {
             this.socialNetworkMap.put("DEFAULT", new SocialNetwork("DEFAULT", Category.DEFAULT));
         }
         return this.socialNetworkMap;
-    }
-    
-    /**
-     * Get {@link CyNetwork} map
-     * 
-     * @return Map social networks <br>
-     * <i>key: network name</i> <br>
-     * <i>value: CyNetwork</i>
-     */
-    public Map<String, CyNetwork> getCyNetworkMap() {
-    	if (this.cyNetworkMap == null) {
-    		setCyNetworkMap(new HashMap<String, CyNetwork>());
-    	}
-    	return this.cyNetworkMap;
-    }
-    
-    /**
-     * Set {@link CyNetwork} map
-     * 
-     * @param Map social networks <br>
-     * <i>key: network name</i> <br>
-     * <i>value: CyNetwork</i>
-     */
-    public void setCyNetworkMap(Map<String, CyNetwork> cyNetworkMap) {
-    	this.cyNetworkMap = cyNetworkMap;
     }
 
     /**
@@ -729,42 +697,6 @@ public class SocialNetworkAppManager {
     public void setParseNetworkFileTaskFactoryRef(ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef) {
         this.parseNetworkFileTaskFactoryRef = parseNetworkFileTaskFactoryRef;
     }
-    
-    /**
-     * Update the network name JComboBox with the info that is currently
-     * in the CyNetworkMap.
-     */
-    public void updateNetworkNameComboBox() {
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		if (this.getCyNetworkMap().isEmpty()) {
-			model.addElement("N/A");			
-		} else {
-			Iterator<Entry<String, CyNetwork>> it = this.cyNetworkMap.entrySet().iterator();
-			Map.Entry<String, CyNetwork> pair = null;
-			CyNetwork cyNetwork = null;
-			String networkName = null;
-			while (it.hasNext()) {
-				pair = (Map.Entry<String, CyNetwork>) it.next();
-				cyNetwork = (CyNetwork) pair.getValue();
-				networkName = getNetworkName(cyNetwork);
-				model.addElement(networkName);
-			}			
-		}
-		this.getUserPanelRef().getAcademiaPanel().getNetworkNameComboBoxRef().setModel(model);
-    }
-
-    /**
-	 * Update the CyNetwork map
-	 * 
-	 * @param List selectedNetworksList
-	 */
-	public void updateCyNetworkMap(List<CyNetwork> selectedNetworksList) {
-        this.getCyNetworkMap().clear();
-        for (CyNetwork network : selectedNetworksList) {
-            this.getCyNetworkMap().put(getNetworkName(network), network);
-        }        
-		updateNetworkNameComboBox();
-	}
 
     /**
      * Set Cytoscape service registrar

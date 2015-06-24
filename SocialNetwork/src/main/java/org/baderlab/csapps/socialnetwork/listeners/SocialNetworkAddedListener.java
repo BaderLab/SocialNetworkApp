@@ -38,12 +38,12 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
-
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 
@@ -57,15 +57,18 @@ import org.cytoscape.model.events.NetworkAddedListener;
 public class SocialNetworkAddedListener implements NetworkAddedListener {
 
     private SocialNetworkAppManager appManager = null;
+    private CyNetworkManager cyNetworkManagerServiceRef = null;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
      *
      * @param {@link SocialNetworkAppManager} appManager
      */
-    public SocialNetworkAddedListener(SocialNetworkAppManager appManager) {
+    public SocialNetworkAddedListener(SocialNetworkAppManager appManager, 
+            CyNetworkManager cyNetworkManagerServiceRef) {
         super();
         this.appManager = appManager;
+        this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
     }
 
     /**
