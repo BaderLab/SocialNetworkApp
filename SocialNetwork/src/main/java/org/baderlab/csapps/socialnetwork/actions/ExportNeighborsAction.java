@@ -31,10 +31,11 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
+ * Allows users to export a csv file containing the nth degree neighbors
+ * of every node in a currently existing Cytoscape network.
  * 
  * @author Victor Kofia
  */
-// TODO: Write class description
 @SuppressWarnings("serial")
 public class ExportNeighborsAction extends AbstractCyAction {
     
@@ -64,51 +65,18 @@ public class ExportNeighborsAction extends AbstractCyAction {
         super(configProps, applicationManager, networkViewManager);
         putValue(Action.NAME, "Export Neighbors");
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
+        this.cySwingApplicationServiceRef = cySwingApplicationServiceRef;
         this.nodeAttrComboBoxRef = new JComboBox<String>();
         this.cyNetworkMap = new HashMap<String, CyNetwork>();
         this.networkNameComboBoxRef = createNetworkNameComboBoxRef();
-        this.cySwingApplicationServiceRef = cySwingApplicationServiceRef;
     }
     
     /**
+     * Export the neighborlist if a valid network, attribute and
+     * degree has been provided by the user
      * 
+     *  @param ActionEvent e
      */
-    // TODO: Write description
-    private void updateNodeAttrComboBoxRef() {
-        String selectedItem = (String) this.networkNameComboBoxRef.getSelectedItem();
-        CyNetwork cyNetwork = cyNetworkMap.get(selectedItem);
-        if (cyNetwork == null) {
-            return;
-        }
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-        for (CyColumn col : cyNetwork.getDefaultNodeTable().getColumns()) {
-            if (col.getType() == String.class) {
-                model.addElement(col.getName());                                
-            }
-        }
-        nodeAttrComboBoxRef.setModel(model);
-    }
-    
-    /**
-     * 
-     * @return JComboBox 
-     */
-    private JComboBox<String> createNetworkNameComboBoxRef() {
-        JComboBox<String> comboBox = new JComboBox<String>();
-        comboBox.addActionListener(
-            new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    updateNodeAttrComboBoxRef();
-                }
-            }                            
-        );
-        return comboBox;
-    }
-    
-    /**
-     * 
-     */
-    // TODO: Write description
     public void actionPerformed(ActionEvent e) {
         int outcome = JOptionPane.OK_OPTION;
         while (outcome == JOptionPane.OK_OPTION) {
@@ -119,7 +87,7 @@ public class ExportNeighborsAction extends AbstractCyAction {
                 String networkName = (String) this.networkNameComboBoxRef.getSelectedItem();
                 CyNetwork network = this.cyNetworkMap.get(networkName);
                 if (network == null) {
-                    CytoscapeUtilities.notifyUser("No network is available");
+                    CytoscapeUtilities.notifyUser("Unable to export. No network is available");
                     return;
                 }
                 String text = this.neighborDegreeRef.getText().trim();
@@ -168,7 +136,24 @@ public class ExportNeighborsAction extends AbstractCyAction {
         exportNeighborsPanel.add(degreeInputPanel);
         return exportNeighborsPanel;
     }
-
+    
+    /**
+     * Create and return the network name JComboBox
+     * 
+     * @return JComboBox networkNameComboBoxRef
+     */
+    private JComboBox<String> createNetworkNameComboBoxRef() {
+        JComboBox<String> comboBox = new JComboBox<String>();
+        comboBox.addActionListener(
+            new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    updateNodeAttrComboBoxRef();
+                }
+            }                            
+        );
+        return comboBox;
+    }
+    
     /**
      * Export the nth degree neighbors of the specified network to CSV
      * 
@@ -215,7 +200,7 @@ public class ExportNeighborsAction extends AbstractCyAction {
      * 
      * @return JPanel exportNeighborsPanelRef
      */
-    public JPanel getExportNeighborsPanelRef() {
+    private JPanel getExportNeighborsPanelRef() {
         if (this.exportNeighborsPanelRef == null) {
             setExportNeighborsPanelRef(createExportNeighborsPanel());
         }
@@ -227,7 +212,7 @@ public class ExportNeighborsAction extends AbstractCyAction {
      * 
      * @param JPanel exportNeighborsPanelRef
      */
-    public void setExportNeighborsPanelRef(JPanel exportNeighborsPanelRef) {
+    private void setExportNeighborsPanelRef(JPanel exportNeighborsPanelRef) {
         this.exportNeighborsPanelRef = exportNeighborsPanelRef;
     }
 
@@ -235,13 +220,11 @@ public class ExportNeighborsAction extends AbstractCyAction {
      * Update the network name JComboBox with the info that is currently
      * in the CyNetworkMap.
      */
-    public void updateNetworkNameComboBoxRef() {
-        if (this.networkNameComboBoxRef == null) {
-            return;
-        }
+    private void updateNetworkNameComboBoxRef() {
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
         Set<CyNetwork> networkSet = this.cyNetworkManagerServiceRef.getNetworkSet();
         String networkName = null;
+        this.cyNetworkMap.clear();
         if (networkSet.isEmpty()) {
             networkName = "N/A";
             model.addElement(networkName);            
@@ -257,6 +240,26 @@ public class ExportNeighborsAction extends AbstractCyAction {
         }
         this.networkNameComboBoxRef.setModel(model);
         this.networkNameComboBoxRef.setSelectedItem(networkName);            
+    }
+
+    /**
+     * Update the node attribute JComboBox with the attributes of the
+     * selected CyNetwork 
+     */
+    private void updateNodeAttrComboBoxRef() {
+        String selectedItem = (String) this.networkNameComboBoxRef.getSelectedItem();
+        CyNetwork cyNetwork = cyNetworkMap.get(selectedItem);
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+        if (cyNetwork == null) {
+            model.addElement("N/A");
+        } else {
+        	for (CyColumn col : cyNetwork.getDefaultNodeTable().getColumns()) {
+        		if (col.getType() == String.class) {
+        			model.addElement(col.getName());                                
+        		}
+        	}        	
+        }
+        nodeAttrComboBoxRef.setModel(model);
     }
     
 
