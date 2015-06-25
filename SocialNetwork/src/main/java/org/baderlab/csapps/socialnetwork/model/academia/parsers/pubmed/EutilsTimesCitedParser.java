@@ -3,11 +3,11 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Tag;
@@ -22,6 +22,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class EutilsTimesCitedParser extends DefaultHandler {
+    
+    private static final Logger logger = Logger.getLogger(EutilsTimesCitedParser.class.getName());
 
     /**
      * XML Parsing variables. Used to temporarily store data.
@@ -78,17 +80,14 @@ public class EutilsTimesCitedParser extends DefaultHandler {
                 retStart += retMax;
             }
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: add log message
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: add log message
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
-            // TODO: add log message
         }
     }
 

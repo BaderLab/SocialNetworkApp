@@ -1,9 +1,9 @@
 package org.baderlab.csapps.socialnetwork.autoannotate.task;
 
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationManager;
 import org.baderlab.csapps.socialnetwork.autoannotate.AutoAnnotationParameters;
 import org.baderlab.csapps.socialnetwork.autoannotate.model.AnnotationSet;
@@ -22,6 +22,8 @@ import org.cytoscape.work.TaskMonitor;
  */
 
 public class AutoAnnotationTask extends AbstractTask {
+    
+    private static final Logger logger = Logger.getLogger(AutoAnnotationTask.class.getName());
 
     private AutoAnnotationParameters params;
 
@@ -128,7 +130,7 @@ public class AutoAnnotationTask extends AbstractTask {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
             }
         }
     }

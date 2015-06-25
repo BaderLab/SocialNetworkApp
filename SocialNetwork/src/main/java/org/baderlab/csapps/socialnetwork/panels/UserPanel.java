@@ -52,9 +52,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -77,12 +78,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.util.GenerateReports;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -97,6 +98,8 @@ import org.cytoscape.util.swing.FileUtil;
  */
 @SuppressWarnings("serial")
 public class UserPanel extends JPanel implements CytoPanelComponent {
+    
+    private static final Logger logger = Logger.getLogger(UserPanel.class.getName());
 	
 	/**
      * Apply a threshold (if applicable) and create a network
@@ -351,7 +354,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             this.getNetworkPanelRef().repaint();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             // TODO: Add a better error message
             CytoscapeUtilities.notifyUser(String.format("An error occurred while adding %s to the network table", socialNetwork.getNetworkName()));
         }

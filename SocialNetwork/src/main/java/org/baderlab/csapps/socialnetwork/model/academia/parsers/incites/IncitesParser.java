@@ -42,9 +42,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -68,6 +69,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author Victor Kofia
  */
 public class IncitesParser {
+    
+    private static final Logger logger = Logger.getLogger(IncitesParser.class.getName());
 
     /**
      * Parse author's first name
@@ -203,9 +206,9 @@ public class IncitesParser {
 			this.parsePubsXLSX(pkg, numSheets);
 			this.calculateSummary();
 		} catch (InvalidFormatException e) {
-			e.printStackTrace();
+		    logger.log(Level.SEVERE, "Exception occurred", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
 		}
     }
 
@@ -406,7 +409,8 @@ public class IncitesParser {
                 // Authors whose first & last names could not be
                 // resolved properly for one reason or another (mostly
                 // formatting issues)
-                System.out.println(author);
+                logger.log(Level.WARNING, "First and last name could not be resolved "
+                                        + "properly for " + author.toString());
             }
         }
         return pubAuthorList;
@@ -434,15 +438,15 @@ public class IncitesParser {
         // Users do not have to be notified about these errors
         // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setDepartmentName("N/A");
             this.setFacultySet(new HashSet<Author>());
         } catch (OpenXML4JException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setDepartmentName("N/A");
             this.setFacultySet(new HashSet<Author>());
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setDepartmentName("N/A");
             this.setFacultySet(new HashSet<Author>());
         }
@@ -484,16 +488,16 @@ public class IncitesParser {
         // Users do not have to be notified about these exceptions
         // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setPubList(null);
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setPubList(null);
         } catch (InvalidFormatException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setPubList(null);
         } catch (OpenXML4JException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             this.setPubList(null);
         }
     }

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -38,6 +40,8 @@ import org.cytoscape.view.model.CyNetworkViewManager;
  */
 @SuppressWarnings("serial")
 public class ExportNeighborsAction extends AbstractCyAction {
+    
+    private static final Logger logger = Logger.getLogger(ExportNeighborsAction.class.getName());
     
     /**
      * 
@@ -189,7 +193,7 @@ public class ExportNeighborsAction extends AbstractCyAction {
                 writer.flush();
                 writer.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
             }
         }   
@@ -277,7 +281,8 @@ public class ExportNeighborsAction extends AbstractCyAction {
             try {
                 writer.append("(" + network.getDefaultNodeTable().getRow(node.getSUID()).get(attr, String.class) + ") ");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
+
                 CytoscapeUtilities.notifyUser("IOException. Unable to save csv file");
             }
             return;

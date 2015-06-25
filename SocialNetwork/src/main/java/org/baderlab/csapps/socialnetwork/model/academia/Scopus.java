@@ -43,9 +43,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -68,6 +69,8 @@ public class Scopus {
 
         private static final long serialVersionUID = 1L;
     }
+    
+    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
     
 	/**
 	 * Progress bar variables
@@ -173,7 +176,7 @@ public class Scopus {
             // Parse for publications
             while (in.hasNext()) {
                 line = in.nextLine();
-                // only split by commas not contained in quotes.
+                // Only split by commas not contained in quotes.
                 columns = splitQuoted("\"", ",", line);
                 authors = columns[0].replace("\"", "");
                 coauthorList = this.parseAuthors(authors);
@@ -183,7 +186,7 @@ public class Scopus {
                     // the year doesn't match assume something is wonky with
                     // this line
                     // skip this record, print out the line and continue
-                    System.out.println("unable to parse scopus line: " + line.toString());
+                    logger.log(Level.WARNING, "Unable to parse scopus line: " + line.toString());
                     continue;
                 }
                 subjectArea = columns[3].replace("\"", "");
@@ -197,7 +200,8 @@ public class Scopus {
                 this.getPubList().add(pub);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
+            taskMonitor.setStatusMessage("File not found");
             CytoscapeUtilities.notifyUser("Unable to locate Scopus data file.\nPlease re-load" + " file and try again.");
         } finally {
             if (in != null) {

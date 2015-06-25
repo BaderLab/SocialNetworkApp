@@ -45,8 +45,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 
 /**
  * Examples of visual styles currently in use by the app
@@ -54,6 +56,8 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
  * @author Victor Kofia
  */
 public class VisualStyles {
+    
+    private static final Logger logger = Logger.getLogger(VisualStyles.class.getName());
 
     /**
      * Get the help message associated with the visual style type
@@ -118,10 +122,10 @@ public class VisualStyles {
                 helpMssg += sCurrentLine;
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser(String.format("Failed to load %s. FileNotFoundException.", fileName));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser(String.format("Failed to load %s. IOException.", fileName));
         }
         return helpMssg;

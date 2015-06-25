@@ -3,15 +3,16 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.MonitoredFileInputStream;
 import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.Attributes;
@@ -25,6 +26,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class PubMedXmlParser extends DefaultHandler {
+    
+    private static final Logger logger = Logger.getLogger(PubMedXmlParser.class.getName());
 
     /**
      * XML Parsing variables. Used to temporarily store data.
@@ -90,17 +93,14 @@ public class PubMedXmlParser extends DefaultHandler {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(fileInputStream, this);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: add log message
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: add log message
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
-            // TODO: add log message
         }
     }
     
@@ -171,13 +171,12 @@ public class PubMedXmlParser extends DefaultHandler {
         return false;
     }
 
-    // Create new publication and add it to overall publist
-    @Override
     /* (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("PubmedArticle")) {
             Publication pub = new Publication(this.title != null ? this.title.toString() : null, 
@@ -216,13 +215,12 @@ public class PubMedXmlParser extends DefaultHandler {
         return this.pubList;
     }
 
-    // Reset variable contents
-    @Override
     /* (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equals("Author")) {
             this.isAuthor = true;

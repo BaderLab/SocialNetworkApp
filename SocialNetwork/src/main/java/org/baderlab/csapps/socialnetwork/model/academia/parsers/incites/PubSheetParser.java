@@ -38,12 +38,14 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -54,6 +56,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Victor Kofia
  */
 public class PubSheetParser extends DefaultHandler {
+    
+    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
+
 
     /**
      * List of authors in each publication
@@ -171,7 +176,7 @@ public class PubSheetParser extends DefaultHandler {
                     // As soon as an erroneous entry materializes
                     // , terminate parsing --> compromises entire file
                 } catch (UnableToParseAuthorException e) {
-                    e.printStackTrace();
+                    logger.log(Level.SEVERE, "Exception occurred", e);
                     return;
                 }
                 // Set publication info
@@ -202,7 +207,7 @@ public class PubSheetParser extends DefaultHandler {
                     // As soon as an erroneous entry materializes
                     // , terminate parsing --> compromises entire file
                 } catch (UnableToParseAuthorException e) {
-                    e.printStackTrace();
+                    logger.log(Level.SEVERE, "Exception occurred", e);
                     return;
                 }
                 // Set publication info
@@ -233,7 +238,7 @@ public class PubSheetParser extends DefaultHandler {
                     // As soon as an erroneous entry materializes
                     // , terminate parsing --> compromises entire file
                 } catch (UnableToParseAuthorException e) {
-                    e.printStackTrace();
+                    logger.log(Level.SEVERE, "Exception occurred", e);
                     return;
                 }
                 // Set publication info

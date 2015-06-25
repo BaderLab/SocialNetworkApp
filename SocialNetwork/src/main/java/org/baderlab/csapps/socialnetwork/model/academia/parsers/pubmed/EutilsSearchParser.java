@@ -1,14 +1,15 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -45,6 +46,8 @@ public class EutilsSearchParser extends DefaultHandler {
     private int retStart = 0;
     private int retMax = 0;
     
+    private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
+    
     /**
      * Create a new eUtils search parser
      * 
@@ -58,27 +61,22 @@ public class EutilsSearchParser extends DefaultHandler {
             String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
             saxParser.parse(url, this);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: Add log message
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
-            // TODO: Add log message
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
-            // TODO: Add log message
         }
     }
 
-    // Collect tag contents (if applicable)
-    @Override
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
+    @Override
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.isTotalPubs) {
             this.totalPubs.append(ch, start, length);
@@ -146,14 +144,12 @@ public class EutilsSearchParser extends DefaultHandler {
         return webEnv.toString();
     }
     
-    // Reset XML variables
-    @Override
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("Count") && this.totalPubs == null) {
             this.isTotalPubs = true;

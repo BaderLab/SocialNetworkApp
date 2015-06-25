@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -70,6 +71,8 @@ import org.baderlab.csapps.socialnetwork.model.academia.Publication;
  * 8. NetworkName_citationByLoaction_unique.html
  */
 public class GenerateReports {
+    
+    private static final Logger logger = Logger.getLogger(GenerateReports.class.getName());
 
     private ArrayList<Publication> publications = null;
     private ArrayList<Publication> excludedPubs = null;
@@ -329,7 +332,7 @@ public class GenerateReports {
             html_writer.println("</table>");
             html_writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Failed to create file. IOException. - " + base_name);
         }
     }
@@ -369,10 +372,10 @@ public class GenerateReports {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Failed to load google chart template. FileNotFoundException.");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Failed to load google chart template. IOException.");
         }
 
@@ -405,7 +408,7 @@ public class GenerateReports {
             txt_writer.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Failed to create file. IOException. - " + base_name);
         }
         // generate txt file

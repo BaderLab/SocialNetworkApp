@@ -44,7 +44,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -53,6 +54,8 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
  * @author Victor Kofia
  */
 public class Incites_InstitutionLocationMap {
+    
+    private static final Logger logger = Logger.getLogger(Incites_InstitutionLocationMap.class.getName());
 
     /**
      * Author location map
@@ -93,10 +96,10 @@ public class Incites_InstitutionLocationMap {
                  * this.setLocationMap((Map<String, String>) ois.readObject());
                  */
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
             }
         }

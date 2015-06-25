@@ -44,16 +44,17 @@ import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -69,6 +70,8 @@ public class AddInstitutionAction extends AbstractCyAction {
      *
      */
     private static final long serialVersionUID = -4694044300149844000L;
+    
+    private static final Logger logger = Logger.getLogger(AddInstitutionAction.class.getName());
 
     /**
      * Set of all accepted locations
@@ -174,11 +177,11 @@ public class AddInstitutionAction extends AbstractCyAction {
                 // Update map being used by Incites
                 // Incites_InstitutionLocationMap.setLocationMap(map);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities
                 .notifyUser("Location map could not be accessed.");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities
                 .notifyUser("Location map could not be accessed.");
             }
