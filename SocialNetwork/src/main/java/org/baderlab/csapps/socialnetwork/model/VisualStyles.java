@@ -47,8 +47,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 
 /**
  * Examples of visual styles currently in use by the app

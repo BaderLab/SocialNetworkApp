@@ -3,7 +3,9 @@ package org.baderlab.csapps.socialnetwork.listeners;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.swing.table.DefaultTableModel;
+
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;

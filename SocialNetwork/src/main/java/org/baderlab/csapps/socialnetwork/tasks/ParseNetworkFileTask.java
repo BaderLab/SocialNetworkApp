@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;

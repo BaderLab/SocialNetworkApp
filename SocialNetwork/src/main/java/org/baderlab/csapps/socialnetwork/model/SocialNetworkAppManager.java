@@ -43,13 +43,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+
 import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
+
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;

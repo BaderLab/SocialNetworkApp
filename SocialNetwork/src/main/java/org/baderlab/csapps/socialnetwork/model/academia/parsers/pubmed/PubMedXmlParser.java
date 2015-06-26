@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.MonitoredFileInputStream;
 import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.Attributes;

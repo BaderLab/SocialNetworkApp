@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;

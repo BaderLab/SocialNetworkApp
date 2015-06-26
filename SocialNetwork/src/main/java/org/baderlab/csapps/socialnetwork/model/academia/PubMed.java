@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRetrievalParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;

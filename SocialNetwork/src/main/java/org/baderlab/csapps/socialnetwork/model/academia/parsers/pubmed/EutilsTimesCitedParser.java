@@ -2,12 +2,13 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Tag;
@@ -43,15 +44,10 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      * A publication's total number of citations
      */
     private StringBuilder timesCited = null;
-    // TODO: Write description
-    private HashMap<String, Publication> pmidMap = null;
-    
-    private void createMap(ArrayList<Publication> pubList) {
-    	pmidMap = new HashMap<String, Publication>();
-    	for (Publication pub : pubList) {
-    		pmidMap.put(pub.getPMID(), pub);
-    	}
-    }
+    /**
+     * Globally referenced index variable to retrieve publications from publist
+     */
+    private int index = 0;
     
     /**
      * Create a new eUtils times cited parser
@@ -66,7 +62,6 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      */
     public EutilsTimesCitedParser(ArrayList<Publication> pubList, String queryKey, String webEnv, int retStart, int retMax) {
         try {
-        	createMap(pubList);
         	this.pubList = pubList;
         	int totalPubs = pubList.size();
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -90,7 +85,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
     }
-
+    
     /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
@@ -128,13 +123,12 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
-        	Publication pub = this.pmidMap.get(this.pmid.toString());
-        	if (pub != null) {
-        		pub.setTimesCited(this.timesCited.toString());
-        		this.pmidMap.remove(this.pmid.toString());
-        	} else {
-        		// TODO:
-        		System.out.println("eUtils: " + this.pmid);
+        	Publication pub = this.pubList.get(this.index);
+        	pub.setTimesCited(this.timesCited.toString());
+        	this.index++;
+        	if (!pub.getPMID().equals(this.pmid.toString())) {
+        		logger.log(Level.WARNING, "SAX parser truncated pmid from " + pub.getPMID()
+        				+ " to " + this.pmid.toString());
         	}
         	this.pmid = null;
         	this.timesCited = null;

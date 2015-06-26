@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -78,7 +79,6 @@ public class Incites_InstitutionLocationMap {
             try {
                 InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
                 this.locationMap = new HashMap<String, String>();
-
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
                 String sCurrentLine = null;
                 while ((sCurrentLine = br.readLine()) != null) {
