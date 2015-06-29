@@ -147,8 +147,11 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
      */
     @Override
     public void applyVisualStyle(CyNetwork network, SocialNetwork socialNetwork){
-        super.applyVisualStyle(network, socialNetwork);
+        this.network = network;
+        this.socialNetwork = socialNetwork;
+        applyNodeStyle(this.network, this.socialNetwork);
         applyIncitesNodeStyle();
+        applyEdgeStyle(this.network, this.socialNetwork);
     }
 
 
