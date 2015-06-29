@@ -4,6 +4,8 @@ import java.awt.Cursor;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -27,6 +29,8 @@ import org.cytoscape.work.TaskMonitor;
  */
 // TODO: Write class description
 public class ParseNetworkFileTask extends AbstractTask {
+    
+    private static final Logger logger = Logger.getLogger(ParseNetworkFileTask.class.getName());
     
     private SocialNetworkAppManager appManager = null;
     private int currentSteps = 0;
@@ -56,15 +60,15 @@ public class ParseNetworkFileTask extends AbstractTask {
                 socialNetwork = new SocialNetwork(networkName, Category.INCITES);
                 IncitesParser incitesParser = new IncitesParser(this.appManager.getNetworkFile(), taskMonitor);
                 if (incitesParser.getIgnoredRows() >= 1) {
-                    CytoscapeUtilities.notifyUser("Some rows could not be parsed.");
+                    logger.log(Level.WARNING, "Some rows could not be parsed.");
                 }
                 if (incitesParser.getIdentifiedFacultyList().size() == 0) {
-                    CytoscapeUtilities.notifyUser("Unable to identify faculty. Please verify that InCites data file is valid");
+                    logger.log(Level.WARNING, "Unable to identify faculty. Please verify that InCites data file is valid");
                 }
                 pubList = incitesParser.getPubList();
                 if (pubList == null) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. This InCites file is corrupt.");
+                    logger.log(Level.WARNING, "Invalid file. This InCites file is corrupt.");
                     return;
                 }
                 // Add summary attributes

@@ -62,6 +62,7 @@ public class Category {
         defaultInfoPanel.setName("--SELECT CATEGORY--");
         return defaultInfoPanel;
     }
+    
     /**
      * Create LinkedIn info panel
      *
