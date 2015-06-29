@@ -42,10 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
 import org.cytoscape.model.CyEdge;
 
 /**

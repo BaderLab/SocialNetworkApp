@@ -46,7 +46,7 @@ import java.util.Map;
 
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
+import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class TestAuthor {
      */
     public void testFacultyIdentificationInSet() {
         /* need the location map to instantiate an incites author */
-        Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+        IncitesInstitutionLocationMap locmap = new IncitesInstitutionLocationMap();
 
         Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
         Author author2 = new Author("Kofia;Victor", Category.FACULTY);
@@ -99,7 +99,7 @@ public class TestAuthor {
      */
     public void testFacultyIdentificationInSetMiddleInitial() {
         /* need the location map to instantiate an incites author */
-        Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+        IncitesInstitutionLocationMap locmap = new IncitesInstitutionLocationMap();
 
         Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
         Author author2 = new Author("Kofia;Victor A.", Category.FACULTY);
@@ -115,7 +115,7 @@ public class TestAuthor {
      */
     public void testFacultyIdentificationInSetOnlyInitial() {
         /* need the location map to instantiate an incites author */
-        Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+        IncitesInstitutionLocationMap locmap = new IncitesInstitutionLocationMap();
 
         Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
         Author author2 = new Author("Kofia;V.", Category.FACULTY);
@@ -131,7 +131,7 @@ public class TestAuthor {
      */
     public void testFacultyIdentificationInSetWhenIdentifiedIsDefective() {
         /* need the location map to instantiate an incites author */
-        Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+        IncitesInstitutionLocationMap locmap = new IncitesInstitutionLocationMap();
 
         Author author1 = new Author("Kofia, Victor (UNIV TORONTO)", Category.INCITES, locmap);
         Author author2 = new Author("Kofia;Victo", Category.FACULTY);
@@ -147,7 +147,7 @@ public class TestAuthor {
      */
     public void testFacultyIdentificationInSetWhenIdentifierIsDefective() {
         /* need the location map to instantiate an incites author */
-        Incites_InstitutionLocationMap locmap = new Incites_InstitutionLocationMap();
+        IncitesInstitutionLocationMap locmap = new IncitesInstitutionLocationMap();
 
         Author author1 = new Author("Kofia, Victo (UNIV TORONTO)", Category.INCITES, locmap);
         Author author2 = new Author("Kofia;Victor", Category.FACULTY);

@@ -35,14 +35,14 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model.visualstyles;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -142,17 +142,13 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 
     }
 
-    @Override
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle#applyVisualStyle(org.cytoscape.model.CyNetwork, org.baderlab.csapps.socialnetwork.model.SocialNetwork)
      */
+    @Override
     public void applyVisualStyle(CyNetwork network, SocialNetwork socialNetwork){
-        this.network = network;
-        this.socialNetwork = socialNetwork;
-        applyNodeStyle(this.network, this.socialNetwork);
+        super.applyVisualStyle(network, socialNetwork);
         applyIncitesNodeStyle();
-        applyEdgeStyle(this.network, this.socialNetwork);
     }
 
 

@@ -59,6 +59,7 @@ public class CytoscapeUtilities {
         JOptionPane.showMessageDialog(new JPanel(),
                 "<html><body style='width: 200px'>" + message);
     }
+    
     public static String buildId = "";
     public static String pluginReleaseSuffix = "";
     public static String pluginUrl = "";

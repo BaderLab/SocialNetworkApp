@@ -42,13 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
 import org.cytoscape.model.CyNode;
 
 /**
@@ -135,7 +134,7 @@ public class Author extends AbstractNode {
     /**
      * location Map
      */
-    private Incites_InstitutionLocationMap locationMap = null;
+    private IncitesInstitutionLocationMap locationMap = null;
 
     /**
      * Create a new author with the first name, last name and middle initial
@@ -221,9 +220,9 @@ public class Author extends AbstractNode {
      *
      * @param String rawAuthorText
      * @param int origin
-     * @param {@link Incites_InstitutionLocationMap} locationMap
+     * @param {@link IncitesInstitutionLocationMap} locationMap
      */
-    public Author(String rawAuthorText, int origin, Incites_InstitutionLocationMap locationMap) {
+    public Author(String rawAuthorText, int origin, IncitesInstitutionLocationMap locationMap) {
         this.setOrigin(origin);
         switch (origin) {
 

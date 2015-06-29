@@ -55,7 +55,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
+import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.MonitoredFileInputStream;
 import org.cytoscape.work.TaskMonitor;
@@ -184,7 +184,7 @@ public class IncitesParser {
      * object representing all the institution to location mapping needed by
      * incites
      */
-    private Incites_InstitutionLocationMap locationMap = null;
+    private IncitesInstitutionLocationMap locationMap = null;
 
     /**
      * Constructor for {@link IncitesParser}
@@ -195,7 +195,7 @@ public class IncitesParser {
     public IncitesParser(File file, TaskMonitor taskMonitor) {
         // TODO: test cases can't provide a taskMonitor, what
         // to do in this situation?
-        this.locationMap = new Incites_InstitutionLocationMap();
+        this.locationMap = new IncitesInstitutionLocationMap();
         OPCPackage pkg;
 		try {
 			MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(file, 

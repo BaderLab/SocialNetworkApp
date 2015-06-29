@@ -55,7 +55,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.academia.Incites_InstitutionLocationMap;
+import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -164,7 +164,7 @@ public class AddInstitutionAction extends AbstractCyAction {
         if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
             try {
                 // Get map file in jar
-                InputStream in = Incites_InstitutionLocationMap.class
+                InputStream in = IncitesInstitutionLocationMap.class
                         .getClassLoader().getResourceAsStream("map.sn");
                 ObjectInputStream ois = new ObjectInputStream(in);
                 @SuppressWarnings("unchecked")

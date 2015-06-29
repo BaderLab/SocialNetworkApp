@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model.visualstyles;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -47,8 +47,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.Category;
 
 /**
  * Examples of visual styles currently in use by the app

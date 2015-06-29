@@ -54,9 +54,9 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
  *
  * @author Victor Kofia
  */
-public class Incites_InstitutionLocationMap {
+public class IncitesInstitutionLocationMap {
     
-    private static final Logger logger = Logger.getLogger(Incites_InstitutionLocationMap.class.getName());
+    private static final Logger logger = Logger.getLogger(IncitesInstitutionLocationMap.class.getName());
 
     /**
      * Author location map
@@ -74,7 +74,7 @@ public class Incites_InstitutionLocationMap {
      * Initialize the map with values from a file stored in the jar File is
      * currently stored as binary hashmap
      */
-    public Incites_InstitutionLocationMap() {
+    public IncitesInstitutionLocationMap() {
         if (this.locationMap == null) {
             try {
                 InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");

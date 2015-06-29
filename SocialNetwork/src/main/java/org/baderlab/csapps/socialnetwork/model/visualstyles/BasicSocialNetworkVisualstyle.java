@@ -35,12 +35,12 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork.model;
+package org.baderlab.csapps.socialnetwork.model.visualstyles;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -68,7 +68,7 @@ public class BasicSocialNetworkVisualstyle {
     private SocialNetwork socialNetwork;
 
     /**
-     * Apply an edge style to every edge in network
+     * Apply an edge style to every edge in network.
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork
@@ -93,7 +93,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * Apply a node style to every node in network
+     * Apply a node style to every node in network.
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork
@@ -115,7 +115,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * Apply a visual style to network
+     * Apply a visual style to network.
      *
      * @param {@link CyNetwork} network
      * @param {@link SocialNetwork} socialNetwork
@@ -128,7 +128,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * Get largest value given cut-off point
+     * Get largest value given cut-off point.
      *
      * @param List list
      * @param Double cutoff
@@ -150,7 +150,7 @@ public class BasicSocialNetworkVisualstyle {
     }
 
     /**
-     * Get smallest value given cutoff
+     * Get smallest value given cutoff.
      *
      * @param List list
      * @param Double cutoff
