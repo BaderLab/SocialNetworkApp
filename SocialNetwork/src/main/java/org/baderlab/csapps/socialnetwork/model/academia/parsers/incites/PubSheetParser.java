@@ -40,11 +40,11 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -57,7 +57,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PubSheetParser extends DefaultHandler {
     
-    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
+    private static final Logger logger = Logger.getLogger(PubSheetParser.class.getName());
 
 
     /**
