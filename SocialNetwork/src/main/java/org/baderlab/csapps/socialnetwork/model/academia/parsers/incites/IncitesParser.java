@@ -411,7 +411,7 @@ public class IncitesParser {
                 // resolved properly for one reason or another (mostly
                 // formatting issues)
                 logger.log(Level.WARNING, "First and last name could not be resolved "
-                                        + "properly for " + author.toString());
+                                        + "properly for " + authorText);
             }
         }
         return pubAuthorList;

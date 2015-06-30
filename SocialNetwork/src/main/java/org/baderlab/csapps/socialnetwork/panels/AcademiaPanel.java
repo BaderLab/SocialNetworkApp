@@ -333,8 +333,6 @@ public class AcademiaPanel {
                     } else {
                         try {
                             int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
-                            //                                int maxAuthorThreshold = UserPanel.getValidThreshold(thresholdIsSelected(),
-                            //                                        getThresholdTextFieldRef().getText());
                             AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
                         } catch (FileNotFoundException e) {
                             CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
@@ -435,6 +433,7 @@ public class AcademiaPanel {
     }
 
     /**
+     * Get a reference to the threshold JTextArea
      *
      * @return {@link JTextArea} thresholdTextAreaRef
      */

@@ -5,27 +5,25 @@ import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 /**
- * ??
+ * TaskFactory for {@link ParseIncitesXLSXTask}
  * 
  * @author Victor Kofia
  */
-// TODO: Write class description
-public class ParseNetworkFileTaskFactory extends AbstractTaskFactory {
+public class ParseIncitesXLSXTaskFactory extends AbstractTaskFactory {
     
     private SocialNetworkAppManager appManager = null;
     
     /**
-     * ??
+     * Constructor for {@link ParseIncitesXLSXFactory}
      * 
      * @param SocialNetworkAppManager appManager
      */
-    // TODO: Write constructor description
-    public ParseNetworkFileTaskFactory(SocialNetworkAppManager appManager) {
+    public ParseIncitesXLSXTaskFactory(SocialNetworkAppManager appManager) {
         this.appManager = appManager;
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new ParseNetworkFileTask(appManager));
+        return new TaskIterator(new ParseIncitesXLSXTask(appManager));
     }
 
 }

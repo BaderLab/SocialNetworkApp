@@ -56,7 +56,9 @@ import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
-import org.baderlab.csapps.socialnetwork.tasks.ParseNetworkFileTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
@@ -192,13 +194,23 @@ public class CyActivator extends AbstractCyActivator {
         DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef,appManager);
         registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
         
-        ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef = new ParseNetworkFileTaskFactory(appManager);
-        registerService(bc, parseNetworkFileTaskFactoryRef, TaskFactory.class, new Properties());
+        ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef = new ParsePubMedXMLTaskFactory(appManager);
+        registerService(bc, parsePubMedXMLTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        ParseIncitesXLSXTaskFactory parseIncitesXLSXTaskFactoryRef = new ParseIncitesXLSXTaskFactory(appManager);
+        registerService(bc, parseIncitesXLSXTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef = new ParseScopusCSVTaskFactory(appManager);
+        registerService(bc, parseScopusCSVTaskFactoryRef, TaskFactory.class, new Properties());
 
         // Add dependencies to app manager
         // TODO:
         // NOTE: Using setters violates dependency injection
-        appManager.setParseNetworkFileTaskFactoryRef(parseNetworkFileTaskFactoryRef);
+        appManager.setParsePubMedXMLTaskFactoryRef(parsePubMedXMLTaskFactoryRef);
+        
+        appManager.setParseIncitesXLSXTaskFactoryRef(parseIncitesXLSXTaskFactoryRef);
+        
+        appManager.setParseScopusCSVTaskFactoryRef(parseScopusCSVTaskFactoryRef);
         
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 

@@ -45,7 +45,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.Action;
+
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -55,7 +57,9 @@ import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
-import org.baderlab.csapps.socialnetwork.tasks.ParseNetworkFileTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetwork;
@@ -82,6 +86,18 @@ public class SocialNetworkAppManager {
     }
 
     /**
+     * Get the name associated with a particular CyNetwork object
+     *
+     * @param CyNetwork network
+     * @return String networkName
+     */
+    public static String getNetworkName(CyNetwork network) {
+        ArrayList<CyRow> rowList = (ArrayList<CyRow>) network.getDefaultNetworkTable().getAllRows();
+        CyRow row = rowList.get(0);
+        String networkName = (String) row.getAllValues().get("name");
+        return networkName;
+    }
+    /**
      * A reference to the <i>ApplyVisualStyle</i> task factory
      */
     private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
@@ -100,7 +116,7 @@ public class SocialNetworkAppManager {
      */
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     /**
-     * A reference to the <i>DestroyNetwork</i> task factory
+     * A reference to the task factory for <i>DestroyNetworkTask</i>
      */
     private DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = null;
     /**
@@ -113,13 +129,21 @@ public class SocialNetworkAppManager {
      */
     private String networkName = null;
     /**
-     * A reference to the <i>CreateNetwork</i> task factory
+     * A reference to the task factory for <i>CreateNetworkTask</i>
      */
     private CreateNetworkTaskFactory networkTaskFactoryRef = null;
     /**
-     * A reference to the <i>ParseNetworkFile</i> task factory
+     * A reference to the task factory for <i>ParseIncitesXLSXTask</i>
      */
-    private ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef = null;
+    private ParseIncitesXLSXTaskFactory parseIncitesXLSXTaskFactoryRef = null;
+    /**
+     * A reference to the task factory for <i>ParsePubMedXMLTask</i>
+     */
+    private ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef = null;
+    /**
+     * A reference to the task factory for <i>ParseScopusCSVTask</i>
+     */
+    private ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef = null;
     /**
      * A network that's just about to be destroyed
      */
@@ -154,14 +178,15 @@ public class SocialNetworkAppManager {
      */
     private File networkFile = null; // TODO:
     private int maxAuthorThreshold = -1; // TODO:
-    private int networkFileType = -1;
 
+    private int networkFileType = -1;
     /**
      * Set of all visual styles currently supported by app
      */
     private HashSet<String> visualStyleSet = null;
     public static final int ANALYSISTYPE_INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
     public static final int ANALYSISTYPE_SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
+
     public static final int ANALYSISTYPE_PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 
     private int analysis_type = SocialNetworkAppManager.ANALYSISTYPE_INCITES;
@@ -175,7 +200,7 @@ public class SocialNetworkAppManager {
         this.setVisualStyleID(new VisualStyles().getVisualStyleID(visualStyle));
         this.getTaskManager().execute(this.getApplyVisualStyleTaskFactoryRef().createTaskIterator());
     }
-
+    
     /**
      * Close user panel. Method will do nothing if user panel has not been
      * registered prior to it's execution.
@@ -184,7 +209,7 @@ public class SocialNetworkAppManager {
         this.getServiceRegistrar().unregisterService(this.getUserPanelRef(), CytoPanelComponent.class);
         this.getUserPanelAction().putValue(Action.NAME, "Show Social Network");
     }
-    
+
     /**
      * Create a network. Method marked private in order to prevent users from
      * inadvertently creating a network before all pertinent edge and node info
@@ -221,6 +246,10 @@ public class SocialNetworkAppManager {
         // Initialize variables
         String extension = FilenameUtils.getExtension(networkFile.getPath()).trim();
         
+        this.setNetworkFile(networkFile);
+        this.setNetworkName(networkName);
+        this.setMaxAuthorThreshold(maxAuthorThreshold);
+        
         // Create network out of InCites data
         if (this.analysis_type == this.ANALYSISTYPE_INCITES) {
             // Load data from text file
@@ -229,12 +258,14 @@ public class SocialNetworkAppManager {
                 CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
                 return;
             }
+            this.visualizeIncitesXLSX();
         } else if (this.analysis_type == this.ANALYSISTYPE_PUBMED) {
             if (!extension.equalsIgnoreCase("xml")) {
                 this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
                 return;
             }
+            this.visualizePubMedXML();
         // Create network out of Scopus data
         } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
             if (!extension.equalsIgnoreCase("csv")) {
@@ -242,15 +273,8 @@ public class SocialNetworkAppManager {
                 CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
                 return;
             }
+            this.visualizeScopusCSV();
         }
-        
-        // file, name and threshold have to be set before calling
-        // visualizeSocialNetwork().
-        this.setNetworkFile(networkFile);
-        this.setNetworkName(networkName);
-        this.setMaxAuthorThreshold(maxAuthorThreshold);
-
-        this.visualizeNetwork();
     }
 
     /**
@@ -418,19 +442,6 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Get the name associated with a particular CyNetwork object
-     *
-     * @param CyNetwork network
-     * @return String networkName
-     */
-    public static String getNetworkName(CyNetwork network) {
-        ArrayList<CyRow> rowList = (ArrayList<CyRow>) network.getDefaultNetworkTable().getAllRows();
-        CyRow row = rowList.get(0);
-        String networkName = (String) row.getAllValues().get("name");
-        return networkName;
-    }
-
-    /**
      * Get network table column names
      *
      * @return String[] networkTableColumnNames
@@ -458,14 +469,32 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Get <i>ParseNetworkFile</i> task factory
+     * Get the task factory for <i>ParseIncitesXLSXTask</i>
      * 
-     * @return ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef
+     * @return ParseIncitesXLSXTaskFactory parseIncitesXLSXTaskFactoryRef
      */
-    public ParseNetworkFileTaskFactory getParseNetworkFileTaskFactoryRef() {
-        return this.parseNetworkFileTaskFactoryRef;
-    }
+	public ParseIncitesXLSXTaskFactory getParseIncitesXLSXTaskFactoryRef() {
+		return parseIncitesXLSXTaskFactoryRef;
+	}
 	
+    /**
+     * Get the task factory for <i>ParsePubMedXMLTask</i>
+     * 
+     * @return ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef
+     */
+    public ParsePubMedXMLTaskFactory getParsePubMedXMLTaskFactoryRef() {
+        return this.parsePubMedXMLTaskFactoryRef;
+    }
+
+    /**
+     * Get the task factory for <i>ParseScopusTask</i>
+     * 
+     * @return ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef
+     */
+	public ParseScopusCSVTaskFactory getParseScopusCSVTaskFactoryRef() {
+		return parseScopusCSVTaskFactoryRef;
+	}
+
     /**
      * Get Cytoscape service registrar
      *
@@ -687,13 +716,33 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Set <i>ParseNetworkFile</i> task factory
+     * Set a reference to the task factory for <i>ParseIncitesXLSXTask</i>
      * 
-     * @param ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef
+     * @param ParseScopusCSVTaskFactory parseIncitesXLSXTaskFactoryRef
      */
-    public void setParseNetworkFileTaskFactoryRef(ParseNetworkFileTaskFactory parseNetworkFileTaskFactoryRef) {
-        this.parseNetworkFileTaskFactoryRef = parseNetworkFileTaskFactoryRef;
+	public void setParseIncitesXLSXTaskFactoryRef(
+			ParseIncitesXLSXTaskFactory parseIncitesXLSXTaskFactoryRef) {
+		this.parseIncitesXLSXTaskFactoryRef = parseIncitesXLSXTaskFactoryRef;
+	}
+
+    /**
+     * Set the task factory for <i>ParsePubMedXMLTask</i>
+     * 
+     * @param ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef
+     */
+    public void setParsePubMedXMLTaskFactoryRef(ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef) {
+        this.parsePubMedXMLTaskFactoryRef = parsePubMedXMLTaskFactoryRef;
     }
+
+    /**
+     * Set a reference to the task factory for <i>ParseScopusCSVTask</i>
+     * 
+     * @param ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef
+     */
+	public void setParseScopusCSVTaskFactoryRef(
+			ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef) {
+		this.parseScopusCSVTaskFactoryRef = parseScopusCSVTaskFactoryRef;
+	}
 
     /**
      * Set Cytoscape service registrar
@@ -713,7 +762,7 @@ public class SocialNetworkAppManager {
         this.socialNetworkMap = socialNetwork;
     }
 
-    /**
+	/**
      * Set task manager
      *
      * @param TaskManager taskManager
@@ -721,8 +770,8 @@ public class SocialNetworkAppManager {
     public void setTaskManager(TaskManager<?, ?> taskManager) {
         this.taskManagerServiceRef = taskManager;
     }
-
-    /**
+    
+	/**
      * Set user panel action
      *
      * @param ShowUserPanelAction userPanelAction
@@ -730,8 +779,8 @@ public class SocialNetworkAppManager {
     public void setUserPanelAction(ShowUserPanelAction userPanelAction) {
         this.userPanelAction = userPanelAction;
     }
-
-    /**
+    
+	/**
      * Set user panel reference
      *
      * @param UserPanel userPanelRef
@@ -749,11 +798,25 @@ public class SocialNetworkAppManager {
         this.visualStyleID = visualStyleID;
     }
 
-	/**
-     * Visualize a social network. Should not be executed directly.
+    /**
+     * Visualize a Incites XLSX file. Should not be executed directly.
      */
-    private void visualizeNetwork() {
-        this.getTaskManager().execute(this.getParseNetworkFileTaskFactoryRef().createTaskIterator());
+    private void visualizeIncitesXLSX() {
+        this.getTaskManager().execute(this.getParseIncitesXLSXTaskFactoryRef().createTaskIterator());
+    }
+
+    /**
+     * Visualize a PubMed XML file. Should not be executed directly.
+     */
+    private void visualizePubMedXML() {
+        this.getTaskManager().execute(this.getParsePubMedXMLTaskFactoryRef().createTaskIterator());
+    }
+
+    /**
+     * Visualize a Scopus CSV file. Should not be executed directly.
+     */
+    private void visualizeScopusCSV() {
+        this.getTaskManager().execute(this.getParseScopusCSVTaskFactoryRef().createTaskIterator());
     }
 
 }
