@@ -40,8 +40,11 @@ package org.baderlab.csapps.socialnetwork.tasks;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
@@ -70,10 +73,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
     private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
     private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-    private VisualStyle incitesVisualStyle;
-    private VisualStyle pubmedVisualStyle;
-    private VisualStyle scopusVisualStyle;
-    private VisualStyle defaultVisualStyle;
     private TaskMonitor taskMonitor;
 
     /**
@@ -169,7 +168,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
      *
      * @return VisualStyle scopusVisualStyle
      */
-    private VisualStyle createScopusLiteVisualStyle() {
+    private VisualStyle createScopusVisualStyle() {
         VisualStyle scopusVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Scopus");
         addNodeLabels(scopusVisualStyle);
         modifyNodeSize(scopusVisualStyle);
@@ -184,10 +183,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle defaultVisualStyle
      */
     private VisualStyle getDefaultVisualStyle() {
-        if (this.defaultVisualStyle == null) {
-            this.defaultVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Default");
+        VisualStyle defaultVisualStyle = this.getVisualStyle("Default");
+        if (defaultVisualStyle == null) {
+            defaultVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("Default");
+            this.vmmServiceRef.addVisualStyle(defaultVisualStyle);
         }
-        return this.defaultVisualStyle;
+        return defaultVisualStyle;
     }
 
     /**
@@ -196,10 +197,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle incitesVisualStyle
      */
     private VisualStyle getIncitesStyle() {
-        if (this.incitesVisualStyle == null) {
-            this.incitesVisualStyle = this.createIncitesVisualStyle();
+        VisualStyle incitesVisualStyle = this.getVisualStyle("InCites");
+        if (incitesVisualStyle == null) {
+            incitesVisualStyle = this.createIncitesVisualStyle();
+            this.vmmServiceRef.addVisualStyle(incitesVisualStyle);
         }
-        return this.incitesVisualStyle;
+        return incitesVisualStyle;
     }
 
     /**
@@ -208,10 +211,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle pubmedVisualStyle
      */
     private VisualStyle getPubmedVisualStyle() {
-        if (this.pubmedVisualStyle == null) {
-            this.pubmedVisualStyle = this.createPubmedVisualStyle();
+    	VisualStyle pubmedVisualStyle = this.getVisualStyle("PubMed");
+        if (pubmedVisualStyle == null) {
+            pubmedVisualStyle = this.createPubmedVisualStyle();
+            this.vmmServiceRef.addVisualStyle(pubmedVisualStyle);
         }
-        return this.pubmedVisualStyle;
+        return pubmedVisualStyle;
     }
 
     /**
@@ -220,10 +225,12 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle scopusVisualStyle
      */
     private VisualStyle getScopusVisualStyle() {
-        if (this.scopusVisualStyle == null) {
-            this.scopusVisualStyle = this.createScopusLiteVisualStyle();
+    	VisualStyle scopusVisualStyle = this.getVisualStyle("Scopus");
+        if (scopusVisualStyle == null) {
+            scopusVisualStyle = this.createScopusVisualStyle();
+            this.vmmServiceRef.addVisualStyle(scopusVisualStyle);
         }
-        return this.scopusVisualStyle;
+        return scopusVisualStyle;
     }
 
     /**
@@ -233,6 +240,28 @@ public class ApplyVisualStyleTask extends AbstractTask {
      */
     private TaskMonitor getTaskMonitor() {
         return this.taskMonitor;
+    }
+
+    /**
+     * Return the visual style with the specified name in the 
+     * set of all visual styles. null is returned if no visual 
+     * style is found.
+     * 
+     * @param String name
+     * 
+     * @return VisualStyle visualStyle
+     */
+    private VisualStyle getVisualStyle(String name) {
+    	Iterator<VisualStyle> it = this.vmmServiceRef.getAllVisualStyles().iterator();
+    	VisualStyle visualStyle = null;
+    	while (it.hasNext()) {
+    		visualStyle = it.next();
+    		if (visualStyle.getTitle().equalsIgnoreCase(name)) {
+    			break;
+    		}
+    	    visualStyle = null;
+    	}
+    	return visualStyle;
     }
 
     /**
@@ -380,7 +409,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
         }
         return visualStyle;
     }
-
+    
     /**
      * Modify node size
      *
@@ -414,29 +443,32 @@ public class ApplyVisualStyleTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         this.setTaskMonitor(taskMonitor);
+        Set<VisualStyle> visualStyles = this.vmmServiceRef.getAllVisualStyles();
+        VisualStyle visualStyle = null;
         switch (this.appManager.getVisualStyleID()) {
             case Category.DEFAULT:
-                this.vmmServiceRef.setCurrentVisualStyle(this.getDefaultVisualStyle());
+            	visualStyle = this.getDefaultVisualStyle();
                 break;
             case VisualStyles.INCITES_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading InCites Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getIncitesStyle());
+                visualStyle = this.getIncitesStyle();
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading PubMed Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getPubmedVisualStyle());
+                visualStyle = this.getPubmedVisualStyle();
                 break;
             case VisualStyles.SCOPUS_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading Scopus Visual Style ... ");
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
-                this.vmmServiceRef.setCurrentVisualStyle(this.getScopusVisualStyle());
+                visualStyle = this.getScopusVisualStyle();
                 break;
         }
+        this.vmmServiceRef.setCurrentVisualStyle(visualStyle);
         return;
     }
 

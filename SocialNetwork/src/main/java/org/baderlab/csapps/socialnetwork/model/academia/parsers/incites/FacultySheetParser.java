@@ -79,20 +79,20 @@ public class FacultySheetParser extends DefaultHandler {
         this.incitesParser = incitesParser;
     }
 
-    // Collect tag contents
-    @Override
     /*(non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+    	// Collect tag contents
         this.cellID += new String(ch, start, length);
     }
 
-    @Override
     /*(non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
+    @Override
     public void endElement(String uri, String localName, String name) throws SAXException {
 
         if (name.equals("v")) {
@@ -121,11 +121,11 @@ public class FacultySheetParser extends DefaultHandler {
 
     }
 
-    @Override
     /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
+    @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 
         // Reset row contents
