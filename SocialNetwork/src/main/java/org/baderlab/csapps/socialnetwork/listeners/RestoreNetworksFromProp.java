@@ -83,7 +83,7 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
      * @param {@link SessionLoadedEvent} e
      */
     public void handleEvent(SessionLoadedEvent e) {
-        if (e.getLoadedSession().getAppFileListMap() == null || e.getLoadedSession().getAppFileListMap().size() ==0){
+        if (e.getLoadedSession().getAppFileListMap() == null || e.getLoadedSession().getAppFileListMap().size() == 0){
             return;
         }
         List<File> files = e.getLoadedSession().getAppFileListMap().get("socialnetwork");
@@ -92,10 +92,23 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
         }
         try {
             File propFile = files.get(0);
+            // Parse socialnetwork.prop file (CSV)
             BufferedReader in = new BufferedReader(new FileReader(propFile));
-            String socialNetworks = in.readLine(), networkTypes = in.readLine();
-            ArrayList<String> listOfSocialNetworks = new ArrayList<String>(Arrays.asList(socialNetworks.split("\\?")));
-            ArrayList<String> listOfTypes = new ArrayList<String>(Arrays.asList(networkTypes.split("\\?")));
+            in.readLine(); // Skip header
+            
+            String line = in.readLine();
+            String[] networkData = null;
+            ArrayList<String> listOfSocialNetworks = new ArrayList<String>();
+            ArrayList<String> listOfTypes = new ArrayList<String>();
+            ArrayList<String> listOfTotalPubs = new ArrayList<String>();
+            while (line != null) {
+            	networkData = line.split(",");
+            	listOfSocialNetworks.add(networkData[0]);
+            	listOfTypes.add(networkData[1]);
+            	listOfTotalPubs.add(networkData[2]);
+            	line = in.readLine();
+            }
+            
             SocialNetwork socialNetwork = null;
             CyNetworkView networkView = null;
             Collection<CyNetworkView> views = null;
@@ -106,6 +119,7 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
                 if (index > -1) {
                     socialNetwork = new SocialNetwork(n.toString(), Category.toCategory(listOfTypes.get(index)));
                     socialNetwork.setCyNetwork(n);
+                    socialNetwork.setNum_publications(Integer.valueOf(listOfTotalPubs.get(index)));
                     views = this.viewManager.getNetworkViews(n);
                     if (views.size() != 0) {
                         networkView = views.iterator().next();

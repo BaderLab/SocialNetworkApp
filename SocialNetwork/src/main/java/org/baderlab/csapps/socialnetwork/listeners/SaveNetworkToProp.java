@@ -41,6 +41,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -80,17 +82,22 @@ public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
         File propFile = new File(tmpDir, "socialnetwork.props");
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(propFile));
+            writer.write("name,type,pub_total");
+            writer.newLine();
             // Save social networks in current session to file
-            for (String networkName : this.appManager.getSocialNetworkMap().keySet()) {
-                writer.write(networkName);
-                writer.write("?"); // TODO: question mark being used as separator. Wise decision?
+            Iterator<Entry<String, SocialNetwork>> it = this.appManager.getSocialNetworkMap().entrySet().iterator();
+            Entry<String, SocialNetwork> pair = null;
+            String networkName = null, type = null, totalPub = null;
+            SocialNetwork socialNetwork = null;
+            while(it.hasNext()) {
+            	pair = it.next();
+            	networkName = pair.getKey();
+            	socialNetwork = pair.getValue();
+            	type = Category.toString(socialNetwork.getNetworkType());
+            	totalPub = String.valueOf(socialNetwork.getNum_publications());
+            	writer.write(networkName + "," + type + "," + totalPub);
+            	writer.newLine();
             }
-            writer.newLine();
-            for (SocialNetwork socialNetwork : this.appManager.getSocialNetworkMap().values()) {
-                writer.write(Category.toString(socialNetwork.getNetworkType()));
-                writer.write("?");
-            }
-            writer.newLine();
             writer.close();
         } catch (Exception ex) {
             ex.printStackTrace();

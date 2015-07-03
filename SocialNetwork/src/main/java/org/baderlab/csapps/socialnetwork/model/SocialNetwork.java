@@ -445,7 +445,7 @@ public class SocialNetwork {
      *
      * @param int num_publications
      */
-    private void setNum_publications(int num_publications) {
+    public void setNum_publications(int num_publications) {
         this.num_publications = num_publications;
     }
 
