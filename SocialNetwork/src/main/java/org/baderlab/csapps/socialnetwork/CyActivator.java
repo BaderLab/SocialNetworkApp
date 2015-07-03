@@ -169,7 +169,12 @@ public class CyActivator extends AbstractCyActivator {
         SaveNetworkToProp saveSession = new SaveNetworkToProp(appManager);
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
-        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, cyNetworkViewManagerServiceRef);
+        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, 
+        		cyNetworkViewManagerServiceRef,
+        		cyServiceRegistrarRef,
+        		cySwingApplicationServiceRef,
+        		userPanelAction,
+        		userPanel);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 
         // Create and register task factories

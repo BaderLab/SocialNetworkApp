@@ -41,14 +41,24 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
+import javax.swing.Action;
+
+import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.session.events.SessionLoadedEvent;
 import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.view.model.CyNetworkView;
@@ -63,7 +73,11 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 public class RestoreNetworksFromProp implements SessionLoadedListener {
 
     private SocialNetworkAppManager appManager = null;
+    private CyServiceRegistrar cyServiceRegistrar = null;
+    private CytoPanel cytoPanelWest = null;
+    private ShowUserPanelAction userPanelAction = null;
     private CyNetworkViewManager viewManager = null;
+    private UserPanel userPanel = null;
 
     /**
      * Constructor for {@link RestoreNetworksFromProp}
@@ -71,10 +85,19 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
      * @param {@link SocialNetworkAppManager} appManager
      * @param {@link CyNetworkViewManager} viewManager
      */
-    public RestoreNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager) {
+    public RestoreNetworksFromProp(SocialNetworkAppManager appManager, 
+    		CyNetworkViewManager viewManager,
+    		CyServiceRegistrar cyServiceRegistrar,
+    		CySwingApplication cySwingApplicationService,
+    		ShowUserPanelAction userPanelAction,
+    		UserPanel userPanel) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;
+        this.cyServiceRegistrar = cyServiceRegistrar;
+        this.cytoPanelWest = cySwingApplicationService.getCytoPanel(CytoPanelName.WEST);
+        this.userPanelAction = userPanelAction;
+        this.userPanel = userPanel;
     }
 
     /**
@@ -90,6 +113,24 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
         if (files == null || files.size() == 0){
             return;
         }
+        // Show Social Network App user panel
+        
+        String currentName = (String) this.userPanelAction.getValue(Action.NAME);
+        if (currentName.trim().equalsIgnoreCase("Show Social Network")) {
+            this.cyServiceRegistrar.registerService(this.userPanel, CytoPanelComponent.class, new Properties());
+            // If the state of the cytoPanelWest is HIDE, show it
+            if (this.cytoPanelWest.getState() == CytoPanelState.HIDE) {
+                this.cytoPanelWest.setState(CytoPanelState.DOCK);
+            }
+            // Select my panel
+            int index = this.cytoPanelWest.indexOfComponent(this.userPanel);
+            if (index == -1) {
+                return;
+            }
+            this.cytoPanelWest.setSelectedIndex(index);
+            this.userPanelAction.putValue(Action.NAME, "Hide Social Network");
+        }
+        
         try {
             File propFile = files.get(0);
             // Parse socialnetwork.prop file (CSV)
