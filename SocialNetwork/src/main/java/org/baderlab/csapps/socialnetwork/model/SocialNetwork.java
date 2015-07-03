@@ -436,7 +436,7 @@ public class SocialNetwork {
      *
      * @param int num_faculty
      */
-    private void setNum_faculty(int num_faculty) {
+    public void setNum_faculty(int num_faculty) {
         this.num_faculty = num_faculty;
     }
 
@@ -454,7 +454,7 @@ public class SocialNetwork {
      *
      * @param int num_uniden_faculty
      */
-    private void setNum_uniden_faculty(int num_uniden_faculty) {
+    public void setNum_uniden_faculty(int num_uniden_faculty) {
         this.num_uniden_faculty = num_uniden_faculty;
     }
 

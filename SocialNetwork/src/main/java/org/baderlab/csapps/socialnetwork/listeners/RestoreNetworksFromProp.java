@@ -141,12 +141,16 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
             String[] networkData = null;
             ArrayList<String> listOfSocialNetworks = new ArrayList<String>();
             ArrayList<String> listOfTypes = new ArrayList<String>();
-            ArrayList<String> listOfTotalPubs = new ArrayList<String>();
+            ArrayList<String> listOfNumPubs = new ArrayList<String>();
+            ArrayList<String> listOfNumFaculty = new ArrayList<String>();
+            ArrayList<String> listOfNumUnidenFaculty = new ArrayList<String>();
             while (line != null) {
             	networkData = line.split(",");
             	listOfSocialNetworks.add(networkData[0]);
             	listOfTypes.add(networkData[1]);
-            	listOfTotalPubs.add(networkData[2]);
+            	listOfNumPubs.add(networkData[2]);
+            	listOfNumFaculty.add(networkData[3]);
+            	listOfNumUnidenFaculty.add(networkData[4]);
             	line = in.readLine();
             }
             
@@ -160,7 +164,9 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
                 if (index > -1) {
                     socialNetwork = new SocialNetwork(n.toString(), Category.toCategory(listOfTypes.get(index)));
                     socialNetwork.setCyNetwork(n);
-                    socialNetwork.setNum_publications(Integer.valueOf(listOfTotalPubs.get(index)));
+                    socialNetwork.setNum_publications(Integer.valueOf(listOfNumPubs.get(index)));
+                    socialNetwork.setNum_faculty(Integer.valueOf(listOfNumFaculty.get(index)));
+                    socialNetwork.setNum_uniden_faculty(Integer.valueOf(listOfNumUnidenFaculty.get(index)));
                     views = this.viewManager.getNetworkViews(n);
                     if (views.size() != 0) {
                         networkView = views.iterator().next();

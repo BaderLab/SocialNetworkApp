@@ -82,20 +82,22 @@ public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
         File propFile = new File(tmpDir, "socialnetwork.props");
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(propFile));
-            writer.write("name,type,pub_total");
+            writer.write("name,type,pub_total,faculty_total,faculty_uniden_total");
             writer.newLine();
             // Save social networks in current session to file
             Iterator<Entry<String, SocialNetwork>> it = this.appManager.getSocialNetworkMap().entrySet().iterator();
             Entry<String, SocialNetwork> pair = null;
-            String networkName = null, type = null, totalPub = null;
+            String networkName = null, type = null, numPub = null, numFaculty = null, numFacultyUniden = null;
             SocialNetwork socialNetwork = null;
             while(it.hasNext()) {
             	pair = it.next();
             	networkName = pair.getKey();
             	socialNetwork = pair.getValue();
             	type = Category.toString(socialNetwork.getNetworkType());
-            	totalPub = String.valueOf(socialNetwork.getNum_publications());
-            	writer.write(networkName + "," + type + "," + totalPub);
+            	numPub = String.valueOf(socialNetwork.getNum_publications());
+            	numFaculty = String.valueOf(socialNetwork.getNum_faculty());
+            	numFacultyUniden = String.valueOf(socialNetwork.getNum_uniden_faculty());
+            	writer.write(networkName + "," + type + "," + numPub + "," + numFaculty + "," + numFacultyUniden);
             	writer.newLine();
             }
             writer.close();
