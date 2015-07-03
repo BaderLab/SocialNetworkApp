@@ -8,7 +8,7 @@ pluginName=SocialNetworkApp
 
 # Description used to give users information about the plugin such as what it does.  
 # Html tags are encouraged for formatting purposes.
-pluginDescription=Enrichment Map is a network-based method to visualize and interpret gene-set enrichment results.
+pluginDescription=Social Network app is a method to visualize and interpret social networks from publication records.
 
 # Plugin version number, this must be two numbers separated by a decimlal.  Ex. 0.2, 14.03
 pluginVersion=1.0
