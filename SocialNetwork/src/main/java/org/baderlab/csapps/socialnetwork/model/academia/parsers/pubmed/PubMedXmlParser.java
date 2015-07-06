@@ -197,7 +197,7 @@ public class PubMedXmlParser extends DefaultHandler {
             this.author.setMiddleInitial(this.middleInitials != null ? this.middleInitials.toString() : null);
             this.author.setFirstInitial(this.firstName.substring(0, 1));
             this.author.setLabel(this.author.getFirstInitial() + " " + this.author.getLastName());
-            this.author.setInstitution(this.institution != null ? this.institution.toString() : null);
+            this.author.addInstitution(this.institution != null ? this.institution.toString() : null);
 
             // Add author to publication author list
             if (!this.pubAuthorList.contains(this.author)) {

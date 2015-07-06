@@ -93,10 +93,6 @@ public class Author extends AbstractNode {
      */
     private String firstName = "N/A";
     /**
-     * Author's primary institution
-     */
-    private String institution = "N/A";
-    /**
      * Author's last name
      */
     private String lastName = "N/A";
@@ -130,7 +126,10 @@ public class Author extends AbstractNode {
      * List of all publications author has authored / co-authored
      */
     private List<String> pubList = null;
-
+    /**
+     * List of all institutions that author is affiliated with
+     */
+    private List<String> institutionList = null;
     /**
      * location Map
      */
@@ -239,7 +238,7 @@ public class Author extends AbstractNode {
                 this.setMiddleInitial(IncitesParser.parseMiddleInitial(rawAuthorText));
                 this.setLastName(IncitesParser.parseLastName(rawAuthorText));
                 this.setLabel(this.getFirstName() + " " + this.getLastName());
-                this.setInstitution(IncitesParser.parseInstitution(rawAuthorText));
+                this.addInstitution(IncitesParser.parseInstitution(rawAuthorText));
                 this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
                 break;
 
@@ -247,6 +246,21 @@ public class Author extends AbstractNode {
 
         // Format names to ensure consistency
         format();
+    }
+
+    /**
+     * Add an institution that this author is affiliated with
+     *
+     * @param String institution
+     */
+    public void addInstitution(String institution) {
+        if (this.institutionList == null) {
+            this.institutionList = new ArrayList<String>();
+        }
+        if (!institutionList.contains(institution)) {
+            this.institutionList.add(institution);            
+        }
+        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institutionList);
     }
 
     /**
@@ -285,7 +299,6 @@ public class Author extends AbstractNode {
      */
     @Override
     public boolean equals(Object other) {
-
         // compare the current author to the given author
         // method used by contains method with hash of a set of Authors
 
@@ -328,7 +341,7 @@ public class Author extends AbstractNode {
             isEqualFirstName = this.getFirstInitial().equalsIgnoreCase(otherAuthor.getFirstInitial());
             isEqual = isEqualFirstName && isEqualLastName;
         }
-        return isEqual;
+        return isEqual;        
     }
 
     /**
@@ -376,7 +389,7 @@ public class Author extends AbstractNode {
     public String getFirstInitial() {
         return this.firstInitial;
     }
-
+    
     /**
      * Get author's first name
      *
@@ -387,12 +400,25 @@ public class Author extends AbstractNode {
     }
 
     /**
-     * Get author's institution
+     * Get all the institutions that this author is affiliated with
      *
-     * @return String institution
+     * @return ArrayList institutions
      */
     public String getInstitution() {
-        return this.institution;
+        String institution = "N/A";
+        if (institutionList != null && institutionList.size() > 0) {
+            institution = institutionList.get(0);
+        }
+        return institution;
+    }
+
+    /**
+     * Get all the institutions that this author is affiliated with
+     *
+     * @return List institutions
+     */
+    public List<String> getInstitutions() {
+        return institutionList;
     }
 
     /**
@@ -554,7 +580,7 @@ public class Author extends AbstractNode {
     /**
      * Modify institution for both author1 and author2 (who are assumed to be
      * the same). Set institution to the higher priority as defined in the app
-     * locationMap Assumes that author and otherAuthor are the same individual
+     * locationMap. Assumes that author and otherAuthor are the same individual
      * but otherAuthor is the active reference.
      *
      * @param {@link Author} author
@@ -574,7 +600,7 @@ public class Author extends AbstractNode {
             otherRank = rankMap.get(otherLocation);
         }
         if (rank > otherRank) {
-            otherAuthor.setInstitution(author.getInstitution());
+            otherAuthor.addInstitution(author.getInstitution());
             otherAuthor.setLocation(author.getLocation());
         } else if (rank == otherRank) {
             Author[] randomAuthorArray = new Author[] { author, otherAuthor };
@@ -582,7 +608,7 @@ public class Author extends AbstractNode {
             int i = rand.nextInt((1 - 0) + 1) + 0;
             String randomInstitution = randomAuthorArray[i].getInstitution();
             String randomLocation = randomAuthorArray[i].getLocation();
-            otherAuthor.setInstitution(randomInstitution);
+            otherAuthor.addInstitution(randomInstitution);
             otherAuthor.setLocation(randomLocation);
         }
     }
@@ -647,16 +673,6 @@ public class Author extends AbstractNode {
     }
 
     /**
-     * Set institution
-     *
-     * @param String institution
-     */
-    public void setInstitution(String institution) {
-        this.institution = institution;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institution);
-    }
-
-    /**
      * Set label
      *
      * @param String label
@@ -694,7 +710,7 @@ public class Author extends AbstractNode {
         } else {
             this.location = location;
         }
-        this.getNodeAttrMap().put("Location", this.location);
+        this.getNodeAttrMap().put("Location", this.location);    
     }
 
     /**
