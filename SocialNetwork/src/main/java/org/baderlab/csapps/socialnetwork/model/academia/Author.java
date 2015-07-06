@@ -188,11 +188,13 @@ public class Author extends AbstractNode {
                     if (pubmedNames[i].length() >= 2) {
                         // Extract both first initial & middle initial
                         this.setFirstInitial(pubmedNames[i].substring(0, 1));
+                        this.setFirstName(this.getFirstInitial());
                         this.setMiddleInitial(pubmedNames[i].substring(1));
                     } else {
                         // If no middle initial is specified, it will be marked
                         // as unknown
                         this.setFirstInitial(pubmedNames[i]);
+                        this.setFirstName(pubmedNames[i]);
                     }
                     this.setLabel(this.getFirstInitial() + " " + this.getLastName());
                 }
