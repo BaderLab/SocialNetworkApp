@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;

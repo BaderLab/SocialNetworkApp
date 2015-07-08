@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -74,7 +74,8 @@ public class TestIncites {
      * dealt with accordingly.
      */
     public void testDefectiveRowsExist() {
-        File defectiveRowsExistFile = new File("src/test/resources/incites/data/defective_rows_exist.xlsx");
+        String path = this.getClass().getResource("defective_rows_exist.xlsx").getFile();
+        File defectiveRowsExistFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(defectiveRowsExistFile, taskMonitor);
         assertTrue(incitesParser.getDefectiveRows() == 7);
     }
@@ -84,7 +85,8 @@ public class TestIncites {
      * Confirm the non-existence of defective rows in a valid spreadsheet
      */
     public void testDefectiveRowsNonExistent() {
-        File defectiveRowsNotExistFile = new File("src/test/resources/incites/data/no_defective_rows.xlsx");
+        String path = this.getClass().getResource("no_defective_rows.xlsx").getFile();
+        File defectiveRowsNotExistFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(defectiveRowsNotExistFile, taskMonitor);
         assertTrue(incitesParser.getDefectiveRows() == 0);
     }
@@ -94,7 +96,8 @@ public class TestIncites {
      * Confirm correct identification of existing faculty
      */
     public void testIdentifiedFaculty() {
-        File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
+        String path = this.getClass().getResource("faculty.xlsx").getFile();
+        File ignoredRowsNotExistFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
         ArrayList<Author> identifiedFacultyList = incitesParser.getIdentifiedFacultyList();
         assertTrue(identifiedFacultyList.size() == 14);
@@ -109,7 +112,8 @@ public class TestIncites {
      * Ideally, there should be ZERO ignored rows after parsing a data file.
      */
     public void testIgnoredRowsNonExistent() {
-        File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/no_ignored_rows.xlsx");
+        String path = this.getClass().getResource("no_ignored_rows.xlsx").getFile();
+        File ignoredRowsNotExistFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
         assertTrue(incitesParser.getIgnoredRows() == 0);
     }
@@ -121,7 +125,8 @@ public class TestIncites {
      * a paper by himself / herself
      */
     public void testLoneAuthor() {
-        File loneAuthorFile = new File("src/test/resources/incites/data/lone_author_exists.xlsx");
+        String path = this.getClass().getResource("lone_author_exists.xlsx").getFile();
+        File loneAuthorFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(loneAuthorFile, taskMonitor);
         ArrayList<Author> loneAuthorList = incitesParser.getLoneAuthorList();
         assertTrue(loneAuthorList.size() == 1);
@@ -132,7 +137,8 @@ public class TestIncites {
      * Confirm correct identification of missing faculty
      */
     public void testUnidentifiedFaculty() {
-        File ignoredRowsNotExistFile = new File("src/test/resources/incites/data/faculty.xlsx");
+        String path = this.getClass().getResource("faculty.xlsx").getFile();
+        File ignoredRowsNotExistFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
         ArrayList<Author> unidentifiedFacultyList = incitesParser.getUnidentifiedFacultyList();
         assertTrue(unidentifiedFacultyList.size() == 13);

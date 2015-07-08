@@ -53,6 +53,9 @@ public class EutilsSearchParser extends DefaultHandler {
      * @param Query query
      */
     public EutilsSearchParser(Query query) {
+        this.queryKey = new StringBuilder();
+        this.totalPubs = new StringBuilder();
+        this.webEnv = new StringBuilder();
         try {
             // Create new SAXParser
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -71,23 +74,34 @@ public class EutilsSearchParser extends DefaultHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.isTotalPubs) {
             this.totalPubs.append(ch, start, length);
-            this.isTotalPubs = false;
         }
         if (this.isQueryKey) {
             this.queryKey.append(ch, start, length);
-            this.isQueryKey = false;
         }
         if (this.isWebEnv) {
-            this.webEnv.append(new String(ch, start, length));
+            this.webEnv.append(ch, start, length);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(String, String, String)
+     */
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (qName.equalsIgnoreCase("Count")) {
+            this.isTotalPubs = false;
+        }
+        if (qName.equalsIgnoreCase("QueryKey")) {
+            this.isQueryKey = false;
+        }
+        if (qName.equalsIgnoreCase("WebEnv")) {
             this.isWebEnv = false;
         }
     }
@@ -144,25 +158,23 @@ public class EutilsSearchParser extends DefaultHandler {
         return webEnv.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (qName.equalsIgnoreCase("Count") && this.totalPubs == null) {
+        if (qName.equalsIgnoreCase("Count")) {
             this.isTotalPubs = true;
-            this.totalPubs = new StringBuilder();
+            this.totalPubs.setLength(0);
         }
         if (qName.equalsIgnoreCase("QueryKey")) {
             this.isQueryKey = true;
-            this.queryKey = new StringBuilder();
+            this.queryKey.setLength(0);
         }
         if (qName.equalsIgnoreCase("WebEnv")) {
             this.isWebEnv = true;
-            this.webEnv = new StringBuilder();
+            this.webEnv.setLength(0);
         }
     }
 

@@ -87,6 +87,15 @@ public class PubMedXmlParser extends DefaultHandler {
      * @param File xml
      */
     public PubMedXmlParser(File xml, TaskMonitor taskMonitor) {
+        this.lastName = new StringBuilder();
+        this.firstName = new StringBuilder();
+        this.middleInitials = new StringBuilder();
+        this.institution = new StringBuilder();
+        this.journal = new StringBuilder();
+        this.pubDate = new StringBuilder();
+        this.pmid = new StringBuilder();
+        this.timesCited = new StringBuilder();
+        this.title = new StringBuilder();
         try {
             MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(xml, taskMonitor, "Parsing PubMed XML ...");
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -103,53 +112,41 @@ public class PubMedXmlParser extends DefaultHandler {
         }
     }
 
-    // Collect tag contents (if applicable)
-    @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
+    @Override
     public void characters(char ch[], int start, int length) throws SAXException {
+        // Collect tag contents (if applicable)
         if (this.isPubDate) {
             this.pubDate.append(ch, start, length);
-            this.isPubDate = false;
         }
         if (this.isAuthor) {
             this.author = new Author(new String(ch, start, length), Category.PUBMED);
-            this.isAuthor = false;
         }
         if (this.isInstitution) {
             this.institution.append(ch, start, length);
-            this.isInstitution = false;
         }
         if (this.isFirstName) {
             this.firstName.append(ch, start, length);
-            this.isFirstName = false;
         }
         if (this.isLastName) {
             this.lastName.append(ch, start, length);
-            this.isLastName = false;
         }
         if (this.isMiddleInitial) {
             this.middleInitials.append(ch, start, length);
-            this.isMiddleInitial = false;
         }
         if (this.isJournal) {
             this.journal.append(ch, start, length);
-            this.isJournal = false;
         }
         if (this.isTitle) {
             this.title.append(ch, start, length);
-            this.isTitle = false;
         }
         if (this.isTimesCited) {
             this.timesCited.append(ch, start, length);
-            this.isTimesCited = false;
         }
         if (this.isPMID) {
             this.pmid.append(ch, start, length);
-            this.isPMID = false;
         }
     }
 
@@ -170,31 +167,57 @@ public class PubMedXmlParser extends DefaultHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (qName.equals("PubDate")) {
+            this.isPubDate = false;
+        }
+        if (qName.equals("Author")) {
+            this.isAuthor = false;
+        }
+        if (qName.equals("Affiliation")) {
+            this.isInstitution = false;
+        }
+        if (qName.equals("ForeName")) {
+            this.isFirstName = false;
+        }
+        if (qName.equals("LastName")) {
+            this.isLastName = false;
+        }
+        if (qName.equals("Initials")) {
+            this.isMiddleInitial = false;
+        }
+        if (qName.equals("Title")) {
+            this.isJournal = false;
+        }
+        if (qName.equals("ArticleTitle")) {
+            this.isTitle = false;
+        }
+        if (qName.equals("PmcRefCount")) {
+            this.isTimesCited = false;
+        }
+        if (qName.equals("ArticleId") && this.isPMID) {
+            this.isPMID = false;
+        }
         if (qName.equalsIgnoreCase("PubmedArticle")) {
-            Publication pub = new Publication(this.title != null ? this.title.toString() : null, this.pubDate != null ? this.pubDate.toString()
-                    : null, this.journal != null ? this.journal.toString() : null, this.timesCited != null ? this.timesCited.toString() : null, null,
-                    this.pubAuthorList);
-            pub.setPMID(this.pmid != null ? this.pmid.toString() : null);
+            Publication pub = new Publication(this.title.toString(), this.pubDate.toString(), this.journal.toString(), 
+                    this.timesCited.toString(), null, this.pubAuthorList);
+            pub.setPMID(this.pmid.toString());
             this.pubList.add(pub);
             this.pubAuthorList.clear();
         }
         if (qName.equals("Author")) {
             // add the firstname,lastname, initial to the author
-            this.author.setFirstName(this.firstName != null ? this.firstName.toString() : null);
-            this.author.setLastName(this.lastName != null ? this.lastName.toString() : null);
-            this.author.setMiddleInitial(this.middleInitials != null ? this.middleInitials.toString() : null);
+            this.author.setFirstName(this.firstName.toString());
+            this.author.setLastName(this.lastName.toString());
+            this.author.setMiddleInitial(this.middleInitials.toString());
             this.author.setFirstInitial(this.firstName.substring(0, 1));
             this.author.setLabel(this.author.getFirstInitial() + " " + this.author.getLastName());
-            this.author.addInstitution(this.institution != null ? this.institution.toString() : null);
-
+            this.author.addInstitution(this.institution.toString());
             // Add author to publication author list
             if (!this.pubAuthorList.contains(this.author)) {
                 this.pubAuthorList.add(this.author);
@@ -212,9 +235,7 @@ public class PubMedXmlParser extends DefaultHandler {
         return this.pubList;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
@@ -225,39 +246,39 @@ public class PubMedXmlParser extends DefaultHandler {
         }
         if (qName.equals("Affiliation")) {
             this.isInstitution = true;
-            this.institution = new StringBuilder();
+            this.institution.setLength(0);
         }
         if (qName.equals("LastName")) {
             this.isLastName = true;
-            this.lastName = new StringBuilder();
+            this.lastName.setLength(0);
         }
         if (qName.equals("ForeName")) {
             this.isFirstName = true;
-            this.firstName = new StringBuilder();
+            this.firstName.setLength(0);
         }
         if (qName.equals("Initials")) {
             this.isMiddleInitial = true;
-            this.middleInitials = new StringBuilder();
+            this.middleInitials.setLength(0);
         }
         if (qName.equals("Title")) {
             this.isJournal = true;
-            this.journal = new StringBuilder();
+            this.journal.setLength(0);
         }
         if (qName.equals("PubDate")) {
             this.isPubDate = true;
-            this.pubDate = new StringBuilder();
+            this.pubDate.setLength(0);
         }
         if (qName.equals("ArticleTitle")) {
             this.isTitle = true;
-            this.title = new StringBuilder();
+            this.title.setLength(0);
         }
         if (qName.equals("PmcRefCount")) {
             this.isTimesCited = true;
-            this.timesCited = new StringBuilder();
+            this.timesCited.setLength(0);
         }
         if (qName.equals("ArticleId") && contains(attributes, "pubmed")) {
             this.isPMID = true;
-            this.pmid = new StringBuilder();
+            this.pmid.setLength(0);
         }
     }
 

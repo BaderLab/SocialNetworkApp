@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -40,6 +41,10 @@ public class EutilsRetrievalParser extends DefaultHandler {
      * The author of a specific publication.
      */
     private Author author = null;
+    /**
+     * Raw text of an author of a specific publication
+     */
+    private StringBuilder rawAuthorText = null;
     /**
      * A publication's journal
      */
@@ -79,6 +84,12 @@ public class EutilsRetrievalParser extends DefaultHandler {
      * @param int totalPubs
      */
     public EutilsRetrievalParser(String queryKey, String webEnv, int retStart, int retMax, int totalPubs) {
+        this.rawAuthorText = new StringBuilder();
+        this.journal = new StringBuilder();
+        this.pubDate = new StringBuilder();
+        this.pmid = new StringBuilder();
+        this.timesCited = new StringBuilder();
+        this.title = new StringBuilder();
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             while (retStart < totalPubs) {
@@ -102,35 +113,28 @@ public class EutilsRetrievalParser extends DefaultHandler {
     }
 
     // Collect tag contents (if applicable)
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+     */
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.isPubDate) {
             this.pubDate.append(ch, start, length);
-            this.isPubDate = false;
         }
         if (this.isAuthor) {
-            this.author = new Author(new String(ch, start, length), Category.PUBMED);
-            // Add author to publication author list
-            if (!this.pubAuthorList.contains(this.author)) {
-                this.pubAuthorList.add(this.author);
-            }
-            this.isAuthor = false;
+            this.rawAuthorText.append(ch, start, length);
         }
         if (this.isJournal) {
             this.journal.append(ch, start, length);
-            this.isJournal = false;
         }
         if (this.isTitle) {
             this.title.append(ch, start, length);
-            this.isTitle = false;
         }
         if (this.isTimesCited) {
             this.timesCited.append(ch, start, length);
-            this.isTimesCited = false;
         }
         if (this.isPMID) {
             this.pmid.append(ch, start, length);
-            this.isPMID = false;
         }
     }
 
@@ -151,22 +155,42 @@ public class EutilsRetrievalParser extends DefaultHandler {
     }
 
     // Create new publication and add it to overall publist
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (qName.equals("Item") && this.isAuthor) {
+            this.isAuthor = false;
+            this.author = new Author(this.rawAuthorText.toString(), Category.PUBMED);
+            // Add author to publication author list
+            if (!this.pubAuthorList.contains(this.author)) {
+                this.pubAuthorList.add(this.author);
+            }
+        }
+        if (qName.equals("Item") && this.isJournal) {
+            this.isJournal = false;
+        }
+        if (qName.equals("Item") && this.isPubDate) {
+            this.isPubDate = false;
+        }
+        if (qName.equals("Item") && this.isTitle) {
+            this.isTitle = false;
+        }
+        if (qName.equals("Item") && this.isTimesCited) {
+            this.isTimesCited = false;
+        }
+        if (qName.equals("Id")) {
+            this.isPMID = false;
+        }
         if (qName.equalsIgnoreCase("DocSum")) {
-            Publication publication = new Publication(this.title != null ? this.title.toString() : null,
-                    this.pubDate != null ? this.pubDate.toString() : null, this.journal != null ? this.journal.toString() : null,
-                    this.timesCited != null ? this.timesCited.toString() : null, null, this.pubAuthorList);
+            Publication publication = new Publication(this.title.toString(), this.pubDate.toString(), 
+                    this.journal.toString(), this.timesCited.toString(), null, this.pubAuthorList);
             publication.setPMID(this.pmid.toString()); // TODO: pass this value
                                                        // through the
                                                        // constructor?
             this.pubList.add(publication);
             this.pubAuthorList.clear();
-            this.journal = null;
-            this.pubDate = null;
-            this.title = null;
-            this.timesCited = null;
-            this.pmid = null;
         }
     }
 
@@ -179,9 +203,16 @@ public class EutilsRetrievalParser extends DefaultHandler {
         return this.pubList;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Get total pubs
      * 
+     * @return int totalPubs
+     */
+    public int getTotalPubs() {
+        return pubList.size();
+    }
+    
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
@@ -189,26 +220,27 @@ public class EutilsRetrievalParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (contains(attributes, "Author")) {
             this.isAuthor = true;
+            this.rawAuthorText.setLength(0);
         }
         if (contains(attributes, "FullJournalName")) {
             this.isJournal = true;
-            this.journal = new StringBuilder();
+            this.journal.setLength(0);
         }
         if (contains(attributes, "PubDate")) {
             this.isPubDate = true;
-            this.pubDate = new StringBuilder();
+            this.pubDate.setLength(0);
         }
         if (contains(attributes, "Title")) {
             this.isTitle = true;
-            this.title = new StringBuilder();
+            this.title.setLength(0);
         }
         if (contains(attributes, "PmcRefCount")) {
             this.isTimesCited = true;
-            this.timesCited = new StringBuilder();
+            this.timesCited.setLength(0);
         }
         if (qName.equals("Id")) {
             this.isPMID = true;
-            this.pmid = new StringBuilder();
+            this.pmid.setLength(0);
         }
     }
 

@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -72,7 +72,8 @@ public class TestInteraction {
      * NOTE: The publications being tested only have three distinct authors
      */
     public void testTimesCitedMultiplePub() {
-        File timesCitedFile = new File("src/test/resources/incites/data/times_cited_multiple_pub.xlsx");
+        String path = this.getClass().getResource("times_cited_multiple_pub.xlsx").getFile();
+        File timesCitedFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
@@ -99,7 +100,8 @@ public class TestInteraction {
      * has been duplicated once (i.e. Jack, Giant (UNIV); Jack, Giant (UNIV)
      */
     public void testTimesCitedSinglePub() {
-        File timesCitedFile = new File("src/test/resources/incites/data/times_cited_single_pub.xlsx");
+        String path = this.getClass().getResource("times_cited_single_pub.xlsx").getFile();
+        File timesCitedFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();

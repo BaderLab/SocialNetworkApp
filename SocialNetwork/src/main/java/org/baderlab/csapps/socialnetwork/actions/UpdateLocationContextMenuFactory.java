@@ -19,7 +19,7 @@ import org.cytoscape.view.model.View;
 public class UpdateLocationContextMenuFactory implements CyNodeViewContextMenuFactory, ActionListener {
 
     public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "MyNodeViewContextMenuFactory action worked.");
+        JOptionPane.showMessageDialog(null, "Feature is still a work in progress ...");
     }
 
     public CyMenuItem createMenuItem(CyNetworkView netView, View<CyNode> nodeView) {

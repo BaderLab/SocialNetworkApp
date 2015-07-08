@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork;
+package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -75,7 +75,7 @@ public class TestSearch {
     public void testPubmedSearch() {
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
-        Search search = new Search("emili a", Category.ACADEMIA, appManager);
+        Search search = new Search("pawson t", Category.ACADEMIA, appManager);
         int hits = search.getTotalHits();
         int results = search.getResults().size();
         assertTrue(hits == results);

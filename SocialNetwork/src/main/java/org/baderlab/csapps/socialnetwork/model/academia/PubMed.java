@@ -115,6 +115,7 @@ public class PubMed {
         String queryKey = eUtilsSearchParser.getQueryKey();
         String webEnv = eUtilsSearchParser.getWebEnv();
         EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(queryKey, webEnv, retStart, retMax, totalPubs);
+        totalPubs = eUtilsRetParser.getTotalPubs();
         setPubList(eUtilsRetParser.getPubList());
     }
 
@@ -125,7 +126,7 @@ public class PubMed {
      * @param ArrayList pubList
      * @return String eUtilsPMIDs
      */
-    private String getEutilsPMIDs(ArrayList<Publication> pubList) {
+    public static String getEutilsPMIDs(ArrayList<Publication> pubList) {
         Publication pub = null;
         int retStart = 0;
         int totalPubs = pubList.size();
@@ -158,7 +159,7 @@ public class PubMed {
      * @param ArrayList pubList
      */
     private void setPmcRefCount(ArrayList<Publication> pubList) {
-        Query query = new Query(getEutilsPMIDs(pubList));
+        Query query = new Query(PubMed.getEutilsPMIDs(pubList));
         EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query);
         int retStart = eUtilsSearchParser.getRetStart();
         int retMax = eUtilsSearchParser.getRetMax();
