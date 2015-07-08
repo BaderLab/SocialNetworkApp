@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -26,16 +25,16 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 public class ParseIncitesXLSXTask extends AbstractTask {
-	
+
     private static final Logger logger = Logger.getLogger(ParseIncitesXLSXTask.class.getName());
-    
+
     /**
-     * A reference to the {@link SocialNetworkAppManager}. Makes it possible
-     * to retrieve the name of the network (usually same as the Incites XLSX
+     * A reference to the {@link SocialNetworkAppManager}. Makes it possible to
+     * retrieve the name of the network (usually same as the Incites XLSX
      * filename).
      */
     private SocialNetworkAppManager appManager = null;
-    
+
     /**
      * Constructor for {@link ParseIncitesXLSXTask}.
      * 
@@ -45,15 +44,14 @@ public class ParseIncitesXLSXTask extends AbstractTask {
         this.appManager = appManager;
     }
 
-
     /* (non-Javadoc)
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
-	@Override
-	public void run(TaskMonitor taskMonitor) throws Exception {
-    	taskMonitor.setTitle("Loading Network");
+    @Override
+    public void run(TaskMonitor taskMonitor) throws Exception {
+        taskMonitor.setTitle("Loading Network");
         String networkName = this.appManager.getNetworkName();
-        
+
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.INCITES);
         IncitesParser incitesParser = new IncitesParser(this.appManager.getNetworkFile(), taskMonitor);
         if (incitesParser.getIgnoredRows() >= 1) {
@@ -98,10 +96,10 @@ public class ParseIncitesXLSXTask extends AbstractTask {
         }
         this.appManager.setMap(map);
         this.appManager.getSocialNetworkMap().put(networkName, socialNetwork);
-        
+
         TaskIterator taskIterator = new TaskIterator();
         taskIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
         insertTasksAfterCurrentTask(taskIterator);
-	}
+    }
 
 }

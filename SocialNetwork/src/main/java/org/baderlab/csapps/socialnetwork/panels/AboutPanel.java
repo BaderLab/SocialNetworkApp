@@ -39,13 +39,11 @@ package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.Insets;
 import java.net.URL;
-
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.OpenBrowser;
@@ -118,17 +116,13 @@ public class AboutPanel extends JDialog {
             pluginReleaseSuffix = " (" + pluginReleaseSuffix + ")";
         }
         editorPane.setText("<html><body>" +
-                // "<div style=\"float:right;\"><img height=\"77\" width=\"125\" src=\""+
-                // logoURL.toString() +"\" ></div>" +
+        // "<div style=\"float:right;\"><img height=\"77\" width=\"125\" src=\""+
+        // logoURL.toString() +"\" ></div>" +
                 "<table border='0'><tr>" + "<td width='125'></td>" + "<td width='200'>" + "<p align=center><b>Social Network App v" + pluginVersion
-                + pluginReleaseSuffix + "</b><BR>"
-                + "A Cytoscape App<BR>"
-                + "<BR></p>"
-                + "</td>"
-                + "<td width='177'><div align='right'><img height='97' width='127' src=\""+
-                  logoURL.toString() +"\" ></div></td>"+
-                "</tr></table>" + "<p align=center>Social Network app is a method to visualize<BR>"
-                + "and interpret social networks from publication records.<BR>" + "<BR>" + "by Victor Kofia, Ruth Isserlin and Gary Bader<BR>"
+                + pluginReleaseSuffix + "</b><BR>" + "A Cytoscape App<BR>" + "<BR></p>" + "</td>"
+                + "<td width='177'><div align='right'><img height='97' width='127' src=\"" + logoURL.toString() + "\" ></div></td>" + "</tr></table>"
+                + "<p align=center>Social Network app is a method to visualize<BR>" + "and interpret social networks from publication records.<BR>"
+                + "<BR>" + "by Victor Kofia, Ruth Isserlin and Gary Bader<BR>"
                 + "(<a href='http://www.baderlab.org/'>Bader Lab</a>, University of Toronto)<BR>" + "<BR>" + "Plugin Homepage:<BR>" + "<a href='"
                 + pluginUrl + "'>" + pluginUrl + "</a><BR>" + "<BR>" + "<font size='-1'>" + CytoscapeUtilities.buildId + "</font>"
                 + "</p></body></html>");

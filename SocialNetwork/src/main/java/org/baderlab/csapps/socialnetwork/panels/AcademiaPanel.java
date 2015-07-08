@@ -48,7 +48,6 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -60,7 +59,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -74,8 +72,9 @@ import org.cytoscape.util.swing.FileUtil;
  * @author Victor Kofia
  */
 public class AcademiaPanel {
+
     /**
-     * Reference to academia info panel. Shows information specific to academic 
+     * Reference to academia info panel. Shows information specific to academic
      * copublication networks.
      */
     private JPanel academiaInfoPanelRef = null;
@@ -90,11 +89,11 @@ public class AcademiaPanel {
      */
     private JTextField pathTextFieldRef = new JTextField();
     /**
-     * A reference to the max author threshold text field. Used to set the max
-     * # of authors in a publication that the app will build a network out of.
+     * A reference to the max author threshold text field. Used to set the max #
+     * of authors in a publication that the app will build a network out of.
      */
     private JTextArea thresholdTextAreaRef = null;
-    
+
     // TODO: Write description for these instance variables
     private JRadioButton incitesRadioButtonRef = null;
     private JRadioButton pubmedRadioButtonRef = null;
@@ -152,18 +151,19 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create an advanced options panel that will enable users to have additional
-     * control on how networks are generated. Hidden by default.
+     * Create an advanced options panel that will enable users to have
+     * additional control on how networks are generated. Hidden by default.
      *
      * @return {@link BasicCollapsiblePanel} advancedOptionsPanel
      */
     private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
-        advancedOptionsPanel.setCollapsed(true);;
+        advancedOptionsPanel.setCollapsed(true);
+        ;
         advancedOptionsPanel.add(this.createThresholdPanel());
         return advancedOptionsPanel;
     }
-    
+
     /**
      * Create Database info panel. Allows user to load InCites or Scopus derived
      * data files
@@ -196,7 +196,7 @@ public class AcademiaPanel {
 
         return databaseInfoPanel;
     }
-    
+
     /**
      * Create database panel
      *
@@ -236,7 +236,7 @@ public class AcademiaPanel {
         return databasePanel;
 
     }
-    
+
     /**
      * Create load button. Load button loads data file onto Cytoscape for
      * parsing
@@ -270,7 +270,8 @@ public class AcademiaPanel {
                 filters.add(filter3);
                 filters.add(filter4);
                 filters.add(filter5);
-                File textFile = AcademiaPanel.this.fileUtil.getFile(AcademiaPanel.this.cySwingAppRef.getJFrame(), "Data File Selection", FileUtil.LOAD, filters);
+                File textFile = AcademiaPanel.this.fileUtil.getFile(AcademiaPanel.this.cySwingAppRef.getJFrame(), "Data File Selection",
+                        FileUtil.LOAD, filters);
 
                 setDataFile(textFile);
                 getPathTextFieldRef().setText(textFile.getAbsolutePath());
@@ -279,7 +280,7 @@ public class AcademiaPanel {
         });
         return loadButton;
     }
-    
+
     /**
      * Create new load data panel. Allows user to specify path of desired data
      * file
@@ -303,8 +304,9 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create <i>CreateNetwork</i> button. When pressed, the <i>CreateNetwork</i> button
-     * attempts to create a network out of a file specified by the user.
+     * Create <i>CreateNetwork</i> button. When pressed, the
+     * <i>CreateNetwork</i> button attempts to create a network out of a file
+     * specified by the user.
      *
      * @return {@link JButton} createNetworkButton
      */
@@ -312,6 +314,7 @@ public class AcademiaPanel {
         JButton createNetworkButton = new JButton("Create Network");
         createNetworkButton.setToolTipText("Create network");
         createNetworkButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent event) {
                 // check to see which analysis type is selected
                 if (AcademiaPanel.this.incitesRadioButtonRef.isSelected()) {
@@ -364,10 +367,10 @@ public class AcademiaPanel {
     }
 
     /**
-     * Create and return the threshold panel. The threshold panel
-     * is located under the Advanced Options collapsible panel. It
-     * allows users to specify a threshold with which they can limit
-     * the number of authors in a publication.
+     * Create and return the threshold panel. The threshold panel is located
+     * under the Advanced Options collapsible panel. It allows users to specify
+     * a threshold with which they can limit the number of authors in a
+     * publication.
      * 
      * @return JPanel thresholdPanel
      */
@@ -379,6 +382,7 @@ public class AcademiaPanel {
         this.thresholdRadioButtonRef.setToolTipText("Set the maximum # of authors to be considered per publication. "
                 + "Publications that exceed the threshold will be excluded.");
         this.thresholdRadioButtonRef.addItemListener(new ItemListener() {
+
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // TODO:
@@ -395,7 +399,7 @@ public class AcademiaPanel {
         thresholdPanel.add(getThresholdTextAreaRef());
         return thresholdPanel;
     }
-    
+
     /**
      * Get academia info panel reference
      *
@@ -441,8 +445,7 @@ public class AcademiaPanel {
         if (this.thresholdTextAreaRef == null) {
             JTextArea textArea = new JTextArea("500");
             Border border = BorderFactory.createLineBorder(Color.GRAY);
-            textArea.setBorder(BorderFactory.createCompoundBorder(border,
-                    BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+            textArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(0, 5, 0, 5)));
             setThresholdTextAreaRef(textArea);
         }
         return this.thresholdTextAreaRef;

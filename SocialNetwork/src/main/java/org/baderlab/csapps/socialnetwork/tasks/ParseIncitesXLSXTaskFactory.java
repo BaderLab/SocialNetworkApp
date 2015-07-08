@@ -10,9 +10,9 @@ import org.cytoscape.work.TaskIterator;
  * @author Victor Kofia
  */
 public class ParseIncitesXLSXTaskFactory extends AbstractTaskFactory {
-    
+
     private SocialNetworkAppManager appManager = null;
-    
+
     /**
      * Constructor for {@link ParseIncitesXLSXFactory}
      * 

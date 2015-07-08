@@ -55,7 +55,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
-
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -178,7 +177,7 @@ public class CollapsiblePanel extends JPanel {
                     break;
                 case BOTTOM:
                     compR.y = rect.height - borderInsets.bottom + TEXT_SPACING + (borderInsets.bottom - EDGE_SPACING - TEXT_SPACING - compD.height)
-                    / 2;
+                            / 2;
                     break;
                 case BELOW_BOTTOM:
                     compR.y = rect.height - compD.height - EDGE_SPACING;
@@ -253,6 +252,7 @@ public class CollapsiblePanel extends JPanel {
             this.component = component;
         }
     }
+
     /**
      * Handles expanding and collapsing of extra content on the user's click of
      * the titledBorder component.
@@ -267,6 +267,7 @@ public class CollapsiblePanel extends JPanel {
             setCollapsed(!isCollapsed());
         }
     }
+
     private static final long serialVersionUID = 1L;
     // Border
     CollapsableTitledBorder border; // includes upper left component and line

@@ -117,10 +117,10 @@ public class PubMed {
         EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(queryKey, webEnv, retStart, retMax, totalPubs);
         setPubList(eUtilsRetParser.getPubList());
     }
-    
+
     /**
-     * Use the pmids of the specified publications to construct a query (for eUtils). 
-     * The various pmids will be combined with an OR operator.
+     * Use the pmids of the specified publications to construct a query (for
+     * eUtils). The various pmids will be combined with an OR operator.
      * 
      * @param ArrayList pubList
      * @return String eUtilsPMIDs
@@ -151,7 +151,7 @@ public class PubMed {
     public ArrayList<Publication> getPubList() { // Return all results
         return this.pubList;
     }
-    
+
     /**
      * Set the PmcRefCount of the publications in the list.
      * 

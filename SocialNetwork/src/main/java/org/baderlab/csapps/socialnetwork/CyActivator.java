@@ -40,11 +40,11 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
-import org.baderlab.csapps.socialnetwork.actions.ExportNeighborsAction;
+import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import org.baderlab.csapps.socialnetwork.actions.UpdateLocationContextMenuFactory;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
@@ -56,12 +56,14 @@ import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
+import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -96,39 +98,38 @@ public class CyActivator extends AbstractCyActivator {
         // Acquire services
         CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
 
-        CySwingApplication cySwingApplicationServiceRef = getService(bc,CySwingApplication.class);
-        
-        CyNetworkNaming cyNetworkNamingServiceRef = getService(bc,CyNetworkNaming.class);
+        CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
 
-        CyNetworkFactory cyNetworkFactoryServiceRef = getService(bc,CyNetworkFactory.class);
+        CyNetworkNaming cyNetworkNamingServiceRef = getService(bc, CyNetworkNaming.class);
 
-        CyNetworkManager cyNetworkManagerServiceRef = getService(bc,CyNetworkManager.class);
+        CyNetworkFactory cyNetworkFactoryServiceRef = getService(bc, CyNetworkFactory.class);
 
-        CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(bc,CyNetworkViewFactory.class);
+        CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
 
-        CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(bc,CyNetworkViewManager.class);
+        CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(bc, CyNetworkViewFactory.class);
+
+        CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(bc, CyNetworkViewManager.class);
 
         CyLayoutAlgorithmManager cyLayoutManagerServiceRef = getService(bc, CyLayoutAlgorithmManager.class);
 
-        VisualStyleFactory visualStyleFactoryServiceRef = getService(bc,VisualStyleFactory.class);
+        VisualStyleFactory visualStyleFactoryServiceRef = getService(bc, VisualStyleFactory.class);
 
         FileUtil fileUtil = getService(bc, FileUtil.class);
 
         // Open browser used by about panel,
         OpenBrowser openBrowserRef = getService(bc, OpenBrowser.class);
 
-        VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService
-                (bc,VisualMappingFunctionFactory.class,"(mapping.type=passthrough)");
+        VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class,
+                "(mapping.type=passthrough)");
 
-        VisualMappingFunctionFactory continuousMappingFactoryServiceRef = getService
-                (bc,VisualMappingFunctionFactory.class,"(mapping.type=continuous)");
+        VisualMappingFunctionFactory continuousMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class,
+                "(mapping.type=continuous)");
 
-        VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService
-                (bc,VisualMappingFunctionFactory.class,"(mapping.type=discrete)");
+        VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
 
-        VisualMappingManager vmmServiceRef = getService(bc,VisualMappingManager.class);
+        VisualMappingManager vmmServiceRef = getService(bc, VisualMappingManager.class);
 
-        TaskManager<?, ?> taskManager = getService(bc,TaskManager.class);
+        TaskManager<?, ?> taskManager = getService(bc, TaskManager.class);
 
         CyServiceRegistrar cyServiceRegistrarRef = getService(bc, CyServiceRegistrar.class);
 
@@ -136,18 +137,23 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
 
         // Create & register new menu item (for opening /closing main app panel)
-        UserPanel userPanel = new UserPanel(appManager,fileUtil,cySwingApplicationServiceRef);
+        UserPanel userPanel = new UserPanel(appManager, fileUtil, cySwingApplicationServiceRef);
 
         Map<String, String> serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Apps.Social Network");
-        ShowUserPanelAction userPanelAction = new ShowUserPanelAction(serviceProperties,
-                cyApplicationManagerServiceRef,
-                cyNetworkViewManagerServiceRef,
-                cySwingApplicationServiceRef,
-                cyServiceRegistrarRef, userPanel);
+        ShowUserPanelAction userPanelAction = new ShowUserPanelAction(serviceProperties, cyApplicationManagerServiceRef,
+                cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, cyServiceRegistrarRef, userPanel);
 
         registerService(bc, userPanelAction, CyAction.class, new Properties());
+
+        // Create & register new menu item (for updating institution / location
+        // associations
+        // in the app)
+        CyNodeViewContextMenuFactory updateLocationContextMenuFactory = new UpdateLocationContextMenuFactory();
+        Properties updateLocationContextMenuFactoryProps = new Properties();
+        updateLocationContextMenuFactoryProps.put("preferredMenu", "Apps.Social Network");
+        registerAllServices(bc, updateLocationContextMenuFactory, updateLocationContextMenuFactoryProps);
 
         // Add panel and action to the manager
         appManager.setUserPanelRef(userPanel);
@@ -157,54 +163,43 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
         registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 
-        SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef,appManager);
+        SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
         registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
-        
+
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
         registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
 
         SaveNetworkToProp saveSession = new SaveNetworkToProp(appManager);
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
-        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, 
-        		cyNetworkViewManagerServiceRef,
-        		cyServiceRegistrarRef,
-        		cySwingApplicationServiceRef,
-        		userPanelAction,
-        		userPanel);
+        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
+                cySwingApplicationServiceRef, userPanelAction, userPanel);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 
         // Create and register task factories
-        ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef =
-                new ApplyVisualStyleTaskFactory(visualStyleFactoryServiceRef,
-                        vmmServiceRef,
-                        passthroughMappingFactoryServiceRef,
-                        continuousMappingFactoryServiceRef,
-                        discreteMappingFactoryServiceRef,appManager);
+        ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = new ApplyVisualStyleTaskFactory(visualStyleFactoryServiceRef, vmmServiceRef,
+                passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef, appManager);
         registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
 
+        CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef,
+                cyNetworkManagerServiceRef, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, appManager);
+        registerService(bc, networkTaskFactoryRef, TaskFactory.class, new Properties());
 
-        CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef,
-                cyNetworkFactoryServiceRef,
-                cyNetworkManagerServiceRef,
-                cyNetworkViewFactoryServiceRef,
-                cyNetworkViewManagerServiceRef,
-                cyLayoutManagerServiceRef,
-                appManager);
-        registerService(bc,networkTaskFactoryRef,TaskFactory.class, new Properties());
-
-        DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef,appManager);
+        DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = new DestroyNetworkTaskFactory(cyNetworkManagerServiceRef, appManager);
         registerService(bc, destroyNetworkTaskFactoryRef, TaskFactory.class, new Properties());
         
+        ExportNthDegreeNeighborsTaskFactory exportNthDegreeNeighborsTaskFactoryRef = new ExportNthDegreeNeighborsTaskFactory(appManager);
+        registerService(bc, exportNthDegreeNeighborsTaskFactoryRef, TaskFactory.class, new Properties());
+
         ParsePubMedXMLTaskFactory parsePubMedXMLTaskFactoryRef = new ParsePubMedXMLTaskFactory(appManager);
         registerService(bc, parsePubMedXMLTaskFactoryRef, TaskFactory.class, new Properties());
-        
+
         ParseIncitesXLSXTaskFactory parseIncitesXLSXTaskFactoryRef = new ParseIncitesXLSXTaskFactory(appManager);
         registerService(bc, parseIncitesXLSXTaskFactoryRef, TaskFactory.class, new Properties());
-        
+
         ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef = new ParseScopusCSVTaskFactory(appManager);
         registerService(bc, parseScopusCSVTaskFactoryRef, TaskFactory.class, new Properties());
 
@@ -212,11 +207,11 @@ public class CyActivator extends AbstractCyActivator {
         // TODO:
         // NOTE: Using setters violates dependency injection
         appManager.setParsePubMedXMLTaskFactoryRef(parsePubMedXMLTaskFactoryRef);
-        
+
         appManager.setParseIncitesXLSXTaskFactoryRef(parseIncitesXLSXTaskFactoryRef);
-        
+
         appManager.setParseScopusCSVTaskFactoryRef(parseScopusCSVTaskFactoryRef);
-        
+
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 
         appManager.setServiceRegistrar(cyServiceRegistrarRef);
@@ -233,34 +228,28 @@ public class CyActivator extends AbstractCyActivator {
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Apps.Social Network");
-        ShowAboutPanelAction aboutAction = new ShowAboutPanelAction(serviceProperties,
-                cyApplicationManagerServiceRef,
-                cyNetworkViewManagerServiceRef,
-                cySwingApplicationServiceRef,
-                openBrowserRef);
+        ShowAboutPanelAction aboutAction = new ShowAboutPanelAction(serviceProperties, cyApplicationManagerServiceRef,
+                cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, openBrowserRef);
 
-        registerService(bc, aboutAction, CyAction.class,new Properties());
+        registerService(bc, aboutAction, CyAction.class, new Properties());
 
         // InCites Action
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Tools.InCites");
-        AddInstitutionAction incitesAction = new AddInstitutionAction(serviceProperties,
-                cyApplicationManagerServiceRef,
+        AddInstitutionAction incitesAction = new AddInstitutionAction(serviceProperties, cyApplicationManagerServiceRef,
                 cyNetworkViewManagerServiceRef);
 
         registerService(bc, incitesAction, CyAction.class, new Properties());
-        
+
         // Export neighbors Action
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Tools.NetworkAnalyzer.Neighbor List");
-        ExportNeighborsAction exportNeighborsAction = new ExportNeighborsAction(serviceProperties,
-                cyApplicationManagerServiceRef,
-                cyNetworkViewManagerServiceRef,
-                cyNetworkManagerServiceRef,
-                cySwingApplicationServiceRef);
-        
+        ExportNthDegreeNeighborsAction exportNeighborsAction = new ExportNthDegreeNeighborsAction(serviceProperties, cyApplicationManagerServiceRef,
+                cyNetworkViewManagerServiceRef, cyNetworkManagerServiceRef, cySwingApplicationServiceRef, taskManager,
+                exportNthDegreeNeighborsTaskFactoryRef, appManager);
+
         registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
 
     }

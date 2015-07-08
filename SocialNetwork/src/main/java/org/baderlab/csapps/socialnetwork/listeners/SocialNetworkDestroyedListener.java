@@ -38,9 +38,7 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.util.Map;
-
 import javax.swing.table.DefaultTableModel;
-
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;

@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -27,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class PubMedXmlParser extends DefaultHandler {
-    
+
     private static final Logger logger = Logger.getLogger(PubMedXmlParser.class.getName());
 
     /**
@@ -82,7 +80,7 @@ public class PubMedXmlParser extends DefaultHandler {
      * A publication's title
      */
     private StringBuilder title = null;
-    
+
     /**
      * Create a new PubMed xml parser
      * 
@@ -90,7 +88,7 @@ public class PubMedXmlParser extends DefaultHandler {
      */
     public PubMedXmlParser(File xml, TaskMonitor taskMonitor) {
         try {
-        	MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(xml, taskMonitor, "Parsing PubMed XML ...");
+            MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(xml, taskMonitor, "Parsing PubMed XML ...");
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(fileInputStream, this);
         } catch (ParserConfigurationException e) {
@@ -104,7 +102,7 @@ public class PubMedXmlParser extends DefaultHandler {
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
     }
-    
+
     // Collect tag contents (if applicable)
     @Override
     /*
@@ -172,7 +170,8 @@ public class PubMedXmlParser extends DefaultHandler {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
@@ -180,12 +179,9 @@ public class PubMedXmlParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("PubmedArticle")) {
-            Publication pub = new Publication(this.title != null ? this.title.toString() : null, 
-            		                          this.pubDate != null ? this.pubDate.toString() : null, 
-            		                          this.journal != null ? this.journal.toString() : null, 
-            		                          this.timesCited != null ? this.timesCited.toString() : null, 
-            		                          null, 
-            		                          this.pubAuthorList);
+            Publication pub = new Publication(this.title != null ? this.title.toString() : null, this.pubDate != null ? this.pubDate.toString()
+                    : null, this.journal != null ? this.journal.toString() : null, this.timesCited != null ? this.timesCited.toString() : null, null,
+                    this.pubAuthorList);
             pub.setPMID(this.pmid != null ? this.pmid.toString() : null);
             this.pubList.add(pub);
             this.pubAuthorList.clear();
@@ -216,7 +212,8 @@ public class PubMedXmlParser extends DefaultHandler {
         return this.pubList;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)

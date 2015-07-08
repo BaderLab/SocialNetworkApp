@@ -41,7 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -56,10 +55,9 @@ public class CytoscapeUtilities {
      * @param String message
      */
     public static void notifyUser(String message) {
-        JOptionPane.showMessageDialog(new JPanel(),
-                "<html><body style='width: 200px'>" + message);
+        JOptionPane.showMessageDialog(new JPanel(), "<html><body style='width: 200px'>" + message);
     }
-    
+
     public static String buildId = "";
     public static String pluginReleaseSuffix = "";
     public static String pluginUrl = "";
@@ -73,25 +71,20 @@ public class CytoscapeUtilities {
     public String pluginName = "";
 
     /**
-     * Create a new {@link CytsocapeUtilities} object to store important information
+     * Create a new {@link CytsocapeUtilities} object to store important
+     * information
      */
     public CytoscapeUtilities() {
         try {
-            this.plugin_props = getPropertiesFromClasspath("plugin.props",
-                    false);
+            this.plugin_props = getPropertiesFromClasspath("plugin.props", false);
         } catch (IOException ei) {
             System.out.println("Neither of the configuration files could be found");
         }
-        CytoscapeUtilities.pluginUrl = this.plugin_props.getProperty(
-                "pluginURL", "http://baderlab.org/Software/SocialNetworkApp");
-        CytoscapeUtilities.userManualUrl = CytoscapeUtilities.pluginUrl
-                + "/UserManual";
-        CytoscapeUtilities.pluginVersion = this.plugin_props.getProperty(
-                "pluginVersion", "0.1");
-        CytoscapeUtilities.pluginReleaseSuffix = this.plugin_props.getProperty(
-                "pluginReleaseSuffix", "");
-        this.pluginName = this.plugin_props.getProperty("pluginName",
-                "SocialNetworkApp");
+        CytoscapeUtilities.pluginUrl = this.plugin_props.getProperty("pluginURL", "http://baderlab.org/Software/SocialNetworkApp");
+        CytoscapeUtilities.userManualUrl = CytoscapeUtilities.pluginUrl + "/UserManual";
+        CytoscapeUtilities.pluginVersion = this.plugin_props.getProperty("pluginVersion", "0.1");
+        CytoscapeUtilities.pluginReleaseSuffix = this.plugin_props.getProperty("pluginReleaseSuffix", "");
+        this.pluginName = this.plugin_props.getProperty("pluginName", "SocialNetworkApp");
         // read buildId properties:
         // properties available in revision.txt ( git.branch,git.commit.id,
         // git.build.user.name,
@@ -112,10 +105,8 @@ public class CytoscapeUtilities {
             this.build_props.setProperty("git.build.time", "1900/01/01 00:00:00 +0000 (GMT)");
         }
 
-        CytoscapeUtilities.buildId = "Build: "
-                + this.build_props.getProperty("build.number") + " from GIT: "
-                + this.build_props.getProperty("git.commit.id") + " by: "
-                + this.build_props.getProperty("build.user");
+        CytoscapeUtilities.buildId = "Build: " + this.build_props.getProperty("build.number") + " from GIT: "
+                + this.build_props.getProperty("git.commit.id") + " by: " + this.build_props.getProperty("build.user");
 
     }
 
@@ -137,8 +128,7 @@ public class CytoscapeUtilities {
             inputStream = this.getClass().getResourceAsStream(propFileName);
         }
         if (inputStream == null) {
-            throw new FileNotFoundException("property file '" + propFileName
-                    + "' not found in the classpath");
+            throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
         }
         props.load(inputStream);
         return props;

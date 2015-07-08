@@ -86,8 +86,8 @@ public class Tag {
      * @return String query
      */
     private String augmentRetMax(String query, String retMax) {
-    	return String.format("%s&RetMax=%s", query, retMax);
-	}
+        return String.format("%s&RetMax=%s", query, retMax);
+    }
 
     /**
      * Augment query with RetStart
@@ -97,9 +97,9 @@ public class Tag {
      * 
      * @return String query
      */
-	private String augmentRetStart(String query, String retStart) {
-    	return String.format("%s&RetStart=%s", query, retStart);
-	}
+    private String augmentRetStart(String query, String retStart) {
+        return String.format("%s&RetStart=%s", query, retStart);
+    }
 
     /**
      * Augment query with WebEnv
@@ -112,7 +112,7 @@ public class Tag {
         return String.format("%s&WebEnv=%s", query, webEnv);
     }
 
-	/**
+    /**
      * Return string representation of tag
      *
      * @return String tag

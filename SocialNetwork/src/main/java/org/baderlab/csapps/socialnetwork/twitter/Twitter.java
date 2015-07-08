@@ -50,7 +50,6 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -67,6 +66,7 @@ public class Twitter {
         http.sendRequest("followers/ids", "GET");
 
     }
+
     private Map<String, String> oauthMap = null;
     final private String BASE_URL = "https://api.twitter.com/1.1/";
 

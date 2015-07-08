@@ -97,10 +97,10 @@ import org.cytoscape.util.swing.FileUtil;
  */
 @SuppressWarnings("serial")
 public class UserPanel extends JPanel implements CytoPanelComponent {
-    
+
     private static final Logger logger = Logger.getLogger(UserPanel.class.getName());
-	
-	/**
+
+    /**
      * Apply a threshold (if applicable) and create a network
      *
      * @param {@link SocialNetworkAppManager} appManager
@@ -108,10 +108,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @param String text
      * @param {@code int} categoryType
      */
-    public static void createNetwork(SocialNetworkAppManager appManager, boolean isSelected,
-            String thresholdText,
-            String searchTerm,
-            int categoryType) {
+    public static void createNetwork(SocialNetworkAppManager appManager, boolean isSelected, String thresholdText, String searchTerm, int categoryType) {
         int threshold = -1;
         if (isSelected) {
             if (!thresholdText.isEmpty() && Pattern.matches("[0-9]+", thresholdText)) {
@@ -153,6 +150,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         }
         return threshold;
     }
+
     /**
      * Reference to control panel
      */
@@ -236,7 +234,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * instance of academia panel
      */
     private AcademiaPanel academiaPanel = null;
-    
+
     /**
      * Create a new panel
      */
@@ -298,7 +296,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 // Set table reference
                 this.setNetworkTableRef(networkTable);
 
-                // Context menu. Displayed to user on the event of a click (on the
+                // Context menu. Displayed to user on the event of a click (on
+                // the
                 // network table)
                 final JPopupMenu destroyNetworkContextMenu = new JPopupMenu();
                 destroyNetworkContextMenu.add(this.createDestroyNetworkMenuItem());
@@ -342,7 +341,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 // Add network info to table
             } else {
                 DefaultTableModel networkTableModel = (DefaultTableModel) getNetworkTableRef().getModel();
-                networkTableModel.addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
+                networkTableModel
+                        .addRow(new Object[] { networkName, network.getNodeCount(), network.getEdgeCount(), Category.toString(networkType) });
 
             }
 
@@ -647,11 +647,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
                     createNetwork(UserPanel.this.appManager,
-                            //getAcademiaPanel().thresholdIsSelected(),
-                            true, // TODO: Suppose that the threshold radio button is always selected
-                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
-                            getSearchBox().getText().trim(),
-                            getSelectedCategory());
+                    // getAcademiaPanel().thresholdIsSelected(),
+                            true, // TODO: Suppose that the threshold radio
+                                  // button is always selected
+                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(), getSearchBox().getText().trim(), getSelectedCategory());
                 }
             }
         });
@@ -673,6 +672,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         JButton searchButton = new JButton(iconSearch);
         searchButton.setToolTipText("Search");
         searchButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent event) {
                 if (getSearchBox().getText().trim().isEmpty()) {
                     CytoscapeUtilities.notifyUser("Please enter a search term");
@@ -680,11 +680,10 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                     CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                 } else {
                     createNetwork(UserPanel.this.appManager,
-                            //getAcademiaPanel().thresholdIsSelected(),
-                            true, // TODO: Suppose that the threshold radio button is always selected
-                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(),
-                            getSearchBox().getText().trim(),
-                            getSelectedCategory());
+                    // getAcademiaPanel().thresholdIsSelected(),
+                            true, // TODO: Suppose that the threshold radio
+                                  // button is always selected
+                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(), getSearchBox().getText().trim(), getSelectedCategory());
                 }
             }
         });
@@ -704,7 +703,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
             public void actionPerformed(ActionEvent e) {
                 // SEARCH FILTERS
-                // TODO:  (Work In Progress)
+                // TODO: (Work In Progress)
             }
         });
         return searchOptionSelector;
@@ -847,12 +846,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @return Icon panelIcon
      */
     public Icon getIcon() {
-		URL iconURL = this.getClass().getResource("socialNetwork_logo_small.png");
+        URL iconURL = this.getClass().getResource("socialNetwork_logo_small.png");
         ImageIcon EMIcon = null;
         if (iconURL != null) {
             EMIcon = new ImageIcon(iconURL);
         }
-		return EMIcon;
+        return EMIcon;
     }
 
     /**
@@ -1238,7 +1237,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
         HashMap<String, String> files = new HashMap<String, String>();
 
-        switch(socialNetwork.getNetworkType()) {
+        switch (socialNetwork.getNetworkType()) {
             case Category.INCITES:
                 files = gr.createIncitesReports();
                 break;

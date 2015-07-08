@@ -43,7 +43,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -51,9 +50,8 @@ import org.cytoscape.session.events.SessionAboutToBeSavedEvent;
 import org.cytoscape.session.events.SessionAboutToBeSavedListener;
 
 /**
- * Scans the session about to be saved for any social networks and
- * saves any important information to a property file that can be
- * accessed later on.
+ * Scans the session about to be saved for any social networks and saves any
+ * important information to a property file that can be accessed later on.
  *
  * @author Victor Kofia
  */
@@ -76,7 +74,7 @@ public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
      *
      * @param {@link SessionAboutToBeSavedEvent} e
      */
-    public void handleEvent(SessionAboutToBeSavedEvent e){
+    public void handleEvent(SessionAboutToBeSavedEvent e) {
 
         String tmpDir = System.getProperty("java.io.tmpdir");
         File propFile = new File(tmpDir, "socialnetwork.props");
@@ -89,16 +87,16 @@ public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
             Entry<String, SocialNetwork> pair = null;
             String networkName = null, type = null, numPub = null, numFaculty = null, numFacultyUniden = null;
             SocialNetwork socialNetwork = null;
-            while(it.hasNext()) {
-            	pair = it.next();
-            	networkName = pair.getKey();
-            	socialNetwork = pair.getValue();
-            	type = Category.toString(socialNetwork.getNetworkType());
-            	numPub = String.valueOf(socialNetwork.getNum_publications());
-            	numFaculty = String.valueOf(socialNetwork.getNum_faculty());
-            	numFacultyUniden = String.valueOf(socialNetwork.getNum_uniden_faculty());
-            	writer.write(networkName + "," + type + "," + numPub + "," + numFaculty + "," + numFacultyUniden);
-            	writer.newLine();
+            while (it.hasNext()) {
+                pair = it.next();
+                networkName = pair.getKey();
+                socialNetwork = pair.getValue();
+                type = Category.toString(socialNetwork.getNetworkType());
+                numPub = String.valueOf(socialNetwork.getNum_publications());
+                numFaculty = String.valueOf(socialNetwork.getNum_faculty());
+                numFacultyUniden = String.valueOf(socialNetwork.getNum_uniden_faculty());
+                writer.write(networkName + "," + type + "," + numPub + "," + numFaculty + "," + numFacultyUniden);
+                writer.newLine();
             }
             writer.close();
         } catch (Exception ex) {
@@ -109,8 +107,7 @@ public class SaveNetworkToProp implements SessionAboutToBeSavedListener {
         files.add(propFile);
         try {
             e.addAppFiles("socialnetwork", files);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

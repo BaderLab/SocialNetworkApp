@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -25,16 +24,16 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 public class ParseScopusCSVTask extends AbstractTask {
-	
+
     private static final Logger logger = Logger.getLogger(ParseScopusCSVTask.class.getName());
-    
+
     /**
-     * A reference to the {@link SocialNetworkAppManager}. Makes it possible
-     * to retrieve the name of the network (usually same as the Scopus CSV
+     * A reference to the {@link SocialNetworkAppManager}. Makes it possible to
+     * retrieve the name of the network (usually same as the Scopus CSV
      * filename).
      */
     private SocialNetworkAppManager appManager = null;
-    
+
     /**
      * Constructor for {@link ParseScopusCSVTask}.
      * 
@@ -44,13 +43,14 @@ public class ParseScopusCSVTask extends AbstractTask {
         this.appManager = appManager;
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
-	@Override
-	public void run(TaskMonitor taskMonitor) throws Exception {
-    	taskMonitor.setTitle("Loading Network");
+    @Override
+    public void run(TaskMonitor taskMonitor) throws Exception {
+        taskMonitor.setTitle("Loading Network");
         String networkName = this.appManager.getNetworkName();
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
         Scopus scopus = new Scopus(this.appManager.getNetworkFile(), taskMonitor);
@@ -81,10 +81,10 @@ public class ParseScopusCSVTask extends AbstractTask {
         }
         this.appManager.setMap(map);
         this.appManager.getSocialNetworkMap().put(networkName, socialNetwork);
-        
+
         TaskIterator taskIterator = new TaskIterator();
         taskIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
         insertTasksAfterCurrentTask(taskIterator);
-	}
+    }
 
 }

@@ -123,7 +123,7 @@ public class CreateNetworkTask extends AbstractTask {
         try {
             // Create an empty network
             CyNetwork myNet = this.cyNetworkFactoryServiceRef.createNetwork();
-            
+
             // Get network node table
             CyTable nodeTable = null;
             // Get network edge table
@@ -174,21 +174,23 @@ public class CreateNetworkTask extends AbstractTask {
 
             // Set network name
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-            .set("name", this.cyNetworkNamingServiceRef.getSuggestedNetworkTitle(this.appManager.getNetworkName()));
+                    .set("name", this.cyNetworkNamingServiceRef.getSuggestedNetworkTitle(this.appManager.getNetworkName()));
 
             // Add network attributes
             myNet.getDefaultNetworkTable()
-            .getRow(myNet.getSUID())
-            .set(IncitesVisualStyle.networkattr_totalPub, this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+                    .getRow(myNet.getSUID())
+                    .set(IncitesVisualStyle.networkattr_totalPub,
+                            this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-            .set(IncitesVisualStyle.networkattr_Faculty, this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
+                    .set(IncitesVisualStyle.networkattr_Faculty, this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
             myNet.getDefaultNetworkTable()
-            .getRow(myNet.getSUID())
-            .set(IncitesVisualStyle.networkattr_uniden_Faculty,
-                    this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
+                    .getRow(myNet.getSUID())
+                    .set(IncitesVisualStyle.networkattr_uniden_Faculty,
+                            this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
             myNet.getDefaultNetworkTable()
-            .getRow(myNet.getSUID())
-            .set(IncitesVisualStyle.networkattr_totalPub, this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
+                    .getRow(myNet.getSUID())
+                    .set(IncitesVisualStyle.networkattr_totalPub,
+                            this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
 
             // Build network
             Collaboration collaboration = null;
@@ -303,7 +305,8 @@ public class CreateNetworkTask extends AbstractTask {
             if (networkView == null) {
                 // Create a new view for my network
                 networkView = this.cyNetworkViewFactoryServiceRef.createNetworkView(network);
-                networkViewManager.addNetworkView(networkView); // TODO: NullPointerException
+                networkViewManager.addNetworkView(networkView); // TODO:
+                                                                // NullPointerException
             } else {
                 CytoscapeUtilities.notifyUser("Network already present");
             }

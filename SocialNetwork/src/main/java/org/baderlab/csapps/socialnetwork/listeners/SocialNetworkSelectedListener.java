@@ -45,8 +45,8 @@ import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.model.CyNetwork;
 
 /**
- * Listens for social networks that have been selected by the user and
- * displays any relevant information on the UI
+ * Listens for social networks that have been selected by the user and displays
+ * any relevant information on the UI
  *
  * @author Victor Kofia
  */
@@ -83,7 +83,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
                 this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
                 return;
             }
-        }        
+        }
         this.appManager.setCurrentlySelectedSocialNetwork(null);
         this.userPanel.addNetworkVisualStyle(null);
         this.userPanel.updateNetworkSummaryPanel(null);

@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
@@ -55,7 +54,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
  * @author Victor Kofia
  */
 public class IncitesInstitutionLocationMap {
-    
+
     private static final Logger logger = Logger.getLogger(IncitesInstitutionLocationMap.class.getName());
 
     /**

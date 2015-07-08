@@ -48,8 +48,8 @@ import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 
 /**
- * Adds relevant network information to network table once
- * Cytoscape generates a network
+ * Adds relevant network information to network table once Cytoscape generates a
+ * network
  *
  * @author Victor Kofia
  *
@@ -64,8 +64,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
      *
      * @param {@link SocialNetworkAppManager} appManager
      */
-    public SocialNetworkAddedListener(SocialNetworkAppManager appManager, 
-            CyNetworkManager cyNetworkManagerServiceRef) {
+    public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;

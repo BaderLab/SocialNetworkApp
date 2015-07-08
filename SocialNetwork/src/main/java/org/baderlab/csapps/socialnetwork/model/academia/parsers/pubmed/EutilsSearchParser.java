@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.xml.sax.Attributes;
@@ -42,13 +40,13 @@ public class EutilsSearchParser extends DefaultHandler {
      * Unique WebEnv. Necessary for retrieving search results
      */
     private StringBuilder webEnv = null;
-    
+
     // TODO: Add descriptions for retStart and retMax
     private int retStart = 0;
     private int retMax = 0;
-    
+
     private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
-    
+
     /**
      * Create a new eUtils search parser
      * 
@@ -73,7 +71,8 @@ public class EutilsSearchParser extends DefaultHandler {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
@@ -101,7 +100,7 @@ public class EutilsSearchParser extends DefaultHandler {
     public String getQueryKey() {
         return this.queryKey.toString();
     }
-    
+
     /**
      * Get the retMax
      * 
@@ -128,7 +127,7 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return int totalPubs
      */
     public int getTotalPubs() {
-    	String total = this.totalPubs.toString();
+        String total = this.totalPubs.toString();
         if (total != null && Pattern.matches("[0-9]+", total)) {
             return Integer.parseInt(total);
         } else {
@@ -144,8 +143,9 @@ public class EutilsSearchParser extends DefaultHandler {
     public String getWebEnv() {
         return webEnv.toString();
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)

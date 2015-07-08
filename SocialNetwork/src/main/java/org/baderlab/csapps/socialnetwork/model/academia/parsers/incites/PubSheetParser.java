@@ -40,7 +40,6 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -56,9 +55,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Victor Kofia
  */
 public class PubSheetParser extends DefaultHandler {
-    
-    private static final Logger logger = Logger.getLogger(PubSheetParser.class.getName());
 
+    private static final Logger logger = Logger.getLogger(PubSheetParser.class.getName());
 
     /**
      * List of authors in each publication
@@ -114,7 +112,7 @@ public class PubSheetParser extends DefaultHandler {
     // Collect tag contents
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
     @Override
@@ -125,7 +123,7 @@ public class PubSheetParser extends DefaultHandler {
     @Override
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
@@ -253,7 +251,7 @@ public class PubSheetParser extends DefaultHandler {
     @Override
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */

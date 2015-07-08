@@ -46,14 +46,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.cytoscape.application.CyApplicationManager;
@@ -71,7 +69,7 @@ public class AddInstitutionAction extends AbstractCyAction {
      *
      */
     private static final long serialVersionUID = -4694044300149844000L;
-    
+
     private static final Logger logger = Logger.getLogger(AddInstitutionAction.class.getName());
 
     /**
@@ -86,14 +84,11 @@ public class AddInstitutionAction extends AbstractCyAction {
      * @param {@link CyApplicationManager} applicationManager
      * @param {@link CyNetworkViewManager} networkViewManager
      */
-    public AddInstitutionAction(Map<String, String> configProps,
-            CyApplicationManager applicationManager,
-            CyNetworkViewManager networkViewManager) {
+    public AddInstitutionAction(Map<String, String> configProps, CyApplicationManager applicationManager, CyNetworkViewManager networkViewManager) {
         super(configProps, applicationManager, networkViewManager);
         putValue(Action.NAME, "Add Institution");
         HashSet<String> set = new HashSet<String>();
-        String[] locations = new String[] { "univ toronto", "ontario",
-                "canada", "united states", "international", "other" };
+        String[] locations = new String[] { "univ toronto", "ontario", "canada", "united states", "international", "other" };
         for (String location : locations) {
             set.add(location);
         }
@@ -120,26 +115,20 @@ public class AddInstitutionAction extends AbstractCyAction {
         String institution = "N/A", location = "N/A";
         while (outcome == JOptionPane.OK_OPTION) {
             // Display dialog box and get user's outcome.
-            outcome = JOptionPane.showConfirmDialog(null, myPanel, "Login",
-                    JOptionPane.OK_CANCEL_OPTION);
+            outcome = JOptionPane.showConfirmDialog(null, myPanel, "Login", JOptionPane.OK_CANCEL_OPTION);
             if (outcome == JOptionPane.OK_OPTION) {
                 institution = institutionTextField.getText().trim();
                 location = locationTextField.getText().trim();
                 if (institution.trim().isEmpty() && location.trim().isEmpty()) {
-                    CytoscapeUtilities
-                    .notifyUser("Please specify both an institution and a location");
+                    CytoscapeUtilities.notifyUser("Please specify both an institution and a location");
                 } else {
                     if (institution.trim().isEmpty()) {
-                        CytoscapeUtilities
-                        .notifyUser("Please specify an institution");
+                        CytoscapeUtilities.notifyUser("Please specify an institution");
                     } else if (location.trim().isEmpty()) {
-                        CytoscapeUtilities
-                        .notifyUser("Please specify a location");
+                        CytoscapeUtilities.notifyUser("Please specify a location");
                     } else {
-                        if (!this.getLocationSet().contains(
-                                location.toLowerCase())) {
-                            CytoscapeUtilities
-                            .notifyUser("Location does not exist. Please enter a valid location.");
+                        if (!this.getLocationSet().contains(location.toLowerCase())) {
+                            CytoscapeUtilities.notifyUser("Location does not exist. Please enter a valid location.");
                         } else {
                             institution = institution.toUpperCase();
                             // Format location (in case casing was done
@@ -148,9 +137,7 @@ public class AddInstitutionAction extends AbstractCyAction {
                             String[] words = location.split("\\s");
                             location = "";
                             for (String word : words) {
-                                location += word.replaceAll("^\\w", word
-                                        .substring(0, 1).toUpperCase())
-                                        + " ";
+                                location += word.replaceAll("^\\w", word.substring(0, 1).toUpperCase()) + " ";
                             }
                             location = location.trim();
                             outcome = JOptionPane.CANCEL_OPTION;
@@ -164,12 +151,10 @@ public class AddInstitutionAction extends AbstractCyAction {
         if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
             try {
                 // Get map file in jar
-                InputStream in = IncitesInstitutionLocationMap.class
-                        .getClassLoader().getResourceAsStream("map.sn");
+                InputStream in = IncitesInstitutionLocationMap.class.getClassLoader().getResourceAsStream("map.sn");
                 ObjectInputStream ois = new ObjectInputStream(in);
                 @SuppressWarnings("unchecked")
-                Map<String, String> map = (HashMap<String, String>) ois
-                .readObject();
+                Map<String, String> map = (HashMap<String, String>) ois.readObject();
                 // Add institution / location info to map
                 map.put(institution, location);
 
@@ -179,14 +164,11 @@ public class AddInstitutionAction extends AbstractCyAction {
                 // Incites_InstitutionLocationMap.setLocationMap(map);
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities
-                .notifyUser("Location map could not be accessed.");
+                CytoscapeUtilities.notifyUser("Location map could not be accessed.");
             } catch (ClassNotFoundException e) {
                 logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities
-                .notifyUser("Location map could not be accessed.");
+                CytoscapeUtilities.notifyUser("Location map could not be accessed.");
             }
-
         }
 
     }

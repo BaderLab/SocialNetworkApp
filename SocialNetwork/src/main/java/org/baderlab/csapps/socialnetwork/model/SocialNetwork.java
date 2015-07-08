@@ -206,21 +206,20 @@ public class SocialNetwork {
     }
 
     /**
-     * Get a summary of this <i>social network</i>. Contents of summary
-     * varies depending on the type of the network. For <i>Academia</i>
-     * networks, the summary may contain the total # of publications
-     * represented in the network, and also a list of all excluded
-     * publications.
+     * Get a summary of this <i>social network</i>. Contents of summary varies
+     * depending on the type of the network. For <i>Academia</i> networks, the
+     * summary may contain the total # of publications represented in the
+     * network, and also a list of all excluded publications.
      *
      * @return String summary
      */
     public String getNetworkSummary() {
         String info = "<html>";
         // Print out the summary information
-        switch(this.networkType) {
+        switch (this.networkType) {
             case Category.INCITES:
                 info += "Total # of publications: " + this.num_publications + "<br>" + "Total # of faculty: " + this.num_faculty
-                + "<br<Total # of unidentified faculty: " + this.num_uniden_faculty;
+                        + "<br<Total # of unidentified faculty: " + this.num_uniden_faculty;
                 if (this.num_uniden_faculty > 0) {
                     info += "<hr><br>Unidentified Faculty (see below)<br>" + this.unidentified_faculty;
                 }
@@ -297,8 +296,8 @@ public class SocialNetwork {
 
     /**
      * Get a summary of all the excluded publications. Summary provides
-     * information on the title of each excluded publication and the number
-     * of authors it contains.
+     * information on the title of each excluded publication and the number of
+     * authors it contains.
      *
      * @return String summary
      */

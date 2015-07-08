@@ -70,8 +70,9 @@ public class ApplyVisualStyleTaskFactory extends AbstractTaskFactory {
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new ApplyVisualStyleTask(this.visualStyleFactoryServiceRef, this.vmmServiceRef, this.passthroughMappingFactoryServiceRef,
-                this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef, this.appManager));
+        return new TaskIterator(new ApplyVisualStyleTask(this.visualStyleFactoryServiceRef, this.vmmServiceRef,
+                this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef,
+                this.appManager));
     }
 
 }

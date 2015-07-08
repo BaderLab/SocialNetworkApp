@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Tag;
@@ -23,7 +21,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class EutilsTimesCitedParser extends DefaultHandler {
-    
+
     private static final Logger logger = Logger.getLogger(EutilsTimesCitedParser.class.getName());
 
     /**
@@ -31,7 +29,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      */
     boolean isTimesCited = false;
     boolean isPMID = false;
-    
+
     /**
      * A list containing all the results that search session has yielded
      */
@@ -48,7 +46,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      * Globally referenced index variable to retrieve publications from publist
      */
     private int index = 0;
-    
+
     /**
      * Create a new eUtils times cited parser
      * 
@@ -62,8 +60,8 @@ public class EutilsTimesCitedParser extends DefaultHandler {
      */
     public EutilsTimesCitedParser(ArrayList<Publication> pubList, String queryKey, String webEnv, int retStart, int retMax) {
         try {
-        	this.pubList = pubList;
-        	int totalPubs = pubList.size();
+            this.pubList = pubList;
+            int totalPubs = pubList.size();
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             String url = null;
             while (retStart < totalPubs) {
@@ -85,19 +83,21 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
-    	if (this.isPMID) {
-    		this.pmid.append(ch, start, length);
-    		this.isPMID = false;
-    	}
+        if (this.isPMID) {
+            this.pmid.append(ch, start, length);
+            this.isPMID = false;
+        }
         if (this.isTimesCited) {
-        	this.timesCited.append(ch, start, length);
-        	this.isTimesCited = false;
+            this.timesCited.append(ch, start, length);
+            this.isTimesCited = false;
         }
     }
 
@@ -117,21 +117,23 @@ public class EutilsTimesCitedParser extends DefaultHandler {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+     * java.lang.String, java.lang.String)
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
-        	Publication pub = this.pubList.get(this.index);
-        	pub.setTimesCited(this.timesCited.toString());
-        	this.index++;
-        	if (!pub.getPMID().equals(this.pmid.toString())) {
-        		logger.log(Level.WARNING, "SAX parser truncated pmid from " + pub.getPMID()
-        				+ " to " + this.pmid.toString());
-        	}
-        	this.pmid = null;
-        	this.timesCited = null;
+            Publication pub = this.pubList.get(this.index);
+            pub.setTimesCited(this.timesCited.toString());
+            this.index++;
+            if (!pub.getPMID().equals(this.pmid.toString())) {
+                logger.log(Level.WARNING, "SAX parser truncated pmid from " + pub.getPMID() + " to " + this.pmid.toString());
+            }
+            this.pmid = null;
+            this.timesCited = null;
         }
     }
 
@@ -143,9 +145,12 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     public ArrayList<Publication> getPubList() {
         return this.pubList;
     }
-    
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -154,9 +159,9 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             this.timesCited = new StringBuilder();
         }
         if (qName.equals("Id")) {
-        	this.isPMID = true;
-        	this.pmid = new StringBuilder();
+            this.isPMID = true;
+            this.pmid = new StringBuilder();
         }
     }
-	
+
 }

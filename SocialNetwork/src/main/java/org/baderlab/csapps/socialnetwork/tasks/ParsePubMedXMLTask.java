@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -25,16 +24,16 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 public class ParsePubMedXMLTask extends AbstractTask {
-    
+
     private static final Logger logger = Logger.getLogger(ParsePubMedXMLTask.class.getName());
-    
+
     /**
-     * A reference to the {@link SocialNetworkAppManager}. Makes it possible
-     * to retrieve the name of the network (usually same as the query used
-     * to retrieve the PubMed XML)
+     * A reference to the {@link SocialNetworkAppManager}. Makes it possible to
+     * retrieve the name of the network (usually same as the query used to
+     * retrieve the PubMed XML)
      */
     private SocialNetworkAppManager appManager = null;
-    
+
     /**
      * Constructor for {@link ParsePubMedXMLTask}.
      * 
@@ -44,14 +43,16 @@ public class ParsePubMedXMLTask extends AbstractTask {
         this.appManager = appManager;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-    	taskMonitor.setTitle("Loading Network");
+        taskMonitor.setTitle("Loading Network");
         String networkName = this.appManager.getNetworkName();
-        
+
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.PUBMED);
         PubMed pubmed = new PubMed(this.appManager.getNetworkFile(), taskMonitor);
         ArrayList<Publication> pubList = pubmed.getPubList();
@@ -82,7 +83,7 @@ public class ParsePubMedXMLTask extends AbstractTask {
         }
         this.appManager.setMap(map);
         this.appManager.getSocialNetworkMap().put(networkName, socialNetwork);
-        
+
         TaskIterator taskIterator = new TaskIterator();
         taskIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
         insertTasksAfterCurrentTask(taskIterator);

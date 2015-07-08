@@ -47,8 +47,8 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
- * Contains attributes present in every visual style in use by
- * the app. Every social network visual style extends this class.
+ * Contains attributes present in every visual style in use by the app. Every
+ * social network visual style extends this class.
  *
  * @author risserlin
  */

@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -25,7 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class EutilsRetrievalParser extends DefaultHandler {
-    
+
     private static final Logger logger = Logger.getLogger(EutilsRetrievalParser.class.getName());
 
     /**
@@ -70,7 +68,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
      * A publication's title
      */
     private StringBuilder title = null;
-    
+
     /**
      * Create a new eUtils retrieval parser
      * 
@@ -156,13 +154,12 @@ public class EutilsRetrievalParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("DocSum")) {
-            Publication publication = new Publication(this.title != null ? this.title.toString() : null, 
-            		                                  this.pubDate != null ? this.pubDate.toString() : null, 
-            		                                  this.journal != null ? this.journal.toString() : null, 
-            		                                  this.timesCited != null ? this.timesCited.toString() : null, 
-            		                                  null, 
-            		                                  this.pubAuthorList);
-            publication.setPMID(this.pmid.toString()); // TODO: pass this value through the constructor?
+            Publication publication = new Publication(this.title != null ? this.title.toString() : null,
+                    this.pubDate != null ? this.pubDate.toString() : null, this.journal != null ? this.journal.toString() : null,
+                    this.timesCited != null ? this.timesCited.toString() : null, null, this.pubAuthorList);
+            publication.setPMID(this.pmid.toString()); // TODO: pass this value
+                                                       // through the
+                                                       // constructor?
             this.pubList.add(publication);
             this.pubAuthorList.clear();
             this.journal = null;
@@ -181,9 +178,12 @@ public class EutilsRetrievalParser extends DefaultHandler {
     public ArrayList<Publication> getPubList() {
         return this.pubList;
     }
-    
-    /* (non-Javadoc)
-     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

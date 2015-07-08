@@ -39,7 +39,6 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
@@ -62,7 +61,7 @@ public class Category {
         defaultInfoPanel.setName("--SELECT CATEGORY--");
         return defaultInfoPanel;
     }
-    
+
     /**
      * Create LinkedIn info panel
      *
@@ -151,7 +150,7 @@ public class Category {
      *
      * @param int categoryID
      * @return String category
-     * @throws UnableToIdentifyCategoryException 
+     * @throws UnableToIdentifyCategoryException
      */
     public static String toString(int categoryID) throws UnableToIdentifyCategoryException {
         String category = null;
@@ -163,60 +162,60 @@ public class Category {
                 category = "Academia";
                 break;
             case Category.FACULTY:
-            	category = "Faculty";
-            	break;
+                category = "Faculty";
+                break;
             case Category.INCITES:
                 category = "InCites";
                 break;
             case Category.LINKEDIN:
-            	category = "LinkedIn";
-            	break;
+                category = "LinkedIn";
+                break;
             case Category.PUBMED:
-            	category = "PubMed";
-            	break;
+                category = "PubMed";
+                break;
             case Category.SCOPUS:
                 category = "Scopus";
                 break;
             case Category.TWITTER:
-            	category = "Twitter";
-            	break;
+                category = "Twitter";
+                break;
             case Category.YOUTUBE:
-            	category = "Youtube";
-            	break;
+                category = "Youtube";
+                break;
             default:
-            	throw new UnableToIdentifyCategoryException("Unknown");
+                throw new UnableToIdentifyCategoryException("Unknown");
         }
         return category;
     }
-    
+
     /**
      * Return category represented by string
      *
      * @param String categoryID
      * @return int category
-     * @throws UnableToIdentifyCategoryException 
+     * @throws UnableToIdentifyCategoryException
      */
     public static int toCategory(String categoryID) throws UnableToIdentifyCategoryException {
-    	if (categoryID.equalsIgnoreCase("academia")) {
-    		return Category.ACADEMIA;
-    	} else if (categoryID.equalsIgnoreCase("default")) {
-    		return Category.DEFAULT;
-    	} else if (categoryID.equalsIgnoreCase("faculty")) {
-    		return Category.FACULTY;
-    	} else if (categoryID.equalsIgnoreCase("incites")) {
-    		return Category.INCITES;
-    	} else if (categoryID.equalsIgnoreCase("linkedin")) {
-    		return Category.LINKEDIN;
-    	} else if (categoryID.equalsIgnoreCase("pubmed")) {
-    		return Category.PUBMED;
-    	} else if (categoryID.equalsIgnoreCase("scopus")) {
-    		return Category.SCOPUS;
-    	} else if (categoryID.equalsIgnoreCase("twitter")) {
-    		return Category.TWITTER;
-    	} else if (categoryID.equalsIgnoreCase("youtube")) {
-    		return Category.YOUTUBE;
-    	}
-    	throw new UnableToIdentifyCategoryException(categoryID);
+        if (categoryID.equalsIgnoreCase("academia")) {
+            return Category.ACADEMIA;
+        } else if (categoryID.equalsIgnoreCase("default")) {
+            return Category.DEFAULT;
+        } else if (categoryID.equalsIgnoreCase("faculty")) {
+            return Category.FACULTY;
+        } else if (categoryID.equalsIgnoreCase("incites")) {
+            return Category.INCITES;
+        } else if (categoryID.equalsIgnoreCase("linkedin")) {
+            return Category.LINKEDIN;
+        } else if (categoryID.equalsIgnoreCase("pubmed")) {
+            return Category.PUBMED;
+        } else if (categoryID.equalsIgnoreCase("scopus")) {
+            return Category.SCOPUS;
+        } else if (categoryID.equalsIgnoreCase("twitter")) {
+            return Category.TWITTER;
+        } else if (categoryID.equalsIgnoreCase("youtube")) {
+            return Category.YOUTUBE;
+        }
+        throw new UnableToIdentifyCategoryException(categoryID);
     }
 
     /**

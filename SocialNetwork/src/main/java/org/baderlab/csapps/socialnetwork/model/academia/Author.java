@@ -80,6 +80,7 @@ public class Author extends AbstractNode {
         nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
         return nodeAttrMap;
     }
+
     /**
      * Author's department
      */
@@ -258,7 +259,7 @@ public class Author extends AbstractNode {
             this.institutionList = new ArrayList<String>();
         }
         if (!institutionList.contains(institution)) {
-            this.institutionList.add(institution);            
+            this.institutionList.add(institution);
         }
         this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institutionList);
     }
@@ -341,7 +342,7 @@ public class Author extends AbstractNode {
             isEqualFirstName = this.getFirstInitial().equalsIgnoreCase(otherAuthor.getFirstInitial());
             isEqual = isEqualFirstName && isEqualLastName;
         }
-        return isEqual;        
+        return isEqual;
     }
 
     /**
@@ -389,7 +390,7 @@ public class Author extends AbstractNode {
     public String getFirstInitial() {
         return this.firstInitial;
     }
-    
+
     /**
      * Get author's first name
      *
@@ -710,7 +711,7 @@ public class Author extends AbstractNode {
         } else {
             this.location = location;
         }
-        this.getNodeAttrMap().put("Location", this.location);    
+        this.getNodeAttrMap().put("Location", this.location);
     }
 
     /**
@@ -723,8 +724,12 @@ public class Author extends AbstractNode {
     }
 
     @Override
-    /*(non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java.util.Map)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java
+     * .util.Map)
      */
     public void setNodeAttrMap(Map<String, Object> attrMap) {
         this.nodeAttrMap = attrMap;

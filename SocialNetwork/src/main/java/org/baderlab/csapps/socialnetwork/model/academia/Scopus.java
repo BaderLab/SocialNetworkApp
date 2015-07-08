@@ -47,7 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
@@ -70,16 +69,16 @@ public class Scopus {
 
         private static final long serialVersionUID = 1L;
     }
-    
+
     private static final Logger logger = Logger.getLogger(Scopus.class.getName());
-    
-	/**
-	 * Progress bar variables
-	 */
-	private int currentSteps = 0;
-	private int totalSteps = 0;
-	private double progress = 0.0;
-	private TaskMonitor taskMonitor = null;
+
+    /**
+     * Progress bar variables
+     */
+    private int currentSteps = 0;
+    private int totalSteps = 0;
+    private double progress = 0.0;
+    private TaskMonitor taskMonitor = null;
 
     /**
      * Construct Scopus attribute map
@@ -114,7 +113,7 @@ public class Scopus {
      * @param TaskMonitor taskMonitor
      */
     public Scopus(File csv, TaskMonitor taskMonitor) {
-    	this.taskMonitor = taskMonitor;
+        this.taskMonitor = taskMonitor;
         this.parseScopusPubList(csv);
     }
 
@@ -165,7 +164,7 @@ public class Scopus {
     private void parseScopusPubList(File csv) {
         Scanner in = null;
         try {
-        	setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
+            setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
             in = new Scanner(csv);
             // Skip column headers
             String line = null, authors = null, year = null;
@@ -255,43 +254,43 @@ public class Scopus {
         }
         return columns;
     }
-    
-	/**
-	 * Set progress monitor
-	 *
-	 * @param TaskMonitor taskMonitor
-	 * @param String taskName
-	 * @param int totalSteps
-	 */
-	private void setProgressMonitor(String taskName, int totalSteps) {
-	    this.taskMonitor.setTitle(taskName);
-	    this.taskMonitor.setProgress(0.0);
-	    this.currentSteps = 0;
-	    this.totalSteps = totalSteps;
-	}
 
-	/**
-	 * Return progress as a percentage
-	 *
-	 * @param Double progress
-	 * @return String percentage
-	 */
-	private String toPercent(double progress) {
-	    progress = progress * 100;
-	    DecimalFormat df = new DecimalFormat("00");
-	    return df.format(progress) + "%";
-	}
+    /**
+     * Set progress monitor
+     *
+     * @param TaskMonitor taskMonitor
+     * @param String taskName
+     * @param int totalSteps
+     */
+    private void setProgressMonitor(String taskName, int totalSteps) {
+        this.taskMonitor.setTitle(taskName);
+        this.taskMonitor.setProgress(0.0);
+        this.currentSteps = 0;
+        this.totalSteps = totalSteps;
+    }
 
-	/**
-	 * Update progress monitor
-	 *
-	 * @param int currentSteps
-	 */
-	private void updateProgress() {
-	    this.currentSteps += 1;
-	    this.progress = (double) this.currentSteps / this.totalSteps;
-	    this.taskMonitor.setStatusMessage("Complete: " + toPercent(this.progress));
-	    this.taskMonitor.setProgress(this.progress);
-	}
+    /**
+     * Return progress as a percentage
+     *
+     * @param Double progress
+     * @return String percentage
+     */
+    private String toPercent(double progress) {
+        progress = progress * 100;
+        DecimalFormat df = new DecimalFormat("00");
+        return df.format(progress) + "%";
+    }
+
+    /**
+     * Update progress monitor
+     *
+     * @param int currentSteps
+     */
+    private void updateProgress() {
+        this.currentSteps += 1;
+        this.progress = (double) this.currentSteps / this.totalSteps;
+        this.taskMonitor.setStatusMessage("Complete: " + toPercent(this.progress));
+        this.taskMonitor.setProgress(this.progress);
+    }
 
 }

@@ -41,14 +41,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Copublications;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 /**
- * A group of interactions in a network. This class is used to create maps that will
- * later on function as building blocks for networks.
+ * A group of interactions in a network. This class is used to create maps that
+ * will later on function as building blocks for networks.
  *
  * @author Victor Kofia
  */
@@ -61,13 +60,15 @@ public class Interaction {
      */
     private Map<Collaboration, ArrayList<AbstractEdge>> map = null;
     /**
-     * A threshold specified by the user that sets limits on the # of collaborators
+     * A threshold specified by the user that sets limits on the # of
+     * collaborators
      */
-    private int maxThreshold; // TODO: Make this generic so that it can function for any type of social network
+    private int maxThreshold; // TODO: Make this generic so that it can function
+                              // for any type of social network
     /**
-     * List containing publications that could not be visualized because the
-     * # of authors who were involved exceeded the threshold specified by the
-     * user (only for use in <i>Academia</i> networks).
+     * List containing publications that could not be visualized because the #
+     * of authors who were involved exceeded the threshold specified by the user
+     * (only for use in <i>Academia</i> networks).
      */
     private ArrayList<Publication> excludedPublications = null;
 
@@ -105,7 +106,8 @@ public class Interaction {
 
     /**
      *
-     * Get the list of excluded publications (only for use in <i>Academia</i> networks)
+     * Get the list of excluded publications (only for use in <i>Academia</i>
+     * networks)
      *
      * @return ArrayList excludedPublications
      */
@@ -142,7 +144,8 @@ public class Interaction {
             ArrayList<AbstractEdge> edgeList = null;
             AbstractNode node1 = null;
             AbstractNode node2 = null;
-            // Link each node to a collaboration consisting of all the other nodes
+            // Link each node to a collaboration consisting of all the other
+            // nodes
             // it is attached to via this edge
             while (i < edge.getNodes().size()) {
                 node1 = edge.getNodes().get(i);
@@ -190,7 +193,8 @@ public class Interaction {
         // Iterate through each publication
         while (h <= results.size() - 1) {
             publication = (Publication) results.get(h);
-            // Include publication only if the # of authors does not exceed the threshold
+            // Include publication only if the # of authors does not exceed the
+            // threshold
             if ((this.maxThreshold < 0) || (publication.getNodes().size() <= this.maxThreshold)) {
                 i = 0;
                 j = 0;
@@ -220,7 +224,8 @@ public class Interaction {
                         }
                         // Create collaboration out of both authors
                         collaboration = new Collaboration(authorMap.get(author1), authorMap.get(author2));
-                        // Check for collaboration's existence before it's entered
+                        // Check for collaboration's existence before it's
+                        // entered
                         // into map
                         if (!academiaMap.containsKey(collaboration)) {
                             copublications = new Copublications(collaboration, publication);
@@ -259,7 +264,8 @@ public class Interaction {
     }
 
     /**
-     * Set the list of excluded publications (only for use in <i>Academia</i> networks)
+     * Set the list of excluded publications (only for use in <i>Academia</i>
+     * networks)
      *
      * @param ArrayList excludedPublications
      */

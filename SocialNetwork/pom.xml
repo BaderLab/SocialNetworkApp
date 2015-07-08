@@ -343,4 +343,5 @@
 		<url>https://github.com/BaderLab/SocialNetworkApp</url>
 		<developerConnection>scm:git:git@github.com:BaderLab/SocialNetworkApp.git</developerConnection>
 	</scm>	
+	<description>Social Network app is a method to visualize and interpret social networks from publication records.</description>
 </project>

@@ -49,7 +49,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -59,20 +58,17 @@ import org.baderlab.csapps.socialnetwork.model.academia.Publication;
  * Given a set of publications generate all relevant reports and save the
  * reports into a temporary directory
  *
- * Reports:
- * 1. NetworkName_pubByLocation.txt
- * 2. NetworkName_citationByLoaction.txt
- * 3. NetworkName_pubByLocation_unique.txt
- * 4. NetworkName_citationByLoaction_unique.txt
+ * Reports: 1. NetworkName_pubByLocation.txt 2.
+ * NetworkName_citationByLoaction.txt 3. NetworkName_pubByLocation_unique.txt 4.
+ * NetworkName_citationByLoaction_unique.txt
  *
- * And the google chart representation of the above data
- * 5. NetworkName_pubByLocation.html
- * 6. NetworkName_citationByLoaction.html
- * 7. NetworkName_pubByLocation_unique.html
- * 8. NetworkName_citationByLoaction_unique.html
+ * And the google chart representation of the above data 5.
+ * NetworkName_pubByLocation.html 6. NetworkName_citationByLoaction.html 7.
+ * NetworkName_pubByLocation_unique.html 8.
+ * NetworkName_citationByLoaction_unique.html
  */
 public class GenerateReports {
-    
+
     private static final Logger logger = Logger.getLogger(GenerateReports.class.getName());
 
     private ArrayList<Publication> publications = null;
@@ -113,7 +109,7 @@ public class GenerateReports {
         this.publications = network.getPublications();
         this.networkName = network.getNetworkName();
         if (network.getNetworkName().length() > 10) {
-        	this.networkName = network.getNetworkName().substring(0, 9);        	
+            this.networkName = network.getNetworkName().substring(0, 9);
         }
         this.excludedPubs = network.getExcludedPubs();
         // create an outputDir in the temp directory

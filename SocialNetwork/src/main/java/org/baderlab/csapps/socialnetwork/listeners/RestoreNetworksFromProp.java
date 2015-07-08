@@ -44,9 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
 import javax.swing.Action;
-
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -65,8 +63,8 @@ import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
- * Scans the properties file for any important information
- * on social networks about to be loaded in a session file.
+ * Scans the properties file for any important information on social networks
+ * about to be loaded in a session file.
  *
  * @author Victor Kofia
  */
@@ -85,12 +83,8 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
      * @param {@link SocialNetworkAppManager} appManager
      * @param {@link CyNetworkViewManager} viewManager
      */
-    public RestoreNetworksFromProp(SocialNetworkAppManager appManager, 
-    		CyNetworkViewManager viewManager,
-    		CyServiceRegistrar cyServiceRegistrar,
-    		CySwingApplication cySwingApplicationService,
-    		ShowUserPanelAction userPanelAction,
-    		UserPanel userPanel) {
+    public RestoreNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
+            CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;
@@ -106,15 +100,15 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
      * @param {@link SessionLoadedEvent} e
      */
     public void handleEvent(SessionLoadedEvent e) {
-        if (e.getLoadedSession().getAppFileListMap() == null || e.getLoadedSession().getAppFileListMap().size() == 0){
+        if (e.getLoadedSession().getAppFileListMap() == null || e.getLoadedSession().getAppFileListMap().size() == 0) {
             return;
         }
         List<File> files = e.getLoadedSession().getAppFileListMap().get("socialnetwork");
-        if (files == null || files.size() == 0){
+        if (files == null || files.size() == 0) {
             return;
         }
         // Show Social Network App user panel
-        
+
         String currentName = (String) this.userPanelAction.getValue(Action.NAME);
         if (currentName.trim().equalsIgnoreCase("Show Social Network")) {
             this.cyServiceRegistrar.registerService(this.userPanel, CytoPanelComponent.class, new Properties());
@@ -130,13 +124,13 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
             this.cytoPanelWest.setSelectedIndex(index);
             this.userPanelAction.putValue(Action.NAME, "Hide Social Network");
         }
-        
+
         try {
             File propFile = files.get(0);
             // Parse socialnetwork.prop file (CSV)
             BufferedReader in = new BufferedReader(new FileReader(propFile));
             in.readLine(); // Skip header
-            
+
             String line = in.readLine();
             String[] networkData = null;
             ArrayList<String> listOfSocialNetworks = new ArrayList<String>();
@@ -145,15 +139,15 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
             ArrayList<String> listOfNumFaculty = new ArrayList<String>();
             ArrayList<String> listOfNumUnidenFaculty = new ArrayList<String>();
             while (line != null) {
-            	networkData = line.split(",");
-            	listOfSocialNetworks.add(networkData[0]);
-            	listOfTypes.add(networkData[1]);
-            	listOfNumPubs.add(networkData[2]);
-            	listOfNumFaculty.add(networkData[3]);
-            	listOfNumUnidenFaculty.add(networkData[4]);
-            	line = in.readLine();
+                networkData = line.split(",");
+                listOfSocialNetworks.add(networkData[0]);
+                listOfTypes.add(networkData[1]);
+                listOfNumPubs.add(networkData[2]);
+                listOfNumFaculty.add(networkData[3]);
+                listOfNumUnidenFaculty.add(networkData[4]);
+                line = in.readLine();
             }
-            
+
             SocialNetwork socialNetwork = null;
             CyNetworkView networkView = null;
             Collection<CyNetworkView> views = null;

@@ -83,8 +83,7 @@ public class Collaboration {
         }
         Collaboration other = (Collaboration) obj;
         if (this.node1 == null) {
-            if (other.node1 != null)
-            {
+            if (other.node1 != null) {
                 return false;
                 // Collaborations are considered equal regardless of order (i.e.
                 // node1 and node2

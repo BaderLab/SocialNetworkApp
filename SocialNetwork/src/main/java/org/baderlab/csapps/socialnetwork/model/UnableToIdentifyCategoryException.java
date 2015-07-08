@@ -61,7 +61,9 @@ public class UnableToIdentifyCategoryException extends Exception {
     }
 
     @Override
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Throwable#getMessage()
      */
     public String getMessage() {
@@ -70,7 +72,9 @@ public class UnableToIdentifyCategoryException extends Exception {
     }
 
     @Override
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Throwable#getStackTrace()
      */
     public StackTraceElement[] getStackTrace() {
@@ -79,7 +83,9 @@ public class UnableToIdentifyCategoryException extends Exception {
     }
 
     @Override
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Throwable#toString()
      */
     public String toString() {

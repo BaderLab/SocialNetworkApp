@@ -3,27 +3,28 @@ package org.baderlab.csapps.socialnetwork.tasks;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
+import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTask;
 
 /**
- * TaskFactory for {@link ParsePubMedXMLTask}
+ * TaskFactory for {@link ExportNthDegreeNeighborsTask}
  * 
  * @author Victor Kofia
  */
-public class ParsePubMedXMLTaskFactory extends AbstractTaskFactory {
+public class ExportNthDegreeNeighborsTaskFactory extends AbstractTaskFactory {
 
     private SocialNetworkAppManager appManager = null;
 
     /**
-     * Constructor for {@link ParsePubMedXMLFactory}
+     * Constructor for {@link ExportNthDegreeNeighborsFactory}
      * 
      * @param SocialNetworkAppManager appManager
      */
-    public ParsePubMedXMLTaskFactory(SocialNetworkAppManager appManager) {
+    public ExportNthDegreeNeighborsTaskFactory(SocialNetworkAppManager appManager) {
         this.appManager = appManager;
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new ParsePubMedXMLTask(appManager));
+        return new TaskIterator(new ExportNthDegreeNeighborsTask(appManager));
     }
 
 }

@@ -76,8 +76,9 @@ public class CreateNetworkTaskFactory extends AbstractTaskFactory {
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new CreateNetworkTask(this.cyNetworkNamingServiceRef, this.cyNetworkFactoryServiceRef, this.cyNetworkManagerServiceRef,
-                this.cyNetworkViewFactoryServiceRef, this.cyNetworkViewManagerServiceRef, this.cyLayoutManagerServiceRef, this.appManager));
+        return new TaskIterator(new CreateNetworkTask(this.cyNetworkNamingServiceRef, this.cyNetworkFactoryServiceRef,
+                this.cyNetworkManagerServiceRef, this.cyNetworkViewFactoryServiceRef, this.cyNetworkViewManagerServiceRef,
+                this.cyLayoutManagerServiceRef, this.appManager));
     }
 
 }

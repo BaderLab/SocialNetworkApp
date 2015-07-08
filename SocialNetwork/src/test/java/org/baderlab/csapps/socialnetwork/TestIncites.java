@@ -39,10 +39,8 @@ package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.util.ArrayList;
-
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.work.TaskMonitor;
@@ -56,8 +54,8 @@ import org.junit.Test;
  * @author Victor Kofia
  */
 public class TestIncites {
-	
-	private TaskMonitor taskMonitor = mock(TaskMonitor.class);
+
+    private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 
     @Before
     public void setUp() throws Exception {

@@ -39,12 +39,10 @@ package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
@@ -57,8 +55,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestInteraction {
-	
-	private TaskMonitor taskMonitor = mock(TaskMonitor.class);
+
+    private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 
     @Before
     public void setUp() throws Exception {
@@ -67,7 +65,7 @@ public class TestInteraction {
     @After
     public void tearDown() throws Exception {
     }
-    
+
     @Test
     /**
      * Verify the correct calculation of times cited in two publications
@@ -84,12 +82,12 @@ public class TestInteraction {
         Collaboration cons = null;
         Author authorA = null, authorB = null;
         while (it.hasNext() && status == true) {
-        	pair = (Map.Entry<Collaboration, ArrayList<AbstractEdge>>) it.next();
-        	cons = pair.getKey();
-        	authorA = (Author) cons.getNode1();
-        	authorB = (Author) cons.getNode2();
-        	status = status && verifyAuthor(authorA);
-        	status = status && verifyAuthor(authorB);
+            pair = (Map.Entry<Collaboration, ArrayList<AbstractEdge>>) it.next();
+            cons = pair.getKey();
+            authorA = (Author) cons.getNode1();
+            authorB = (Author) cons.getNode2();
+            status = status && verifyAuthor(authorA);
+            status = status && verifyAuthor(authorB);
         }
         assertTrue(status);
     }
@@ -118,19 +116,19 @@ public class TestInteraction {
      * @return boolean
      */
     private boolean verifyAuthor(Author author) {
-    	boolean status = true;
-	    switch (author.getTimesCited()) {
-			case 2:
-				status = status && author.getLabel().equals("Julian Bashir");
-				break;
-			case 7:
-				status = status && author.getLabel().equals("Kira Nerys");
-				break;
-			case 9:
-				status = status && author.getLabel().equals("Benjamin Sisko");
-				break;
-		}
-    	return status;
+        boolean status = true;
+        switch (author.getTimesCited()) {
+            case 2:
+                status = status && author.getLabel().equals("Julian Bashir");
+                break;
+            case 7:
+                status = status && author.getLabel().equals("Kira Nerys");
+                break;
+            case 9:
+                status = status && author.getLabel().equals("Benjamin Sisko");
+                break;
+        }
+        return status;
     }
 
 }

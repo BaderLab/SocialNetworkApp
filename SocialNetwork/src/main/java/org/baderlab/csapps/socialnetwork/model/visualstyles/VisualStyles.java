@@ -56,7 +56,7 @@ import org.baderlab.csapps.socialnetwork.model.Category;
  * @author Victor Kofia
  */
 public class VisualStyles {
-    
+
     private static final Logger logger = Logger.getLogger(VisualStyles.class.getName());
 
     /**
@@ -67,7 +67,7 @@ public class VisualStyles {
      */
     public static String getHelpMessage(int visualStyleType) {
         String fileName = null;
-        switch(visualStyleType) {
+        switch (visualStyleType) {
             case VisualStyles.INCITES_VISUAL_STYLE:
                 if (INCITES_VISUAL_STYLE_HELP == null) {
                     fileName = "incites_visual_style_help.txt";
@@ -172,9 +172,9 @@ public class VisualStyles {
     private static String INCITES_VISUAL_STYLE_HELP = null;
 
     /**
-     * A visual style map
-     * <br> Key: string representation of visual style
-     * <br> Value: visual style ID
+     * A visual style map <br>
+     * Key: string representation of visual style <br>
+     * Value: visual style ID
      */
     private Map<String, Integer> visualStyleMap = null;
 
@@ -203,21 +203,20 @@ public class VisualStyles {
      */
     public String[] getVisualStyleList(int visualStyleSelectorType) {
         String[] visualStyleList = null;
-        switch(visualStyleSelectorType) {
+        switch (visualStyleSelectorType) {
             case VisualStyles.DEFAULT_VISUAL_STYLE:
-                visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--"};
+                visualStyleList = new String[] { "--SELECT NETWORK VISUAL STYLE--" };
                 break;
             case VisualStyles.INCITES_VISUAL_STYLE:
-                visualStyleList = new String[] {"InCites"};
+                visualStyleList = new String[] { "InCites" };
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
-                visualStyleList = new String[] {"PubMed"};
+                visualStyleList = new String[] { "PubMed" };
                 break;
             case VisualStyles.SCOPUS_VISUAL_STYLE:
-                visualStyleList = new String[] {"Scopus"};
+                visualStyleList = new String[] { "Scopus" };
                 break;
         }
         return visualStyleList;
     }
 }
-

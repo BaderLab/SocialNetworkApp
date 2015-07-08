@@ -39,7 +39,6 @@ package org.baderlab.csapps.socialnetwork;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Search;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;

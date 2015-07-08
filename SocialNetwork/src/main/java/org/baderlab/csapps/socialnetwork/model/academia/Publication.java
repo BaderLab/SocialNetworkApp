@@ -97,14 +97,13 @@ public class Publication extends AbstractEdge {
      * @param String expectedCitations
      * @param List coauthorList
      */
-    public Publication(String title, String pubDate, String journal, 
-    		String timesCited, String expectedCitations, List<Author> coauthorList) {
+    public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
         this.pubDate = pubDate;
         this.title = title;
         this.journal = journal;
         this.authorList.addAll(coauthorList);
-    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {        	
-    		this.timesCited = timesCited;        	
+        if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {
+            this.timesCited = timesCited;
         }
         this.expectedCitations = expectedCitations;
         constructEdgeAttrMap();
@@ -231,9 +230,9 @@ public class Publication extends AbstractEdge {
      * 
      * @return String pmid
      */
-	public String getPMID() {
-		return this.pmid;
-	}
+    public String getPMID() {
+        return this.pmid;
+    }
 
     /**
      * Get publication date
@@ -250,11 +249,11 @@ public class Publication extends AbstractEdge {
      * @return int timesCited
      */
     public int getTimesCited() {
-    	if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {        	
-    		return Integer.parseInt(this.timesCited);
-    	} else {
-    		return 0;
-    	}
+        if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {
+            return Integer.parseInt(this.timesCited);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -322,14 +321,14 @@ public class Publication extends AbstractEdge {
     }
 
     /**
-	 * Set the PMID of this publication
-	 * 
-	 * @param String pmid
-	 */
-	public void setPMID(String pmid) {
-		this.pmid = pmid;
-	}
-    
+     * Set the PMID of this publication
+     * 
+     * @param String pmid
+     */
+    public void setPMID(String pmid) {
+        this.pmid = pmid;
+    }
+
     /**
      * Set publication pub date
      *
@@ -345,7 +344,7 @@ public class Publication extends AbstractEdge {
      * @param int timesCited
      */
     public void setTimesCited(int timesCited) {
-    	this.timesCited = String.valueOf(timesCited);
+        this.timesCited = String.valueOf(timesCited);
     }
 
     /**
@@ -354,7 +353,7 @@ public class Publication extends AbstractEdge {
      * @param String timesCited
      */
     public void setTimesCited(String timesCited) {
-    	this.timesCited = timesCited;
+        this.timesCited = timesCited;
     }
 
     /**
@@ -366,7 +365,7 @@ public class Publication extends AbstractEdge {
         this.title = title;
     }
 
-	/**
+    /**
      * Return a string representation of the publication in the format: <br>
      * Title: <i>title</i> <br>
      * Pub-Date: <i>pubdate</i> <br>

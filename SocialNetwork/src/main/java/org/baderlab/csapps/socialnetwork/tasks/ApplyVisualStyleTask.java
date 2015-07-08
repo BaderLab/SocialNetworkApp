@@ -44,7 +44,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
@@ -110,8 +109,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
         // Get column name
         String colName = (String) this.appManager.getCurrentlySelectedSocialNetwork().getVisualStyleMap().get(BasicVisualLexicon.EDGE_LABEL)[0];
         // Assign edge label filter to column
-        PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef.createVisualMappingFunction(
-                colName, Integer.class, BasicVisualLexicon.EDGE_LABEL);
+        PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef
+                .createVisualMappingFunction(colName, Integer.class, BasicVisualLexicon.EDGE_LABEL);
         visualStyle.addVisualMappingFunction(mapping);
         return visualStyle;
     }
@@ -126,8 +125,8 @@ public class ApplyVisualStyleTask extends AbstractTask {
         // Get column name
         String colName = (String) this.appManager.getCurrentlySelectedSocialNetwork().getVisualStyleMap().get(BasicVisualLexicon.NODE_LABEL)[0];
         // Assign node label filter to column
-        PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef.createVisualMappingFunction(
-                colName, Integer.class, BasicVisualLexicon.NODE_LABEL);
+        PassthroughMapping<Integer, ?> mapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef
+                .createVisualMappingFunction(colName, Integer.class, BasicVisualLexicon.NODE_LABEL);
         visualStyle.addVisualMappingFunction(mapping);
         return visualStyle;
     }
@@ -211,7 +210,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle pubmedVisualStyle
      */
     private VisualStyle getPubmedVisualStyle() {
-    	VisualStyle pubmedVisualStyle = this.getVisualStyle("PubMed");
+        VisualStyle pubmedVisualStyle = this.getVisualStyle("PubMed");
         if (pubmedVisualStyle == null) {
             pubmedVisualStyle = this.createPubmedVisualStyle();
             this.vmmServiceRef.addVisualStyle(pubmedVisualStyle);
@@ -225,7 +224,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
      * @return VisualStyle scopusVisualStyle
      */
     private VisualStyle getScopusVisualStyle() {
-    	VisualStyle scopusVisualStyle = this.getVisualStyle("Scopus");
+        VisualStyle scopusVisualStyle = this.getVisualStyle("Scopus");
         if (scopusVisualStyle == null) {
             scopusVisualStyle = this.createScopusVisualStyle();
             this.vmmServiceRef.addVisualStyle(scopusVisualStyle);
@@ -243,25 +242,24 @@ public class ApplyVisualStyleTask extends AbstractTask {
     }
 
     /**
-     * Return the visual style with the specified name in the 
-     * set of all visual styles. null is returned if no visual 
-     * style is found.
+     * Return the visual style with the specified name in the set of all visual
+     * styles. null is returned if no visual style is found.
      * 
      * @param String name
      * 
      * @return VisualStyle visualStyle
      */
     private VisualStyle getVisualStyle(String name) {
-    	Iterator<VisualStyle> it = this.vmmServiceRef.getAllVisualStyles().iterator();
-    	VisualStyle visualStyle = null;
-    	while (it.hasNext()) {
-    		visualStyle = it.next();
-    		if (visualStyle.getTitle().equalsIgnoreCase(name)) {
-    			break;
-    		}
-    	    visualStyle = null;
-    	}
-    	return visualStyle;
+        Iterator<VisualStyle> it = this.vmmServiceRef.getAllVisualStyles().iterator();
+        VisualStyle visualStyle = null;
+        while (it.hasNext()) {
+            visualStyle = it.next();
+            if (visualStyle.getTitle().equalsIgnoreCase(name)) {
+                break;
+            }
+            visualStyle = null;
+        }
+        return visualStyle;
     }
 
     /**
@@ -409,7 +407,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
         }
         return visualStyle;
     }
-    
+
     /**
      * Modify node size
      *
@@ -447,7 +445,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
         VisualStyle visualStyle = null;
         switch (this.appManager.getVisualStyleID()) {
             case Category.DEFAULT:
-            	visualStyle = this.getDefaultVisualStyle();
+                visualStyle = this.getDefaultVisualStyle();
                 break;
             case VisualStyles.INCITES_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading InCites Visual Style ... ");

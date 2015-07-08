@@ -46,7 +46,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -70,7 +69,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author Victor Kofia
  */
 public class IncitesParser {
-    
+
     private static final Logger logger = Logger.getLogger(IncitesParser.class.getName());
 
     /**
@@ -85,7 +84,6 @@ public class IncitesParser {
         if (firstNameMatcher.find()) {
             return firstNameMatcher.group(1).trim();
         }
-        System.out.println("CHECK: " + incitesText);
         return "N/A";
     }
 
@@ -193,27 +191,24 @@ public class IncitesParser {
      * @param TaskMonitor taskMonitor
      */
     public IncitesParser(File file, TaskMonitor taskMonitor) {
-        // TODO: test cases can't provide a taskMonitor, what
-        // to do in this situation?
         this.locationMap = new IncitesInstitutionLocationMap();
         OPCPackage pkg;
-		try {
-			MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(file, 
-					taskMonitor, "Parsing InCites XLSX ...");
-			pkg = OPCPackage.open(fileInputStream);
-			XSSFWorkbook workbook = new XSSFWorkbook(pkg);
-			int numSheets = workbook.getNumberOfSheets();
-			this.parseFacultyXLSX(pkg, numSheets);
-			this.parsePubsXLSX(pkg, numSheets);
-			this.calculateSummary();
-		} catch (InvalidFormatException e) {
-		    logger.log(Level.SEVERE, "Exception occurred", e);
-		} catch (IOException e) {
+        try {
+            MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(file, taskMonitor, "Parsing InCites XLSX ...");
+            pkg = OPCPackage.open(fileInputStream);
+            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+            int numSheets = workbook.getNumberOfSheets();
+            this.parseFacultyXLSX(pkg, numSheets);
+            this.parsePubsXLSX(pkg, numSheets);
+            this.calculateSummary();
+        } catch (InvalidFormatException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
-		}
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Exception occurred", e);
+        }
     }
 
-	/**
+    /**
      * Return true iff author in authorList
      *
      * @param List authorList
@@ -274,10 +269,10 @@ public class IncitesParser {
     private XMLReader fetchSheetParser(SharedStringsTable sst, int sheet) throws SAXException {
         XMLReader parser = XMLReaderFactory.createXMLReader();
         switch (sheet) {
-            // Sheet#1: ??
+        // Sheet#1: ??
             case 1:
                 parser.setContentHandler(new PubSheetParser(sst, this));
-        	    break;
+                break;
             // Sheet#3: publication data
             case 3:
                 parser.setContentHandler(new PubSheetParser(sst, this));
@@ -410,8 +405,7 @@ public class IncitesParser {
                 // Authors whose first & last names could not be
                 // resolved properly for one reason or another (mostly
                 // formatting issues)
-                logger.log(Level.WARNING, "First and last name could not be resolved "
-                                        + "properly for " + authorText);
+                logger.log(Level.WARNING, "First and last name could not be resolved properly from \"" + authorText + "\"");
             }
         }
         return pubAuthorList;
@@ -424,9 +418,9 @@ public class IncitesParser {
      * @param int numSheets
      */
     private void parseFacultyXLSX(OPCPackage pkg, int numSheets) {
-    	if (numSheets == 1) {
-    		return; // Exit. No faculty sheet exists.
-    	}
+        if (numSheets == 1) {
+            return; // Exit. No faculty sheet exists.
+        }
         try {
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();
@@ -436,8 +430,8 @@ public class IncitesParser {
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
             sheet.close();
-        // Users do not have to be notified about these errors
-        // but printed stack traces are useful (i.e. debugging)
+            // Users do not have to be notified about these errors
+            // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
             this.setDepartmentName("N/A");
@@ -486,8 +480,8 @@ public class IncitesParser {
             InputSource sheetSource = new InputSource(sheet);
             parser.parse(sheetSource);
             sheet.close();
-        // Users do not have to be notified about these exceptions
-        // but printed stack traces are useful (i.e. debugging)
+            // Users do not have to be notified about these exceptions
+            // but printed stack traces are useful (i.e. debugging)
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
             this.setPubList(null);
