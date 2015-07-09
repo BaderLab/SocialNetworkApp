@@ -54,7 +54,7 @@ import org.junit.Test;
  *
  * @author Victor Kofia
  */
-public class TestAuthor {
+public class AuthorTest {
 
     @Before
     public void setUp() {

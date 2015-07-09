@@ -38,34 +38,29 @@
 package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import static org.mockito.Mockito.mock;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.Collaboration;
-import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.Search;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.util.swing.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Collaboration identity tests
+ * Test search feature
  *
  * @author Victor Kofia
  */
-public class TestCollaboration {
+public class SearchTest {
 
-    Author author1 = null;
-    Author author2 = null;
-    Collaboration cons1 = null;
-    Collaboration cons2 = null;
+    private FileUtil fileUtil = mock(FileUtil.class);
+    private CySwingApplication cySwingAppRef = mock(CySwingApplication.class);
 
     @Before
     public void setUp() throws Exception {
-        this.author1 = new Author("ntu P", Category.PUBMED);
-        this.author2 = new Author("homme G", Category.PUBMED);
-        this.cons1 = new Collaboration(this.author1, this.author2);
-        this.cons2 = new Collaboration(this.author2, this.author1);
     }
 
     @After
@@ -74,46 +69,16 @@ public class TestCollaboration {
 
     @Test
     /**
-     * Test whether or not two consortiums are 'equal' to each other.
-     * NOTE: These consortiums differ only in node order
-     * (i.e. node1 is node2 and node2 is node1)
+     * Verify that the number of hits declared by PubMed's xml file is equal
+     * to the total number of results returned by search
      */
-    public void testEquality() {
-        assertTrue(this.cons1.equals(this.cons2));
-    }
-
-    @Test
-    /**
-     * Test whether or not two consortiums have the same hash-code
-     * NOTE: These consortiums differ only in node order
-     * (i.e. node1 is node2 and node2 is node1)
-     */
-    public void testHashCode() {
-        assertTrue(this.cons1.hashCode() == this.cons2.hashCode());
-    }
-
-    @Test
-    /**
-     * Test whether or not one consortium (cons1) can be used to identify
-     * another (cons2) in a list
-     * NOTE: cons1 and cons2 differ only in node order
-     */
-    public void testListRecognition() {
-        ArrayList<Collaboration> consortiumList = new ArrayList<Collaboration>();
-        consortiumList.add(this.cons1);
-        assertTrue(consortiumList.contains(this.cons2));
-    }
-
-    @Test
-    /**
-     * Test whether or not one consortium (cons1) can be used to identify
-     * another (cons2) in a map
-     * NOTE: cons1 and cons2 differ only in node order
-     */
-    public void testMapRecognition() {
-        Map<Collaboration, String> consortiumMap = new HashMap<Collaboration, String>();
-        consortiumMap.put(this.cons2, "intro");
-        assertTrue(consortiumMap.containsKey(this.cons1));
+    public void testPubmedSearch() {
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
+        appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
+        Search search = new Search("pawson t", Category.ACADEMIA, appManager);
+        int hits = search.getTotalHits();
+        int results = search.getResults().size();
+        assertTrue(hits == results);
     }
 
 }

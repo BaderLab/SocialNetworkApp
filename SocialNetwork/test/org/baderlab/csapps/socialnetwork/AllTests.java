@@ -1,11 +1,11 @@
 package org.baderlab.csapps.socialnetwork;
 
-import org.baderlab.csapps.socialnetwork.model.academia.TestAuthor;
-import org.baderlab.csapps.socialnetwork.model.academia.TestCollaboration;
-import org.baderlab.csapps.socialnetwork.model.academia.TestInteraction;
-import org.baderlab.csapps.socialnetwork.model.academia.TestSearch;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.TestIncites;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.TestPubMedParser;
+import org.baderlab.csapps.socialnetwork.model.academia.AuthorTest;
+import org.baderlab.csapps.socialnetwork.model.academia.CollaborationTest;
+import org.baderlab.csapps.socialnetwork.model.academia.InteractionTest;
+import org.baderlab.csapps.socialnetwork.model.academia.SearchTest;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParserTest;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedParserTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -17,8 +17,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Victor Kofia
  */
 @RunWith(value=Suite.class)
-@SuiteClasses(value={TestAuthor.class, TestCollaboration.class, TestIncites.class, TestInteraction.class, TestSearch.class,
-        TestPubMedParser.class})
+@SuiteClasses(value={AuthorTest.class, CollaborationTest.class, IncitesParserTest.class, InteractionTest.class, SearchTest.class,
+        PubMedParserTest.class})
 public class AllTests {
 
   /**

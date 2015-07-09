@@ -53,7 +53,7 @@ import org.junit.Test;
  *
  * @author Victor Kofia
  */
-public class TestIncites {
+public class IncitesParserTest {
 
     private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 

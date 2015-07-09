@@ -18,7 +18,7 @@ import org.junit.Test;
  * 
  * @author Victor Kofia
  */
-public class TestPubMedParser {
+public class PubMedParserTest {
 
     private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 

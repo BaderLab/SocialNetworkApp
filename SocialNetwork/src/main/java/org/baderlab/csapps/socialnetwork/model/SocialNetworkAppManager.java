@@ -314,7 +314,8 @@ public class SocialNetworkAppManager {
                 // This is only temporary ~
                 category = Category.PUBMED;
                 interaction = new Interaction(results, category, maxAuthorThreshold);
-                if (interaction.getExcludedPublications().size() == results.size()) {
+                map = interaction.getAbstractMap();
+                if (map.size() == 0) {
                     this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold.");
                     return;
@@ -327,7 +328,6 @@ public class SocialNetworkAppManager {
                 // socialNetwork.setPublications(search.getTotalHits());
 
                 // Create new map using results
-                map = interaction.getAbstractMap();
                 // Set social network attributes
                 // ??
 
