@@ -43,9 +43,7 @@ public class ParseScopusCSVTask extends AbstractTask {
         this.appManager = appManager;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
     @Override

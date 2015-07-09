@@ -60,6 +60,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTaskFacto
 import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
@@ -202,6 +203,9 @@ public class CyActivator extends AbstractCyActivator {
 
         ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef = new ParseScopusCSVTaskFactory(appManager);
         registerService(bc, parseScopusCSVTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
+        registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
 
         // Add dependencies to app manager
         // TODO:
@@ -223,6 +227,8 @@ public class CyActivator extends AbstractCyActivator {
         appManager.setDestroyNetworkTaskFactoryRef(destroyNetworkTaskFactoryRef);
 
         appManager.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
+        
+        appManager.setSearchPubMedTaskFactoryRef(searchPubMedTaskFactoryRef);
 
         // About Action
         serviceProperties = new HashMap<String, String>();

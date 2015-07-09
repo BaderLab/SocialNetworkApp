@@ -59,6 +59,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTask;
 import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetwork;
@@ -251,30 +252,58 @@ public class SocialNetworkAppManager {
         this.setMaxAuthorThreshold(maxAuthorThreshold);
 
         // Create network out of InCites data
-        if (this.analysis_type == this.ANALYSISTYPE_INCITES) {
-            // Load data from text file
-            if (!extension.equalsIgnoreCase("xlsx")) {
-                this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
-                return;
-            }
-            this.visualizeIncitesXLSX();
-        } else if (this.analysis_type == this.ANALYSISTYPE_PUBMED) {
-            if (!extension.equalsIgnoreCase("xml")) {
-                this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
-                return;
-            }
-            this.visualizePubMedXML();
-            // Create network out of Scopus data
-        } else if (this.analysis_type == this.ANALYSISTYPE_SCOPUS) {
-            if (!extension.equalsIgnoreCase("csv")) {
-                this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
-                return;
-            }
-            this.visualizeScopusCSV();
+        switch(this.analysis_type) {
+            case ANALYSISTYPE_INCITES:
+                // Load data from text file
+                if (!extension.equalsIgnoreCase("xlsx")) {
+                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
+                    return;
+                }
+                this.visualizeIncitesXLSX();
+                break;
+            case ANALYSISTYPE_PUBMED:
+                if (!extension.equalsIgnoreCase("xml")) {
+                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
+                    return;
+                }
+                this.visualizePubMedXML();
+                break;
+            case ANALYSISTYPE_SCOPUS:
+                if (!extension.equalsIgnoreCase("csv")) {
+                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
+                    return;
+                }
+                this.visualizeScopusCSV();
+                break;
+            default:
+                break;
         }
+    }
+    
+    /**
+     * Search term that the user has inputed into the search box
+     */
+    private String searchTerm = null;
+    
+    /**
+     * Set search term. Will later be retrieved by {@link SearchPubMedTask}
+     * 
+     * @param String searchTerm
+     */
+    private void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+    
+    /**
+     * Get search term that user has inputed into the search box
+     * 
+     * @return String searchTerm
+     */
+    public String getSearchTerm() {
+        return this.searchTerm;
     }
 
     /**
@@ -285,68 +314,13 @@ public class SocialNetworkAppManager {
      * @param int maxAuthorThreshold
      */
     public void createNetwork(String searchTerm, int category, int maxAuthorThreshold) {
-        // Verify that network name is valid
-        if (!this.isNameValid(searchTerm)) {
-            CytoscapeUtilities.notifyUser("Network " + this.networkName + " already exists in Cytoscape." + " Please enter a new name.");
-            return;
-        }
-        // Create new search session
-        Search search = new Search(searchTerm, category, this);
-        // Get a list of the results that are going to serve as edges. Exact
-        // result type may vary with website
-        List<? extends AbstractEdge> results = search.getResults();
-        if (results == null) {
-            this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            CytoscapeUtilities.notifyUser("Network could not be loaded");
-            return;
-        }
-        if (results.size() == 0) {
-            this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            CytoscapeUtilities.notifyUser("Search did not yield any results");
-            return;
-        }
-        Map<Collaboration, ArrayList<AbstractEdge>> map = null;
-        Interaction interaction = null;
-        SocialNetwork socialNetwork = null;
         switch (category) {
             case Category.ACADEMIA:
-                // Change category (to PubMed)
-                // This is only temporary ~
-                category = Category.PUBMED;
-                interaction = new Interaction(results, category, maxAuthorThreshold);
-                map = interaction.getAbstractMap();
-                if (map.size() == 0) {
-                    this.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold.");
-                    return;
-                }
-                socialNetwork = new SocialNetwork(searchTerm, category);
-                ArrayList<Publication> pubList = (ArrayList<Publication>) results;
-                socialNetwork.setPublications(pubList);
-                socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
-                // TODO:figure out how to add publications from pubmed search
-                // socialNetwork.setPublications(search.getTotalHits());
-
-                // Create new map using results
-                // Set social network attributes
-                // ??
-
-                this.setNetworkName(searchTerm);
-                this.getSocialNetworkMap().put(searchTerm, socialNetwork);
-                // Transfer map to Cytoscape's map variable
-                this.setMap(map);
-                // Create network using map
-                this.createNetwork();
+                this.setSearchTerm(searchTerm);
+                this.setMaxAuthorThreshold(maxAuthorThreshold);
+                searchPubMed();
                 break;
         }
-        /*
-         * this.setNetworkName(searchTerm);
-         * this.getSocialNetworkMap().put(searchTerm, socialNetwork); //
-         * Transfer map to Cytoscape's map variable this.setMap(map); // Create
-         * network using map this.createNetwork();
-         */
-        // TODO: Include when support for other types of social networks is
-        // added
     }
 
     /**
@@ -814,6 +788,36 @@ public class SocialNetworkAppManager {
      */
     private void visualizeScopusCSV() {
         this.getTaskManager().execute(this.getParseScopusCSVTaskFactoryRef().createTaskIterator());
+    }
+    
+    /**
+     * Perform a search on PubMed. Should not be executed directly.
+     */
+    private void searchPubMed() {
+        this.getTaskManager().execute(this.getSearchPubMedTaskFactoryRef().createTaskIterator());
+    }
+    
+    /**
+     * A reference to the task factory for <i>SearchPubMedTask</i>
+     */
+    private SearchPubMedTaskFactory searchPubMedTaskFactoryRef = null;
+    
+    /**
+     * Get the task factory for <i>SearchPubMedTask</i>
+     * 
+     * @return SearchPubMedTaskFactory searchPubMedTaskFactoryRef
+     */
+    private SearchPubMedTaskFactory getSearchPubMedTaskFactoryRef() {
+        return this.searchPubMedTaskFactoryRef;
+    }
+    
+    /**
+     * Set the task factory for <i>SearchPubMedTask</i>
+     * 
+     * @param SearchPubMedTaskFactory searchPubMedTaskFactoryRef
+     */
+    public void setSearchPubMedTaskFactoryRef(SearchPubMedTaskFactory searchPubMedTaskFactoryRef) {
+        this.searchPubMedTaskFactoryRef = searchPubMedTaskFactoryRef;
     }
     
     private int neighborListDegree = 0;
