@@ -152,6 +152,15 @@ public class PubMed {
     public ArrayList<Publication> getPubList() { // Return all results
         return this.pubList;
     }
+    
+    /**
+     * Return the total number of hits (total number of publications)
+     * 
+     * @return int totalHits
+     */
+    public int getTotalHits() {
+        return this.pubList != null ? this.pubList.size() : 0;
+    }
 
     /**
      * Set the PmcRefCount of the publications in the list.

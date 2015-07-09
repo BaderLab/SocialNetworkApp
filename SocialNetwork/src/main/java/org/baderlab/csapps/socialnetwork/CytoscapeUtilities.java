@@ -41,8 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * Public utilities class with static methods used repeatedly by the code
@@ -55,7 +53,8 @@ public class CytoscapeUtilities {
      * @param String message
      */
     public static void notifyUser(String message) {
-        JOptionPane.showMessageDialog(new JPanel(), "<html><body style='width: 200px'>" + message);
+        NotificationThread notify = new NotificationThread(message);
+        notify.start();
     }
 
     public static String buildId = "";

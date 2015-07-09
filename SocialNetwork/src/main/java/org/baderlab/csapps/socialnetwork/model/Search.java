@@ -74,7 +74,7 @@ public class Search {
             case Category.ACADEMIA:
                 PubMed pubmed = new PubMed(searchTerm);
                 this.results = pubmed.getPubList();
-                this.totalHits = pubmed.getPubList().size();
+                this.totalHits = pubmed.getTotalHits();
                 break;
         }
     }

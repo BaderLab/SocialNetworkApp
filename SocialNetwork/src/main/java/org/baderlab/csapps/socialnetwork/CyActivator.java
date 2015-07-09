@@ -60,6 +60,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTaskFacto
 import org.baderlab.csapps.socialnetwork.tasks.ParseIncitesXLSXTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
@@ -204,17 +205,17 @@ public class CyActivator extends AbstractCyActivator {
         ParseScopusCSVTaskFactory parseScopusCSVTaskFactoryRef = new ParseScopusCSVTaskFactory(appManager);
         registerService(bc, parseScopusCSVTaskFactoryRef, TaskFactory.class, new Properties());
         
+        ParseSocialNetworkFileTaskFactory parseSocialNetworkFileTaskFactoryRef = new ParseSocialNetworkFileTaskFactory(appManager, 
+                taskManager, parseIncitesXLSXTaskFactoryRef, parsePubMedXMLTaskFactoryRef, parseScopusCSVTaskFactoryRef);
+        registerService(bc, parseSocialNetworkFileTaskFactoryRef, TaskFactory.class, new Properties());
+        
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
         registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
 
         // Add dependencies to app manager
         // TODO:
         // NOTE: Using setters violates dependency injection
-        appManager.setParsePubMedXMLTaskFactoryRef(parsePubMedXMLTaskFactoryRef);
-
-        appManager.setParseIncitesXLSXTaskFactoryRef(parseIncitesXLSXTaskFactoryRef);
-
-        appManager.setParseScopusCSVTaskFactoryRef(parseScopusCSVTaskFactoryRef);
+        appManager.setParseSocialNetworkFileTaskFactory(parseSocialNetworkFileTaskFactoryRef);
 
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
 

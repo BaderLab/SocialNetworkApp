@@ -54,7 +54,8 @@ public class SearchPubMedTask extends AbstractTask {
         
         // Verify that network name is valid
         if (!this.appManager.isNameValid(searchTerm)) {
-            CytoscapeUtilities.notifyUser(String.format("Network %s already exists in Cytoscape. Please enter a new name.", searchTerm));
+            String message = String.format("Network %s already exists in Cytoscape. Please enter a new name.", searchTerm);
+            CytoscapeUtilities.notifyUser(message);
             return;
         }
         // Create new search session
