@@ -38,6 +38,8 @@
 package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -76,6 +78,7 @@ public class AddInstitutionAction extends AbstractCyAction {
      * Set of all accepted locations
      */
     private HashSet<String> locationSet = null;
+    private String outputDir = null;
 
     /**
      * Add an institution
@@ -87,6 +90,7 @@ public class AddInstitutionAction extends AbstractCyAction {
     public AddInstitutionAction(Map<String, String> configProps, CyApplicationManager applicationManager, CyNetworkViewManager networkViewManager) {
         super(configProps, applicationManager, networkViewManager);
         putValue(Action.NAME, "Add Institution");
+        this.outputDir = System.getProperty("java.io.tmpdir");
         HashSet<String> set = new HashSet<String>();
         String[] locations = new String[] { "univ toronto", "ontario", "canada", "united states", "international", "other" };
         for (String location : locations) {
@@ -131,9 +135,8 @@ public class AddInstitutionAction extends AbstractCyAction {
                             CytoscapeUtilities.notifyUser("Location does not exist. Please enter a valid location.");
                         } else {
                             institution = institution.toUpperCase();
-                            // Format location (in case casing was done
-                            // improperly)
-                            // i.e. united states becomes 'United States'
+                            // Format location (in case casing was done improperly)
+                            // i.e. 'united states' becomes 'United States'
                             String[] words = location.split("\\s");
                             location = "";
                             for (String word : words) {
@@ -150,14 +153,14 @@ public class AddInstitutionAction extends AbstractCyAction {
 
         if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
             try {
+                String basename = this.outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
                 // Get map file in jar
-                InputStream in = IncitesInstitutionLocationMap.class.getClassLoader().getResourceAsStream("map.sn");
+                InputStream in = new FileInputStream(basename);
                 ObjectInputStream ois = new ObjectInputStream(in);
                 @SuppressWarnings("unchecked")
                 Map<String, String> map = (HashMap<String, String>) ois.readObject();
                 // Add institution / location info to map
                 map.put(institution, location);
-
                 // TODO: Update file dynamically - store a local version that we
                 // check as well.
                 // Update map being used by Incites

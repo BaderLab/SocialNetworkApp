@@ -148,14 +148,12 @@ public class Copublications extends AbstractEdge {
         return this.getPubList().size();
     }
 
-    @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see
      * org.baderlab.csapps.socialnetwork.model.AbstractEdge#setCyEdge(org.cytoscape
      * .model.CyEdge)
      */
+    @Override
     public void setCyEdge(CyEdge cyEdge) {
         this.cyEdge = cyEdge;
     }
