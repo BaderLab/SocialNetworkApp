@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
@@ -441,7 +440,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         this.setTaskMonitor(taskMonitor);
-        Set<VisualStyle> visualStyles = this.vmmServiceRef.getAllVisualStyles();
         VisualStyle visualStyle = null;
         switch (this.appManager.getVisualStyleID()) {
             case Category.DEFAULT:

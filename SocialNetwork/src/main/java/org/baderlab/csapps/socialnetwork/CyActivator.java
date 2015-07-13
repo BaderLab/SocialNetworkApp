@@ -44,7 +44,7 @@ import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.actions.UpdateLocationContextMenuFactory;
+import org.baderlab.csapps.socialnetwork.actions.UpdateLocationAction;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
@@ -150,14 +150,6 @@ public class CyActivator extends AbstractCyActivator {
 
         registerService(bc, userPanelAction, CyAction.class, new Properties());
 
-        // Create & register new menu item (for updating institution / location
-        // associations
-        // in the app)
-        CyNodeViewContextMenuFactory updateLocationContextMenuFactory = new UpdateLocationContextMenuFactory();
-        Properties updateLocationContextMenuFactoryProps = new Properties();
-        updateLocationContextMenuFactoryProps.put("preferredMenu", "Apps.Social Network");
-        registerAllServices(bc, updateLocationContextMenuFactory, updateLocationContextMenuFactoryProps);
-
         // Add panel and action to the manager
         appManager.setUserPanelRef(userPanel);
         appManager.setUserPanelAction(userPanelAction);
@@ -246,7 +238,7 @@ public class CyActivator extends AbstractCyActivator {
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Tools.InCites");
         AddInstitutionAction incitesAction = new AddInstitutionAction(serviceProperties, cyApplicationManagerServiceRef,
-                cyNetworkViewManagerServiceRef);
+                cyNetworkViewManagerServiceRef, taskManager, applyVisualStyleTaskFactoryRef);
 
         registerService(bc, incitesAction, CyAction.class, new Properties());
 
@@ -259,6 +251,15 @@ public class CyActivator extends AbstractCyActivator {
                 exportNthDegreeNeighborsTaskFactoryRef, appManager);
 
         registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
+        
+        // Create & register new menu item (for updating institution / location
+        // associations in the app)
+        CyNodeViewContextMenuFactory updateLocationContextMenu = new UpdateLocationAction(taskManager,
+                applyVisualStyleTaskFactoryRef);
+        Properties updateLocationContextMenuFactoryProps = new Properties();
+        updateLocationContextMenuFactoryProps.put("preferredMenu", "Apps.Social Network");
+        registerAllServices(bc, updateLocationContextMenu, updateLocationContextMenuFactoryProps);
+
 
     }
 }

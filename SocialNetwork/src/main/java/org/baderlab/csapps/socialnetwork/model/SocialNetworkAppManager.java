@@ -54,7 +54,6 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;

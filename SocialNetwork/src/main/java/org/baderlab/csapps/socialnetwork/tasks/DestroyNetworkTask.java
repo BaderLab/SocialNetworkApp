@@ -47,6 +47,7 @@ import org.cytoscape.work.TaskMonitor;
  * 
  * @author Victor Kofia
  */
+// TODO: Write class description
 public class DestroyNetworkTask extends AbstractTask {
 
     private CyNetworkManager cyNetworkManagerServiceRef = null;

@@ -3,7 +3,6 @@ package org.baderlab.csapps.socialnetwork.tasks;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
-import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTask;
 
 /**
  * TaskFactory for {@link ExportNthDegreeNeighborsTask}

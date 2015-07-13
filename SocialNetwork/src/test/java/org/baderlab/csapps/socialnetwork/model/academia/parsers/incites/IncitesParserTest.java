@@ -42,7 +42,6 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.util.ArrayList;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
 import org.junit.Before;

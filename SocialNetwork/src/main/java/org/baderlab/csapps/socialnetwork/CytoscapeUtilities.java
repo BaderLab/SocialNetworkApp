@@ -37,15 +37,45 @@
 
 package org.baderlab.csapps.socialnetwork;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyRow;
+import org.cytoscape.model.CyTable;
 
 /**
  * Public utilities class with static methods used repeatedly by the code
  */
 public class CytoscapeUtilities {
+    
+    // TODO: Add documentation
+    private static final Logger logger = Logger.getLogger(CytoscapeUtilities.class.getName());
+    private static HashSet<String> locationSet = null;
+    
+    public static HashSet<String> getLocationSet() {
+        if (CytoscapeUtilities.locationSet == null) {
+            CytoscapeUtilities.locationSet = new HashSet<String>();
+            String[] locations = new String[] { "univ toronto", "ontario", "canada", "united states", "international", "other" };
+            for (String location : locations) {
+                CytoscapeUtilities.locationSet.add(location);
+            }            
+        }
+        return CytoscapeUtilities.locationSet;        
+    }
 
     /**
      * Notify user of an issue (indicated by message)
@@ -55,6 +85,89 @@ public class CytoscapeUtilities {
     public static void notifyUser(String message) {
         NotificationThread notify = new NotificationThread(message);
         notify.start();
+    }
+    
+    public static void updateLocationMap(String institution, String location) {
+        if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
+            String outputDir = System.getProperty("java.io.tmpdir");
+            String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
+            // Get map file in jar
+            try {
+                // Retrieve the hashmap
+                InputStream in = new FileInputStream(basename);
+                ObjectInputStream ois = new ObjectInputStream(in);
+                @SuppressWarnings("unchecked")
+                Map<String, String> locationMap = (HashMap<String, String>) ois.readObject();
+                ois.close();
+                // Update the hashmap
+                locationMap.put(institution, location);
+                // Save the hashmap in CytoscapeConfigurations/3/karaf/tmp/...
+            } catch (FileNotFoundException fileNotFoundException) {
+                logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
+            } catch (IOException ioException) {
+                logger.log(Level.SEVERE, "Exception occurred", ioException);
+            } catch (ClassNotFoundException classNotFoundException) {
+                logger.log(Level.SEVERE, "Exception occurred", classNotFoundException);
+            }
+        }
+    }
+    
+    //TODO: Write method description (perhaps change method name)
+    public static void createInputPanel(String title) {
+        JTextField institutionTextField = new JTextField(5);
+        JTextField locationTextField = new JTextField(5);
+
+        JPanel myPanel = new JPanel();
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
+        myPanel.add(new JLabel("Institution"));
+        myPanel.add(institutionTextField);
+        myPanel.add(new JLabel("Location"));
+        myPanel.add(locationTextField);
+
+        int outcome = JOptionPane.OK_OPTION;
+        String institution = "N/A", location = "N/A";
+        while (outcome == JOptionPane.OK_OPTION) {
+            // Display dialog box and get user's outcome.
+            outcome = JOptionPane.showConfirmDialog(null, myPanel, title, JOptionPane.OK_CANCEL_OPTION);
+            if (outcome == JOptionPane.OK_OPTION) {
+                institution = institutionTextField.getText().trim();
+                location = locationTextField.getText().trim();
+                if (institution.trim().isEmpty() && location.trim().isEmpty()) {
+                    CytoscapeUtilities.notifyUser("Please specify both an institution and a location");
+                } else {
+                    if (institution.trim().isEmpty()) {
+                        CytoscapeUtilities.notifyUser("Please specify an institution");
+                    } else if (location.trim().isEmpty()) {
+                        CytoscapeUtilities.notifyUser("Please specify a location");
+                    } else {
+                        if (getLocationSet().contains(location.toLowerCase())) {
+                            CytoscapeUtilities.notifyUser("Location does not exist. Please enter a valid location.");
+                        } else {
+                            institution = institution.toUpperCase();
+                            // Format location (in case casing was done improperly)
+                            // i.e. 'united states' becomes 'United States'
+                            String[] words = location.split("\\s");
+                            location = "";
+                            for (String word : words) {
+                                location += word.replaceAll("^\\w", word.substring(0, 1).toUpperCase()) + " ";
+                            }
+                            location = location.trim();
+                            outcome = JOptionPane.CANCEL_OPTION;
+                        }
+                    }
+
+                }
+            }
+        }  
+        
+        CytoscapeUtilities.updateLocationMap(institution, location);
+        
+    }
+    
+    public static void addLocationToNodeTable(CyNetwork cyNetwork, Long SUID, String location) {
+        CyTable nodeTable = cyNetwork.getDefaultNodeTable();
+        CyRow cyRow = nodeTable.getRow(SUID);
+        cyRow.set("Location", location);
     }
 
     public static String buildId = "";

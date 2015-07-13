@@ -37,18 +37,15 @@
 
 package org.baderlab.csapps.socialnetwork.model.academia;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
  * Tools for manipulating Incites data
@@ -81,11 +78,9 @@ public class IncitesInstitutionLocationMap {
             String outputDir = System.getProperty("java.io.tmpdir");
             String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
             // Get map file in jar
-            InputStream in = null;
-            ObjectInputStream ois = null;
             try {
-                in = new FileInputStream(basename);
-                ois = new ObjectInputStream(in);
+                InputStream in = new FileInputStream(basename);
+                ObjectInputStream ois = new ObjectInputStream(in);
                 this.locationMap = (HashMap<String, String>) ois.readObject();
                 ois.close();
             } catch (FileNotFoundException e) {

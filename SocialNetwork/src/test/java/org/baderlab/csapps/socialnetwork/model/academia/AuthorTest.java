@@ -43,8 +43,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -177,14 +177,12 @@ public class Publication extends AbstractEdge {
         return allAuthors;
     }
 
-    /**
-     * Get CyEdge
-     *
-     * @return CyEdge cyEdge
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getCyEdge()
      */
     @Override
     public CyEdge getCyEdge() {
-        return this.cyEdge;
+        return super.cyEdge;
     }
 
     /**

@@ -101,9 +101,7 @@ public class Copublications extends AbstractEdge {
     }
 
     @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getCyEdge()
      */
     public CyEdge getCyEdge() {
@@ -121,9 +119,7 @@ public class Copublications extends AbstractEdge {
     }
 
     @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getNodes()
      */
     public List<? extends AbstractNode> getNodes() {
@@ -149,9 +145,7 @@ public class Copublications extends AbstractEdge {
     }
 
     /* (non-Javadoc)
-     * @see
-     * org.baderlab.csapps.socialnetwork.model.AbstractEdge#setCyEdge(org.cytoscape
-     * .model.CyEdge)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#setCyEdge(org.cytoscape.model.CyEdge)
      */
     @Override
     public void setCyEdge(CyEdge cyEdge) {

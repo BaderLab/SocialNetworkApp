@@ -47,7 +47,6 @@ import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
-import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
