@@ -37,14 +37,24 @@
 
 package org.baderlab.csapps.socialnetwork.model;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Action;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
@@ -174,6 +184,46 @@ public class SocialNetworkAppManager {
     public static final int ANALYSISTYPE_PUBMED = (130 << 24) + (14 << 16) + (29 << 8) + 110;
 
     private int analysis_type = SocialNetworkAppManager.ANALYSISTYPE_INCITES;
+    
+    private static final Logger logger = Logger.getLogger(SocialNetworkAppManager.class.getName());
+    
+    /**
+     * Create a new Social Network App manager
+     */
+    public SocialNetworkAppManager() {
+        String outputDir = System.getProperty("java.io.tmpdir");
+        String path = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
+        File file = new File(path);
+        Map<String, String> locationMap = new HashMap<String, String>();
+        if (!file.isFile()) {
+            try {
+                InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
+                locationMap = new HashMap<String, String>();
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                String sCurrentLine = null;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    // Tokenize the line
+                    String[] tokens = sCurrentLine.split("\t");
+                    // Properly formed line
+                    if (tokens.length == 2) {
+                       locationMap.put(tokens[0], tokens[1]);
+                    } else {
+                        logger.log(Level.WARNING, "Misformed line in locationmap file\n \"" + sCurrentLine + "\n");
+                    }
+                }
+                FileOutputStream fout = new FileOutputStream(path);
+                ObjectOutputStream oos = new ObjectOutputStream(fout);   
+                oos.writeObject(locationMap);
+                oos.close();
+            } catch (FileNotFoundException e) {
+                logger.log(Level.SEVERE, "Exception occurred", e);
+                CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Exception occurred", e);
+                CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
+            }
+        }
+    }
 
     /**
      * Apply visual style to network
@@ -195,23 +245,6 @@ public class SocialNetworkAppManager {
     }
 
     /**
-     * Create a network. Method marked private in order to prevent users from
-     * inadvertently creating a network before all pertinent edge and node info
-     * is set.
-     */
-    private void createNetwork() {
-
-        // Execute network task.
-        // NOTE: Relevant node & edge info is not directly coupled with task
-        // execution. It is
-        // acquired later on through Cytoscape.getMap()
-        // This method is a blackbox and should NOT be directly executed under
-        // ANY circumstances
-        this.getTaskManager().execute(this.getNetworkTaskFactoryRef().createTaskIterator());
-
-    }
-
-    /**
      * Create a network from file
      *
      * @param File networkFile
@@ -226,10 +259,17 @@ public class SocialNetworkAppManager {
     }
     
     /**
-     * Visualize a social network. This method should not be executed directly or made
-     * publicly accessble under any circumstances.
+     * Visualize a social network. Method marked private in order to prevent users from
+     * inadvertently creating a network before all pertinent edge and node info
+     * is set.
      */
     private void visualizeNetwork() {
+        // Execute network task.
+        // NOTE: Relevant node & edge info is not directly coupled with task
+        // execution. It is
+        // acquired later on through Cytoscape.getMap()
+        // This method is a blackbox and should NOT be directly executed under
+        // ANY circumstances
         this.getTaskManager().execute(this.getParseSocialNetworkFileTaskFactory().createTaskIterator());
     }
     

@@ -38,7 +38,6 @@
 package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +54,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.model.CyNetworkViewManager;

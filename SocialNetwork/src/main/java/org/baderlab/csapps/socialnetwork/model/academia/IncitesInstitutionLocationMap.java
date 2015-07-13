@@ -38,10 +38,12 @@
 package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -73,33 +75,25 @@ public class IncitesInstitutionLocationMap {
      * Initialize the map with values from a file stored in the jar File is
      * currently stored as binary hashmap
      */
+    @SuppressWarnings("unchecked")
     public IncitesInstitutionLocationMap() {
         if (this.locationMap == null) {
+            String outputDir = System.getProperty("java.io.tmpdir");
+            String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
+            // Get map file in jar
+            InputStream in = null;
+            ObjectInputStream ois = null;
             try {
-                InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
-                this.locationMap = new HashMap<String, String>();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String sCurrentLine = null;
-                while ((sCurrentLine = br.readLine()) != null) {
-                    // Tokenize the line
-                    String[] tokens = sCurrentLine.split("\t");
-                    // Properly formed line
-                    if (tokens.length == 2) {
-                        this.locationMap.put(tokens[0], tokens[1]);
-                    } else {
-                        System.out.println("misformed line in locationmap file\n \"" + sCurrentLine + "\n");
-                    }
-                }
-                /*
-                 * ObjectInputStream ois = new ObjectInputStream(in);
-                 * this.setLocationMap((Map<String, String>) ois.readObject());
-                 */
+                in = new FileInputStream(basename);
+                ois = new ObjectInputStream(in);
+                this.locationMap = (HashMap<String, String>) ois.readObject();
+                ois.close();
             } catch (FileNotFoundException e) {
                 logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
+            } catch (ClassNotFoundException e) {
+                logger.log(Level.SEVERE, "Exception occurred", e);
             }
         }
     }

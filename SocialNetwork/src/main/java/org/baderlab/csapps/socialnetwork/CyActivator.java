@@ -127,7 +127,8 @@ public class CyActivator extends AbstractCyActivator {
         VisualMappingFunctionFactory continuousMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class,
                 "(mapping.type=continuous)");
 
-        VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class, "(mapping.type=discrete)");
+        VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class, 
+                "(mapping.type=discrete)");
 
         VisualMappingManager vmmServiceRef = getService(bc, VisualMappingManager.class);
 
