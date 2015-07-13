@@ -87,7 +87,7 @@ public class CytoscapeUtilities {
         notify.start();
     }
     
-    public static void updateLocationMap(String institution, String location) {
+    public static void updateLocationMap(String institution, String location, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
         if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
             String outputDir = System.getProperty("java.io.tmpdir");
             String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
@@ -109,12 +109,19 @@ public class CytoscapeUtilities {
             } catch (ClassNotFoundException classNotFoundException) {
                 logger.log(Level.SEVERE, "Exception occurred", classNotFoundException);
             }
+            if (defaultInstitution != null) {
+                CytoscapeUtilities.addLocationToNodeTable(cyNetwork, SUID, location);
+            }
         }
     }
     
     //TODO: Write method description (perhaps change method name)
-    public static void createInputPanel(String title) {
+    public static void createInputPanel(String title, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
         JTextField institutionTextField = new JTextField(5);
+        if (defaultInstitution != null) {
+            institutionTextField.setText(defaultInstitution);
+            institutionTextField.setEditable(false);
+        }
         JTextField locationTextField = new JTextField(5);
 
         JPanel myPanel = new JPanel();
@@ -140,7 +147,7 @@ public class CytoscapeUtilities {
                     } else if (location.trim().isEmpty()) {
                         CytoscapeUtilities.notifyUser("Please specify a location");
                     } else {
-                        if (getLocationSet().contains(location.toLowerCase())) {
+                        if (!getLocationSet().contains(location.toLowerCase())) {
                             CytoscapeUtilities.notifyUser("Location does not exist. Please enter a valid location.");
                         } else {
                             institution = institution.toUpperCase();
@@ -153,14 +160,14 @@ public class CytoscapeUtilities {
                             }
                             location = location.trim();
                             outcome = JOptionPane.CANCEL_OPTION;
+                            CytoscapeUtilities.updateLocationMap(institution, location, defaultInstitution, cyNetwork, SUID);
                         }
                     }
 
                 }
             }
-        }  
+        }
         
-        CytoscapeUtilities.updateLocationMap(institution, location);
         
     }
     
@@ -233,7 +240,7 @@ public class CytoscapeUtilities {
     private Properties getPropertiesFromClasspath(String propFileName, boolean inMaindir) throws IOException {
         // Loading properties file from the classpath
         Properties props = new Properties();
-        InputStream inputStream;
+        InputStream inputStream = null;
         if (inMaindir) {
             inputStream = this.getClass().getClassLoader().getResourceAsStream(propFileName);
         } else {

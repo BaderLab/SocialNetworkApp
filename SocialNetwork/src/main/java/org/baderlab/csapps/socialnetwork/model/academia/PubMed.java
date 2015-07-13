@@ -63,16 +63,17 @@ public class PubMed {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
         String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
                 BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_timescited,
-                BasicSocialNetworkVisualstyle.nodeattr_inst, BasicSocialNetworkVisualstyle.nodeattr_numpub,
-                BasicSocialNetworkVisualstyle.nodeattr_pub };
+                BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub, BasicSocialNetworkVisualstyle.nodeattr_inst };
         int i = 0;
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < 4; i++) {
             nodeAttrMap.put(columns[i], "");
         }
         // Initialize the num publication attribute (~Integer)
         nodeAttrMap.put(columns[i], 0);
         i++;
         // Initialize Publications attribute (~ ArrayList)
+        nodeAttrMap.put(columns[i], new ArrayList<String>());
+        i++;
         nodeAttrMap.put(columns[i], new ArrayList<String>());
         return nodeAttrMap;
     }

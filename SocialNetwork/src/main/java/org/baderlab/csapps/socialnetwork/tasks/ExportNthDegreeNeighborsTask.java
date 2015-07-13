@@ -63,9 +63,7 @@ public class ExportNthDegreeNeighborsTask extends AbstractTask {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
     @Override

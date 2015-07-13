@@ -83,8 +83,7 @@ public class AddInstitutionAction extends AbstractCyAction {
      * @param {@link ActionEvent} arg0
      */
     public void actionPerformed(ActionEvent arg0) {
-        CytoscapeUtilities.createInputPanel("Add a new institution");
-        this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());
+        CytoscapeUtilities.createInputPanel("Add a new institution", null, null, null);
     }
 
 }
