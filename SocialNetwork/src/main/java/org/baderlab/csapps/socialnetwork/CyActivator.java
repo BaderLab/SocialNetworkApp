@@ -41,10 +41,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
+import org.baderlab.csapps.socialnetwork.actions.ChangeAuthorInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.actions.UpdateLocationAction;
+import org.baderlab.csapps.socialnetwork.actions.UpdateAuthorLocationAction;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
@@ -252,14 +253,19 @@ public class CyActivator extends AbstractCyActivator {
 
         registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
         
-        // Create & register new menu item (for updating institution / location
-        // associations in the app)
-        CyNodeViewContextMenuFactory updateLocationContextMenu = new UpdateLocationAction(taskManager,
+        // Create & register new menu item (for updating the location that a specific author
+        // has been assigned to)
+        CyNodeViewContextMenuFactory updateAuthorLocationAction = new UpdateAuthorLocationAction(taskManager,
                 applyVisualStyleTaskFactoryRef);
-        Properties updateLocationContextMenuFactoryProps = new Properties();
-        updateLocationContextMenuFactoryProps.put("preferredMenu", "Apps.Social Network");
-        registerAllServices(bc, updateLocationContextMenu, updateLocationContextMenuFactoryProps);
+        Properties updateAuthorLocationActionProps = new Properties();
+        updateAuthorLocationActionProps.put("preferredMenu", "Apps");
+        registerAllServices(bc, updateAuthorLocationAction, updateAuthorLocationActionProps);
 
-
+        // Menu item for changing the default institution of an author
+        CyNodeViewContextMenuFactory changeAuthorInstitutionAction = new ChangeAuthorInstitutionAction(taskManager,
+                applyVisualStyleTaskFactoryRef);
+        Properties changeAuthorInstitutionActionProps = new Properties();
+        changeAuthorInstitutionActionProps.put("preferredMenu", "Apps");
+        registerAllServices(bc, changeAuthorInstitutionAction, changeAuthorInstitutionActionProps);
     }
 }

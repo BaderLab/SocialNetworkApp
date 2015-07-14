@@ -22,7 +22,7 @@ import org.cytoscape.work.TaskManager;
  * @author Victor Kofia
  */
 // TODO: Write class description
-public class UpdateLocationAction implements CyNodeViewContextMenuFactory, ActionListener {
+public class UpdateAuthorLocationAction implements CyNodeViewContextMenuFactory, ActionListener {
     
     private CyNode cyNode = null;
     private CyNetwork cyNetwork = null;
@@ -38,14 +38,16 @@ public class UpdateLocationAction implements CyNodeViewContextMenuFactory, Actio
         List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get("Institution");
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
             String institution = listOfInstitutions.get(0);       
-            CytoscapeUtilities.createInputPanel("Update location of " + authorName, institution, this.cyNetwork, cyNode.getSUID());
+            CytoscapeUtilities.createInputPanel(String.format("Update location of %s", authorName), institution, 
+                    this.cyNetwork, 
+                    cyNode.getSUID());
             this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());
         } else {
             CytoscapeUtilities.notifyUser(String.format("%s is not assigned to an institution.", authorName));            
         }
     }
     
-    public UpdateLocationAction(TaskManager<?, ?> taskManager, 
+    public UpdateAuthorLocationAction(TaskManager<?, ?> taskManager, 
             ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef) {
         this.taskManager = taskManager;
         this.applyVisualStyleTaskFactoryRef = applyVisualStyleTaskFactoryRef;
@@ -54,7 +56,7 @@ public class UpdateLocationAction implements CyNodeViewContextMenuFactory, Actio
     public CyMenuItem createMenuItem(CyNetworkView netView, View<CyNode> nodeView) {
         this.cyNetwork = netView.getModel();
         this.cyNode = nodeView.getModel();
-        JMenuItem addInstitutionMenuItem = new JMenuItem("Update author location");
+        JMenuItem addInstitutionMenuItem = new JMenuItem("Update Author's Location");
         addInstitutionMenuItem.addActionListener(this);
         CyMenuItem cyMenuItem = new CyMenuItem(addInstitutionMenuItem, 0);
         return cyMenuItem;

@@ -139,12 +139,12 @@ public class CytoscapeUtilities {
             if (outcome == JOptionPane.OK_OPTION) {
                 institution = institutionTextField.getText().trim();
                 location = locationTextField.getText().trim();
-                if (institution.trim().isEmpty() && location.trim().isEmpty()) {
+                if (institution.isEmpty() && location.isEmpty()) {
                     CytoscapeUtilities.notifyUser("Please specify both an institution and a location");
                 } else {
-                    if (institution.trim().isEmpty()) {
+                    if (institution.isEmpty()) {
                         CytoscapeUtilities.notifyUser("Please specify an institution");
-                    } else if (location.trim().isEmpty()) {
+                    } else if (location.isEmpty()) {
                         CytoscapeUtilities.notifyUser("Please specify a location");
                     } else {
                         if (!getLocationSet().contains(location.toLowerCase())) {
