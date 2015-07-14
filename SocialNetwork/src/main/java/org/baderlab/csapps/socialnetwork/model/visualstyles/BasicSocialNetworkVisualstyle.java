@@ -58,6 +58,7 @@ public class BasicSocialNetworkVisualstyle {
     public static final String nodeattr_fname = "First Name";
     public static final String nodeattr_lname = "Last Name";
     public static final String nodeattr_inst = "Institution";
+    public static final String nodeattr_inst_main = "Main Institution";
     public static final String nodeattr_pub = "Publications";
     public static final String nodeattr_numpub = "# of Publications";
     public static final String edgeattr_numcopubs = "# of copubs";

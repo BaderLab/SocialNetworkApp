@@ -65,9 +65,9 @@ public class Author extends AbstractNode {
     public static HashMap<String, Object> constructIncitesAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
         String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
-                BasicSocialNetworkVisualstyle.nodeattr_fname, IncitesVisualStyle.nodeattr_inst, IncitesVisualStyle.nodeattr_location,
+                BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_inst_main, IncitesVisualStyle.nodeattr_location,
                 IncitesVisualStyle.nodeattr_dept, BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_numpub,
-                BasicSocialNetworkVisualstyle.nodeattr_pub };
+                BasicSocialNetworkVisualstyle.nodeattr_pub, BasicSocialNetworkVisualstyle.nodeattr_inst };
         int i = 0;
         for (i = 0; i < 6; i++) {
             nodeAttrMap.put(columns[i], "");
@@ -78,6 +78,8 @@ public class Author extends AbstractNode {
         nodeAttrMap.put(columns[i + 1], 0);
         // Initialize Publications attribute (~ ArrayList)
         nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
+        // Initialize Institutions attribute (~ ArrayList)
+        nodeAttrMap.put(columns[i + 3], new ArrayList<String>());
         return nodeAttrMap;
     }
 
@@ -127,6 +129,10 @@ public class Author extends AbstractNode {
      * List of all publications author has authored / co-authored
      */
     private List<String> pubList = null;
+    /**
+     * The current institution that author is affiliated with
+     */
+    private String mainInstitution = null;
     /**
      * List of all institutions that author is affiliated with
      */
@@ -262,6 +268,7 @@ public class Author extends AbstractNode {
             this.institutionList.add(institution);
         }
         this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institutionList);
+        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, institution);
     }
 
     /**
