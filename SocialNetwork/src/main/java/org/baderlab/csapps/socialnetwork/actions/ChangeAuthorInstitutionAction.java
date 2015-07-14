@@ -1,8 +1,10 @@
 package org.baderlab.csapps.socialnetwork.actions;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -22,6 +24,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.TaskManager;
 
 /**
+ * ??
  * 
  * @author Victor Kofia
  */
@@ -61,16 +64,19 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
             String listOfInstitArray[] = new String[listOfInstitutions.size()];
             JComboBox<String> institutionComboBox = new JComboBox<String>(listOfInstitutions.toArray(listOfInstitArray));
 
-            JPanel myPanel = new JPanel();
-            myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
-            myPanel.add(new JLabel("Institution"));
-            myPanel.add(institutionComboBox);
+            JPanel dialogPanel = new JPanel();
+            JPanel wrapperPanel = new JPanel();
+            wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.X_AXIS));
+            wrapperPanel.add(new JLabel("Institution"));
+            wrapperPanel.add(Box.createHorizontalStrut(5));
+            wrapperPanel.add(institutionComboBox);
+            dialogPanel.add(wrapperPanel, BorderLayout.NORTH);
             int outcome = JOptionPane.OK_OPTION;
 
             String institution = "N/A";
             while (outcome == JOptionPane.OK_OPTION) {
                 // Display dialog box and get user's outcome.
-                outcome = JOptionPane.showConfirmDialog(null, myPanel, title, JOptionPane.OK_CANCEL_OPTION);
+                outcome = JOptionPane.showConfirmDialog(null, dialogPanel, title, JOptionPane.OK_CANCEL_OPTION);
                 if (outcome == JOptionPane.OK_OPTION) {
                     institution = ((String) institutionComboBox.getSelectedItem()).trim();
                     if (institution.isEmpty()) {

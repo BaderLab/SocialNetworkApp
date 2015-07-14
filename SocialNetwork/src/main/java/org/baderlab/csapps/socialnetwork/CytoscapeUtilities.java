@@ -171,6 +171,13 @@ public class CytoscapeUtilities {
         
     }
     
+    /**
+     * Add location of node with SUID to node table
+     * 
+     * @param CyNetwork cyNetwork
+     * @param Long SUID
+     * @param String location
+     */
     public static void addLocationToNodeTable(CyNetwork cyNetwork, Long SUID, String location) {
         CyTable nodeTable = cyNetwork.getDefaultNodeTable();
         CyRow cyRow = nodeTable.getRow(SUID);
