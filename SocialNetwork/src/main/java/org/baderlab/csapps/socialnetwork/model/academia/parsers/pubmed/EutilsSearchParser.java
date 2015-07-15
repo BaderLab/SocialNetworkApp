@@ -25,9 +25,10 @@ public class EutilsSearchParser extends DefaultHandler {
      * XML Parsing variables. Used to temporarily store data.
      */
     boolean isQueryKey = false;
-
     boolean isWebEnv = false;
     boolean isTotalPubs = false;
+    boolean isRetStart = false;
+    boolean isRetMax = false;
     /**
      * Unique queryKey. Necessary for retrieving search results
      */
@@ -42,8 +43,8 @@ public class EutilsSearchParser extends DefaultHandler {
     private StringBuilder webEnv = null;
 
     // TODO: Add descriptions for retStart and retMax
-    private int retStart = 0;
-    private int retMax = 0;
+    private StringBuilder retStart = null;
+    private StringBuilder retMax = null;
 
     private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
 
@@ -56,6 +57,8 @@ public class EutilsSearchParser extends DefaultHandler {
         this.queryKey = new StringBuilder();
         this.totalPubs = new StringBuilder();
         this.webEnv = new StringBuilder();
+        this.retStart = new StringBuilder();
+        this.retMax = new StringBuilder();
         try {
             // Create new SAXParser
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -88,6 +91,12 @@ public class EutilsSearchParser extends DefaultHandler {
         if (this.isWebEnv) {
             this.webEnv.append(ch, start, length);
         }
+        if (this.isRetStart) {
+            this.retStart.append(ch, start, length);
+        }
+        if (this.isRetMax) {
+            this.retMax.append(ch, start, length);
+        }
     }
 
     /* (non-Javadoc)
@@ -103,6 +112,12 @@ public class EutilsSearchParser extends DefaultHandler {
         }
         if (qName.equalsIgnoreCase("WebEnv")) {
             this.isWebEnv = false;
+        }
+        if (qName.equalsIgnoreCase("RetStart")) {
+            this.isRetStart = false;
+        }
+        if (qName.equalsIgnoreCase("RetMax")) {
+            this.isRetMax = false;
         }
     }
 
@@ -121,9 +136,12 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return int retMax
      */
     public int getRetMax() {
-        int total = getTotalPubs();
-        this.retMax = total > 400 ? 400 : total;
-        return this.retMax;
+        String total = this.retMax.toString();
+        if (total != null && Pattern.matches("[0-9]+", total)) {
+            return Integer.parseInt(total);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -132,7 +150,12 @@ public class EutilsSearchParser extends DefaultHandler {
      * @return int retStart
      */
     public int getRetStart() {
-        return retStart; // retStart is always 0
+        String total = this.retStart.toString();
+        if (total != null && Pattern.matches("[0-9]+", total)) {
+            return Integer.parseInt(total);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -164,7 +187,7 @@ public class EutilsSearchParser extends DefaultHandler {
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (qName.equalsIgnoreCase("Count")) {
+        if (qName.equalsIgnoreCase("Count") && this.totalPubs.length() == 0) {
             this.isTotalPubs = true;
             this.totalPubs.setLength(0);
         }
@@ -175,6 +198,14 @@ public class EutilsSearchParser extends DefaultHandler {
         if (qName.equalsIgnoreCase("WebEnv")) {
             this.isWebEnv = true;
             this.webEnv.setLength(0);
+        }
+        if (qName.equalsIgnoreCase("RetStart")) {
+            this.isRetStart = true;
+            this.retStart.setLength(0);
+        }
+        if (qName.equalsIgnoreCase("RetMax")) {
+            this.isRetMax = true;
+            this.retMax.setLength(0);
         }
     }
 

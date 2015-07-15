@@ -43,9 +43,7 @@ public class ParsePubMedXMLTask extends AbstractTask {
         this.appManager = appManager;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
     @Override
@@ -72,6 +70,7 @@ public class ParsePubMedXMLTask extends AbstractTask {
             return;
         }
         socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
+        
         // Create map
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         if (map.size() == 0) {

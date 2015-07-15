@@ -2,6 +2,7 @@ package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.awt.Cursor;
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -69,7 +70,9 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
         File networkFile = this.appManager.getNetworkFile();
         String networkName = this.appManager.getNetworkName();
         if (!this.appManager.isNameValid(networkName)) {
-            CytoscapeUtilities.notifyUser("Network " + networkName + " already exists in Cytoscape." + " Please enter a new name.");
+            String message = "Network " + networkName + " already exists in Cytoscape." + " Please enter a new name.";
+            logger.log(Level.WARNING, message);
+            CytoscapeUtilities.notifyUser(message);
             return;
         }
         // Change mouse cursor
@@ -82,7 +85,9 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
                 // Load data from text file
                 if (!extension.equalsIgnoreCase("xlsx")) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. InCites data files either have to be excel spreadsheets or text files.");
+                    String message = "Invalid file. InCites data files either have to be excel spreadsheets or text files.";
+                    logger.log(Level.WARNING, message);
+                    CytoscapeUtilities.notifyUser(message);
                     return;
                 }
                 this.visualizeIncitesXLSX();
@@ -90,7 +95,9 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
             case SocialNetworkAppManager.ANALYSISTYPE_PUBMED:
                 if (!extension.equalsIgnoreCase("xml")) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. PubMed data files have to be in xml format.");
+                    String message = "Invalid file. PubMed data files have to be in xml format.";
+                    logger.log(Level.WARNING, message);
+                    CytoscapeUtilities.notifyUser(message);
                     return;
                 }
                 this.visualizePubMedXML();
@@ -98,7 +105,9 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
             case SocialNetworkAppManager.ANALYSISTYPE_SCOPUS:
                 if (!extension.equalsIgnoreCase("csv")) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    CytoscapeUtilities.notifyUser("Invalid file. Scopus data files have to be csv spreadsheets");
+                    String message = "Invalid file. Scopus data files have to be csv spreadsheets";
+                    logger.log(Level.WARNING, message);
+                    CytoscapeUtilities.notifyUser(message);
                     return;
                 }
                 this.visualizeScopusCSV();

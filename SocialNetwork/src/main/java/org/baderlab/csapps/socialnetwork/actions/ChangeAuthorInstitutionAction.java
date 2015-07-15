@@ -58,12 +58,9 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
         @SuppressWarnings("unchecked")
         List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Institution");
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
-
-            String title = String.format("Change main institution of %s", authorName); // TODO:
-
+            String title = String.format("Change main institution of %s", authorName);
             String listOfInstitArray[] = new String[listOfInstitutions.size()];
             JComboBox<String> institutionComboBox = new JComboBox<String>(listOfInstitutions.toArray(listOfInstitArray));
-
             JPanel dialogPanel = new JPanel();
             JPanel wrapperPanel = new JPanel();
             wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.X_AXIS));
@@ -72,7 +69,6 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
             wrapperPanel.add(institutionComboBox);
             dialogPanel.add(wrapperPanel, BorderLayout.NORTH);
             int outcome = JOptionPane.OK_OPTION;
-
             String mainInstitution = "N/A";
             while (outcome == JOptionPane.OK_OPTION) {
                 // Display dialog box and get user's outcome.

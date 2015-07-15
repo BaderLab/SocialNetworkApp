@@ -185,7 +185,6 @@ public class CytoscapeUtilities {
                             CytoscapeUtilities.updateLocationMap(institution, location, defaultInstitution, cyNetwork, SUID);
                         }
                     }
-
                 }
             }
         }    

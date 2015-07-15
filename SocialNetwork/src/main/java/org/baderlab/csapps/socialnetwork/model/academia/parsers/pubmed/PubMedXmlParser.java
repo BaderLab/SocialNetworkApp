@@ -222,7 +222,6 @@ public class PubMedXmlParser extends DefaultHandler {
             if (!this.pubAuthorList.contains(this.author)) {
                 this.pubAuthorList.add(this.author);
             }
-
         }
     }
 

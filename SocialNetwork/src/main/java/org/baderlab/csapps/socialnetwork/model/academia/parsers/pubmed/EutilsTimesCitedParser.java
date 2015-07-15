@@ -96,13 +96,13 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             }
         } catch (ParserConfigurationException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
-            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please try again some other time.");
         } catch (SAXException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
-            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
+            CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please try again some other time.");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
-            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
+            CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
         }
     }
 
@@ -148,9 +148,11 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             this.isTimesCited = false;
         }
         if (qName.equalsIgnoreCase("DocSum")) {
-            Publication pub = this.pubMap.get(this.pmid);
+            Publication pub = this.pubMap.get(this.pmid.toString());
             if (pub != null) {
                 pub.setTimesCited(this.timesCited.toString());
+            } else {
+                logger.log(Level.SEVERE, String.format("Times cited could not be retrieved for publication with the following pmid: %s", this.pmid));
             }
         }
     }
