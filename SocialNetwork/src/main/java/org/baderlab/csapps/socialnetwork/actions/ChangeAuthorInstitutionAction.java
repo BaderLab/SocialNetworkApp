@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Map;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -17,7 +18,6 @@ import org.cytoscape.application.swing.CyMenuItem;
 import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
@@ -49,17 +49,17 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
     /**
      * ??
      */
+    // TODO: Write description
     public void actionPerformed(ActionEvent e) {
-
+        Long SUID = this.cyNode.getSUID();
         // Get the institution of this author
         CyTable nodeTable = this.cyNetwork.getDefaultNodeTable();
-        CyRow cyRow = nodeTable.getRow(this.cyNode.getSUID());
-        String authorName = (String) cyRow.getAllValues().get("Label");
+        String authorName = (String) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Label");
         @SuppressWarnings("unchecked")
-        List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get("Institution");
+        List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Institution");
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
 
-            String title = String.format("Change institution of %s", authorName); // TODO:
+            String title = String.format("Change main institution of %s", authorName); // TODO:
 
             String listOfInstitArray[] = new String[listOfInstitutions.size()];
             JComboBox<String> institutionComboBox = new JComboBox<String>(listOfInstitutions.toArray(listOfInstitArray));
@@ -67,24 +67,35 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
             JPanel dialogPanel = new JPanel();
             JPanel wrapperPanel = new JPanel();
             wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.X_AXIS));
-            wrapperPanel.add(new JLabel("Institution"));
+            wrapperPanel.add(new JLabel("Select Main Institution"));
             wrapperPanel.add(Box.createHorizontalStrut(5));
             wrapperPanel.add(institutionComboBox);
             dialogPanel.add(wrapperPanel, BorderLayout.NORTH);
             int outcome = JOptionPane.OK_OPTION;
 
-            String institution = "N/A";
+            String mainInstitution = "N/A";
             while (outcome == JOptionPane.OK_OPTION) {
                 // Display dialog box and get user's outcome.
                 outcome = JOptionPane.showConfirmDialog(null, dialogPanel, title, JOptionPane.OK_CANCEL_OPTION);
                 if (outcome == JOptionPane.OK_OPTION) {
-                    institution = ((String) institutionComboBox.getSelectedItem()).trim();
-                    if (institution.isEmpty()) {
+                    mainInstitution = ((String) institutionComboBox.getSelectedItem()).trim();
+                    if (mainInstitution.isEmpty()) {
                         CytoscapeUtilities.notifyUser("Please specify both an institution and a location");
                     } else {
-                        institution = institution.toUpperCase();
-                        outcome = JOptionPane.CANCEL_OPTION;
-                    }
+                        if (!mainInstitution.equalsIgnoreCase("n/a")) {
+                            mainInstitution = mainInstitution.toUpperCase();
+                            CytoscapeUtilities.setNodeAttribute(nodeTable, SUID, "Main Institution", mainInstitution);
+                            Map<String, String> locationMap = CytoscapeUtilities.getLocationMap();
+                            String location = locationMap.get(mainInstitution);
+                            if (location == null) {
+                                location = "Other";
+                                locationMap.put(mainInstitution, location);
+                                CytoscapeUtilities.saveLocationMap(locationMap);
+                            }
+                            CytoscapeUtilities.setNodeAttribute(nodeTable, SUID, "Location", location);                                
+                            outcome = JOptionPane.CANCEL_OPTION;                            
+                        }
+                    }   
                 }
             }
 
@@ -101,7 +112,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
     public CyMenuItem createMenuItem(CyNetworkView netView, View<CyNode> nodeView) {
         this.cyNetwork = netView.getModel();
         this.cyNode = nodeView.getModel();
-        JMenuItem addInstitutionMenuItem = new JMenuItem("Change Author's Institution");
+        JMenuItem addInstitutionMenuItem = new JMenuItem("Change Author's Main Institution");
         addInstitutionMenuItem.addActionListener(this);
         CyMenuItem cyMenuItem = new CyMenuItem(addInstitutionMenuItem, 0);
         return cyMenuItem;

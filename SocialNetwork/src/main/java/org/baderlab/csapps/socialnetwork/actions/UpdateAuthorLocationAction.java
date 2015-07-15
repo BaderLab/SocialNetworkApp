@@ -38,7 +38,7 @@ public class UpdateAuthorLocationAction implements CyNodeViewContextMenuFactory,
         List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get("Institution");
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
             String institution = listOfInstitutions.get(0);       
-            CytoscapeUtilities.createInputPanel(String.format("Update location of %s", authorName), institution, 
+            CytoscapeUtilities.createDialogBox(String.format("Update location of %s", authorName), institution, 
                     this.cyNetwork, 
                     cyNode.getSUID());
             this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());

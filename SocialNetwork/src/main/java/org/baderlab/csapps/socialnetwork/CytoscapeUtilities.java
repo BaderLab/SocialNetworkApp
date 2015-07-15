@@ -39,9 +39,11 @@ package org.baderlab.csapps.socialnetwork;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -87,36 +89,56 @@ public class CytoscapeUtilities {
         notify.start();
     }
     
-    public static void updateLocationMap(String institution, String location, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> getLocationMap() {
+        String outputDir = System.getProperty("java.io.tmpdir");
+        String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
+        Map<String, String> locationMap = null;
+        try {
+            InputStream in = new FileInputStream(basename);
+            ObjectInputStream ois = new ObjectInputStream(in);
+            locationMap = (HashMap<String, String>) ois.readObject();
+            ois.close();
+        } catch (FileNotFoundException fileNotFoundException) {
+            logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
+        } catch (IOException ioException) {
+            logger.log(Level.SEVERE, "Exception occurred", ioException);
+        } catch (ClassNotFoundException classNotFoundException) {
+            logger.log(Level.SEVERE, "Exception occurred", classNotFoundException);
+        }
+        return locationMap;
+    }
+    
+    public static void saveLocationMap(Map<String, String> locationMap) {
+        String outputDir = System.getProperty("java.io.tmpdir");
+        String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
+        FileOutputStream fout;
+        try {
+            fout = new FileOutputStream(basename);
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(locationMap);
+            oos.close();
+        } catch (FileNotFoundException fileNotFoundException) {
+            logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
+        } catch (IOException ioException) {
+            logger.log(Level.SEVERE, "Exception occurred", ioException);
+        }
+    }
+    
+    private static void updateLocationMap(String institution, String location, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
         if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
-            String outputDir = System.getProperty("java.io.tmpdir");
-            String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
-            // Get map file in jar
-            try {
-                // Retrieve the hashmap
-                InputStream in = new FileInputStream(basename);
-                ObjectInputStream ois = new ObjectInputStream(in);
-                @SuppressWarnings("unchecked")
-                Map<String, String> locationMap = (HashMap<String, String>) ois.readObject();
-                ois.close();
-                // Update the hashmap
-                locationMap.put(institution, location);
-                // Save the hashmap in CytoscapeConfigurations/3/karaf/tmp/...
-            } catch (FileNotFoundException fileNotFoundException) {
-                logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
-            } catch (IOException ioException) {
-                logger.log(Level.SEVERE, "Exception occurred", ioException);
-            } catch (ClassNotFoundException classNotFoundException) {
-                logger.log(Level.SEVERE, "Exception occurred", classNotFoundException);
-            }
+            Map<String, String> locationMap = CytoscapeUtilities.getLocationMap();
+            locationMap.put(institution, location);
+            CytoscapeUtilities.saveLocationMap(locationMap);
             if (defaultInstitution != null) {
-                CytoscapeUtilities.addLocationToNodeTable(cyNetwork, SUID, location);
+                CyTable cyTable = cyNetwork.getDefaultNodeTable();
+                CytoscapeUtilities.setNodeAttribute(cyTable, SUID, "Location", location);
             }
         }
     }
     
     //TODO: Write method description (perhaps change method name)
-    public static void createInputPanel(String title, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
+    public static void createDialogBox(String title, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
         JTextField institutionTextField = new JTextField(5);
         if (defaultInstitution != null) {
             institutionTextField.setText(defaultInstitution);
@@ -166,22 +188,32 @@ public class CytoscapeUtilities {
 
                 }
             }
-        }
-        
-        
+        }    
     }
     
     /**
-     * Add location of node with SUID to node table
+     * Set the specified node attribute to a new value
      * 
-     * @param CyNetwork cyNetwork
+     * @param CyTable nodeTable
      * @param Long SUID
-     * @param String location
+     * @param String attributeName
+     * @param Object value
      */
-    public static void addLocationToNodeTable(CyNetwork cyNetwork, Long SUID, String location) {
-        CyTable nodeTable = cyNetwork.getDefaultNodeTable();
+    public static void setNodeAttribute(CyTable nodeTable, Long SUID, String attributeName, Object value) {
         CyRow cyRow = nodeTable.getRow(SUID);
-        cyRow.set("Location", location);
+        cyRow.set(attributeName, value);
+    }
+    
+    /**
+     * Get the specified node attribute
+     * 
+     * @param CyTable nodeTable
+     * @param Long SUID
+     * @param String attributeName
+     */
+    public static Object getNodeAttribute(CyTable nodeTable, Long SUID, String attributeName) {
+        CyRow cyRow = nodeTable.getRow(SUID);
+        return cyRow.getAllValues().get(attributeName);
     }
 
     public static String buildId = "";
