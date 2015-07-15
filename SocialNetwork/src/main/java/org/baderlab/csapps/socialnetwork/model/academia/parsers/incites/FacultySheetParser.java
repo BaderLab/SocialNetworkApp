@@ -79,9 +79,7 @@ public class FacultySheetParser extends DefaultHandler {
         this.incitesParser = incitesParser;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
      */
     @Override
@@ -90,9 +88,7 @@ public class FacultySheetParser extends DefaultHandler {
         this.cellID += new String(ch, start, length);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
      * java.lang.String, java.lang.String)
      */
@@ -125,9 +121,7 @@ public class FacultySheetParser extends DefaultHandler {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */

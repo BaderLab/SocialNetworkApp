@@ -248,13 +248,11 @@ public class PubSheetParser extends DefaultHandler {
         }
     }
 
-    @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
      * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
+    @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
         // Reset row contents
         if (name.equals("row")) {

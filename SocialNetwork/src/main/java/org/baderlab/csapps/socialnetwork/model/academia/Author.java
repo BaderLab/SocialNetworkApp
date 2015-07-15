@@ -458,6 +458,15 @@ public class Author extends AbstractNode {
     }
 
     /**
+     * Get the author's main institution
+     * 
+     * @return String mainInstitution
+     */
+    public String getMainInstitution() {
+        return mainInstitution;
+    }
+
+    /**
      * Get middle initial
      *
      * @return String middleInitial
@@ -722,6 +731,15 @@ public class Author extends AbstractNode {
     }
 
     /**
+     * Set the author's main institution
+     * 
+     * @param String mainInstitution
+     */
+    public void setMainInstitution(String mainInstitution) {
+        this.mainInstitution = mainInstitution;
+    }
+
+    /**
      * Set middle initial
      *
      * @param String middleInitial
@@ -731,12 +749,8 @@ public class Author extends AbstractNode {
     }
 
     @Override
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java
-     * .util.Map)
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java.util.Map)
      */
     public void setNodeAttrMap(Map<String, Object> attrMap) {
         this.nodeAttrMap = attrMap;

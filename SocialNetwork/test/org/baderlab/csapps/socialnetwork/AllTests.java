@@ -6,6 +6,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.InteractionTest;
 import org.baderlab.csapps.socialnetwork.model.academia.SearchTest;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParserTest;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedParserTest;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.scopus.ScopusParserTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -18,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(value=Suite.class)
 @SuiteClasses(value={AuthorTest.class, CollaborationTest.class, IncitesParserTest.class, InteractionTest.class, SearchTest.class,
-        PubMedParserTest.class})
+        PubMedParserTest.class, ScopusParserTest.class})
 public class AllTests {
 
   /**

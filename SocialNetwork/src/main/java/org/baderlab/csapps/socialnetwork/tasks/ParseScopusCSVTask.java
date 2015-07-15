@@ -28,9 +28,9 @@ public class ParseScopusCSVTask extends AbstractTask {
     private static final Logger logger = Logger.getLogger(ParseScopusCSVTask.class.getName());
 
     /**
-     * A reference to the {@link SocialNetworkAppManager}. Makes it possible to
+     * A reference to the {@link SocialNetworkAppManager}. Used to
      * retrieve the name of the network (usually same as the Scopus CSV
-     * filename).
+     * filename), the network file and a reference to the user panel.
      */
     private SocialNetworkAppManager appManager = null;
 

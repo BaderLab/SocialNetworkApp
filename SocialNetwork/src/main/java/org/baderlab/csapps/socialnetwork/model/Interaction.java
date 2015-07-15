@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -83,8 +84,6 @@ public class Interaction {
         this.setMaxThreshold(maxAuthorThreshold);
         switch (type) {
             case Category.PUBMED:
-                this.setAbstractMap(this.loadAcademiaMap(edgeList));
-                break;
             case Category.ACADEMIA:
                 this.setAbstractMap(this.loadAcademiaMap(edgeList));
                 break;
@@ -190,9 +189,14 @@ public class Interaction {
         Copublications copublications = null;
         Publication publication = null;
         List<Author> listOfNodes = null;
+        HashSet<Publication> pubSet = new HashSet<Publication>();
         // Iterate through each publication
         while (h <= results.size() - 1) {
             publication = (Publication) results.get(h);
+            if (pubSet.contains(publication)) {
+                h++;
+                continue;
+            }
             // Include publication only if the # of authors does not exceed the
             // threshold
             if ((this.maxThreshold < 0) || (publication.getNodes().size() <= this.maxThreshold)) {
@@ -244,9 +248,9 @@ public class Interaction {
             } else {
                 this.getExcludedPublications().add(publication);
             }
+            pubSet.add(publication);
             h++;
         }
-
         return academiaMap;
     }
 

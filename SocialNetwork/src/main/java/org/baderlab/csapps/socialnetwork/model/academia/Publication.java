@@ -375,5 +375,24 @@ public class Publication extends AbstractEdge {
     public String toString() {
         return "Title: " + this.title + "\nTimes Cited: " + this.timesCited;
     }
+    
+
+    @Override
+    public int hashCode() {
+        final int prime = 13;
+        int result = 1;
+        result += prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+        result += prime * result + this.timesCited.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean isEqual = false;
+        Publication otherPub = (Publication) obj;
+        isEqual = otherPub.getTitle().equalsIgnoreCase(this.getTitle());
+        isEqual = isEqual && otherPub.getTimesCited() == this.getTimesCited();
+        return isEqual;
+    }
 
 }
