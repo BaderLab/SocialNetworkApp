@@ -86,7 +86,7 @@ public class AboutPanel extends JDialog {
      *
      */
     private static final long serialVersionUID = -4271722804183280880L;
-    private CySwingApplication application;
+    private CySwingApplication application = null;
     private OpenBrowser browser;
 
     /**

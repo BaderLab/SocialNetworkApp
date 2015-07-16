@@ -89,15 +89,17 @@ public class Scopus {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
         String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
                 BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_timescited,
-                BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub };
+                BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub, 
+                BasicSocialNetworkVisualstyle.nodeattr_pub_per_year};
         int i = 0;
-        for (i = 0; i < 4; i++) {
+        while (i < 4) {
             nodeAttrMap.put(columns[i], "");
+            i++;
         }
         // Initialize the num publication attribute (~Integer)
         nodeAttrMap.put(columns[i], 0);
-        // Initialize Publications attribute (~ ArrayList)
         nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
+        nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
         return nodeAttrMap;
     }
 

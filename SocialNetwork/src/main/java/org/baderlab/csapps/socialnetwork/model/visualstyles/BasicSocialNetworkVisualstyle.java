@@ -64,6 +64,7 @@ public class BasicSocialNetworkVisualstyle {
     public static final String edgeattr_numcopubs = "# of copubs";
     public static final String nodeattr_timescited = "Times Cited";
     public static final String networkattr_totalPub = "Total Publications";
+    public static final String nodeattr_pub_per_year = "Yearly Publications";
 
     private CyNetwork network;
     private SocialNetwork socialNetwork;
