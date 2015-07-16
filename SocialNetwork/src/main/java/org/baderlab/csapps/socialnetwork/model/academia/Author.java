@@ -437,7 +437,7 @@ public class Author extends AbstractNode {
      */
     @Override
     public String getLabel() {
-        return this.label;
+        return this.label == null ? this.label : this.label.trim();
     }
 
     /**
@@ -699,7 +699,6 @@ public class Author extends AbstractNode {
     public void setLabel(String label) {
         this.label = label;
         this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_label, label);
-
     }
 
     /**
@@ -749,10 +748,10 @@ public class Author extends AbstractNode {
         this.middleInitial = middleInitial;
     }
 
-    @Override
     /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractNode#setNodeAttrMap(java.util.Map)
      */
+    @Override
     public void setNodeAttrMap(Map<String, Object> attrMap) {
         this.nodeAttrMap = attrMap;
     }
