@@ -16,6 +16,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CyMenuItem;
 import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
@@ -54,6 +55,18 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
         Long SUID = this.cyNode.getSUID();
         // Get the institution of this author
         CyTable nodeTable = this.cyNetwork.getDefaultNodeTable();
+        
+        for (CyColumn cyColumn : nodeTable.getColumns()) {
+            String columnName = cyColumn.getName();
+            String className = null;
+            if (cyColumn.getType() == List.class) {
+                className = cyColumn.getListElementType().getName();
+            } else {
+                className = cyColumn.getType().getName();
+            }
+            System.out.println(String.format("Column: %s, Type: %s", columnName, className));
+        }
+        
         String authorName = (String) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Label");
         @SuppressWarnings("unchecked")
         List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Institution");

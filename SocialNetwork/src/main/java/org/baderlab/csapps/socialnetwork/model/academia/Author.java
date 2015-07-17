@@ -71,23 +71,19 @@ public class Author extends AbstractNode {
      */
     public static HashMap<String, Object> constructIncitesAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
-                BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_inst_main, IncitesVisualStyle.nodeattr_location,
-                IncitesVisualStyle.nodeattr_dept, BasicSocialNetworkVisualstyle.nodeattr_timescited, BasicSocialNetworkVisualstyle.nodeattr_numpub,
-                BasicSocialNetworkVisualstyle.nodeattr_pub, BasicSocialNetworkVisualstyle.nodeattr_inst, BasicSocialNetworkVisualstyle.nodeattr_pub_per_year };
-        int i = 0;
-        while (i < 6) {
-            nodeAttrMap.put(columns[i], "");
-            i++;
-        }
-        while (i < 8) {
-            nodeAttrMap.put(columns[i], 0);
-            i++;
-        }
-        while (i < 11) {
-            nodeAttrMap.put(columns[i], new ArrayList<String>());
-            i++;
-        }
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_label, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_lname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_fname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, "");
+        nodeAttrMap.put(IncitesVisualStyle.nodeattr_location, "");
+        nodeAttrMap.put(IncitesVisualStyle.nodeattr_dept, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_numpub, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub, new ArrayList<String>());
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst, new ArrayList<String>());
+        List<Integer> intervalList = new ArrayList<Integer>();
+        intervalList.add(0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
         return nodeAttrMap;
     }
 
@@ -375,7 +371,7 @@ public class Author extends AbstractNode {
             Integer[] yearArray = new Integer[yearSet.size()];
             yearSet.toArray(yearArray);
             int size = (yearArray[yearArray.length - 1] - yearArray[0]) + 1;
-            ArrayList<Integer> intervalList = new ArrayList<Integer>(size);
+            List<Integer> intervalList = new ArrayList<Integer>(size);
             // Iterate through every year
             for (int year = yearArray[0]; year <= yearArray[yearArray.length - 1]; year++) {
                 intervalList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);

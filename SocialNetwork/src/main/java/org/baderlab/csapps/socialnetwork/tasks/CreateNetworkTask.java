@@ -143,7 +143,11 @@ public class CreateNetworkTask extends AbstractTask {
                 } else if (attrType instanceof Integer) {
                     nodeTable.createColumn(attrName, Integer.class, false);
                 } else if (attrType instanceof List) {
-                    nodeTable.createListColumn(attrName, String.class, false);
+                    if (attrName.equals("Yearly Publications")) { // TODO: Find a better solution
+                        nodeTable.createListColumn(attrName, Integer.class, false);
+                    } else {
+                        nodeTable.createListColumn(attrName, String.class, false);                        
+                    }
                 }
             }
 

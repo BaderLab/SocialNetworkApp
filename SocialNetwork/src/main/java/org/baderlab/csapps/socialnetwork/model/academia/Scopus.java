@@ -42,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,19 +88,15 @@ public class Scopus {
      */
     public static HashMap<String, Object> constructScopusAttrMap(Author author) {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
-                BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_timescited,
-                BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub, 
-                BasicSocialNetworkVisualstyle.nodeattr_pub_per_year};
-        int i = 0;
-        while (i < 4) {
-            nodeAttrMap.put(columns[i], "");
-            i++;
-        }
-        // Initialize the num publication attribute (~Integer)
-        nodeAttrMap.put(columns[i], 0);
-        nodeAttrMap.put(columns[i + 1], new ArrayList<String>());
-        nodeAttrMap.put(columns[i + 2], new ArrayList<String>());
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_label, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_lname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_fname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_numpub, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub, new ArrayList<String>());
+        List<Integer> intervalList = new ArrayList<Integer>();
+        intervalList.add(0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
         return nodeAttrMap;
     }
 

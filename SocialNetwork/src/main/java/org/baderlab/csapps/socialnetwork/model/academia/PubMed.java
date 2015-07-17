@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRetrievalParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedParser;
@@ -61,20 +62,17 @@ public class PubMed {
      */
     public static HashMap<String, Object> constructPubMedAttrMap(Author author) {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        String[] columns = new String[] { BasicSocialNetworkVisualstyle.nodeattr_label, BasicSocialNetworkVisualstyle.nodeattr_lname,
-                BasicSocialNetworkVisualstyle.nodeattr_fname, BasicSocialNetworkVisualstyle.nodeattr_timescited,
-                BasicSocialNetworkVisualstyle.nodeattr_inst_main, BasicSocialNetworkVisualstyle.nodeattr_numpub, BasicSocialNetworkVisualstyle.nodeattr_pub, 
-                BasicSocialNetworkVisualstyle.nodeattr_inst, BasicSocialNetworkVisualstyle.nodeattr_pub_per_year };
-        int i = 0;
-        while (i < 5) {
-            nodeAttrMap.put(columns[i], "");
-            i++;
-        }
-        nodeAttrMap.put(columns[i], 0);
-        while (i < 9) {
-            nodeAttrMap.put(columns[i], new ArrayList<String>());
-            i++;
-        }
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_label, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_lname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_fname, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, "");
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_numpub, 0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub, new ArrayList<String>());
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst, new ArrayList<String>());
+        List<Integer> intervalList = new ArrayList<Integer>();
+        intervalList.add(0);
+        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
         return nodeAttrMap;
     }
     
