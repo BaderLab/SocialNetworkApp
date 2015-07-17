@@ -42,6 +42,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -56,6 +61,8 @@ import org.cytoscape.model.CyNode;
  * @author Victor Kofia
  */
 public class Author extends AbstractNode {
+    
+    private static final Logger logger = Logger.getLogger(Author.class.getName());
 
     /**
      * Construct Incites attribute map
@@ -125,11 +132,16 @@ public class Author extends AbstractNode {
      * counted
      */
     private boolean alreadyBeenAdded = false;
-
     /**
      * List of all publications author has authored / co-authored
      */
     private List<String> pubList = null;
+    /**
+     * Map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
+     */
+    private Map<Integer, List<Publication>> pubMap = null;
     /**
      * The current institution that author is affiliated with
      */
@@ -265,11 +277,40 @@ public class Author extends AbstractNode {
         if (this.institutionList == null) {
             this.institutionList = new ArrayList<String>();
         }
-        if (!institutionList.contains(institution)) {
+        if (institutionList.isEmpty()) {
+            setMainInstitution(institution);
             this.institutionList.add(institution);
+        } else {
+            if (!institutionList.contains(institution)) {
+                this.institutionList.add(institution);
+            }            
         }
         this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institutionList);
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, institution);
+    }
+    
+    /**
+     * Get map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
+     * 
+     * @return Map pubMap
+     */
+    private Map<Integer, List<Publication>> getPubMap() {
+        if (this.pubMap == null) {
+            this.pubMap = new TreeMap<Integer, List<Publication>>();
+        }
+        return this.pubMap;
+    }
+    
+    /**
+     * Get map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
+     * 
+     * @param Map pubMap
+     */
+    private void setPubMap(Map<Integer, List<Publication>> pubMap) {
+        this.pubMap = pubMap;
     }
 
     /**
@@ -283,20 +324,66 @@ public class Author extends AbstractNode {
         // NOTE: In lone author publications, the lone author is represented
         // twice
         int timesCited = this.getTimesCited();
-        ArrayList<String> pubList = (ArrayList<String>) this.getPubList();
+        ArrayList<String> listOfPublicationTitles = (ArrayList<String>) this.getPubList();
         if (publication.isSingleAuthored()) {
             if (!this.hasAlreadyBeenAdded()) {
                 this.setTimesCited(timesCited + publication.getTimesCited());
-                pubList.add(publication.getTitle());
-                this.setPubList(pubList);
+                listOfPublicationTitles.add(publication.getTitle());
+                this.setPubList(listOfPublicationTitles);
+                this.updatePubMap(publication);
                 this.setAlreadyBeenAdded(true);
             } else {
                 this.setAlreadyBeenAdded(false);
             }
         } else {
             this.setTimesCited(timesCited + publication.getTimesCited());
-            pubList.add(publication.getTitle());
-            this.setPubList(pubList);
+            listOfPublicationTitles.add(publication.getTitle());
+            this.setPubList(listOfPublicationTitles);
+            this.updatePubMap(publication);
+        }
+    }
+    
+    /**
+     * Add this publication to the publication treemap
+     *
+     * @param Publication publication
+     */
+    private void updatePubMap(Publication publication) {
+        if (this.getLabel().equalsIgnoreCase("S Lotia")) {
+            System.out.println("...");
+        }
+        Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
+        String yearTxt = publication.getPubYear();
+        if (yearTxt != null) {
+            yearTxt = yearTxt.split("\\s+")[0];
+            if (Pattern.matches("[0-9]+", yearTxt)) {
+                int year = Integer.parseInt(yearTxt);
+                List<Publication> listOfPubs = pubMap.get(year);
+                if (listOfPubs == null) {
+                    listOfPubs = new ArrayList<Publication>();
+                    listOfPubs.add(publication);
+                    pubMap.put(year, listOfPubs);
+                } else {
+                    listOfPubs.add(publication);
+                }                
+            } else {
+                logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", yearTxt));
+            }
+        }
+        if (this.getPubMap().size() > 0) {
+            // Create an ArrayList where every index represents
+            // a year in the interval X to Y where X is the earliest
+            // year and Y is the latest year
+            Set<Integer> yearSet = pubMap.keySet();
+            Integer[] yearArray = new Integer[yearSet.size()];
+            yearSet.toArray(yearArray);
+            int size = (yearArray[yearArray.length - 1] - yearArray[0]) + 1;
+            ArrayList<Integer> intervalList = new ArrayList<Integer>(size);
+            // Iterate through every year
+            for (int year = yearArray[0]; year <= yearArray[yearArray.length - 1]; year++) {
+                intervalList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
+            }
+            this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
         }
     }
 
@@ -507,7 +594,7 @@ public class Author extends AbstractNode {
         if (this.pubList == null) {
             this.pubList = new ArrayList<String>();
         }
-        return this.pubList;
+        return this.pubList;    
     }
 
     /**
@@ -737,6 +824,7 @@ public class Author extends AbstractNode {
      */
     public void setMainInstitution(String mainInstitution) {
         this.mainInstitution = mainInstitution;
+        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, mainInstitution);
     }
 
     /**

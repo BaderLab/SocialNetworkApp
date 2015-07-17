@@ -73,7 +73,7 @@ public class Publication extends AbstractEdge {
     /**
      * Publication's release date
      */
-    private String pubDate = null;
+    private String pubYear = null;
     /**
      * The total amount of times Publication has been cited
      */
@@ -90,15 +90,15 @@ public class Publication extends AbstractEdge {
     /**
      * Create new publication
      *
-     * @param String pubDate
+     * @param String pubYear
      * @param String title
      * @param String journal
      * @param String timesCited
      * @param String expectedCitations
      * @param List coauthorList
      */
-    public Publication(String title, String pubDate, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
-        this.pubDate = pubDate;
+    public Publication(String title, String pubYear, String journal, String timesCited, String expectedCitations, List<Author> coauthorList) {
+        this.pubYear = pubYear;
         this.title = title;
         this.journal = journal;
         this.authorList.addAll(coauthorList);
@@ -149,7 +149,7 @@ public class Publication extends AbstractEdge {
     public void constructEdgeAttrMap() {
         this.edgeAttrMap = new HashMap<String, Object>();
         this.edgeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, this.timesCited);
-        this.edgeAttrMap.put("Pub Date", this.pubDate);
+        this.edgeAttrMap.put("Pub Date", this.pubYear);
         this.edgeAttrMap.put("Journal", this.journal);
         this.edgeAttrMap.put("Title", this.title);
     }
@@ -233,12 +233,12 @@ public class Publication extends AbstractEdge {
     }
 
     /**
-     * Get publication date
+     * Get publication year
      *
-     * @return String pubDate
+     * @return String pubYear
      */
-    public String getPubDate() {
-        return this.pubDate;
+    public String getPubYear() {
+        return this.pubYear;
     }
 
     /**
@@ -328,12 +328,12 @@ public class Publication extends AbstractEdge {
     }
 
     /**
-     * Set publication pub date
+     * Set the year in which this publication was published
      *
-     * @param String date
+     * @param String pubYear
      */
-    public void setPubDate(String date) {
-        this.pubDate = date;
+    public void setPubYear(String pubYear) {
+        this.pubYear = pubYear;
     }
 
     /**
