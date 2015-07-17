@@ -349,9 +349,6 @@ public class Author extends AbstractNode {
      * @param Publication publication
      */
     private void updatePubMap(Publication publication) {
-        if (this.getLabel().equalsIgnoreCase("S Lotia")) {
-            System.out.println("...");
-        }
         Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
         String yearTxt = publication.getPubYear();
         if (yearTxt != null) {
