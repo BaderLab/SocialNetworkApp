@@ -354,7 +354,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
-            // TODO: Add a better error message
             CytoscapeUtilities.notifyUser(String.format("An error occurred while adding %s to the network table", socialNetwork.getNetworkName()));
         }
     }

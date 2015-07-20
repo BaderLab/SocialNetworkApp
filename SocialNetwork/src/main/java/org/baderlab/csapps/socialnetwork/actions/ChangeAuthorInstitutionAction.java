@@ -16,7 +16,6 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CyMenuItem;
 import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
@@ -65,7 +64,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
             JPanel dialogPanel = new JPanel();
             JPanel wrapperPanel = new JPanel();
             wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.X_AXIS));
-            wrapperPanel.add(new JLabel("Select Main Institution"));
+            wrapperPanel.add(new JLabel("Set author's main institution"));
             wrapperPanel.add(Box.createHorizontalStrut(5));
             wrapperPanel.add(institutionComboBox);
             dialogPanel.add(wrapperPanel, BorderLayout.NORTH);
@@ -109,7 +108,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
     public CyMenuItem createMenuItem(CyNetworkView netView, View<CyNode> nodeView) {
         this.cyNetwork = netView.getModel();
         this.cyNode = nodeView.getModel();
-        JMenuItem addInstitutionMenuItem = new JMenuItem("Change Author's Main Institution");
+        JMenuItem addInstitutionMenuItem = new JMenuItem("Set Author's Main Institution");
         addInstitutionMenuItem.addActionListener(this);
         CyMenuItem cyMenuItem = new CyMenuItem(addInstitutionMenuItem, 0);
         return cyMenuItem;

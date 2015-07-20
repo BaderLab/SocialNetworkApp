@@ -50,6 +50,8 @@ import java.util.regex.Pattern;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
@@ -368,12 +370,21 @@ public class Author extends AbstractNode {
             // a year in the interval X to Y where X is the earliest
             // year and Y is the latest year
             Set<Integer> yearSet = pubMap.keySet();
-            Integer[] yearArray = new Integer[yearSet.size()];
-            yearSet.toArray(yearArray);
-            int size = (yearArray[yearArray.length - 1] - yearArray[0]) + 1;
-            List<Integer> intervalList = new ArrayList<Integer>(size);
+            List<Integer> intervalList = new ArrayList<Integer>();
+            String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+            if (!Pattern.matches("[0-9]+", startYearTxt)) {
+                return;
+            }
+            int startYear = Integer.parseInt(startYearTxt);
+            String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+            if (!Pattern.matches("[0-9]+", endYearTxt)) {
+                return;
+            }
+            int endYear = Integer.parseInt(endYearTxt);
+            int size = endYear - startYear + 1;
+            intervalList = new ArrayList<Integer>(size);
             // Iterate through every year
-            for (int year = yearArray[0]; year <= yearArray[yearArray.length - 1]; year++) {
+            for (int year = startYear; year <= endYear; year++) {
                 intervalList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
             }
             this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);

@@ -46,12 +46,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
+import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
@@ -79,6 +81,26 @@ import org.cytoscape.work.TaskManager;
  * @author Victor Kofia
  */
 public class SocialNetworkAppManager {
+    
+    private static JTextField startDateTextFieldRef = null;
+    private static JTextField endDateTextFieldRef = null;
+    
+    public static JTextField getStartDateTextFieldRef() {
+        if (SocialNetworkAppManager.startDateTextFieldRef == null) {
+            int year = Calendar.getInstance().get(Calendar.YEAR) - 5;
+            startDateTextFieldRef = new JTextField(String.valueOf(year));
+        }
+        return SocialNetworkAppManager.startDateTextFieldRef;
+    }
+    
+    public static JTextField getEndDateTextFieldRef() {
+        if (SocialNetworkAppManager.endDateTextFieldRef == null) {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            endDateTextFieldRef = new JTextField(String.valueOf(year));
+        }
+        return SocialNetworkAppManager.endDateTextFieldRef;
+    }
+
 
     /**
      * Get <i>ApplyVisualStyle</i> task factory

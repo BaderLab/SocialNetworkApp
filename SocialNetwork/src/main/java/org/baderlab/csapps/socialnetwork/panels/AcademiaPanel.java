@@ -45,6 +45,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,6 +100,8 @@ public class AcademiaPanel {
     private JRadioButton pubmedRadioButtonRef = null;
     private JRadioButton scopusRadioButtonRef = null;
     private JRadioButton thresholdRadioButtonRef = null;
+    private JTextField startDateTextFieldRef = null;
+    private JTextField endDateTextFieldRef = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -138,7 +141,7 @@ public class AcademiaPanel {
         JPanel wrapperPanel = new JPanel();
         wrapperPanel.setLayout(new BorderLayout());
         wrapperPanel.add(this.createDatabaseInfoPanel(), BorderLayout.NORTH);
-        wrapperPanel.add(this.createAdvancedOptionsPanel(), BorderLayout.SOUTH);
+        //wrapperPanel.add(this.createAdvancedOptionsPanel(), BorderLayout.SOUTH);
 
         academiaInfoPanel.setLayout(new BorderLayout());
         academiaInfoPanel.setName("Academia");
@@ -159,8 +162,8 @@ public class AcademiaPanel {
     private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setCollapsed(true);
-        ;
-        advancedOptionsPanel.add(this.createThresholdPanel());
+        advancedOptionsPanel.add(this.createSpecifyMaxAuthorThresholdPanel(), BorderLayout.NORTH);
+        advancedOptionsPanel.add(this.createSpecifyTimeIntervalPanel(), BorderLayout.SOUTH);
         return advancedOptionsPanel;
     }
 
@@ -184,10 +187,12 @@ public class AcademiaPanel {
 
         // Add load panel
         databaseInfoPanel.add(createLoadDataPanel());
+        
 
         // Add faculty panel
         databaseInfoPanel.add(createSpecifyNetworkNamePanel());
 
+        databaseInfoPanel.add(createAdvancedOptionsPanel());
         // Add 'create network button' to panel
         // Button wrapper added for cosmetic reasons
         JPanel buttonWrapper = new JPanel();
@@ -372,10 +377,11 @@ public class AcademiaPanel {
      * a threshold with which they can limit the number of authors in a
      * publication.
      * 
-     * @return JPanel thresholdPanel
+     * @return JPanel specifyMaxThresholdPanel
      */
-    private JPanel createThresholdPanel() {
+    private JPanel createSpecifyMaxAuthorThresholdPanel() {
         JPanel thresholdPanel = new JPanel();
+        thresholdPanel.setBorder(BorderFactory.createTitledBorder("Specify Max Author Per Pub"));
         thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
         this.thresholdRadioButtonRef = new JRadioButton("Set max authors per pub");
         this.thresholdRadioButtonRef.setEnabled(true); // Set the ?? as true
@@ -394,10 +400,42 @@ public class AcademiaPanel {
         // TODO: Hide the radio button to prevent users from disabling it
         // innerPanel.add(this.thresholdRadioButton);
         thresholdPanel.add(Box.createHorizontalStrut(5));
-        thresholdPanel.add(new JLabel("Max authors per pub"));
-        thresholdPanel.add(Box.createHorizontalStrut(5));
         thresholdPanel.add(getThresholdTextAreaRef());
         return thresholdPanel;
+    }
+    
+    /**
+     * Create and return the specify time interval panel. This panel is located
+     * under the Advanced Options collapsible panel. It allows users to specify 
+     * the time intervals (years) that will be considered when creating charts.
+     * 
+     * @return
+     */
+    private JPanel createSpecifyTimeIntervalPanel() {
+        BasicCollapsiblePanel specifyTimeIntervalPanel = new BasicCollapsiblePanel("Time Interval");
+        specifyTimeIntervalPanel.add(getStartDatePanel(), BorderLayout.NORTH);
+        specifyTimeIntervalPanel.add(getEndDatePanel(), BorderLayout.SOUTH);
+        return specifyTimeIntervalPanel;
+    }
+    
+    private JPanel getStartDatePanel() {
+        JPanel startDatePanel = new JPanel();
+        startDatePanel.setLayout(new BoxLayout(startDatePanel, BoxLayout.X_AXIS));
+        startDatePanel.add(Box.createHorizontalStrut(5));
+        startDatePanel.add(new JLabel("Start Date"));
+        startDatePanel.add(Box.createHorizontalStrut(5));
+        startDatePanel.add(SocialNetworkAppManager.getStartDateTextFieldRef());
+        return startDatePanel;
+    }
+    
+    private JPanel getEndDatePanel() {
+        JPanel endDatePanel = new JPanel();
+        endDatePanel.setLayout(new BoxLayout(endDatePanel, BoxLayout.X_AXIS));
+        endDatePanel.add(Box.createHorizontalStrut(5));
+        endDatePanel.add(new JLabel("End Date"));
+        endDatePanel.add(Box.createHorizontalStrut(5));
+        endDatePanel.add(SocialNetworkAppManager.getEndDateTextFieldRef());
+        return endDatePanel;
     }
 
     /**
