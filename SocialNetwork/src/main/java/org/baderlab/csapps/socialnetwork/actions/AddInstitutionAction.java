@@ -59,9 +59,6 @@ public class AddInstitutionAction extends AbstractCyAction {
      */
     private static final long serialVersionUID = -4694044300149844000L;
 
-    private TaskManager<?, ?> taskManager = null;
-    private ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
-
     /**
      * Add an institution
      *
@@ -73,8 +70,6 @@ public class AddInstitutionAction extends AbstractCyAction {
             TaskManager<?, ?> taskManager, ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef) {
         super(configProps, applicationManager, networkViewManager);
         putValue(Action.NAME, "Add Institution");
-        this.taskManager = taskManager;
-        this.applyVisualStyleTaskFactoryRef = applyVisualStyleTaskFactoryRef;
     }
 
     /**

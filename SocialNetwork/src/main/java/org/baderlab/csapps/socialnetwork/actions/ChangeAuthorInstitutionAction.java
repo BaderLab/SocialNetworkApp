@@ -54,19 +54,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
     public void actionPerformed(ActionEvent e) {
         Long SUID = this.cyNode.getSUID();
         // Get the institution of this author
-        CyTable nodeTable = this.cyNetwork.getDefaultNodeTable();
-        
-        for (CyColumn cyColumn : nodeTable.getColumns()) {
-            String columnName = cyColumn.getName();
-            String className = null;
-            if (cyColumn.getType() == List.class) {
-                className = cyColumn.getListElementType().getName();
-            } else {
-                className = cyColumn.getType().getName();
-            }
-            System.out.println(String.format("Column: %s, Type: %s", columnName, className));
-        }
-        
+        CyTable nodeTable = this.cyNetwork.getDefaultNodeTable();       
         String authorName = (String) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Label");
         @SuppressWarnings("unchecked")
         List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Institution");
