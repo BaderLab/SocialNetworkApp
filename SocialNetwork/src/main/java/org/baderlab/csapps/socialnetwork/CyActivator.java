@@ -46,8 +46,8 @@ import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.UpdateAuthorLocationAction;
-import org.baderlab.csapps.socialnetwork.listeners.RestoreNetworksFromProp;
-import org.baderlab.csapps.socialnetwork.listeners.SaveNetworkToProp;
+import org.baderlab.csapps.socialnetwork.listeners.RestoreSocialNetworksFromProp;
+import org.baderlab.csapps.socialnetwork.listeners.SaveSocialNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
@@ -168,10 +168,10 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
         registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
 
-        SaveNetworkToProp saveSession = new SaveNetworkToProp(appManager);
+        SaveSocialNetworkToProp saveSession = new SaveSocialNetworkToProp(appManager);
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
-        RestoreNetworksFromProp restoreSession = new RestoreNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
+        RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
                 cySwingApplicationServiceRef, userPanelAction, userPanel);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 

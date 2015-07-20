@@ -68,7 +68,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
  *
  * @author Victor Kofia
  */
-public class RestoreNetworksFromProp implements SessionLoadedListener {
+public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
 
     private SocialNetworkAppManager appManager = null;
     private CyServiceRegistrar cyServiceRegistrar = null;
@@ -78,12 +78,12 @@ public class RestoreNetworksFromProp implements SessionLoadedListener {
     private UserPanel userPanel = null;
 
     /**
-     * Constructor for {@link RestoreNetworksFromProp}
+     * Constructor for {@link RestoreSocialNetworksFromProp}
      *
      * @param {@link SocialNetworkAppManager} appManager
      * @param {@link CyNetworkViewManager} viewManager
      */
-    public RestoreNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
+    public RestoreSocialNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
             CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel) {
         super();
         this.appManager = appManager;
