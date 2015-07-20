@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.util.Set;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
@@ -30,46 +31,21 @@ public class ScopusParserTest {
     @After
     public void tearDown() throws Exception {
     }
-    
-    /**
-     * Return the author with the specified label in the collaboration array
-     * 
-     * @param String label
-     * @param String[] authorArray
-     * 
-     * @return Author author
-     */
-    private Author getAuthor(String label, Collaboration[] collabArray) {
-        Collaboration collab = null;
-        Author author1 = null, author2 = null;
-        for (int i = 0; i < collabArray.length; i++) {
-            collab = collabArray[i];
-            author1 = (Author) collab.getNode1();
-            author2 = (Author) collab.getNode2();
-            if (author1.getLabel().equals(label)) {
-                return author1;
-            }
-            if (author2.getLabel().equals(label)) {
-                return author2;
-            }
-        }
-        return null;
-    }
 
     /**
-     * Confirm that the XML parser parses all the contents
+     * Confirm that the calculated times cited value for the main author is correct
      */
     @Test
     public void testTimesCited() {
         boolean status = false;
-        String path = getClass().getResource("example_scopus_file.csv").getFile();
+        String path = getClass().getResource("scopus_times_cited.csv").getFile();
         File csvFile = new File(path);
         Scopus scopus = new Scopus(csvFile, taskMonitor);
         Interaction interaction = new Interaction(scopus.getPubList(), Category.ACADEMIA, 500);
         Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
         collaboratorSet.toArray(collabArray);
-        Author author = getAuthor("S Lotia", collabArray); 
+        Author author = CytoscapeUtilities.getAuthor("A Person", collabArray); 
         if (author != null) {
             status = author.getTimesCited() == 992;
         }

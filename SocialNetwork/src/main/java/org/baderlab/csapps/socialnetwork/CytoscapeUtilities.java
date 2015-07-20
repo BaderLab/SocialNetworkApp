@@ -55,6 +55,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
@@ -188,6 +190,31 @@ public class CytoscapeUtilities {
                 }
             }
         }    
+    }
+    
+    /**
+     * Return the author with the specified label in the collaboration array
+     * 
+     * @param String label
+     * @param String[] authorArray
+     * 
+     * @return Author author
+     */
+    public static Author getAuthor(String label, Collaboration[] collabArray) {
+        Collaboration collab = null;
+        Author author1 = null, author2 = null;
+        for (int i = 0; i < collabArray.length; i++) {
+            collab = collabArray[i];
+            author1 = (Author) collab.getNode1();
+            author2 = (Author) collab.getNode2();
+            if (author1.getLabel().equals(label)) {
+                return author1;
+            }
+            if (author2.getLabel().equals(label)) {
+                return author2;
+            }
+        }
+        return null;
     }
     
     /**

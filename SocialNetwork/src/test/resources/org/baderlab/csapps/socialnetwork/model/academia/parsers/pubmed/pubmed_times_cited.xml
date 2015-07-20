@@ -1,0 +1,1802 @@
+<?xml version="1.0"?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2015//EN" "http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_150101.dtd">
+<PubmedArticleSet>
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="PubMed-not-MEDLINE">
+        <PMID Version="1">25580224</PMID>
+        <DateCreated>
+            <Year>2015</Year>
+            <Month>01</Month>
+            <Day>12</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2015</Year>
+            <Month>01</Month>
+            <Day>12</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2015</Year>
+            <Month>01</Month>
+            <Day>14</Day>
+        </DateRevised>
+        <Article PubModel="Electronic-eCollection">
+            <Journal>
+                <ISSN IssnType="Electronic">2046-1402</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>3</Volume>
+                    <PubDate>
+                        <Year>2014</Year>
+                    </PubDate>
+                </JournalIssue>
+                <Title>F1000Research</Title>
+                <ISOAbbreviation>F1000Res</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>The Cytoscape app article collection.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>138</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.12688/f1000research.4642.1</ELocationID>
+            <Abstract>
+                <AbstractText>As a network visualization and analysis platform, Cytoscape relies on apps to provide domain-specific features and functions. There are many resources available to support Cytoscape app development and distribution, including the Cytoscape App Store and an online &quot;cookbook&quot; for app developers. This article collection is another resource to help researchers find out more about relevant Cytoscape apps and to provide app developers with useful implementation tips. The collection will grow over time as new Cytoscape apps are developed and published.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Pico</LastName>
+                    <ForeName>Alexander R</ForeName>
+                    <Initials>AR</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Gladstone Institutes, San Francisco, CA 95158, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bader</LastName>
+                    <ForeName>Gary D</ForeName>
+                    <Initials>GD</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>The Donnelly Centre, University of Toronto, Toronto, ON M5S 3E1, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Demchak</LastName>
+                    <ForeName>Barry</ForeName>
+                    <Initials>B</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California, San Diego, La Jolla, CA 92093, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Guitart Pla</LastName>
+                    <ForeName>Oriol</ForeName>
+                    <Initials>O</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Institut Pasteur, Paris, 75015, France.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Hull</LastName>
+                    <ForeName>Timothy</ForeName>
+                    <Initials>T</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California, San Diego, La Jolla, CA 92093, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Longabaugh</LastName>
+                    <ForeName>William</ForeName>
+                    <Initials>W</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Institute for Systems Biology, Seattle, WA 98109, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Lopes</LastName>
+                    <ForeName>Christian</ForeName>
+                    <Initials>C</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>The Donnelly Centre, University of Toronto, Toronto, ON M5S 3E1, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Gladstone Institutes, San Francisco, CA 95158, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Molenaar</LastName>
+                    <ForeName>Piet</ForeName>
+                    <Initials>P</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Amsterdam Medical Centre, Amsterdam, 1105 AZ, Netherlands.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Montojo</LastName>
+                    <ForeName>Jason</ForeName>
+                    <Initials>J</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>The Donnelly Centre, University of Toronto, Toronto, ON M5S 3E1, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Morris</LastName>
+                    <ForeName>John H</ForeName>
+                    <Initials>JH</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California San Francisco, San Francisco, CA 94143, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ono</LastName>
+                    <ForeName>Keiichiro</ForeName>
+                    <Initials>K</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California, San Diego, La Jolla, CA 92093, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Schwikowski</LastName>
+                    <ForeName>Benno</ForeName>
+                    <Initials>B</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Institut Pasteur, Paris, 75015, France.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Welker</LastName>
+                    <ForeName>David</ForeName>
+                    <Initials>D</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California, San Diego, La Jolla, CA 92093, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ideker</LastName>
+                    <ForeName>Trey</ForeName>
+                    <Initials>T</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>University of California, San Diego, La Jolla, CA 92093, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2014</Year>
+                <Month>07</Month>
+                <Day>01</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>F1000Res</MedlineTA>
+            <NlmUniqueID>101594320</NlmUniqueID>
+            <ISSNLinking>2046-1402</ISSNLinking>
+        </MedlineJournalInfo>
+        <OtherID Source="NLM">PMC4288400</OtherID>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="ecollection">
+                <Year>2014</Year>
+                <Month/>
+                <Day/>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="accepted">
+                <Year>2014</Year>
+                <Month>6</Month>
+                <Day>26</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="epublish">
+                <Year>2014</Year>
+                <Month>7</Month>
+                <Day>1</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2015</Year>
+                <Month>1</Month>
+                <Day>13</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2015</Year>
+                <Month>1</Month>
+                <Day>13</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2015</Year>
+                <Month>1</Month>
+                <Day>13</Day>
+                <Hour>6</Hour>
+                <Minute>1</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>epublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="doi">10.12688/f1000research.4642.1</ArticleId>
+            <ArticleId IdType="pubmed">25580224</ArticleId>
+            <ArticleId IdType="pmc">PMC4288400</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="PubMed-not-MEDLINE" VersionID="2" VersionDate="2014/09/11">
+        <PMID Version="2">25254103</PMID>
+        <DateCreated>
+            <Year>2014</Year>
+            <Month>09</Month>
+            <Day>29</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2014</Year>
+            <Month>09</Month>
+            <Day>29</Day>
+        </DateCompleted>
+        <Article PubModel="Electronic-eCollection">
+            <Journal>
+                <ISSN IssnType="Electronic">2046-1402</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>3</Volume>
+                    <PubDate>
+                        <Year>2014</Year>
+                    </PubDate>
+                </JournalIssue>
+                <Title>F1000Research</Title>
+                <ISOAbbreviation>F1000Res</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>WikiPathways App for Cytoscape: Making biological pathways amenable to network analysis and visualization.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>152</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.12688/f1000research.4254.2</ELocationID>
+            <Abstract>
+                <AbstractText>In this paper we present the open-source WikiPathways app for Cytoscape ( http://apps.cytoscape.org/apps/wikipathways) that can be used to import biological pathways for data visualization and network analysis. WikiPathways is an open, collaborative biological pathway database that provides fully annotated pathway diagrams for manual download or through web services. The WikiPathways app allows users to load pathways in two different views: as an annotated pathway ideal for data visualization and as a simple network to perform computational analysis. An example pathway and dataset are used to demonstrate the functionality of the WikiPathways app and how they can be combined and used together with other apps. More than 3000 downloads in the first 12 months following its release in August 2013 highlight the importance and adoption of the app in the network biology field.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Kutmon</LastName>
+                    <ForeName>Martina</ForeName>
+                    <Initials>M</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Bioinformatics - BiGCaT, Maastricht University, Maastricht, 6229 ER, Netherlands.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Gladstone Institutes, San Francisco, CA 94158-2261, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Evelo</LastName>
+                    <ForeName>Chris T</ForeName>
+                    <Initials>CT</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Bioinformatics - BiGCaT, Maastricht University, Maastricht, 6229 ER, Netherlands.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Pico</LastName>
+                    <ForeName>Alexander R</ForeName>
+                    <Initials>AR</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Gladstone Institutes, San Francisco, CA 94158-2261, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2014</Year>
+                <Month>07</Month>
+                <Day>01</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>F1000Res</MedlineTA>
+            <NlmUniqueID>101594320</NlmUniqueID>
+            <ISSNLinking>2046-1402</ISSNLinking>
+        </MedlineJournalInfo>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="ecollection">
+                <Year>2014</Year>
+                <Month/>
+                <Day/>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="accepted">
+                <Year>2014</Year>
+                <Month>8</Month>
+                <Day>29</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="epublish">
+                <Year>2014</Year>
+                <Month>9</Month>
+                <Day>11</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2014</Year>
+                <Month>9</Month>
+                <Day>30</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2014</Year>
+                <Month>9</Month>
+                <Day>26</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>9</Month>
+                <Day>26</Day>
+                <Hour>6</Hour>
+                <Minute>1</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>epublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="doi">10.12688/f1000research.4254.2</ArticleId>
+            <ArticleId IdType="pubmed">25254103</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">23595664</PMID>
+        <DateCreated>
+            <Year>2013</Year>
+            <Month>05</Month>
+            <Day>16</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2013</Year>
+            <Month>11</Month>
+            <Day>04</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2014</Year>
+            <Month>11</Month>
+            <Day>16</Day>
+        </DateRevised>
+        <Article PubModel="Print-Electronic">
+            <Journal>
+                <ISSN IssnType="Electronic">1367-4811</ISSN>
+                <JournalIssue CitedMedium="Internet">
+                    <Volume>29</Volume>
+                    <Issue>10</Issue>
+                    <PubDate>
+                        <Year>2013</Year>
+                        <Month>May</Month>
+                        <Day>15</Day>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Bioinformatics (Oxford, England)</Title>
+                <ISOAbbreviation>Bioinformatics</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Cytoscape app store.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>1350-1</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.1093/bioinformatics/btt138</ELocationID>
+            <Abstract>
+                <AbstractText Label="SUMMARY" NlmCategory="CONCLUSIONS">Cytoscape is an open source software tool for biological network visualization and analysis, which can be extended with independently developed apps. We launched the Cytoscape App Store to highlight the important features that apps add to Cytoscape, enable researchers to find and install apps they need and help developers promote their apps.</AbstractText>
+                <AbstractText Label="AVAILABILITY" NlmCategory="BACKGROUND">The App Store is available at http://apps.cytoscape.org.</AbstractText>
+                <AbstractText Label="CONTACT" NlmCategory="BACKGROUND">apico@gladstone.ucsf.edu.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Gladstone Institutes, San Francisco, CA 94158, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Montojo</LastName>
+                    <ForeName>Jason</ForeName>
+                    <Initials>J</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Dong</LastName>
+                    <ForeName>Yue</ForeName>
+                    <Initials>Y</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bader</LastName>
+                    <ForeName>Gary D</ForeName>
+                    <Initials>GD</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Pico</LastName>
+                    <ForeName>Alexander R</ForeName>
+                    <Initials>AR</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <GrantList CompleteYN="Y">
+                <Grant>
+                    <GrantID>P41 GM103504</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>P41 GM103504</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+            </GrantList>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D052061">Research Support, N.I.H., Extramural</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2013</Year>
+                <Month>04</Month>
+                <Day>16</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>Bioinformatics</MedlineTA>
+            <NlmUniqueID>9808944</NlmUniqueID>
+            <ISSNLinking>1367-4803</ISSNLinking>
+        </MedlineJournalInfo>
+        <CitationSubset>IM</CitationSubset>
+        <CommentsCorrectionsList>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Res. 2003 Nov;13(11):2498-504</RefSource>
+                <PMID Version="1">14597658</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2009 Apr 15;25(8):1091-3</RefSource>
+                <PMID Version="1">19237447</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2007;2(10):2366-82</RefSource>
+                <PMID Version="1">17947979</PMID>
+            </CommentsCorrections>
+        </CommentsCorrectionsList>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D019295">Computational Biology</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000295">instrumentation</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D020407">Internet</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D053858">Metabolic Networks and Pathways</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D012984">Software</DescriptorName>
+            </MeshHeading>
+        </MeshHeadingList>
+        <OtherID Source="NLM">PMC3654709</OtherID>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="aheadofprint">
+                <Year>2013</Year>
+                <Month>4</Month>
+                <Day>16</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2013</Year>
+                <Month>4</Month>
+                <Day>19</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2013</Year>
+                <Month>4</Month>
+                <Day>19</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2013</Year>
+                <Month>11</Month>
+                <Day>5</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pii">btt138</ArticleId>
+            <ArticleId IdType="doi">10.1093/bioinformatics/btt138</ArticleId>
+            <ArticleId IdType="pubmed">23595664</ArticleId>
+            <ArticleId IdType="pmc">PMC3654709</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">23132118</PMID>
+        <DateCreated>
+            <Year>2012</Year>
+            <Month>11</Month>
+            <Day>07</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2013</Year>
+            <Month>01</Month>
+            <Day>14</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2014</Year>
+            <Month>11</Month>
+            <Day>04</Day>
+        </DateRevised>
+        <Article PubModel="Print-Electronic">
+            <Journal>
+                <ISSN IssnType="Electronic">1548-7105</ISSN>
+                <JournalIssue CitedMedium="Internet">
+                    <Volume>9</Volume>
+                    <Issue>11</Issue>
+                    <PubDate>
+                        <Year>2012</Year>
+                        <Month>Nov</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Nature methods</Title>
+                <ISOAbbreviation>Nat. Methods</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>A travel guide to Cytoscape plugins.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>1069-76</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.1038/nmeth.2212</ELocationID>
+            <Abstract>
+                <AbstractText>Cytoscape is open-source software for integration, visualization and analysis of biological networks. It can be extended through Cytoscape plugins, enabling a broad community of scientists to contribute useful features. This growth has occurred organically through the independent efforts of diverse authors, yielding a powerful but heterogeneous set of tools. We present a travel guide to the world of plugins, covering the 152 publicly available plugins for Cytoscape 2.5-2.8. We also describe ongoing efforts to distribute, organize and maintain the quality of the collection.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Saito</LastName>
+                    <ForeName>Rintaro</ForeName>
+                    <Initials>R</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Medicine, University of California, San Diego, La Jolla, California, USA.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Smoot</LastName>
+                    <ForeName>Michael E</ForeName>
+                    <Initials>ME</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ono</LastName>
+                    <ForeName>Keiichiro</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ruscheinski</LastName>
+                    <ForeName>Johannes</ForeName>
+                    <Initials>J</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Wang</LastName>
+                    <ForeName>Peng-Liang</ForeName>
+                    <Initials>PL</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Pico</LastName>
+                    <ForeName>Alexander R</ForeName>
+                    <Initials>AR</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bader</LastName>
+                    <ForeName>Gary D</ForeName>
+                    <Initials>GD</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ideker</LastName>
+                    <ForeName>Trey</ForeName>
+                    <Initials>T</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <GrantList CompleteYN="Y">
+                <Grant>
+                    <GrantID>P41 GM103504</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>P41 RR031228</GrantID>
+                    <Acronym>RR</Acronym>
+                    <Agency>NCRR NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>P50 GM085764</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+            </GrantList>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D052061">Research Support, N.I.H., Extramural</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2012</Year>
+                <Month>11</Month>
+                <Day>06</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>United States</Country>
+            <MedlineTA>Nat Methods</MedlineTA>
+            <NlmUniqueID>101215604</NlmUniqueID>
+            <ISSNLinking>1548-7091</ISSNLinking>
+        </MedlineJournalInfo>
+        <CitationSubset>IM</CitationSubset>
+        <CommentsCorrectionsList>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Apr 1;26(7):971-3</RefSource>
+                <PMID Version="1">20139469</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2010;11:5</RefSource>
+                <PMID Version="1">20047655</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Jul 15;26(14):1790-1</RefSource>
+                <PMID Version="1">20507893</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Cancer Res. 2010 Aug 15;70(16):6437-47</RefSource>
+                <PMID Version="1">20663907</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2010 Sep;28(9):977-82</RefSource>
+                <PMID Version="1">20802497</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2010 Sep;28(9):935-42</RefSource>
+                <PMID Version="1">20829833</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Nov 1;26(21):2796-7</RefSource>
+                <PMID Version="1">20847220</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Nov 15;26(22):2927-8</RefSource>
+                <PMID Version="1">20926419</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Dec 1;26(23):2995-6</RefSource>
+                <PMID Version="1">20947524</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>PLoS One. 2010;5(11):e13984</RefSource>
+                <PMID Version="1">21085593</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2011 Jan;39(Database issue):D685-90</RefSource>
+                <PMID Version="1">21071392</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2011 Jan;39(Database issue):D698-704</RefSource>
+                <PMID Version="1">21071413</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Syst Biol. 2010;4:164</RefSource>
+                <PMID Version="1">21118483</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2011 Mar;6(3):285-95</RefSource>
+                <PMID Version="1">21372810</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2011 Mar 15;27(6):883-4</RefSource>
+                <PMID Version="1">21257609</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2011 Apr 1;27(7):1030-1</RefSource>
+                <PMID Version="1">21278188</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Trends Biochem Sci. 2011 Apr;36(4):179-82</RefSource>
+                <PMID Version="1">21345680</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2011;12:192</RefSource>
+                <PMID Version="1">21605434</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Methods. 2011 Jul;8(7):528-9</RefSource>
+                <PMID Version="1">21716279</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2011 Sep;6(9):1308-23</RefSource>
+                <PMID Version="1">21886098</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2011;12:380</RefSource>
+                <PMID Version="1">21943367</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2011;12:436</RefSource>
+                <PMID Version="1">22070249</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2000 Jan 1;28(1):27-30</RefSource>
+                <PMID Version="1">10592173</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Genet. 2000 May;25(1):25-9</RefSource>
+                <PMID Version="1">10802651</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nature. 2001 May 3;411(6833):41-2</RefSource>
+                <PMID Version="1">11333967</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2002 Apr 1;30(7):1575-84</RefSource>
+                <PMID Version="1">11917018</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2002;18 Suppl 1:S233-40</RefSource>
+                <PMID Version="1">12169552</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2003 Mar 1;19(4):524-31</RefSource>
+                <PMID Version="1">12611808</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2003 Jan 13;4:2</RefSource>
+                <PMID Version="1">12525261</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Res. 2003 Nov;13(11):2498-504</RefSource>
+                <PMID Version="1">14597658</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2004 Feb;22(2):177-83</RefSource>
+                <PMID Version="1">14755292</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2005 Jan 1;33(Database issue):D514-7</RefSource>
+                <PMID Version="1">15608251</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Feb 15;21(4):430-8</RefSource>
+                <PMID Version="1">15608051</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Jun 1;21(11):2739-47</RefSource>
+                <PMID Version="1">15797909</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Aug 15;21(16):3448-9</RefSource>
+                <PMID Version="1">15972284</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Proc Natl Acad Sci U S A. 2005 Oct 25;102(43):15545-50</RefSource>
+                <PMID Version="1">16199517</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2006;7:176</RefSource>
+                <PMID Version="1">16569235</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Science. 2007 Feb 16;315(5814):972-6</RefSource>
+                <PMID Version="1">17218491</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Comput Biol Chem. 2007 Jun;31(3):222-5</RefSource>
+                <PMID Version="1">17500038</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Sep 1;23(17):2345-7</RefSource>
+                <PMID Version="1">17623706</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Sep 15;23(18):2495-7</RefSource>
+                <PMID Version="1">17644818</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Mol Syst Biol. 2007;3:135</RefSource>
+                <PMID Version="1">17882155</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Mol Syst Biol. 2007;3:140</RefSource>
+                <PMID Version="1">17940530</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2007;2(10):2366-82</RefSource>
+                <PMID Version="1">17947979</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2008 Jan 15;24(2):282-4</RefSource>
+                <PMID Version="1">18006545</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>In Silico Biol. 2008;8(1):47-52</RefSource>
+                <PMID Version="1">18430989</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>PLoS Biol. 2008 Jul 22;6(7):e184</RefSource>
+                <PMID Version="1">18651794</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>J Proteome Res. 2008 Aug;7(8):3114-26</RefSource>
+                <PMID Version="1">18570455</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2008 Sep 15;24(18):2112-4</RefSource>
+                <PMID Version="1">18678589</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2008;9:356</RefSource>
+                <PMID Version="1">18755046</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Curr Protoc Bioinformatics. 2008 Sep;Chapter 8:Unit 8.13</RefSource>
+                <PMID Version="1">18819078</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2009 Jan 1;25(1):137-8</RefSource>
+                <PMID Version="1">18812364</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Methods. 2009 Jan;6(1):39-46</RefSource>
+                <PMID Version="1">19116613</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2009 Apr 15;25(8):1091-3</RefSource>
+                <PMID Version="1">19237447</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Genomics. 2009;10:244</RefSource>
+                <PMID Version="1">19470162</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2009 Jul;37(Web Server issue):W23-7</RefSource>
+                <PMID Version="1">19420058</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2009 Oct;27(10):921-4</RefSource>
+                <PMID Version="1">19816451</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2009 Nov 1;25(21):2857-9</RefSource>
+                <PMID Version="1">19729372</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2010 Jan 15;26(2):275-7</RefSource>
+                <PMID Version="1">19914922</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2010;11 Suppl 1:S61</RefSource>
+                <PMID Version="1">20122237</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Genomics. 2010;11 Suppl 1:S3</RefSource>
+                <PMID Version="1">20158874</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2010 Jul;38(Web Server issue):W755-62</RefSource>
+                <PMID Version="1">20513647</PMID>
+            </CommentsCorrections>
+        </CommentsCorrectionsList>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D000465">Algorithms</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D019295">Computational Biology</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D003198">Computer Simulation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D057225">Data Mining</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D003628">Database Management Systems</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D020869">Gene Expression Profiling</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D053263">Gene Regulatory Networks</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D005796">Genes</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000502">physiology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D023281">Genomics</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000379">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D008954">Models, Biological</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D012984">Software</DescriptorName>
+            </MeshHeading>
+        </MeshHeadingList>
+        <OtherID Source="NLM">NIHMS462839</OtherID>
+        <OtherID Source="NLM">PMC3649846</OtherID>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="received">
+                <Year>2011</Year>
+                <Month>12</Month>
+                <Day>13</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="accepted">
+                <Year>2012</Year>
+                <Month>9</Month>
+                <Day>27</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="aheadofprint">
+                <Year>2012</Year>
+                <Month>11</Month>
+                <Day>06</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2012</Year>
+                <Month>11</Month>
+                <Day>8</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2012</Year>
+                <Month>11</Month>
+                <Day>8</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2013</Year>
+                <Month>1</Month>
+                <Day>15</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pii">nmeth.2212</ArticleId>
+            <ArticleId IdType="doi">10.1038/nmeth.2212</ArticleId>
+            <ArticleId IdType="pubmed">23132118</ArticleId>
+            <ArticleId IdType="pmc">PMC3649846</ArticleId>
+            <ArticleId IdType="mid">NIHMS462839</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">17947979</PMID>
+        <DateCreated>
+            <Year>2007</Year>
+            <Month>10</Month>
+            <Day>19</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2008</Year>
+            <Month>01</Month>
+            <Day>22</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2014</Year>
+            <Month>09</Month>
+            <Day>16</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Electronic">1750-2799</ISSN>
+                <JournalIssue CitedMedium="Internet">
+                    <Volume>2</Volume>
+                    <Issue>10</Issue>
+                    <PubDate>
+                        <Year>2007</Year>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Nature protocols</Title>
+                <ISOAbbreviation>Nat Protoc</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Integration of biological networks and gene expression data using Cytoscape.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>2366-82</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText>Cytoscape is a free software package for visualizing, modeling and analyzing molecular and genetic interaction networks. This protocol explains how to use Cytoscape to analyze the results of mRNA expression profiling, and other functional genomics and proteomics experiments, in the context of an interaction network obtained for genes of interest. Five major steps are described: (i) obtaining a gene or protein network, (ii) displaying the network using layout algorithms, (iii) integrating with gene expression and other functional attributes, (iv) identifying putative complexes and functional modules and (v) identifying enriched Gene Ontology annotations in the network. These steps provide a broad sample of the types of analyses performed by Cytoscape.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Cline</LastName>
+                    <ForeName>Melissa S</ForeName>
+                    <Initials>MS</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Institut Pasteur, 25-28 rue du Docteur Roux, 75724 Paris cedex 15, France.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Smoot</LastName>
+                    <ForeName>Michael</ForeName>
+                    <Initials>M</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Cerami</LastName>
+                    <ForeName>Ethan</ForeName>
+                    <Initials>E</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Kuchinsky</LastName>
+                    <ForeName>Allan</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Landys</LastName>
+                    <ForeName>Nerius</ForeName>
+                    <Initials>N</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Workman</LastName>
+                    <ForeName>Chris</ForeName>
+                    <Initials>C</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Christmas</LastName>
+                    <ForeName>Rowan</ForeName>
+                    <Initials>R</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Avila-Campilo</LastName>
+                    <ForeName>Iliana</ForeName>
+                    <Initials>I</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Creech</LastName>
+                    <ForeName>Michael</ForeName>
+                    <Initials>M</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Gross</LastName>
+                    <ForeName>Benjamin</ForeName>
+                    <Initials>B</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Hanspers</LastName>
+                    <ForeName>Kristina</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Isserlin</LastName>
+                    <ForeName>Ruth</ForeName>
+                    <Initials>R</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Kelley</LastName>
+                    <ForeName>Ryan</ForeName>
+                    <Initials>R</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Killcoyne</LastName>
+                    <ForeName>Sarah</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Maere</LastName>
+                    <ForeName>Steven</ForeName>
+                    <Initials>S</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Morris</LastName>
+                    <ForeName>John</ForeName>
+                    <Initials>J</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ono</LastName>
+                    <ForeName>Keiichiro</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Pavlovic</LastName>
+                    <ForeName>Vuk</ForeName>
+                    <Initials>V</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Pico</LastName>
+                    <ForeName>Alexander R</ForeName>
+                    <Initials>AR</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Vailaya</LastName>
+                    <ForeName>Aditya</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Wang</LastName>
+                    <ForeName>Peng-Liang</ForeName>
+                    <Initials>PL</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Adler</LastName>
+                    <ForeName>Annette</ForeName>
+                    <Initials>A</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Conklin</LastName>
+                    <ForeName>Bruce R</ForeName>
+                    <Initials>BR</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Hood</LastName>
+                    <ForeName>Leroy</ForeName>
+                    <Initials>L</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Kuiper</LastName>
+                    <ForeName>Martin</ForeName>
+                    <Initials>M</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Sander</LastName>
+                    <ForeName>Chris</ForeName>
+                    <Initials>C</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Schmulevich</LastName>
+                    <ForeName>Ilya</ForeName>
+                    <Initials>I</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Schwikowski</LastName>
+                    <ForeName>Benno</ForeName>
+                    <Initials>B</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Warner</LastName>
+                    <ForeName>Guy J</ForeName>
+                    <Initials>GJ</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ideker</LastName>
+                    <ForeName>Trey</ForeName>
+                    <Initials>T</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Bader</LastName>
+                    <ForeName>Gary D</ForeName>
+                    <Initials>GD</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <GrantList CompleteYN="Y">
+                <Grant>
+                    <GrantID>GM070743-01</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-01</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-02</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-03</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-03S1</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-04</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+                <Grant>
+                    <GrantID>R01 GM070743-05</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+            </GrantList>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+                <PublicationType UI="D052061">Research Support, N.I.H., Extramural</PublicationType>
+                <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>Nat Protoc</MedlineTA>
+            <NlmUniqueID>101284307</NlmUniqueID>
+            <ISSNLinking>1750-2799</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D012333">RNA, Messenger</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <CommentsCorrectionsList>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Science. 2005 Feb 4;307(5710):724-7</RefSource>
+                <PMID Version="1">15692050</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Proc Natl Acad Sci U S A. 2005 Feb 8;102(6):1974-9</RefSource>
+                <PMID Version="1">15687504</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Feb 15;21(4):430-8</RefSource>
+                <PMID Version="1">15608051</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2005;6(4):R38</RefSource>
+                <PMID Version="1">15833125</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2005 May;23(5):561-6</RefSource>
+                <PMID Version="1">15877074</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2005 Jul 1;33(Web Server issue):W352-7</RefSource>
+                <PMID Version="1">15980487</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2005;6(7):R62</RefSource>
+                <PMID Version="1">15998451</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2005;6(7):224</RefSource>
+                <PMID Version="1">15998455</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Appl Bioinformatics. 2005;4(1):71-4</RefSource>
+                <PMID Version="1">16000016</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Aug 15;21(16):3448-9</RefSource>
+                <PMID Version="1">15972284</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2005 Aug;23(8):951-9</RefSource>
+                <PMID Version="1">16082366</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nature. 2005 Aug 11;436(7052):861-5</RefSource>
+                <PMID Version="1">16094371</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Physiol Genomics. 2005 Sep 21;23(1):103-18</RefSource>
+                <PMID Version="1">15942018</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Sep 1;21 Suppl 2:ii220-1</RefSource>
+                <PMID Version="1">16204107</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Proc Natl Acad Sci U S A. 2005 Oct 25;102(43):15545-50</RefSource>
+                <PMID Version="1">16199517</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2006 Jan 1;34(Database issue):D319-21</RefSource>
+                <PMID Version="1">16381876</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2006 Jan 1;34(Database issue):D411-4</RefSource>
+                <PMID Version="1">16381900</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2006 Jan 1;34(Database issue):D504-6</RefSource>
+                <PMID Version="1">16381921</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Proc IEEE Comput Syst Bioinform Conf. 2004;:216-23</RefSource>
+                <PMID Version="1">16448015</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Evol Biol. 2006;6:8</RefSource>
+                <PMID Version="1">16441898</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Cell. 2006 Mar 10;124(5):1069-81</RefSource>
+                <PMID Version="1">16487579</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nature. 2006 Mar 30;440(7084):637-43</RefSource>
+                <PMID Version="1">16554755</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2006 Apr 15;22(8):1015-7</RefSource>
+                <PMID Version="1">16510498</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Cell. 2006 Apr 7;125(1):173-86</RefSource>
+                <PMID Version="1">16615898</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Annu Rev Plant Biol. 2006;57:451-75</RefSource>
+                <PMID Version="1">16669770</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nature. 2006 May 11;441(7090):173-8</RefSource>
+                <PMID Version="1">16688168</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2006 Aug 15;22(16):2044-6</RefSource>
+                <PMID Version="1">16777906</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2006 Sep 1;22(17):2178-9</RefSource>
+                <PMID Version="1">16921162</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Methods Enzymol. 2006;411:352-69</RefSource>
+                <PMID Version="1">16939800</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Mol Syst Biol. 2006;2:63</RefSource>
+                <PMID Version="1">17102808</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2006 Dec 1;22(23):2968-70</RefSource>
+                <PMID Version="1">17021160</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2006;7:497</RefSource>
+                <PMID Version="1">17101041</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Brief Bioinform. 2006 Dec;7(4):331-8</RefSource>
+                <PMID Version="1">17132622</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2006;7(9):R83</RefSource>
+                <PMID Version="1">16973001</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2007 Jan;35(Database issue):D566-71</RefSource>
+                <PMID Version="1">17130145</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2007 Jan;35(Database issue):D747-50</RefSource>
+                <PMID Version="1">17132828</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Jan 15;23(2):207-14</RefSource>
+                <PMID Version="1">17092991</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Feb 1;23(3):394-6</RefSource>
+                <PMID Version="1">17127678</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Feb 1;23(3):392-3</RefSource>
+                <PMID Version="1">17138585</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2007;8(1):R7</RefSource>
+                <PMID Version="1">17217541</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2006;1(2):662-71</RefSource>
+                <PMID Version="1">17406294</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Protoc. 2007;2(3):685-94</RefSource>
+                <PMID Version="1">17406631</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Apr 1;23(7):910-2</RefSource>
+                <PMID Version="1">17277332</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Apr 15;23(8):1040-2</RefSource>
+                <PMID Version="1">17309895</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>PLoS Comput Biol. 2007 Apr 20;3(4):e59</RefSource>
+                <PMID Version="1">17447836</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Comput Biol Chem. 2007 Jun;31(3):222-5</RefSource>
+                <PMID Version="1">17500038</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Science. 2007 Jun 8;316(5830):1497-502</RefSource>
+                <PMID Version="1">17540862</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2007 Aug 15;23(16):2193-5</RefSource>
+                <PMID Version="1">17553858</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Genet. 2000 May;25(1):25-9</RefSource>
+                <PMID Version="1">10802651</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Yeast. 2000 Apr;17(1):48-55</RefSource>
+                <PMID Version="1">10928937</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Science. 2001 May 4;292(5518):929-34</RefSource>
+                <PMID Version="1">11340206</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>FEBS Lett. 2002 Feb 20;513(1):135-40</RefSource>
+                <PMID Version="1">11911893</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Genet. 2002 May;31(1):19-20</RefSource>
+                <PMID Version="1">11984561</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2002 Jul;18(7):996-1003</RefSource>
+                <PMID Version="1">12117798</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2002;18 Suppl 1:S233-40</RefSource>
+                <PMID Version="1">12169552</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2003;4(1):R7</RefSource>
+                <PMID Version="1">12540299</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2003 Feb 15;31(4):e15</RefSource>
+                <PMID Version="1">12582260</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2003;4(3):R22</RefSource>
+                <PMID Version="1">12620107</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>J Mol Biol. 2003 Apr 11;327(5):919-23</RefSource>
+                <PMID Version="1">12662919</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Biol. 2003;4(4):R28</RefSource>
+                <PMID Version="1">12702209</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Trends Cell Biol. 2003 Jul;13(7):344-56</RefSource>
+                <PMID Version="1">12837605</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nature. 2003 Oct 16;425(6959):737-41</RefSource>
+                <PMID Version="1">14562106</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>BMC Bioinformatics. 2003 Jan 13;4:2</RefSource>
+                <PMID Version="1">12525261</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Genome Res. 2003 Nov;13(11):2498-504</RefSource>
+                <PMID Version="1">14597658</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2004 Jan 1;32(Database issue):D452-5</RefSource>
+                <PMID Version="1">14681455</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2004 Jan 1;32(Database issue):D497-501</RefSource>
+                <PMID Version="1">14681466</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2004 Feb;22(2):177-83</RefSource>
+                <PMID Version="1">14755292</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Science. 2004 Feb 6;303(5659):808-13</RefSource>
+                <PMID Version="1">14764870</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nat Biotechnol. 2004 Oct;22(10):1253-9</RefSource>
+                <PMID Version="1">15470465</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Nucleic Acids Res. 2005 Jan 1;33(Database issue):D428-32</RefSource>
+                <PMID Version="1">15608231</PMID>
+            </CommentsCorrections>
+            <CommentsCorrections RefType="Cites">
+                <RefSource>Bioinformatics. 2005 Jan 15;21(2):272-4</RefSource>
+                <PMID Version="1">15347570</PMID>
+            </CommentsCorrections>
+        </CommentsCorrectionsList>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D019295">Computational Biology</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000379">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D020869">Gene Expression Profiling</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000379">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D053263">Gene Regulatory Networks</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D023281">Genomics</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000379">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D040901">Proteomics</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000379">methods</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D012333">RNA, Messenger</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000378">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D012984">Software</DescriptorName>
+            </MeshHeading>
+        </MeshHeadingList>
+        <OtherID Source="NLM">NIHMS170904</OtherID>
+        <OtherID Source="NLM">PMC3685583</OtherID>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2007</Year>
+                <Month>10</Month>
+                <Day>20</Day>
+                <Hour>9</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2008</Year>
+                <Month>1</Month>
+                <Day>23</Day>
+                <Hour>9</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2007</Year>
+                <Month>10</Month>
+                <Day>20</Day>
+                <Hour>9</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pii">nprot.2007.324</ArticleId>
+            <ArticleId IdType="doi">10.1038/nprot.2007.324</ArticleId>
+            <ArticleId IdType="pubmed">17947979</ArticleId>
+            <ArticleId IdType="pmc">PMC3685583</ArticleId>
+            <ArticleId IdType="mid">NIHMS170904</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">15188531</PMID>
+        <DateCreated>
+            <Year>2004</Year>
+            <Month>06</Month>
+            <Day>10</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2004</Year>
+            <Month>07</Month>
+            <Day>06</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2004</Year>
+            <Month>11</Month>
+            <Day>17</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">0305-5000</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>31</Volume>
+                    <Issue>4</Issue>
+                    <PubDate>
+                        <Year>2004</Year>
+                        <Month>May</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Dental update</Title>
+                <ISOAbbreviation>Dent Update</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Dental management of the myasthenic patient.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>237-42</MedlinePgn>
+            </Pagination>
+            <Abstract>
+                <AbstractText>Myasthenia gravis (MG) is an auto-immune disorder of neuromuscular transmission which results in weakness and fatigue of skeletal muscles. The defect in neuromuscular transmission is most commonly seen in the muscles of the eyes, face, neck and shoulders but, in some patients, the respiratory muscles are involved. Patients with this condition may present with problems that necessitate special consideration when managing their dental treatment. Patients who are only mildly affected by MG can be treated in general dental practice for routine care. There are no contra-indications to the use of local anaesthetic agents and the presence of a vasoconstrictor is desirable. More severely affected patients and those who are very anxious about dental treatment should be cared for within the hospital environment. In these patients, respiratory muscles may be affected and, as a result, a myasthenic crisis may arise which requires assisted ventilation and, in some cases, intubation. Those patients who are fearful of the dental environment are likely to be emotionally stressed during such times and this increases the risk of a myasthenic crisis; sedation techniques can be beneficial in this group of patients.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Person</LastName>
+                    <ForeName>A</ForeName>
+                    <Initials>A</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Manchester Dental Hospital.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Randall</LastName>
+                    <ForeName>C</ForeName>
+                    <Initials>C</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Dawson</LastName>
+                    <ForeName>L J</ForeName>
+                    <Initials>LJ</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Longman</LastName>
+                    <ForeName>L P</ForeName>
+                    <Initials>LP</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>England</Country>
+            <MedlineTA>Dent Update</MedlineTA>
+            <NlmUniqueID>7805969</NlmUniqueID>
+            <ISSNLinking>0305-5000</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D000779">Anesthetics, Local</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance UI="D014662">Vasoconstrictor Agents</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>D</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D000766">Anesthesia, Dental</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D000779">Anesthetics, Local</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000008">administration &amp; dosage</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D016292">Conscious Sedation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D016854">Dental Anxiety</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000517">prevention &amp; control</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y" UI="D017742">Dental Care for Chronically Ill</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D003796">Dental Service, Hospital</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D004347">Drug Interactions</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D006801">Humans</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D007442">Intubation, Intratracheal</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D009157">Myasthenia Gravis</DescriptorName>
+                <QualifierName MajorTopicYN="Y" UI="Q000150">complications</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000188">drug therapy</QualifierName>
+                <QualifierName MajorTopicYN="N" UI="Q000503">physiopathology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D012121">Respiration, Artificial</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D012132">Respiratory Muscles</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000503">physiopathology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N" UI="D014662">Vasoconstrictor Agents</DescriptorName>
+                <QualifierName MajorTopicYN="N" UI="Q000008">administration &amp; dosage</QualifierName>
+            </MeshHeading>
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2004</Year>
+                <Month>6</Month>
+                <Day>11</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2004</Year>
+                <Month>7</Month>
+                <Day>9</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2004</Year>
+                <Month>6</Month>
+                <Day>11</Day>
+                <Hour>5</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">15188531</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+</PubmedArticleSet>

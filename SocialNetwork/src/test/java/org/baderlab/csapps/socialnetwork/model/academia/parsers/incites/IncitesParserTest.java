@@ -41,6 +41,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
@@ -141,5 +146,25 @@ public class IncitesParserTest {
         IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
         ArrayList<Author> unidentifiedFacultyList = incitesParser.getUnidentifiedFacultyList();
         assertTrue(unidentifiedFacultyList.size() == 13);
+    }
+    
+    @Test
+    /**
+     * Confirm that the calculated times cited value for the main author is correct
+     */
+    public void testTimesCited() {
+        boolean status = false;
+        String path = getClass().getResource("incites_times_cited.xlsx").getFile();
+        File xlsxFile = new File(path);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
+        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
+        collaboratorSet.toArray(collabArray);
+        Author author = CytoscapeUtilities.getAuthor("A Person", collabArray); 
+        if (author != null) {
+            status = author.getTimesCited() == 306;
+        }
+        assertTrue(status);
     }
 }
