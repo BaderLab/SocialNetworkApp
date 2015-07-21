@@ -41,7 +41,7 @@ import java.awt.Cursor;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
@@ -94,11 +94,11 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                     vs.applyVisualStyle(event.getNetwork(), socialNetwork);
                     break;
                 case Category.SCOPUS:
-                    BasicSocialNetworkVisualstyle vs_scopus = new BasicSocialNetworkVisualstyle();
+                    BasicSocialNetworkVisualStyle vs_scopus = new BasicSocialNetworkVisualStyle();
                     vs_scopus.applyVisualStyle(event.getNetwork(), socialNetwork);
                     break;
                 case Category.PUBMED:
-                    BasicSocialNetworkVisualstyle vs_pubmed = new BasicSocialNetworkVisualstyle();
+                    BasicSocialNetworkVisualStyle vs_pubmed = new BasicSocialNetworkVisualStyle();
                     vs_pubmed.applyVisualStyle(event.getNetwork(), socialNetwork);
                     break;
             }

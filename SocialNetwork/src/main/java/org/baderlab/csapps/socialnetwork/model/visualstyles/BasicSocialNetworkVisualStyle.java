@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -52,53 +54,48 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  *
  * @author risserlin
  */
-public class BasicSocialNetworkVisualstyle {
-
-    public static final String nodeattr_label = "Label";
-    public static final String nodeattr_fname = "First Name";
-    public static final String nodeattr_lname = "Last Name";
-    public static final String nodeattr_inst = "Institution";
-    public static final String nodeattr_inst_main = "Main Institution";
-    public static final String nodeattr_pub = "Publications";
-    public static final String nodeattr_numpub = "# of Publications";
-    public static final String edgeattr_numcopubs = "# of copubs";
-    public static final String nodeattr_timescited = "Times Cited";
-    public static final String networkattr_totalPub = "Total Publications";
-    public static final String nodeattr_pub_per_year = "Yearly Publications";
+public class BasicSocialNetworkVisualStyle extends AbstractVisualStyle {
 
     private CyNetwork network;
     private SocialNetwork socialNetwork;
 
-    /**
-     * Apply an edge style to every edge in network.
-     *
-     * @param {@link CyNetwork} network
-     * @param {@link SocialNetwork} socialNetwork
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.baderlab.csapps.socialnetwork.model.visualstyles.AbstractVisualStyle
+     * #applyEdgeStyle(org.cytoscape.model.CyNetwork,
+     * org.baderlab.csapps.socialnetwork.model.SocialNetwork)
      */
     protected void applyEdgeStyle(CyNetwork network, SocialNetwork socialNetwork) {
+        
         // Edge table reference
         CyTable edgeTable = network.getDefaultEdgeTable();
+        
         // Edge width variables
         int minEdgeWidth = 0;
         int maxEdgeWidth = 0;
+        
         // Specify EDGE_WIDTH
         edgeTable = network.getDefaultEdgeTable();
-        CyColumn copubColumn = edgeTable.getColumn(edgeattr_numcopubs);
+        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.NumCopublications.toString());
         ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         minEdgeWidth = getSmallestInCutoff(copubList, 5.0);
         maxEdgeWidth = getLargestInCutoff(copubList, 100.0);
-        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_WIDTH, new Object[] { edgeattr_numcopubs, minEdgeWidth + 1, maxEdgeWidth });
+        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_WIDTH, new Object[] { EdgeAttribute.NumCopublications.toString(), minEdgeWidth + 1, maxEdgeWidth });
 
         // Specify EDGE_TRANSPARENCY
-        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, new Object[] { edgeattr_numcopubs });
+        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.EDGE_TRANSPARENCY, new Object[] { EdgeAttribute.NumCopublications.toString() });
     }
 
-    /**
-     * Apply a node style to every node in network.
-     *
-     * @param {@link CyNetwork} network
-     * @param {@link SocialNetwork} socialNetwork
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.baderlab.csapps.socialnetwork.model.visualstyles.AbstractVisualStyle
+     * #applyNodeStyle(org.cytoscape.model.CyNetwork,
+     * org.baderlab.csapps.socialnetwork.model.SocialNetwork)
      */
     protected void applyNodeStyle(CyNetwork network, SocialNetwork socialNetwork) {
         // Node table reference
@@ -106,14 +103,14 @@ public class BasicSocialNetworkVisualstyle {
         // Node size variables
         int minNodeSize = 0;
         int maxNodeSize = 0;
-        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, new Object[] { nodeattr_label });
+        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, new Object[] { NodeAttribute.Label.toString() });
         // Specify Node_SIZE
         nodeTable = network.getDefaultNodeTable();
-        CyColumn timesCitedColumn = nodeTable.getColumn(nodeattr_timescited);
+        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TimesCited.toString());
         ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
         minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
         maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
-        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, new Object[] { nodeattr_timescited, minNodeSize + 1, maxNodeSize });
+        socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, new Object[] { NodeAttribute.TimesCited.toString(), minNodeSize + 1, maxNodeSize });
     }
 
     /**

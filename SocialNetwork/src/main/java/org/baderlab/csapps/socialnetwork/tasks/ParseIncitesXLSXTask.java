@@ -14,7 +14,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
@@ -73,7 +73,7 @@ public class ParseIncitesXLSXTask extends AbstractTask {
         socialNetwork.setUnidentified_faculty(incitesParser.getUnidentifiedFacultyString());
 
         // Add info to social network map(s)
-        socialNetwork.getAttrMap().put(IncitesVisualStyle.nodeattr_dept, incitesParser.getDepartmentName());
+        socialNetwork.getAttrMap().put(NodeAttribute.Department.toString(), incitesParser.getDepartmentName());
 
         // Create interaction
         Interaction interaction = new Interaction(pubList, Category.ACADEMIA, this.appManager.getMaxAuthorThreshold());

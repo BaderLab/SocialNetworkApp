@@ -50,7 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.work.TaskMonitor;
 
 /**
@@ -88,15 +88,15 @@ public class Scopus {
      */
     public static HashMap<String, Object> constructScopusAttrMap(Author author) {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_label, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_lname, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_fname, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, 0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_numpub, 0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub, new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.Label.toString(), "");
+        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "");
+        nodeAttrMap.put(NodeAttribute.LastName.toString(), "");
+        nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
         List<Integer> intervalList = new ArrayList<Integer>();
         intervalList.add(0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
+        nodeAttrMap.put(NodeAttribute.YearlyPublications.toString(), intervalList);
         return nodeAttrMap;
     }
 

@@ -45,7 +45,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -44,7 +44,8 @@ import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**
@@ -84,8 +85,8 @@ public class Copublications extends AbstractEdge {
      */
     public void addPublication(Publication publication) {
         this.getPubList().add(publication);
-        this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.edgeattr_numcopubs, this.getPubList().size());
-        ((ArrayList<String>) this.getEdgeAttrMap().get(BasicSocialNetworkVisualstyle.nodeattr_pub)).add(publication.getTitle());
+        this.getEdgeAttrMap().put(EdgeAttribute.NumCopublications.toString(), this.getPubList().size());
+        ((ArrayList<String>) this.getEdgeAttrMap().get(NodeAttribute.Publications.toString())).add(publication.getTitle());
     }
 
     /**
@@ -94,16 +95,16 @@ public class Copublications extends AbstractEdge {
     @Override
     public void constructEdgeAttrMap() {
         this.setEdgeAttrMap(new HashMap<String, Object>());
-        this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.edgeattr_numcopubs, this.getPubList().size());
+        this.getEdgeAttrMap().put(EdgeAttribute.NumCopublications.toString(), this.getPubList().size());
         ArrayList<String> titles = new ArrayList<String>();
         titles.add(this.getPubList().get(0).getTitle());
-        this.getEdgeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, titles);
+        this.getEdgeAttrMap().put(NodeAttribute.Publications.toString(), titles);
     }
 
-    @Override
     /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getCyEdge()
      */
+    @Override
     public CyEdge getCyEdge() {
         return this.cyEdge;
     }
@@ -118,10 +119,10 @@ public class Copublications extends AbstractEdge {
         return this.edgeAttrMap;
     }
 
-    @Override
     /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#getNodes()
      */
+    @Override
     public List<? extends AbstractNode> getNodes() {
         return null;
     }

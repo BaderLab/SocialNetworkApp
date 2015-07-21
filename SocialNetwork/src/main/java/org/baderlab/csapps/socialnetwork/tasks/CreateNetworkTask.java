@@ -51,8 +51,7 @@ import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NetworkAttribute;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -169,12 +168,15 @@ public class CreateNetworkTask extends AbstractTask {
                 }
             }
 
+            // TODO: This code shouldn't be here. It will make it difficult to expand the app's functionality
+            // to other types of social networks (not just academia).
+            
             // Add all columns to network table
             networkTable = myNet.getDefaultNetworkTable();
-            networkTable.createColumn(BasicSocialNetworkVisualstyle.networkattr_totalPub, Integer.class, false);
-            networkTable.createColumn(IncitesVisualStyle.networkattr_Faculty, Integer.class, false);
-            networkTable.createColumn(IncitesVisualStyle.networkattr_uniden_Faculty, Integer.class, false);
-            networkTable.createColumn(IncitesVisualStyle.networkattr_uniden_Faculty_list, String.class, false);
+            networkTable.createColumn(NetworkAttribute.TotalPublications.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.TotalFaculty.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.TotalUnidentifiedFaculty.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.ListUnidentifiedFaculty.toString(), String.class, false);
 
             // Set network name
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
@@ -183,17 +185,17 @@ public class CreateNetworkTask extends AbstractTask {
             // Add network attributes
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(IncitesVisualStyle.networkattr_totalPub,
+                    .set(NetworkAttribute.TotalPublications.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-                    .set(IncitesVisualStyle.networkattr_Faculty, this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
+                    .set(NetworkAttribute.TotalFaculty.toString(), this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(IncitesVisualStyle.networkattr_uniden_Faculty,
+                    .set(NetworkAttribute.TotalUnidentifiedFaculty.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(IncitesVisualStyle.networkattr_totalPub,
+                    .set(NetworkAttribute.TotalPublications.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
 
             // Build network

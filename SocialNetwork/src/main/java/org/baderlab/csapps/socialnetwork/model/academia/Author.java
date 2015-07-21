@@ -50,11 +50,9 @@ import java.util.regex.Pattern;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.model.CyNode;
 
 /**
@@ -73,19 +71,19 @@ public class Author extends AbstractNode {
      */
     public static HashMap<String, Object> constructIncitesAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_label, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_lname, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_fname, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, "");
-        nodeAttrMap.put(IncitesVisualStyle.nodeattr_location, "");
-        nodeAttrMap.put(IncitesVisualStyle.nodeattr_dept, "");
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, 0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_numpub, 0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub, new ArrayList<String>());
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_inst, new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.Label.toString(), "");
+        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "");
+        nodeAttrMap.put(NodeAttribute.LastName.toString(), "");
+        nodeAttrMap.put(NodeAttribute.MainInstitution.toString(), "");
+        nodeAttrMap.put(NodeAttribute.Location.toString(), "");
+        nodeAttrMap.put(NodeAttribute.Department.toString(), "");
+        nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.Institution.toString(), new ArrayList<String>());
         List<Integer> intervalList = new ArrayList<Integer>();
         intervalList.add(0);
-        nodeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
+        nodeAttrMap.put(NodeAttribute.YearlyPublications.toString(), intervalList);
         return nodeAttrMap;
     }
 
@@ -283,7 +281,7 @@ public class Author extends AbstractNode {
                 this.institutionList.add(institution);
             }            
         }
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst, institutionList);
+        this.getNodeAttrMap().put(NodeAttribute.Institution.toString(), institutionList);
     }
     
     /**
@@ -387,7 +385,7 @@ public class Author extends AbstractNode {
             for (int year = startYear; year <= endYear; year++) {
                 intervalList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
             }
-            this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub_per_year, intervalList);
+            this.getNodeAttrMap().put(NodeAttribute.YearlyPublications.toString(), intervalList);
         }
     }
 
@@ -750,7 +748,7 @@ public class Author extends AbstractNode {
      */
     public void setFaculty(String department) {
         this.department = department;
-        this.getNodeAttrMap().put(IncitesVisualStyle.nodeattr_dept, department);
+        this.getNodeAttrMap().put(NodeAttribute.Department.toString(), department);
     }
 
     /**
@@ -769,7 +767,7 @@ public class Author extends AbstractNode {
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_fname, firstName);
+        this.getNodeAttrMap().put(NodeAttribute.FirstName.toString(), firstName);
     }
 
     /**
@@ -789,7 +787,7 @@ public class Author extends AbstractNode {
     @Override
     public void setLabel(String label) {
         this.label = label;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_label, label);
+        this.getNodeAttrMap().put(NodeAttribute.Label.toString(), label);
     }
 
     /**
@@ -828,7 +826,7 @@ public class Author extends AbstractNode {
      */
     public void setMainInstitution(String mainInstitution) {
         this.mainInstitution = mainInstitution;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_inst_main, mainInstitution);
+        this.getNodeAttrMap().put(NodeAttribute.MainInstitution.toString(), mainInstitution);
     }
 
     /**
@@ -864,8 +862,8 @@ public class Author extends AbstractNode {
      */
     public void setPubList(List<String> pubList) {
         this.pubList = pubList;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_pub, pubList);
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_numpub, pubList.size());
+        this.getNodeAttrMap().put(NodeAttribute.Publications.toString(), pubList);
+        this.getNodeAttrMap().put(NodeAttribute.NumPublications.toString(), pubList.size());
     }
 
     /**
@@ -875,7 +873,7 @@ public class Author extends AbstractNode {
      */
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
-        this.getNodeAttrMap().put(BasicSocialNetworkVisualstyle.nodeattr_timescited, timesCited);
+        this.getNodeAttrMap().put(NodeAttribute.TimesCited.toString(), timesCited);
     }
 
     /**

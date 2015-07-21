@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualstyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.EdgeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**
@@ -142,16 +142,16 @@ public class Publication extends AbstractEdge {
 
     }
 
-    /**
-     * Construct edge attribute map for use in Cytoscape
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractEdge#constructEdgeAttrMap()
      */
     @Override
     public void constructEdgeAttrMap() {
         this.edgeAttrMap = new HashMap<String, Object>();
-        this.edgeAttrMap.put(BasicSocialNetworkVisualstyle.nodeattr_timescited, this.timesCited);
-        this.edgeAttrMap.put("Pub Date", this.pubYear);
-        this.edgeAttrMap.put("Journal", this.journal);
-        this.edgeAttrMap.put("Title", this.title);
+        this.edgeAttrMap.put(EdgeAttribute.TimesCited.toString(), this.timesCited);
+        this.edgeAttrMap.put(EdgeAttribute.PublicationDate.toString(), this.pubYear);
+        this.edgeAttrMap.put(EdgeAttribute.Journal.toString(), this.journal);
+        this.edgeAttrMap.put(EdgeAttribute.Title.toString(), this.title);
     }
 
     /**

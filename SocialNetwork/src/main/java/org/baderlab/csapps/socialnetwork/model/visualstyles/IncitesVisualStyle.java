@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -55,9 +56,8 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
  *
  * @author risserlin
  */
-public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
+public class IncitesVisualStyle extends BasicSocialNetworkVisualStyle {
 
-    public static final String nodeattr_location = "Location";
     public static final String nodeattr_location_uoft = "UNIV TORONTO";
     public static final String nodeattr_location_canada = "Canada";
     public static final String nodeattr_location_us = "United States";
@@ -65,12 +65,6 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
     public static final String nodeattr_location_inter = "International";
     public static final String nodeattr_location_other = "Other";
     public static final String nodeattr_location_na = "N/A";
-    public static final String nodeattr_inst = "Institution";
-    public static final String nodeattr_dept = "Department";
-
-    public static final String networkattr_Faculty = "Total number of Faculty";
-    public static final String networkattr_uniden_Faculty = "Total number of unidentified Faculty";
-    public static final String networkattr_uniden_Faculty_list = "List of unidentified Faculty";
 
     private CyNetwork network;
     private SocialNetwork socialNetwork;
@@ -87,11 +81,11 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
 
         // Specify Node_SIZE
         nodeTable = this.network.getDefaultNodeTable();
-        CyColumn timesCitedColumn = nodeTable.getColumn(nodeattr_timescited);
+        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TimesCited.toString());
         ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
         minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
         maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, new Object[] { nodeattr_timescited, minNodeSize + 1, maxNodeSize });
+        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, new Object[] { NodeAttribute.TimesCited.toString(), minNodeSize + 1, maxNodeSize });
 
         // Specify NODE_FILL_COLOR
         Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
@@ -103,34 +97,35 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualstyle {
         locationsMap.put(nodeattr_location_other, new Color(204, 0, 204));
         locationsMap.put(nodeattr_location_uoft, new Color(0, 204, 0));
         locationsMap.put(nodeattr_location_na, new Color(153, 153, 153));
-        colorAttrMap.put(nodeattr_location, locationsMap);
+        colorAttrMap.put(NodeAttribute.Location.toString(), locationsMap);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, new Object[] { colorAttrMap });
+        
         // Specify NODE_SHAPE
         Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
         HashMap<String, NodeShape> departmentMap = new HashMap<String, NodeShape>();
-        departmentMap.put((String) (this.socialNetwork.getAttrMap().get(nodeattr_dept)), NodeShapeVisualProperty.TRIANGLE);
+        departmentMap.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), NodeShapeVisualProperty.TRIANGLE);
         departmentMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
-        shapeAttrMap.put(nodeattr_dept, departmentMap);
+        shapeAttrMap.put(NodeAttribute.Department.toString(), departmentMap);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, new Object[] { shapeAttrMap });
 
-        // Specify Node_border_width and Node_Border_fill for faculty memebers
+        // Specify Node_border_width and Node_Border_fill for faculty members
         // (i.e. department)
         Map<String, HashMap<String, Color>> borderpainAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> departmentMap_borderpaint = new HashMap<String, Color>();
-        departmentMap_borderpaint.put((String) (this.socialNetwork.getAttrMap().get(nodeattr_dept)), new Color(243, 243, 21));
-        borderpainAttrMap.put(nodeattr_dept, departmentMap_borderpaint);
+        departmentMap_borderpaint.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), new Color(243, 243, 21));
+        borderpainAttrMap.put(NodeAttribute.Department.toString(), departmentMap_borderpaint);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_PAINT, new Object[] { borderpainAttrMap });
 
         Map<String, HashMap<String, Double>> borderwidthAttrMap = new HashMap<String, HashMap<String, Double>>();
         HashMap<String, Double> departmentMap_borderwidth = new HashMap<String, Double>();
-        departmentMap_borderwidth.put((String) (this.socialNetwork.getAttrMap().get(nodeattr_dept)), 10.0);
-        borderwidthAttrMap.put(nodeattr_dept, departmentMap_borderwidth);
+        departmentMap_borderwidth.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), 10.0);
+        borderwidthAttrMap.put(NodeAttribute.Department.toString(), departmentMap_borderwidth);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_WIDTH, new Object[] { borderwidthAttrMap });
 
         Map<String, HashMap<String, Font>> fontsizeAttrMap = new HashMap<String, HashMap<String, Font>>();
         HashMap<String, Font> departmentMap_fontsize = new HashMap<String, Font>();
         departmentMap_fontsize.put(nodeattr_location_uoft, new Font("Verdana", Font.BOLD, 12));
-        fontsizeAttrMap.put(nodeattr_location, departmentMap_fontsize);
+        fontsizeAttrMap.put(NodeAttribute.Location.toString(), departmentMap_fontsize);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL_FONT_FACE, new Object[] { fontsizeAttrMap });
 
     }
