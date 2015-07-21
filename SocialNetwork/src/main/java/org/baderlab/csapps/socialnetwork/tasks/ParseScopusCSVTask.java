@@ -79,7 +79,6 @@ public class ParseScopusCSVTask extends AbstractTask {
         }
         this.appManager.setMap(map);
         this.appManager.getSocialNetworkMap().put(networkName, socialNetwork);
-
         TaskIterator taskIterator = new TaskIterator();
         taskIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
         insertTasksAfterCurrentTask(taskIterator);

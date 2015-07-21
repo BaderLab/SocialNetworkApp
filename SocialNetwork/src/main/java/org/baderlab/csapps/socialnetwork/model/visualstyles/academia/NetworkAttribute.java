@@ -1,6 +1,11 @@
 package org.baderlab.csapps.socialnetwork.model.visualstyles.academia;
 
-
+/**
+ * ??
+ * 
+ * @author Victor Kofia
+ */
+// TODO: Write enum description
 public enum NetworkAttribute {
     
     ListUnidentifiedFaculty("List of unidentified Faculty"),

@@ -41,8 +41,8 @@ import java.awt.Cursor;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualStyle;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.IncitesVisualStyle;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
@@ -78,7 +78,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     public void handleEvent(NetworkAddedEvent event) {
         // Set mouse cursor to default (network's already been loaded)
         this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        String name = this.appManager.getNetworkName(event.getNetwork());
+        String name = SocialNetworkAppManager.getNetworkName(event.getNetwork());
         // If the network being added is a social network, then
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
@@ -89,17 +89,13 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             int networkID = socialNetwork.getNetworkType();
             switch (networkID) {
                 case Category.INCITES:
-                    // Create instance InCites visual style
-                    IncitesVisualStyle vs = new IncitesVisualStyle();
-                    vs.applyVisualStyle(event.getNetwork(), socialNetwork);
+                    IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(event.getNetwork(), socialNetwork);
+                    incitesVisualStyle.applyVisualStyle();
                     break;
                 case Category.SCOPUS:
-                    BasicSocialNetworkVisualStyle vs_scopus = new BasicSocialNetworkVisualStyle();
-                    vs_scopus.applyVisualStyle(event.getNetwork(), socialNetwork);
-                    break;
                 case Category.PUBMED:
-                    BasicSocialNetworkVisualStyle vs_pubmed = new BasicSocialNetworkVisualStyle();
-                    vs_pubmed.applyVisualStyle(event.getNetwork(), socialNetwork);
+                    BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), socialNetwork);
+                    basicVisualStyle.applyVisualStyle();
                     break;
             }
             this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);

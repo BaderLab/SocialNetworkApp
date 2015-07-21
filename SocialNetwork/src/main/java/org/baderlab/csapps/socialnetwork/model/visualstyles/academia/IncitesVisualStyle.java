@@ -35,7 +35,7 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork.model.visualstyles;
+package org.baderlab.csapps.socialnetwork.model.visualstyles.academia;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -56,30 +55,34 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
  *
  * @author risserlin
  */
-public class IncitesVisualStyle extends BasicSocialNetworkVisualStyle {
-
-    public static final String nodeattr_location_uoft = "UNIV TORONTO";
-    public static final String nodeattr_location_canada = "Canada";
-    public static final String nodeattr_location_us = "United States";
-    public static final String nodeattr_location_ontario = "Ontario";
-    public static final String nodeattr_location_inter = "International";
-    public static final String nodeattr_location_other = "Other";
-    public static final String nodeattr_location_na = "N/A";
-
-    private CyNetwork network;
-    private SocialNetwork socialNetwork;
-
+public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
+    
     /**
-     * Apply the InCites visual style to every node in the network
+     * ??
+     * 
+     * @param CyNetwork network
+     * @param SocialNetwork socialNetwork
      */
-    private void applyIncitesNodeStyle() {
+    public IncitesVisualStyle(CyNetwork network, SocialNetwork socialNetwork) {
+        super(network, socialNetwork);
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle#applyNodeStyle()
+     */
+    @Override
+    protected void applyNodeStyle() {
         // Node table reference
         CyTable nodeTable = null;
         // Node size variables
         int minNodeSize = 0;
         int maxNodeSize = 0;
+        
+        // Specify NODE_LABEL
 
-        // Specify Node_SIZE
+        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, new Object[] { NodeAttribute.Label.toString() });
+
+        // Specify NODE_SIZE
         nodeTable = this.network.getDefaultNodeTable();
         CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TimesCited.toString());
         ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
@@ -90,13 +93,13 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualStyle {
         // Specify NODE_FILL_COLOR
         Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> locationsMap = new HashMap<String, Color>();
-        locationsMap.put(nodeattr_location_ontario, new Color(255, 137, 41));
-        locationsMap.put(nodeattr_location_canada, new Color(204, 0, 51));
-        locationsMap.put(nodeattr_location_us, new Color(0, 51, 153));
-        locationsMap.put(nodeattr_location_inter, new Color(0, 204, 204));
-        locationsMap.put(nodeattr_location_other, new Color(204, 0, 204));
-        locationsMap.put(nodeattr_location_uoft, new Color(0, 204, 0));
-        locationsMap.put(nodeattr_location_na, new Color(153, 153, 153));
+        locationsMap.put(Location.Ontario.toString(), new Color(255, 137, 41));
+        locationsMap.put(Location.Canada.toString(), new Color(204, 0, 51));
+        locationsMap.put(Location.UnitedStates.toString(), new Color(0, 51, 153));
+        locationsMap.put(Location.International.toString(), new Color(0, 204, 204));
+        locationsMap.put(Location.Other.toString(), new Color(204, 0, 204));
+        locationsMap.put(Location.UofT.toString(), new Color(0, 204, 0));
+        locationsMap.put(Location.NA.toString(), new Color(153, 153, 153));
         colorAttrMap.put(NodeAttribute.Location.toString(), locationsMap);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, new Object[] { colorAttrMap });
         
@@ -108,7 +111,7 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualStyle {
         shapeAttrMap.put(NodeAttribute.Department.toString(), departmentMap);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, new Object[] { shapeAttrMap });
 
-        // Specify Node_border_width and Node_Border_fill for faculty members
+        // Specify NODE_BORDER_WIDTH and NODE_BORDER_FILL for faculty members
         // (i.e. department)
         Map<String, HashMap<String, Color>> borderpainAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> departmentMap_borderpaint = new HashMap<String, Color>();
@@ -124,27 +127,9 @@ public class IncitesVisualStyle extends BasicSocialNetworkVisualStyle {
 
         Map<String, HashMap<String, Font>> fontsizeAttrMap = new HashMap<String, HashMap<String, Font>>();
         HashMap<String, Font> departmentMap_fontsize = new HashMap<String, Font>();
-        departmentMap_fontsize.put(nodeattr_location_uoft, new Font("Verdana", Font.BOLD, 12));
+        departmentMap_fontsize.put(Location.UofT.toString(), new Font("Verdana", Font.BOLD, 12));
         fontsizeAttrMap.put(NodeAttribute.Location.toString(), departmentMap_fontsize);
         this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL_FONT_FACE, new Object[] { fontsizeAttrMap });
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.baderlab.csapps.socialnetwork.model.BasicSocialNetworkVisualstyle
-     * #applyVisualStyle(org.cytoscape.model.CyNetwork,
-     * org.baderlab.csapps.socialnetwork.model.SocialNetwork)
-     */
-    @Override
-    public void applyVisualStyle(CyNetwork network, SocialNetwork socialNetwork) {
-        this.network = network;
-        this.socialNetwork = socialNetwork;
-        applyNodeStyle(this.network, this.socialNetwork);
-        applyIncitesNodeStyle();
-        applyEdgeStyle(this.network, this.socialNetwork);
     }
 
 }

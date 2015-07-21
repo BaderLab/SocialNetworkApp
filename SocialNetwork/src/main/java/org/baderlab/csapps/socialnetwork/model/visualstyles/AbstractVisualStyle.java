@@ -1,7 +1,5 @@
 package org.baderlab.csapps.socialnetwork.model.visualstyles;
 
-import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.cytoscape.model.CyNetwork;
 
 /**
  * ??
@@ -13,26 +11,17 @@ public abstract class AbstractVisualStyle {
     
     /**
      * Apply an edge style to every edge in network.
-     *
-     * @param {@link CyNetwork} network
-     * @param {@link SocialNetwork} socialNetwork
      */
-    protected abstract void applyEdgeStyle(CyNetwork network, SocialNetwork socialNetwork);
+    protected abstract void applyEdgeStyle();
     
     /**
      * Apply a node style to every node in network.
-     *
-     * @param {@link CyNetwork} network
-     * @param {@link SocialNetwork} socialNetwork
      */
-    protected abstract void applyNodeStyle(CyNetwork network, SocialNetwork socialNetwork);
+    protected abstract void applyNodeStyle();
     
     /**
      * Apply a visual style to network.
-     *
-     * @param {@link CyNetwork} network
-     * @param {@link SocialNetwork} socialNetwork
      */
-    public abstract void applyVisualStyle(CyNetwork network, SocialNetwork socialNetwork);
+    public abstract void applyVisualStyle();
 
 }

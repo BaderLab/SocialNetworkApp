@@ -853,6 +853,7 @@ public class Author extends AbstractNode {
      */
     public void setOrigin(int origin) {
         this.origin = origin;
+        this.getNodeAttrMap().put(NodeAttribute.Department.toString(), "N/A");
     }
 
     /**

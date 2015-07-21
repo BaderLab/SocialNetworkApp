@@ -44,7 +44,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.BasicSocialNetworkVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
