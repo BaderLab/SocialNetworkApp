@@ -52,7 +52,7 @@ import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyNode;
 
 /**

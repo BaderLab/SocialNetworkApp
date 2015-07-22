@@ -56,7 +56,6 @@ import javax.swing.Action;
 import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;

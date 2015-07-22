@@ -51,7 +51,7 @@ import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NetworkAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NetworkAttribute;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;

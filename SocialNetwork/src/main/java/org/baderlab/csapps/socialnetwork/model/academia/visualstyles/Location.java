@@ -1,4 +1,4 @@
-package org.baderlab.csapps.socialnetwork.model.visualstyles.academia;
+package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
 
 public enum Location {

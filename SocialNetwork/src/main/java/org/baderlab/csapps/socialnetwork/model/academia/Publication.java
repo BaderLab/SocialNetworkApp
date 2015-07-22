@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**

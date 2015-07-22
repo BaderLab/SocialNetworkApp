@@ -82,7 +82,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
+import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.util.GenerateReports;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -377,6 +377,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             visualStyleType = socialNetwork.getDefaultVisualStyle();
             networkName = socialNetwork.getNetworkName();
         }
+        // TODO: Visual styles panel disabled temporarily
+        /*
         if (this.getVisualStylePanel() == null) {
             // Create new visual style panel
             this.setVisualStylePanel(this.createVisualStylePanel(networkName));
@@ -394,6 +396,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         } else {
             this.changeNetworkVisualStyle(networkName);
         }
+        */
     }
 
     /**

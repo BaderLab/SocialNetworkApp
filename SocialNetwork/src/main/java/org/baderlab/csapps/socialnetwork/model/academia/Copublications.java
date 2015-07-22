@@ -44,8 +44,8 @@ import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.EdgeAttribute;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**

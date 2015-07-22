@@ -41,8 +41,8 @@ import java.awt.Cursor;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
@@ -87,6 +87,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             socialNetwork.setCyNetwork(event.getNetwork());
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             int networkID = socialNetwork.getNetworkType();
+            // Specify the default visual styles
             switch (networkID) {
                 case Category.INCITES:
                     IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(event.getNetwork(), socialNetwork);

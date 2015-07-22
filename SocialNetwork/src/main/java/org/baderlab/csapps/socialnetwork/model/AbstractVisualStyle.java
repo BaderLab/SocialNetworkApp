@@ -1,4 +1,4 @@
-package org.baderlab.csapps.socialnetwork.model.visualstyles;
+package org.baderlab.csapps.socialnetwork.model;
 
 
 /**

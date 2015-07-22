@@ -35,13 +35,13 @@
  **
  **/
 
-package org.baderlab.csapps.socialnetwork.model.visualstyles.academia;
+package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.AbstractVisualStyle;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;

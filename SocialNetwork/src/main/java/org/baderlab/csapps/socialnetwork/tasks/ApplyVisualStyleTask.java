@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.VisualStyles;
+import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -145,6 +145,22 @@ public class ApplyVisualStyleTask extends AbstractTask {
         modifyNodeBorder(incitesVisualStyle);
         modifyNodeShape(incitesVisualStyle);
         return incitesVisualStyle;
+    }
+    
+    /**
+     * Create InCites chart visual style
+     *
+     * @return VisualStyle incitesChartVisualStyle
+     */
+    private VisualStyle createIncitesChartVisualStyle() {
+        VisualStyle incitesChartVisualStyle = this.visualStyleFactoryServiceRef.createVisualStyle("InCites Chart");
+        addNodeLabels(incitesChartVisualStyle);
+        modifyEdgeWidth(incitesChartVisualStyle);
+        modifyNodeSize(incitesChartVisualStyle);
+        modifyEdgeOpacity(incitesChartVisualStyle);
+        modifyNodeColor(incitesChartVisualStyle);
+        modifyNodeShape(incitesChartVisualStyle);
+        return incitesChartVisualStyle;
     }
 
     /**
@@ -450,6 +466,13 @@ public class ApplyVisualStyleTask extends AbstractTask {
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
                 visualStyle = this.getIncitesStyle();
+                /*
+                VisualStyle incitesChartVisualStyle = this.getVisualStyle("InCites Chart");
+                if (incitesChartVisualStyle == null) {
+                    incitesChartVisualStyle = this.createIncitesChartVisualStyle();
+                    this.vmmServiceRef.addVisualStyle(incitesChartVisualStyle);
+                }
+                */
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading PubMed Visual Style ... ");

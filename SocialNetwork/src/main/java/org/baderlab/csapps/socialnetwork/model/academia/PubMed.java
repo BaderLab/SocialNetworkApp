@@ -45,7 +45,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRet
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedXmlParser;
-import org.baderlab.csapps.socialnetwork.model.visualstyles.academia.NodeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.work.TaskMonitor;
 
 /**

@@ -1,4 +1,4 @@
-package org.baderlab.csapps.socialnetwork.model.visualstyles.academia;
+package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
 import java.awt.Color;
 import java.util.ArrayList;
