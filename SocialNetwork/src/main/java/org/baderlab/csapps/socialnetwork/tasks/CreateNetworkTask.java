@@ -52,6 +52,7 @@ import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NetworkAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -142,7 +143,9 @@ public class CreateNetworkTask extends AbstractTask {
                 } else if (attrType instanceof Integer) {
                     nodeTable.createColumn(attrName, Integer.class, false);
                 } else if (attrType instanceof List) {
-                    if (attrName.equals("Yearly Publications")) { // TODO: Find a better solution
+                    // TODO: Find a better way to handle lists that have integer values
+                    if (attrName.equals(NodeAttribute.YearlyPublications.toString()) ||
+                            attrName.equals(NodeAttribute.Years.toString())) { 
                         nodeTable.createListColumn(attrName, Integer.class, false);
                     } else {
                         nodeTable.createListColumn(attrName, String.class, false);                        

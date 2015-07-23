@@ -386,6 +386,13 @@ public class Author extends AbstractNode {
                 intervalList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
             }
             this.getNodeAttrMap().put(NodeAttribute.YearlyPublications.toString(), intervalList);
+            if (this.getNodeAttrMap().get(NodeAttribute.Years) == null) {
+                List<Integer> years = new ArrayList<Integer>();
+                for (int i = startYear; i <= endYear; i++) {
+                    years.add(i);
+                }
+                this.getNodeAttrMap().put(NodeAttribute.Years.toString(), years);
+            }
         }
     }
 
@@ -853,6 +860,8 @@ public class Author extends AbstractNode {
      */
     public void setOrigin(int origin) {
         this.origin = origin;
+        // TODO: Maybe there's a better place to set the department attribute than here?
+        // Not being accessed for some reason
         this.getNodeAttrMap().put(NodeAttribute.Department.toString(), "N/A");
     }
 

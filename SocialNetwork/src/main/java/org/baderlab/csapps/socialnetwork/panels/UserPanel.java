@@ -316,8 +316,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                             // Get selected network name
                             String networkName = (String) getNetworkTableRef().getModel().getValueAt(row, 0);
                             setSelectedNetwork(networkName);
+                            
                             // Change network visual style
-                            changeNetworkVisualStyle(networkName);
+                            // TODO: Temporarily disabled
+                            //changeNetworkVisualStyle(networkName);
+                            
                             // Show network view
                             UserPanel.this.appManager.setCurrentNetworkView(networkName);
                         }
