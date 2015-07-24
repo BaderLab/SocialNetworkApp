@@ -383,7 +383,7 @@ public class ApplyVisualStyleTask extends AbstractTask {
      */
     private VisualStyle modifyNodeColor(VisualStyle visualStyle) {
 
-        // set the default value for node color
+        // Set the default value for node color
         visualStyle.setDefaultValue(BasicVisualLexicon.NODE_FILL_COLOR, new Color(0, 204, 204));
 
         DiscreteMapping mapping = null;
@@ -411,11 +411,11 @@ public class ApplyVisualStyleTask extends AbstractTask {
         DiscreteMapping mapping = null;
         Object[] tempVar = this.appManager.getCurrentlySelectedSocialNetwork().getVisualStyleMap().get(BasicVisualLexicon.NODE_SHAPE);
         Map<String, HashMap<String, NodeShape>> nodeShapeMap = (Map<String, HashMap<String, NodeShape>>) tempVar[0];
-        for (Entry<String, HashMap<String, NodeShape>> colorMapEntry : nodeShapeMap.entrySet()) {
-            String colName = colorMapEntry.getKey();
+        for (Entry<String, HashMap<String, NodeShape>> nodeShapeMapEntry : nodeShapeMap.entrySet()) {
+            String colName = nodeShapeMapEntry.getKey();
             mapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(colName, String.class,
                     BasicVisualLexicon.NODE_SHAPE);
-            for (Entry<String, NodeShape> attrMapEntry : colorMapEntry.getValue().entrySet()) {
+            for (Entry<String, NodeShape> attrMapEntry : nodeShapeMapEntry.getValue().entrySet()) {
                 mapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
             }
             visualStyle.addVisualMappingFunction(mapping);
@@ -466,13 +466,6 @@ public class ApplyVisualStyleTask extends AbstractTask {
                 this.getTaskMonitor().setProgress(0.0);
                 this.getTaskMonitor().setStatusMessage("");
                 visualStyle = this.getIncitesStyle();
-                /*
-                VisualStyle incitesChartVisualStyle = this.getVisualStyle("InCites Chart");
-                if (incitesChartVisualStyle == null) {
-                    incitesChartVisualStyle = this.createIncitesChartVisualStyle();
-                    this.vmmServiceRef.addVisualStyle(incitesChartVisualStyle);
-                }
-                */
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
                 this.getTaskMonitor().setTitle("Loading PubMed Visual Style ... ");

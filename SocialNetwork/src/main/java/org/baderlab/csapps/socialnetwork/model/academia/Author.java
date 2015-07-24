@@ -127,25 +127,15 @@ public class Author extends AbstractNode {
      * location Map
      */
     private IncitesInstitutionLocationMap locationMap = null;
+    /**
+     * The start year in the interval specified by the user
+     */
     private int startYear = 0;
+    /**
+     * The end year in the interval specified by the user
+     */
     private int endYear = 0;
     
-    private int getStartYear() {
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        if (Pattern.matches("[0-9]+", startYearTxt)) {
-            this.startYear = Integer.parseInt(startYearTxt);
-        }
-        return this.startYear;
-    }
-    
-    private int getEndYear() {
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        if (Pattern.matches("[0-9]+", endYearTxt)) {
-            this.endYear = Integer.parseInt(endYearTxt);
-        }
-        return this.endYear;
-    }
-
     /**
      * Create a new author with the first name, last name and middle initial
      * specified in rawAuthorText. Source file origin is specified by a special
@@ -225,7 +215,7 @@ public class Author extends AbstractNode {
         // Format names to ensure consistency
         format();
     }
-
+    
     /**
      * Constructor specific to incites as the location map is required to build
      * an incites author object
@@ -278,31 +268,6 @@ public class Author extends AbstractNode {
         }
         this.getNodeAttrMap().put(NodeAttribute.Institution.toString(), institutionList);
     }
-    
-    /**
-     * Get map of all publications author has authored / co-authored <br>
-     * Key: <i>year</i> <br>
-     * Value: <i>List of publications published during year</i>
-     * 
-     * @return Map pubMap
-     */
-    private Map<Integer, List<Publication>> getPubMap() {
-        if (this.pubMap == null) {
-            this.pubMap = new TreeMap<Integer, List<Publication>>();
-        }
-        return this.pubMap;
-    }
-    
-    /**
-     * Get map of all publications author has authored / co-authored <br>
-     * Key: <i>year</i> <br>
-     * Value: <i>List of publications published during year</i>
-     * 
-     * @param Map pubMap
-     */
-    private void setPubMap(Map<Integer, List<Publication>> pubMap) {
-        this.pubMap = pubMap;
-    }
 
     /**
      * Add publication
@@ -331,47 +296,6 @@ public class Author extends AbstractNode {
             listOfPublicationTitles.add(publication.getTitle());
             this.setPubList(listOfPublicationTitles);
             this.updatePubMap(publication);
-        }
-    }
-    
-    /**
-     * Add this publication to the publication treemap
-     *
-     * @param Publication publication
-     */
-    private void updatePubMap(Publication publication) {
-        Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
-        String yearTxt = publication.getPubYear();
-        if (yearTxt != null) {
-            yearTxt = yearTxt.split("\\s+")[0];
-            if (Pattern.matches("[0-9]+", yearTxt)) {
-                int year = Integer.parseInt(yearTxt);
-                List<Publication> listOfPubs = pubMap.get(year);
-                if (listOfPubs == null) {
-                    listOfPubs = new ArrayList<Publication>();
-                    listOfPubs.add(publication);
-                    pubMap.put(year, listOfPubs);
-                } else {
-                    listOfPubs.add(publication);
-                }                
-            } else {
-                logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", yearTxt));
-            }
-        }
-        if (this.getPubMap().size() > 0) {
-            // Create an ArrayList where every index represents
-            // a year in the interval X to Y where X is the earliest
-            // year and Y is the latest year
-            Set<Integer> yearSet = pubMap.keySet();
-            List<Integer> pubsPerYearList = new ArrayList<Integer>();
-            int startYear = getStartYear(), endYear = getEndYear();
-            int size = endYear - startYear + 1;
-            pubsPerYearList = new ArrayList<Integer>(size);
-            // Iterate through every year
-            for (int year = startYear; year <= endYear; year++) {
-                pubsPerYearList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
-            }
-            this.getNodeAttrMap().put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
         }
     }
 
@@ -427,7 +351,7 @@ public class Author extends AbstractNode {
         }
         return isEqual;
     }
-
+    
     /**
      * Capitalize the first letter of string and return. If string is a single
      * character letter, it will be capitalized. Empty strings will yield empty
@@ -445,7 +369,7 @@ public class Author extends AbstractNode {
         this.setFirstInitial(this.getFirstInitial().toUpperCase());
         this.setMiddleInitial(this.getMiddleInitial().toUpperCase());
     }
-
+    
     /**
      * Get {@link CyNode}
      *
@@ -463,6 +387,19 @@ public class Author extends AbstractNode {
      */
     public String getDepartment() {
         return this.department;
+    }
+    
+    /**
+     * Get the end year in the interval specified by the user
+     * 
+     * @return {@code int} endYear
+     */
+    private int getEndYear() {
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", endYearTxt)) {
+            this.endYear = Integer.parseInt(endYearTxt);
+        }
+        return this.endYear;
     }
 
     /**
@@ -583,6 +520,33 @@ public class Author extends AbstractNode {
             this.pubList = new ArrayList<String>();
         }
         return this.pubList;    
+    }
+
+    /**
+     * Get map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
+     * 
+     * @return Map pubMap
+     */
+    private Map<Integer, List<Publication>> getPubMap() {
+        if (this.pubMap == null) {
+            this.pubMap = new TreeMap<Integer, List<Publication>>();
+        }
+        return this.pubMap;
+    }
+
+    /**
+     * Get the start year in the interval specified by the user
+     * 
+     * @return {@code int} startYear
+     */
+    private int getStartYear() {
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", startYearTxt)) {
+            this.startYear = Integer.parseInt(startYearTxt);
+        }
+        return this.startYear;
     }
 
     /**
@@ -853,6 +817,17 @@ public class Author extends AbstractNode {
     }
 
     /**
+     * Get map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
+     * 
+     * @param Map pubMap
+     */
+    private void setPubMap(Map<Integer, List<Publication>> pubMap) {
+        this.pubMap = pubMap;
+    }
+
+    /**
      * Set author's total number of citations
      *
      * @param int timesCited
@@ -871,6 +846,47 @@ public class Author extends AbstractNode {
     @Override
     public String toString() {
         return this.lastName + ", " + this.firstName;
+    }
+
+    /**
+     * Add this publication to the publication treemap
+     *
+     * @param Publication publication
+     */
+    private void updatePubMap(Publication publication) {
+        Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
+        String yearTxt = publication.getPubYear();
+        if (yearTxt != null) {
+            yearTxt = yearTxt.split("\\s+")[0];
+            if (Pattern.matches("[0-9]+", yearTxt)) {
+                int year = Integer.parseInt(yearTxt);
+                List<Publication> listOfPubs = pubMap.get(year);
+                if (listOfPubs == null) {
+                    listOfPubs = new ArrayList<Publication>();
+                    listOfPubs.add(publication);
+                    pubMap.put(year, listOfPubs);
+                } else {
+                    listOfPubs.add(publication);
+                }                
+            } else {
+                logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", yearTxt));
+            }
+        }
+        if (this.getPubMap().size() > 0) {
+            // Create an ArrayList where every index represents
+            // a year in the interval X to Y where X is the earliest
+            // year and Y is the latest year
+            Set<Integer> yearSet = pubMap.keySet();
+            List<Integer> pubsPerYearList = new ArrayList<Integer>();
+            int startYear = getStartYear(), endYear = getEndYear();
+            int size = endYear - startYear + 1;
+            pubsPerYearList = new ArrayList<Integer>(size);
+            // Iterate through every year
+            for (int year = startYear; year <= endYear; year++) {
+                pubsPerYearList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
+            }
+            this.getNodeAttrMap().put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+        }
     }
 
 }
