@@ -41,6 +41,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRetrievalParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedParser;
@@ -60,22 +62,56 @@ public class PubMed {
      *
      * @return Map nodeAttrMap
      */
-    public static HashMap<String, Object> constructPubMedAttrMap(Author author) {
+    public static HashMap<String, Object> constructPubMedAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        nodeAttrMap.put(NodeAttribute.Label.toString(), "");
-        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "");
-        nodeAttrMap.put(NodeAttribute.LastName.toString(), "");
-        nodeAttrMap.put(NodeAttribute.MainInstitution.toString(), "");
+        nodeAttrMap.put(NodeAttribute.Label.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.LastName.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.MainInstitution.toString(), "N/A");
         nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
         nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
         nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
         nodeAttrMap.put(NodeAttribute.Institution.toString(), new ArrayList<String>());
-        List<Integer> intervalList = new ArrayList<Integer>();
-        intervalList.add(0);
-        nodeAttrMap.put(NodeAttribute.YearlyPublications.toString(), intervalList);
+        List<Integer> pubsPerYearList = new ArrayList<Integer>();
+        pubsPerYearList.add(0);
+        nodeAttrMap.put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+            int startYear = Integer.parseInt(startYearTxt), endYear = Integer.parseInt(endYearTxt);
+            List<Integer> years = new ArrayList<Integer>();
+            for (int i = startYear; i <= endYear; i++) {
+                years.add(i);
+            }
+            nodeAttrMap.put(NodeAttribute.Years.toString(), years);
+        }
         return nodeAttrMap;
     }
     
+    /**
+     * Use the pmids of the specified publications to construct a query (for
+     * eUtils). The various pmids will be combined with an OR operator.
+     * 
+     * @param ArrayList pubList
+     * @return String eUtilsPMIDs
+     */
+    public static String getEutilsPMIDs(ArrayList<Publication> pubList) {
+        Publication pub = null;
+        int retStart = 0;
+        int totalPubs = pubList.size();
+        int retMax = totalPubs > 400 ? 400 : totalPubs;
+        StringBuilder pmids = new StringBuilder();
+        for (int i = retStart; i < retMax; i++) {
+            pub = pubList.get(i);
+            pmids.append(pub.getPMID());
+            pmids.append("[UID]");
+            if (i < (retMax - 1)) {
+                pmids.append(" OR ");
+            }
+        }
+        return pmids.toString();
+    }
+
     /**
      * A list containing all the results that search session has yielded
      */
@@ -116,30 +152,6 @@ public class PubMed {
         EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(queryKey, webEnv, retStart, retMax, totalPubs);
         totalPubs = eUtilsRetParser.getTotalPubs();
         setPubList(eUtilsRetParser.getPubList());
-    }
-
-    /**
-     * Use the pmids of the specified publications to construct a query (for
-     * eUtils). The various pmids will be combined with an OR operator.
-     * 
-     * @param ArrayList pubList
-     * @return String eUtilsPMIDs
-     */
-    public static String getEutilsPMIDs(ArrayList<Publication> pubList) {
-        Publication pub = null;
-        int retStart = 0;
-        int totalPubs = pubList.size();
-        int retMax = totalPubs > 400 ? 400 : totalPubs;
-        StringBuilder pmids = new StringBuilder();
-        for (int i = retStart; i < retMax; i++) {
-            pub = pubList.get(i);
-            pmids.append(pub.getPMID());
-            pmids.append("[UID]");
-            if (i < (retMax - 1)) {
-                pmids.append(" OR ");
-            }
-        }
-        return pmids.toString();
     }
 
     /**

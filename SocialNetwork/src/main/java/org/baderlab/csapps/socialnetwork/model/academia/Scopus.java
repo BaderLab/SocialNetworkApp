@@ -50,6 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.work.TaskMonitor;
 
@@ -86,17 +87,27 @@ public class Scopus {
      *
      * @return Map nodeAttrMap
      */
-    public static HashMap<String, Object> constructScopusAttrMap(Author author) {
+    public static HashMap<String, Object> constructScopusAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        nodeAttrMap.put(NodeAttribute.Label.toString(), "");
-        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "");
-        nodeAttrMap.put(NodeAttribute.LastName.toString(), "");
+        nodeAttrMap.put(NodeAttribute.Label.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.LastName.toString(), "N/A");
         nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
         nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
         nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
-        List<Integer> intervalList = new ArrayList<Integer>();
-        intervalList.add(0);
-        nodeAttrMap.put(NodeAttribute.YearlyPublications.toString(), intervalList);
+        List<Integer> pubsPerYearList = new ArrayList<Integer>();
+        pubsPerYearList.add(0);
+        nodeAttrMap.put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+            int startYear = Integer.parseInt(startYearTxt), endYear = Integer.parseInt(endYearTxt);
+            List<Integer> years = new ArrayList<Integer>();
+            for (int i = startYear; i <= endYear; i++) {
+                years.add(i);
+            }
+            nodeAttrMap.put(NodeAttribute.Years.toString(), years);
+        }
         return nodeAttrMap;
     }
 

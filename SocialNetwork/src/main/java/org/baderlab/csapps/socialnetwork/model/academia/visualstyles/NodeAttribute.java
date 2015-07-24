@@ -17,7 +17,7 @@ public enum NodeAttribute {
     NumPublications("# of Publications"),
     Publications("Publications"),
     TimesCited("Times Cited"),
-    YearlyPublications("Yearly Publications"),
+    PubsPerYear("Yearly Publications"),
     Years("Years");
     
     private String attrName = null;

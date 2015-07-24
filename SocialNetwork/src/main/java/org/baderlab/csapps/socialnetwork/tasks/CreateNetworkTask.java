@@ -144,7 +144,7 @@ public class CreateNetworkTask extends AbstractTask {
                     nodeTable.createColumn(attrName, Integer.class, false);
                 } else if (attrType instanceof List) {
                     // TODO: Find a better way to handle lists that have integer values
-                    if (attrName.equals(NodeAttribute.YearlyPublications.toString()) ||
+                    if (attrName.equals(NodeAttribute.PubsPerYear.toString()) ||
                             attrName.equals(NodeAttribute.Years.toString())) { 
                         nodeTable.createListColumn(attrName, Integer.class, false);
                     } else {

@@ -41,7 +41,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -53,10 +55,12 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.MonitoredFileInputStream;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -70,7 +74,38 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class IncitesParser {
 
-    private static final Logger logger = Logger.getLogger(IncitesParser.class.getName());
+    /**
+     * Construct Incites attribute map
+     *
+     * @return Map nodeAttrMap
+     */
+    public static HashMap<String, Object> constructIncitesAttrMap() {
+        HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
+        nodeAttrMap.put(NodeAttribute.Label.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.LastName.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.MainInstitution.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.Location.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.Department.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.Institution.toString(), new ArrayList<String>());
+        List<Integer> pubsPerYearList = new ArrayList<Integer>();
+        pubsPerYearList.add(0);
+        nodeAttrMap.put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+            int startYear = Integer.parseInt(startYearTxt), endYear = Integer.parseInt(endYearTxt);
+            List<Integer> years = new ArrayList<Integer>();
+            for (int i = startYear; i <= endYear; i++) {
+                years.add(i);
+            }
+            nodeAttrMap.put(NodeAttribute.Years.toString(), years);
+        }
+        return nodeAttrMap;
+    }
 
     /**
      * Parse author's first name
@@ -131,6 +166,8 @@ public class IncitesParser {
         }
         return "N/A";
     }
+
+    private static final Logger logger = Logger.getLogger(IncitesParser.class.getName());
 
     /**
      * # of defective rows in Incites document
@@ -397,7 +434,7 @@ public class IncitesParser {
             if (this.checkIfAuthorValid(author)) {
                 if (!this.authorInList(pubAuthorList, author)) {
                     if (facultySet.contains(author)) {
-                        author.setFaculty(facultyName);
+                        author.setDepartment(facultyName);
                     }
                     pubAuthorList.add(author);
                 }
@@ -409,6 +446,21 @@ public class IncitesParser {
             }
         }
         return pubAuthorList;
+    }
+
+    /**
+     * Parse faculty name
+     *
+     * @param String facultyText
+     * @param String facultyName
+     */
+    public String parseFacultyName(String facultyText) {
+        Pattern firstNamePattern = Pattern.compile("(.+?)(\\(|$)");
+        Matcher firstNameMatcher = firstNamePattern.matcher(facultyText.trim());
+        if (firstNameMatcher.find()) {
+            return firstNameMatcher.group(1).trim();
+        }
+        return "N/A";
     }
 
     /**
@@ -445,21 +497,6 @@ public class IncitesParser {
             this.setDepartmentName("N/A");
             this.setFacultySet(new HashSet<Author>());
         }
-    }
-
-    /**
-     * Parse faculty name
-     *
-     * @param String facultyText
-     * @param String facultyName
-     */
-    public String parseFacultyName(String facultyText) {
-        Pattern firstNamePattern = Pattern.compile("(.+?)(\\(|$)");
-        Matcher firstNameMatcher = firstNamePattern.matcher(facultyText.trim());
-        if (firstNameMatcher.find()) {
-            return firstNameMatcher.group(1).trim();
-        }
-        return "N/A";
     }
 
     /**
