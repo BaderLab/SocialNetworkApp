@@ -38,6 +38,7 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
+import java.util.Iterator;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -89,6 +90,27 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
     }
+    
+    /**
+     * Return the visual style with the specified name in the set of all visual
+     * styles. null is returned if no visual style is found.
+     * 
+     * @param String name
+     * 
+     * @return VisualStyle visualStyle
+     */
+    private VisualStyle getVisualStyle(String name) {
+        Iterator<VisualStyle> it = this.vmmServiceRef.getAllVisualStyles().iterator();
+        VisualStyle visualStyle = null;
+        while (it.hasNext()) {
+            visualStyle = it.next();
+            if (visualStyle.getTitle().equalsIgnoreCase(name)) {
+                break;
+            }
+            visualStyle = null;
+        }
+        return visualStyle;
+    }
 
     /**
      * Adds network to network table and configures visual styles if necessary.
@@ -112,24 +134,39 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             switch (networkID) {
                 case Category.INCITES:
                     // TODO:
-                    IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(event.getNetwork(), this.socialNetwork, 
-                            this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
-                            this.discreteMappingFactoryServiceRef, false);
-                    this.vmmServiceRef.addVisualStyle(incitesVisualStyle.getVisualStyle());
+                    if (getVisualStyle("InCites") == null) {
+                        IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(event.getNetwork(), this.socialNetwork, 
+                                this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
+                                this.discreteMappingFactoryServiceRef, false);
+                        this.vmmServiceRef.addVisualStyle(incitesVisualStyle.getVisualStyle());                        
+                    }
                     break;
                 case Category.SCOPUS:
+                    // TODO:
+                    if (getVisualStyle("Scopus") == null) {
+                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), this.socialNetwork, 
+                                this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
+                                this.discreteMappingFactoryServiceRef, false);
+                        this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
+                    }
+                    break;
                 case Category.PUBMED:
                     // TODO:
-                    BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), this.socialNetwork, 
-                            this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
-                            this.discreteMappingFactoryServiceRef, false);
-                    this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());
+                    if (getVisualStyle("PubMed") == null) {
+                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), this.socialNetwork, 
+                                this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
+                                this.discreteMappingFactoryServiceRef, false);
+                        this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
+                    }
                     break;
             }
             ChartVisualStyle chartVisualStyle = new ChartVisualStyle(event.getNetwork(), this.socialNetwork, 
                     this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                     this.discreteMappingFactoryServiceRef, true);
-            this.vmmServiceRef.addVisualStyle(chartVisualStyle.getVisualStyle());                        
+            String title = chartVisualStyle.getVisualStyle().getTitle();
+            if (getVisualStyle(title) ==  null) {
+                this.vmmServiceRef.addVisualStyle(chartVisualStyle.getVisualStyle());                                                        
+            }
             this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
         }
     }

@@ -301,7 +301,7 @@ public class CreateNetworkTask extends AbstractTask {
                 return;
             }
 
-            this.setProgressMonitor(monitor, "Loading Nework ...", -1);
+            this.setProgressMonitor(monitor, "Loading Network ...", -1);
 
             networkManager.addNetwork(network);
 

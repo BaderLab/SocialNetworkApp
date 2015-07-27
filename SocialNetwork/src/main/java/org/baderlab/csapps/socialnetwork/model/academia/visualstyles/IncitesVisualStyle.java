@@ -77,7 +77,6 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeBorderPaint(VisualStyle visualStyle) {
-        super.applyNodeBorderPaint(visualStyle);
         DiscreteMapping borderPaintDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
                 String.class, BasicVisualLexicon.NODE_BORDER_PAINT);
         borderPaintDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), new Color(243, 243, 21));       
@@ -89,7 +88,6 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeBorderWidth(VisualStyle visualStyle) {
-        super.applyNodeBorderWidth(visualStyle);
         DiscreteMapping borderWidthDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
                 String.class, BasicVisualLexicon.NODE_BORDER_WIDTH);
         borderWidthDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), 10.0);       
@@ -100,7 +98,6 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeFillColor(VisualStyle visualStyle) {
-        super.applyNodeFillColor(visualStyle);
         Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> locationsMap = new HashMap<String, Color>();
         locationsMap.put(Location.Ontario.toString(), new Color(255, 137, 41));
@@ -127,7 +124,6 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeLabelFontFace(VisualStyle visualStyle) {
-        super.applyNodeLabelFontFace(visualStyle);
         DiscreteMapping fontDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
                 String.class, BasicVisualLexicon.NODE_LABEL_FONT_FACE);
         fontDiscreteMapping.putMapValue(Location.UofT.toString(), new Font("Verdana", Font.BOLD, 12));
@@ -138,7 +134,6 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeShape(VisualStyle visualStyle) {
-        super.applyNodeShape(visualStyle);
         Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
         HashMap<String, NodeShape> departmentMap = new HashMap<String, NodeShape>();
         departmentMap.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), NodeShapeVisualProperty.TRIANGLE);

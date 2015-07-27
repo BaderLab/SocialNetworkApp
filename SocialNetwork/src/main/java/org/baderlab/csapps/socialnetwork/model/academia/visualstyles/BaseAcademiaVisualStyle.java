@@ -79,11 +79,12 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
             VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
             VisualMappingFunctionFactory discreteMappingFactoryServiceRef, boolean isChart) {
         this.network = network;
+        this.socialNetwork = socialNetwork;
         this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
         String networkName = null;
-        switch(socialNetwork.getNetworkType()) {
+        switch(this.socialNetwork.getNetworkType()) {
             case Category.PUBMED:
                 networkName = "PubMed";
                 break;
@@ -284,6 +285,15 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         applyEdgeStyle(visualStyle);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        BaseAcademiaVisualStyle other = (BaseAcademiaVisualStyle) obj;
+        return this.visualStyle.getTitle().equals(other.getVisualStyle().getTitle());
+    }
+
     /**
      * Get largest value given cut-off point.
      *
@@ -334,6 +344,14 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     @Override
     public VisualStyle getVisualStyle() {
         return this.visualStyle;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return this.visualStyle.getTitle().hashCode();
     }
 
 }
