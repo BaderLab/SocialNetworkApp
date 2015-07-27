@@ -67,9 +67,9 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     public IncitesVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
             VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
-            VisualMappingFunctionFactory discreteMappingFactoryServiceRef) {
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef, boolean isChart) {
         super(network, socialNetwork, visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
-                discreteMappingFactoryServiceRef);
+                discreteMappingFactoryServiceRef, isChart);
     }
     
     /* (non-Javadoc)

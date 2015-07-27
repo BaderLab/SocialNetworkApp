@@ -55,7 +55,7 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
 /**
- * Contains attributes present in every academia visual style in use by 
+ * Contains attributes present in every academia visual style used by 
  * the app. Every academia visual style extends this class.
  *
  * @author risserlin
@@ -77,7 +77,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
      */
     public BaseAcademiaVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
             VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
-            VisualMappingFunctionFactory discreteMappingFactoryServiceRef) {
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef, boolean isChart) {
         this.network = network;
         this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
@@ -92,6 +92,10 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
                 break;
             case Category.SCOPUS:
                 networkName = "Scopus";
+                break;
+        }
+        if (isChart) {
+            networkName = String.format("%s Chart", networkName);
         }
         this.visualStyle = visualStyleFactoryServiceRef.createVisualStyle(networkName);
         applyVisualStyle(this.visualStyle);
@@ -103,6 +107,50 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     @Override
     protected void applyEdgeStyle(VisualStyle visualStyle) {
         
+        // Specify EDGE_WIDTH
+        applyEdgeWidth(visualStyle);
+        
+        // Specify EDGE_TRANSPARENCY
+        applyEdgeTransparency(visualStyle);
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeTransparency(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyEdgeTransparency(VisualStyle visualStyle) {
+        // Edge table reference
+        CyTable edgeTable = this.network.getDefaultEdgeTable();
+        
+        // Edge width variables
+        int min = 0;
+        int max = 0;
+        
+        edgeTable = this.network.getDefaultEdgeTable();
+        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.NumCopublications.toString());
+        ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
+        copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
+        min = getSmallestInCutoff(copubList, 5.0);
+        max = getLargestInCutoff(copubList, 100.0);   
+        
+        ContinuousMapping<Integer, ?> mapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
+                EdgeAttribute.NumCopublications.toString(), Integer.class, BasicVisualLexicon.EDGE_TRANSPARENCY);
+        // BRVs are used to set limits on edge transparency
+        // (min edge transparency = 100; max edge transparency = 300)
+        BoundaryRangeValues bv0 = new BoundaryRangeValues(100.0, 100.0, 100.0);
+        BoundaryRangeValues bv1 = new BoundaryRangeValues(300.0, 300.0, 300.0);
+        // Adjust handle position
+        mapping.addPoint(1, bv0);
+        mapping.addPoint(max / 2, bv1);
+        visualStyle.addVisualMappingFunction(mapping);        
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeWidth(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyEdgeWidth(VisualStyle visualStyle) {
         // Edge table reference
         CyTable edgeTable = this.network.getDefaultEdgeTable();
         
@@ -126,20 +174,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         // Adjust handle position
         edgeWidthContinuousMapping.addPoint(min + 1, bv0);
         edgeWidthContinuousMapping.addPoint(max, bv1);
-        visualStyle.addVisualMappingFunction(edgeWidthContinuousMapping);
-        
-        // Specify EDGE_TRANSPARENCY
-        ContinuousMapping<Integer, ?> mapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
-                EdgeAttribute.NumCopublications.toString(), Integer.class, BasicVisualLexicon.EDGE_TRANSPARENCY);
-        // BRVs are used to set limits on edge transparency
-        // (min edge transparency = 100; max edge transparency = 300)
-        bv0 = new BoundaryRangeValues(100.0, 100.0, 100.0);
-        bv1 = new BoundaryRangeValues(300.0, 300.0, 300.0);
-        // Adjust handle position
-        mapping.addPoint(1, bv0);
-        mapping.addPoint(max / 2, bv1);
-        visualStyle.addVisualMappingFunction(mapping);        
-        
+        visualStyle.addVisualMappingFunction(edgeWidthContinuousMapping);    
     }
 
     /* (non-Javadoc)

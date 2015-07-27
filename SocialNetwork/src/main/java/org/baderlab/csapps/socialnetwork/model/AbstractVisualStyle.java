@@ -87,5 +87,19 @@ public abstract class AbstractVisualStyle {
      * @param VisualStyle visualStyle
      */
     protected abstract void applyNodeLabelFontFace(VisualStyle visualStyle);
+    
+    /**
+     * Specify the edge width
+     * 
+     * @param VisualStyle visualStyle
+     */
+    protected abstract void applyEdgeWidth(VisualStyle visualStyle);
+
+    /**
+     * Specify the edge transparency
+     * 
+     * @param VisualStyle visualStyle
+     */
+    protected abstract void applyEdgeTransparency(VisualStyle visualStyle);
 
 }
