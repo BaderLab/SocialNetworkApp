@@ -39,16 +39,18 @@ package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyTable;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 
 /**
  * A visual style for InCites networks
@@ -63,34 +65,42 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      * @param CyNetwork network
      * @param SocialNetwork socialNetwork
      */
-    public IncitesVisualStyle(CyNetwork network, SocialNetwork socialNetwork) {
-        super(network, socialNetwork);
+    public IncitesVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
+            VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef) {
+        super(network, socialNetwork, visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
+                discreteMappingFactoryServiceRef);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle#applyNodeBorderPaint(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeBorderPaint(VisualStyle visualStyle) {
+        super.applyNodeBorderPaint(visualStyle);
+        DiscreteMapping borderPaintDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+                String.class, BasicVisualLexicon.NODE_BORDER_PAINT);
+        borderPaintDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), new Color(243, 243, 21));       
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle#applyNodeBorderWidth(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeBorderWidth(VisualStyle visualStyle) {
+        super.applyNodeBorderWidth(visualStyle);
+        DiscreteMapping borderWidthDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+                String.class, BasicVisualLexicon.NODE_BORDER_WIDTH);
+        borderWidthDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), 10.0);       
     }
 
     /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle#applyNodeStyle()
+     * @see org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle#applyNodeFillColor(org.cytoscape.view.vizmap.VisualStyle)
      */
     @Override
-    protected void applyNodeStyle() {
-        // Node table reference
-        CyTable nodeTable = null;
-        // Node size variables
-        int minNodeSize = 0;
-        int maxNodeSize = 0;
-        
-        // Specify NODE_LABEL
-
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, new Object[] { NodeAttribute.Label.toString() });
-
-        // Specify NODE_SIZE
-        nodeTable = this.network.getDefaultNodeTable();
-        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TimesCited.toString());
-        ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
-        minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
-        maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, new Object[] { NodeAttribute.TimesCited.toString(), minNodeSize + 1, maxNodeSize });
-
-        // Specify NODE_FILL_COLOR
+    protected void applyNodeFillColor(VisualStyle visualStyle) {
+        super.applyNodeFillColor(visualStyle);
         Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> locationsMap = new HashMap<String, Color>();
         locationsMap.put(Location.Ontario.toString(), new Color(255, 137, 41));
@@ -101,35 +111,48 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
         locationsMap.put(Location.UofT.toString(), new Color(0, 204, 0));
         locationsMap.put(Location.NA.toString(), new Color(153, 153, 153));
         colorAttrMap.put(NodeAttribute.Location.toString(), locationsMap);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_FILL_COLOR, new Object[] { colorAttrMap });
-        
-        // Specify NODE_SHAPE
+        DiscreteMapping fillColorDiscreteMapping = null;
+        for (Entry<String, HashMap<String, Color>> colorMapEntry : colorAttrMap.entrySet()) {
+            fillColorDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(colorMapEntry.getKey(), String.class,
+                    BasicVisualLexicon.NODE_FILL_COLOR);
+            for (Entry<String, Color> attrMapEntry : colorMapEntry.getValue().entrySet()) {
+                fillColorDiscreteMapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
+            }
+            visualStyle.addVisualMappingFunction(fillColorDiscreteMapping);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle#applyNodeLabelFontFace(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeLabelFontFace(VisualStyle visualStyle) {
+        super.applyNodeLabelFontFace(visualStyle);
+        DiscreteMapping fontDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+                String.class, BasicVisualLexicon.NODE_LABEL_FONT_FACE);
+        fontDiscreteMapping.putMapValue(Location.UofT.toString(), new Font("Verdana", Font.BOLD, 12));
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle#applyNodeShape(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeShape(VisualStyle visualStyle) {
+        super.applyNodeShape(visualStyle);
         Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
         HashMap<String, NodeShape> departmentMap = new HashMap<String, NodeShape>();
         departmentMap.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), NodeShapeVisualProperty.TRIANGLE);
         departmentMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
         shapeAttrMap.put(NodeAttribute.Department.toString(), departmentMap);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SHAPE, new Object[] { shapeAttrMap });
-
-        // Specify NODE_BORDER_WIDTH and NODE_BORDER_FILL for faculty members
-        // (i.e. department)
-        Map<String, HashMap<String, Color>> borderpainAttrMap = new HashMap<String, HashMap<String, Color>>();
-        HashMap<String, Color> departmentMap_borderpaint = new HashMap<String, Color>();
-        departmentMap_borderpaint.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), new Color(243, 243, 21));
-        borderpainAttrMap.put(NodeAttribute.Department.toString(), departmentMap_borderpaint);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_PAINT, new Object[] { borderpainAttrMap });
-
-        Map<String, HashMap<String, Double>> borderwidthAttrMap = new HashMap<String, HashMap<String, Double>>();
-        HashMap<String, Double> departmentMap_borderwidth = new HashMap<String, Double>();
-        departmentMap_borderwidth.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), 10.0);
-        borderwidthAttrMap.put(NodeAttribute.Department.toString(), departmentMap_borderwidth);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_BORDER_WIDTH, new Object[] { borderwidthAttrMap });
-
-        Map<String, HashMap<String, Font>> fontsizeAttrMap = new HashMap<String, HashMap<String, Font>>();
-        HashMap<String, Font> departmentMap_fontsize = new HashMap<String, Font>();
-        departmentMap_fontsize.put(Location.UofT.toString(), new Font("Verdana", Font.BOLD, 12));
-        fontsizeAttrMap.put(NodeAttribute.Location.toString(), departmentMap_fontsize);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL_FONT_FACE, new Object[] { fontsizeAttrMap });
+        DiscreteMapping shapeDiscreteMapping = null;
+        for (Entry<String, HashMap<String, NodeShape>> nodeShapeMapEntry : shapeAttrMap.entrySet()) {
+            shapeDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(nodeShapeMapEntry.getKey(), String.class,
+                    BasicVisualLexicon.NODE_SHAPE);
+            for (Entry<String, NodeShape> attrMapEntry : nodeShapeMapEntry.getValue().entrySet()) {
+                shapeDiscreteMapping.putMapValue(attrMapEntry.getKey(), attrMapEntry.getValue());
+            }
+            visualStyle.addVisualMappingFunction(shapeDiscreteMapping);
+        }
     }
 
 }

@@ -11,6 +11,12 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.NodeShape;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.view.vizmap.mappings.BoundaryRangeValues;
+import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
+import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
 /**
  * ??
@@ -20,21 +26,26 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
 // TODO: Write class description
 public class IncitesChartVisualStyle extends BaseAcademiaVisualStyle {
     
-    public IncitesChartVisualStyle(CyNetwork network, SocialNetwork socialNetwork) {
-        super(network, socialNetwork);
+    public IncitesChartVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
+            VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef) {
+        super(network, socialNetwork, visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
+                discreteMappingFactoryServiceRef);
     }
 
     /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.visualstyles.academia.BaseAcademiaVisualStyle#applyNodeStyle()
      */
     @Override
-    protected void applyNodeStyle() {
+    protected void applyNodeStyle(VisualStyle visualStyle) {
         CyTable nodeTable = null;
         int minNodeSize = 0;
         int maxNodeSize = 0;
         
         // Specify NODE_LABEL
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_LABEL, new Object[] { NodeAttribute.Label.toString() });
+        PassthroughMapping<Integer, ?> labelPassthroughMapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef
+                .createVisualMappingFunction(NodeAttribute.Label.toString(), Integer.class, BasicVisualLexicon.NODE_LABEL);
+        visualStyle.addVisualMappingFunction(labelPassthroughMapping);        
         
         // Specify NODE_SIZE
         nodeTable = this.network.getDefaultNodeTable();
@@ -42,10 +53,16 @@ public class IncitesChartVisualStyle extends BaseAcademiaVisualStyle {
         ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
         minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
         maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
-        this.socialNetwork.getVisualStyleMap().put(BasicVisualLexicon.NODE_SIZE, 
-                new Object[] { NodeAttribute.TimesCited.toString(), minNodeSize + 1, maxNodeSize });
+        ContinuousMapping<Integer, ?> timesCitesContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
+                NodeAttribute.TimesCited.toString(), Integer.class, BasicVisualLexicon.NODE_SIZE);
+        BoundaryRangeValues bv0 = new BoundaryRangeValues(10.0, 10.0, 10.0);
+        BoundaryRangeValues bv1 = new BoundaryRangeValues(50.0, 50.0, 50.0);
+        timesCitesContinuousMapping.addPoint(minNodeSize + 1, bv0);
+        timesCitesContinuousMapping.addPoint(maxNodeSize, bv1);
+        visualStyle.addVisualMappingFunction(timesCitesContinuousMapping);
         
         // Specify NODE_FILL_COLOR
+        // TODO: Set the default to white
         Map<String, HashMap<String, Color>> colorAttrMap = new HashMap<String, HashMap<String, Color>>();
         HashMap<String, Color> locationsMap = new HashMap<String, Color>();
         locationsMap.put(Location.Ontario.toString(), Color.WHITE);

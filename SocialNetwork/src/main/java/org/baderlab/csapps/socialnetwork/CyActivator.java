@@ -177,8 +177,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
 
         // Create and register task factories
-        ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = new ApplyVisualStyleTaskFactory(visualStyleFactoryServiceRef, vmmServiceRef,
-                passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef, appManager);
+        ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = new ApplyVisualStyleTaskFactory(vmmServiceRef, appManager);
         registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
 
         CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef,
