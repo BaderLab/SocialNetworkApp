@@ -1,15 +1,9 @@
 package org.baderlab.csapps.socialnetwork.tasks;
 
-import static org.cytoscape.model.CyEdge.Type.ANY;
-import static org.cytoscape.model.CyEdge.Type.DIRECTED;
-import static org.cytoscape.model.CyEdge.Type.INCOMING;
-import static org.cytoscape.model.CyEdge.Type.OUTGOING;
-import static org.cytoscape.model.CyEdge.Type.UNDIRECTED;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,13 +12,10 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualLexicon;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics2;
@@ -50,11 +41,11 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     // Note: Callables are used for the selection lists in order to provide a custom toString() method
     // and still be able to get back the selected object.
     
-    @Tunable(description="Edge Weight Column:")
-    public ListSingleSelection<Callable<CyColumn>> columnNames;
+    @Tunable(description="Set Domain:")
+    public ListSingleSelection<Callable<CyColumn>> domainColumnNames;
     
-    @Tunable(description="Edge Type:")
-    public ListSingleSelection<CyEdge.Type> edgeTypes = new ListSingleSelection<CyEdge.Type>(ANY, UNDIRECTED, DIRECTED, INCOMING, OUTGOING);
+    @Tunable(description="Set Range:")
+    public ListSingleSelection<Callable<CyColumn>> rangeColumnNames;
     
     @Tunable(description="Visual Property:")
     public ListSingleSelection<Callable<VisualProperty<CyCustomGraphics2<?>>>> visualProperties;
@@ -65,31 +56,45 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         this.customChartListener = customChartManager;
         this.visualMappingManager = visualMappingManager;
         this.columnIdFactory = columnIdFactory;
-        this.columnNames = computeNumericEdgeColumns();
+        this.domainColumnNames = computeNumericNodeColumns();
+        this.rangeColumnNames = computeNumericNodeColumns();
         this.visualProperties = computeVisualProperties();
     }
     
     
     /**
-     * Select the columns from the edge table that are numeric.
+     * Select the columns from the node table that are numeric.
      */
-    private ListSingleSelection<Callable<CyColumn>> computeNumericEdgeColumns() {
+    private ListSingleSelection<Callable<CyColumn>> computeNumericNodeColumns() {
         CyNetwork network = applicationManager.getCurrentNetwork();
-        CyTable edgeTable = network.getDefaultEdgeTable();
-        Collection<CyColumn> edgeColumns = edgeTable.getColumns();
+        CyTable nodeTable = network.getDefaultNodeTable();
+        Collection<CyColumn> nodeColumns = nodeTable.getColumns();
         
         List<Callable<CyColumn>> numericColumnNames = new ArrayList<Callable<CyColumn>>();
         
-        for(final CyColumn column : edgeColumns) {
-            if(Number.class.isAssignableFrom(column.getType()) && !column.isPrimaryKey()) {
-                numericColumnNames.add(new Callable<CyColumn>() {
-                    public CyColumn call() { 
-                        return column; 
-                    }
-                    public String toString() { 
-                        return column.getName(); 
-                    }
-                });
+        for(final CyColumn column : nodeColumns) {
+            if (column.getType() == List.class) {
+                if((Number.class.isAssignableFrom(column.getListElementType())) && !column.isPrimaryKey()) {
+                    numericColumnNames.add(new Callable<CyColumn>() {
+                        public CyColumn call() { 
+                            return column; 
+                        }
+                        public String toString() { 
+                            return column.getName(); 
+                        }
+                    });
+                }
+            } else {
+                if((Number.class.isAssignableFrom(column.getType())) && !column.isPrimaryKey()) {
+                    numericColumnNames.add(new Callable<CyColumn>() {
+                        public CyColumn call() { 
+                            return column; 
+                        }
+                        public String toString() { 
+                            return column.getName(); 
+                        }
+                    });
+                }       
             }
         }
         
@@ -134,20 +139,16 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     
     @Override
     public void run(TaskMonitor monitor) throws Exception {
-        monitor.setTitle("Generating Edge Weight Charts");
+        monitor.setTitle("Generating Charts");
         
         // Get the values the user selected
-        final CyColumn userColumn = columnNames.getSelectedValue().call();
-        final CyEdge.Type edgeType = edgeTypes.getSelectedValue();
+        final CyColumn domainColumn = domainColumnNames.getSelectedValue().call();
+        final CyColumn rangeColumn = rangeColumnNames.getSelectedValue().call();
         final VisualProperty<CyCustomGraphics2<?>> visualProperty = visualProperties.getSelectedValue().call();
         
-        monitor.setStatusMessage("Using Column '" + userColumn.getName() + "'");
         monitor.setStatusMessage("Using Visual Property '" + visualProperty.getDisplayName() + "'");
         monitor.setStatusMessage("Creating charts");
         
-        // We will create a new column in the node table to store the values the chart will use.
-        final String chartColumn = "customCharts";
-                
         // Get the graphics factory from the listener.
         CyCustomGraphics2Factory<?> customGraphicsFactory = customChartListener.getFactory();
         
@@ -160,38 +161,19 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
             return;
         }
         
-        CyNetwork network = networkView.getModel();
-        
-        CyTable nodeTable = network.getTable(CyNode.class, CyNetwork.LOCAL_ATTRS); // create local table
-        if(nodeTable.getColumn(chartColumn) == null) {
-            nodeTable.createListColumn(chartColumn, Double.class, false);
-        }       
-        
-        // Create a chart for each node
-        for(View<CyNode> nodeView : networkView.getNodeViews()) {
-            
-            // Get the edges for the node
-            CyNode node = nodeView.getModel();
-            List<CyEdge> edges = network.getAdjacentEdgeList(node, edgeType);
-            
-            // Use edge weights as values for the chart
-            List<Double> chartValues = new ArrayList<Double>(edges.size());
-            for(CyEdge edge : edges) {
-                CyRow row = network.getRow(edge);
-                Number weight = (Number) row.get(userColumn.getName(), userColumn.getType());
-                chartValues.add(weight.doubleValue());
-            }
-            
-            // Save the weight value into the node table in the new column we created
-            CyRow nodeRow = network.getRow(node);
-            nodeRow.set(chartColumn, chartValues);
-        }
-        
         // Set the chart properties, tell the chart to use the new column we created as the data source.
-        CyColumnIdentifier columnId = columnIdFactory.createColumnIdentifier(chartColumn);
+        CyColumnIdentifier domainColumnId = columnIdFactory.createColumnIdentifier(domainColumn.getName());
+        CyColumnIdentifier rangeColumnId = columnIdFactory.createColumnIdentifier(rangeColumn.getName());
         Map<String,Object> chartProps = new HashMap<String, Object>();
-        chartProps.put("cy_dataColumns", Arrays.asList(columnId)); 
-        chartProps.put("cy_colorScheme", "RAINBOW");
+        chartProps.put("cy_dataColumns", Arrays.asList(rangeColumnId));
+        chartProps.put("cy_domainLabelsColumn", Arrays.asList(domainColumnId));
+        chartProps.put("cy_itemLabelsColumn", Arrays.asList(domainColumnId));
+        chartProps.put("cy_showItemLabels", "true");
+        chartProps.put("cy_showDomainAxis", "true");
+        chartProps.put("cy_showRangeAxis", "true");
+        //chartProps.put("cy_domainLabelPosition", LabelPosition);
+        chartProps.put("cy_separation", 0.2);
+        chartProps.put("cy_colorScheme", "MODULATED");
         
         // create the chart instance
         CyCustomGraphics2<?> customGraphics = customGraphicsFactory.getInstance(chartProps);
@@ -206,6 +188,5 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         networkView.updateView();
     }
     
-
 }
 
