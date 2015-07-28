@@ -154,6 +154,18 @@ public class Publication extends AbstractEdge {
         this.edgeAttrMap.put(EdgeAttribute.Title.toString(), this.title);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        boolean isEqual = false;
+        Publication otherPub = (Publication) obj;
+        isEqual = otherPub.getTitle().equalsIgnoreCase(this.getTitle());
+        isEqual = isEqual && otherPub.getTimesCited() == this.getTimesCited();
+        return isEqual;
+    }
+
     /**
      * Get author list
      *
@@ -263,6 +275,18 @@ public class Publication extends AbstractEdge {
         return this.title;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 13;
+        int result = 1;
+        result += prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+        result += prime * result + this.timesCited.hashCode();
+        return result;
+    }
+
     /**
      * Return true iff publication was authored by a single individual
      *
@@ -353,6 +377,7 @@ public class Publication extends AbstractEdge {
     public void setTimesCited(String timesCited) {
         this.timesCited = timesCited;
     }
+    
 
     /**
      * Set publication title
@@ -374,25 +399,6 @@ public class Publication extends AbstractEdge {
     @Override
     public String toString() {
         return "Title: " + this.title + "\nTimes Cited: " + this.timesCited;
-    }
-    
-
-    @Override
-    public int hashCode() {
-        final int prime = 13;
-        int result = 1;
-        result += prime * result + ((this.title == null) ? 0 : this.title.hashCode());
-        result += prime * result + this.timesCited.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        boolean isEqual = false;
-        Publication otherPub = (Publication) obj;
-        isEqual = otherPub.getTitle().equalsIgnoreCase(this.getTitle());
-        isEqual = isEqual && otherPub.getTimesCited() == this.getTimesCited();
-        return isEqual;
     }
 
 }

@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ChangeAuthorInstitutionAction;
+import org.baderlab.csapps.socialnetwork.actions.CreateChartAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -49,12 +50,14 @@ import org.baderlab.csapps.socialnetwork.actions.UpdateAuthorLocationAction;
 import org.baderlab.csapps.socialnetwork.listeners.RestoreSocialNetworksFromProp;
 import org.baderlab.csapps.socialnetwork.listeners.SaveSocialNetworkToProp;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkAddedListener;
+import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTaskFactory;
@@ -83,9 +86,12 @@ import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics2Factory;
+import org.cytoscape.view.presentation.property.values.CyColumnIdentifierFactory;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.work.ServiceProperties;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskManager;
 import org.osgi.framework.BundleContext;
@@ -99,25 +105,27 @@ public class CyActivator extends AbstractCyActivator {
     public void start(BundleContext bc) {
 
         // Acquire services
-        CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
+        final CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
 
-        CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
+        final CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
 
-        CyNetworkNaming cyNetworkNamingServiceRef = getService(bc, CyNetworkNaming.class);
+        final CyNetworkNaming cyNetworkNamingServiceRef = getService(bc, CyNetworkNaming.class);
 
-        CyNetworkFactory cyNetworkFactoryServiceRef = getService(bc, CyNetworkFactory.class);
+        final CyNetworkFactory cyNetworkFactoryServiceRef = getService(bc, CyNetworkFactory.class);
 
-        CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
+        final CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
 
-        CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(bc, CyNetworkViewFactory.class);
+        final CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(bc, CyNetworkViewFactory.class);
 
-        CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(bc, CyNetworkViewManager.class);
+        final CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(bc, CyNetworkViewManager.class);
 
-        CyLayoutAlgorithmManager cyLayoutManagerServiceRef = getService(bc, CyLayoutAlgorithmManager.class);
+        final CyLayoutAlgorithmManager cyLayoutManagerServiceRef = getService(bc, CyLayoutAlgorithmManager.class);
 
-        VisualStyleFactory visualStyleFactoryServiceRef = getService(bc, VisualStyleFactory.class);
+        final VisualStyleFactory visualStyleFactoryServiceRef = getService(bc, VisualStyleFactory.class);
 
-        FileUtil fileUtil = getService(bc, FileUtil.class);
+        final FileUtil fileUtil = getService(bc, FileUtil.class);
+        
+        final CyColumnIdentifierFactory columnIdFactory = getService(bc, CyColumnIdentifierFactory.class);
 
         // Open browser used by about panel,
         OpenBrowser openBrowserRef = getService(bc, OpenBrowser.class);
@@ -131,7 +139,7 @@ public class CyActivator extends AbstractCyActivator {
         VisualMappingFunctionFactory discreteMappingFactoryServiceRef = getService(bc, VisualMappingFunctionFactory.class, 
                 "(mapping.type=discrete)");
 
-        VisualMappingManager vmmServiceRef = getService(bc, VisualMappingManager.class);
+        final VisualMappingManager vmmServiceRef = getService(bc, VisualMappingManager.class);
 
         TaskManager<?, ?> taskManager = getService(bc, TaskManager.class);
 
@@ -175,10 +183,17 @@ public class CyActivator extends AbstractCyActivator {
         RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
                 cySwingApplicationServiceRef, userPanelAction, userPanel);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
+        
+        final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
+        registerServiceListener(bc, customChartManager, "addCustomGraphicsFactory", "removeCustomGraphicsFactory", CyCustomGraphics2Factory.class);
 
         // Create and register task factories
         ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = new ApplyVisualStyleTaskFactory(vmmServiceRef, appManager);
         registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
+                vmmServiceRef, columnIdFactory);
+        registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
 
         CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef,
                 cyNetworkManagerServiceRef, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, appManager);
@@ -252,6 +267,14 @@ public class CyActivator extends AbstractCyActivator {
                 exportNthDegreeNeighborsTaskFactoryRef, appManager);
 
         registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
+        
+        // Create a task that is shown in the "Apps" menu.
+        // TODO:
+        serviceProperties.put("inMenuBar", "true");
+        serviceProperties.put("preferredMenu", "Apps.Social Network");
+        CreateChartAction createChartAction = new CreateChartAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef, 
+                createChartTaskFactory, taskManager, createChartTaskFactory);
+        registerService(bc, createChartAction, CyAction.class, new Properties());
         
         // Create & register new menu item (for updating the location that a specific author
         // has been assigned to)
