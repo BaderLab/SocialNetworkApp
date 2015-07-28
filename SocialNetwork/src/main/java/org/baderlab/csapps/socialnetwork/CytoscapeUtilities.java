@@ -46,6 +46,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -60,6 +61,8 @@ import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.VisualStyle;
 
 /**
  * Public utilities class with static methods used repeatedly by the code
@@ -79,6 +82,28 @@ public class CytoscapeUtilities {
             }            
         }
         return CytoscapeUtilities.locationSet;        
+    }
+    
+    /**
+     * Return the visual style with the specified name in the set of all visual
+     * styles. null is returned if no visual style is found.
+     * 
+     * @param String name
+     * @param VisualMappingManager visualMappingManager
+     * 
+     * @return VisualStyle visualStyle
+     */
+    public static VisualStyle getVisualStyle(String name, VisualMappingManager visualMappingManager) {
+        Iterator<VisualStyle> it = visualMappingManager.getAllVisualStyles().iterator();
+        VisualStyle visualStyle = null;
+        while (it.hasNext()) {
+            visualStyle = it.next();
+            if (visualStyle.getTitle().equalsIgnoreCase(name)) {
+                break;
+            }
+            visualStyle = null;
+        }
+        return visualStyle;
     }
 
     /**

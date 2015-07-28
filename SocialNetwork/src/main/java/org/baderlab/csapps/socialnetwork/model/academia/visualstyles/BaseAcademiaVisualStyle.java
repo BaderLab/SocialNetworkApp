@@ -96,7 +96,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
                 break;
         }
         if (isChart) {
-            networkName = String.format("%s Chart", networkName);
+            networkName = "Social Network Chart";
         }
         this.visualStyle = visualStyleFactoryServiceRef.createVisualStyle(networkName);
         applyVisualStyle(this.visualStyle);

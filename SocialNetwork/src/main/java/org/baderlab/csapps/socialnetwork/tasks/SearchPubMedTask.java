@@ -65,7 +65,7 @@ public class SearchPubMedTask extends AbstractTask {
         List<? extends AbstractEdge> results = search.getResults();
         if (results == null) {
             this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            String message = "Network could not be loaded";
+            String message = "No results found";
             logger.log(Level.WARNING, message);
             CytoscapeUtilities.notifyUser(message);
             return;

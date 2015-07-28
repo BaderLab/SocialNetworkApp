@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
@@ -48,7 +50,6 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     // Note: Callables are used for the selection lists in order to provide a custom toString() method
     // and still be able to get back the selected object.
     
-    
     @Tunable(description="Edge Weight Column:")
     public ListSingleSelection<Callable<CyColumn>> columnNames;
     
@@ -58,15 +59,12 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     @Tunable(description="Visual Property:")
     public ListSingleSelection<Callable<VisualProperty<CyCustomGraphics2<?>>>> visualProperties;
     
-    
-    
     public CreateChartTask(CyApplicationManager applicationManager, SocialNetworkChartListener customChartManager, 
             VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory) {
         this.applicationManager = applicationManager;
         this.customChartListener = customChartManager;
         this.visualMappingManager = visualMappingManager;
         this.columnIdFactory = columnIdFactory;
-        
         this.columnNames = computeNumericEdgeColumns();
         this.visualProperties = computeVisualProperties();
     }
@@ -154,6 +152,8 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         CyCustomGraphics2Factory<?> customGraphicsFactory = customChartListener.getFactory();
         
         // Get the current network view
+        VisualStyle chartVisualStyle = CytoscapeUtilities.getVisualStyle("Social Network Chart", visualMappingManager);
+        visualMappingManager.setCurrentVisualStyle(chartVisualStyle);
         CyNetworkView networkView = applicationManager.getCurrentNetworkView();
         if(networkView == null) {
             monitor.showMessage(TaskMonitor.Level.ERROR, "No network view");
