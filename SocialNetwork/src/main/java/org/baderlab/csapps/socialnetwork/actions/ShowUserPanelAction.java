@@ -53,7 +53,8 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
- * Enables users to view / hide the Social Network Cytoscape app panel
+ * Enables users to view / hide the main Social Network Cytoscape app panel
+ * (docked to the west)
  *
  * @author Victor Kofia
  */
@@ -77,7 +78,6 @@ public class ShowUserPanelAction extends AbstractCyAction {
     public ShowUserPanelAction(Map<String, String> configProps, CyApplicationManager cyApplicationManagerServiceRef,
             CyNetworkViewManager cyNetworkViewManagerServiceRef, CySwingApplication cySwingApplicationServiceRef,
             CyServiceRegistrar cyServiceRegistrarRef, UserPanel userPanel) {
-
         super(configProps, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef);
         putValue(Action.NAME, "Show Social Network");
         this.cytoPanelWest = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.WEST);

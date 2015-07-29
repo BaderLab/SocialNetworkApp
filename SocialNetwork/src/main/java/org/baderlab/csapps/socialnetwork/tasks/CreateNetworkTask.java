@@ -321,8 +321,7 @@ public class CreateNetworkTask extends AbstractTask {
             if (networkView == null) {
                 // Create a new view for my network
                 networkView = this.cyNetworkViewFactoryServiceRef.createNetworkView(network);
-                networkViewManager.addNetworkView(networkView); // TODO:
-                                                                // NullPointerException
+                networkViewManager.addNetworkView(networkView); // TODO: NullPointerException
             } else {
                 CytoscapeUtilities.notifyUser("Network already present");
             }

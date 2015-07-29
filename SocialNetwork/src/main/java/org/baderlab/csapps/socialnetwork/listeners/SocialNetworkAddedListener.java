@@ -38,7 +38,7 @@
 package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
-import java.util.Iterator;
+import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -46,13 +46,19 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 
 /**
@@ -73,6 +79,10 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
     private CyNetwork network = null;
     private SocialNetwork socialNetwork = null;
+    private CytoPanel cytoPanelEast = null;
+    private InfoPanel infoPanel = null;
+    private CyServiceRegistrar cyServiceRegistrarRef = null;
+    private CySwingApplication cySwingApplicationServiceRef = null;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -81,7 +91,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
      */
     public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef,
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
-            VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef) {
+            VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
+            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, InfoPanel infoPanel) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -90,6 +101,9 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
+        this.cyServiceRegistrarRef = cyServiceRegistrarRef;
+        this.infoPanel = infoPanel;
+        this.cytoPanelEast = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.EAST);
     }
 
     /**
@@ -105,6 +119,20 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         // If the network being added is a social network, then
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
+            // Show app information panel (docked to the east)
+            // ----------------------------------------------------------------------------------------------------
+            this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+            // If the state of the cytoPanelWest is HIDE, show it
+            if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
+                this.cytoPanelEast.setState(CytoPanelState.DOCK);
+            }
+            // Select my panel
+            int index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
+            if (index == -1) {
+                return;
+            }
+            this.cytoPanelEast.setSelectedIndex(index);
+            // ----------------------------------------------------------------------------------------------------                
             // Add to network table
             this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
             this.socialNetwork.setCyNetwork(event.getNetwork());

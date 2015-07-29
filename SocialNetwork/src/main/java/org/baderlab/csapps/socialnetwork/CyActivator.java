@@ -55,6 +55,7 @@ import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListene
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
@@ -91,7 +92,6 @@ import org.cytoscape.view.presentation.property.values.CyColumnIdentifierFactory
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
-import org.cytoscape.work.ServiceProperties;
 import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskManager;
 import org.osgi.framework.BundleContext;
@@ -158,10 +158,13 @@ public class CyActivator extends AbstractCyActivator {
                 cyNetworkViewManagerServiceRef, cySwingApplicationServiceRef, cyServiceRegistrarRef, userPanel);
 
         registerService(bc, userPanelAction, CyAction.class, new Properties());
-
+        
         // Add panel and action to the manager
         appManager.setUserPanelRef(userPanel);
         appManager.setUserPanelAction(userPanelAction);
+        
+        // Create & register information panel (docked to the west)
+        InfoPanel infoPanel = new InfoPanel();
 
         // Create and register listeners
         SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
@@ -171,7 +174,8 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
-                visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef);
+                visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
+                cyServiceRegistrarRef, cySwingApplicationServiceRef, infoPanel);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);

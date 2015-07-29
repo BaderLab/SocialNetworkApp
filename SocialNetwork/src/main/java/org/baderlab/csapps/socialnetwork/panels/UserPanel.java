@@ -453,11 +453,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 @SuppressWarnings("unchecked")
                 JComboBox<String> jcmbType = (JComboBox<String>) e.getSource();
                 String category = (String) jcmbType.getSelectedItem();
-                // Set selected category before performing switcharoo
+                // Set selected category before performing info panel switch
                 // NOTE: This step is imperative. Not doing this will
                 // result in a null pointer exception being thrown.
                 setSelectedCategory(Category.getCategoryID(category));
-                // Perform switcharoo iff the panel being switched to is
+                // Perform info panel switch iff the panel being switched to is
                 // distinct from the current panel
                 if (!category.trim().equalsIgnoreCase(UserPanel.this.appManager.getUserPanelRef().getSelectedInfoPanel().getName())) {
                     UserPanel.this.appManager.getUserPanelRef().performInfoPanelSwitch();
@@ -852,11 +852,11 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      */
     public Icon getIcon() {
         URL iconURL = this.getClass().getResource("socialNetwork_logo_small.png");
-        ImageIcon EMIcon = null;
+        ImageIcon SNIcon = null;
         if (iconURL != null) {
-            EMIcon = new ImageIcon(iconURL);
+            SNIcon = new ImageIcon(iconURL);
         }
-        return EMIcon;
+        return SNIcon;
     }
 
     /**
