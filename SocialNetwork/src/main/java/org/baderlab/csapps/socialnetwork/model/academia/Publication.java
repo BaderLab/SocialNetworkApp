@@ -41,10 +41,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**
@@ -53,6 +57,8 @@ import org.cytoscape.model.CyEdge;
  * @author Victor Kofia
  */
 public class Publication extends AbstractEdge {
+    
+    private static final Logger logger = Logger.getLogger(Publication.class.getName());
 
     /**
      * A list of all authors who collaborated on Publication
@@ -148,10 +154,10 @@ public class Publication extends AbstractEdge {
     @Override
     public void constructEdgeAttrMap() {
         this.edgeAttrMap = new HashMap<String, Object>();
-        this.edgeAttrMap.put(EdgeAttribute.TimesCited.toString(), this.timesCited);
-        this.edgeAttrMap.put(EdgeAttribute.PublicationDate.toString(), this.pubYear);
-        this.edgeAttrMap.put(EdgeAttribute.Journal.toString(), this.journal);
-        this.edgeAttrMap.put(EdgeAttribute.Title.toString(), this.title);
+        this.edgeAttrMap.put(EdgeAttribute.TIMES_CITED.toString(), this.timesCited);
+        this.edgeAttrMap.put(EdgeAttribute.PUBLICATION_DATE.toString(), this.pubYear);
+        this.edgeAttrMap.put(EdgeAttribute.JOURNAL.toString(), this.journal);
+        this.edgeAttrMap.put(EdgeAttribute.TITLE.toString(), this.title);
     }
 
     /* (non-Javadoc)
@@ -247,9 +253,25 @@ public class Publication extends AbstractEdge {
     /**
      * Get publication year
      *
-     * @return String pubYear
+     * @return int pubYear
+     * @throws UnableToParseYearException 
      */
-    public String getPubYear() {
+    public int getPubYear() throws UnableToParseYearException {
+        if (this.pubYear != null) {
+            this.pubYear = this.pubYear.split("\\s+")[0];
+            if (Pattern.matches("[0-9]+", this.pubYear)) {
+                return Integer.parseInt(this.pubYear);                
+            }            
+        }
+        throw new UnableToParseYearException();
+    }
+    
+    /**
+     * Get raw publication date text
+     * 
+     * @return String rawPubDateTxt
+     */
+    public String getRawPubDateTxt() {
         return this.pubYear;
     }
 

@@ -89,12 +89,12 @@ public class Scopus {
      */
     public static HashMap<String, Object> constructScopusAttrMap() {
         HashMap<String, Object> nodeAttrMap = new HashMap<String, Object>();
-        nodeAttrMap.put(NodeAttribute.Label.toString(), "N/A");
-        nodeAttrMap.put(NodeAttribute.FirstName.toString(), "N/A");
-        nodeAttrMap.put(NodeAttribute.LastName.toString(), "N/A");
-        nodeAttrMap.put(NodeAttribute.TimesCited.toString(), 0);
-        nodeAttrMap.put(NodeAttribute.NumPublications.toString(), 0);
-        nodeAttrMap.put(NodeAttribute.Publications.toString(), new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.LABEL.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.FIRST_NAME.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.LAST_NAME.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.TIMES_CITED.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.PUBLICATION_COUNT.toString(), 0);
+        nodeAttrMap.put(NodeAttribute.PUBLICATIONS.toString(), new ArrayList<String>());
         List<Integer> pubsPerYearList = new ArrayList<Integer>();
         pubsPerYearList.add(0);
         nodeAttrMap.put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);

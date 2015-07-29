@@ -52,6 +52,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -276,6 +277,36 @@ public class SocialNetworkAppManager {
         this.setNetworkName(networkName);
         this.setMaxAuthorThreshold(maxAuthorThreshold);
         visualizeNetwork();
+    }
+    
+
+    /**
+     * Get the start year in the interval specified by the user
+     * 
+     * @return {@code int} startYear
+     */
+    public static int getStartYear() {
+        int startYear = -1;
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", startYearTxt)) {
+            startYear = Integer.parseInt(startYearTxt);
+        }
+        return startYear;
+    }
+    
+    
+    /**
+     * Get the end year in the interval specified by the user
+     * 
+     * @return {@code int} endYear
+     */
+    public static int getEndYear() {
+        int endYear = -1;
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        if (Pattern.matches("[0-9]+", endYearTxt)) {
+            endYear = Integer.parseInt(endYearTxt);
+        }
+        return endYear;
     }
     
     /**

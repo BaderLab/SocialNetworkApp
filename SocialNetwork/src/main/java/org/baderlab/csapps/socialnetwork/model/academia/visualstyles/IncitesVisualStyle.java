@@ -77,9 +77,9 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeBorderPaint(VisualStyle visualStyle) {
-        DiscreteMapping borderPaintDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+        DiscreteMapping borderPaintDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.DEPARTMENT.toString(), 
                 String.class, BasicVisualLexicon.NODE_BORDER_PAINT);
-        borderPaintDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), new Color(243, 243, 21));       
+        borderPaintDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.DEPARTMENT.toString()), new Color(243, 243, 21));       
     }
 
 
@@ -88,9 +88,9 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeBorderWidth(VisualStyle visualStyle) {
-        DiscreteMapping borderWidthDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+        DiscreteMapping borderWidthDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.DEPARTMENT.toString(), 
                 String.class, BasicVisualLexicon.NODE_BORDER_WIDTH);
-        borderWidthDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString()), 10.0);       
+        borderWidthDiscreteMapping.putMapValue(this.socialNetwork.getAttrMap().get(NodeAttribute.DEPARTMENT.toString()), 10.0);       
     }
 
     /* (non-Javadoc)
@@ -107,7 +107,7 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
         locationsMap.put(Location.Other.toString(), new Color(204, 0, 204));
         locationsMap.put(Location.UofT.toString(), new Color(0, 204, 0));
         locationsMap.put(Location.NA.toString(), new Color(153, 153, 153));
-        colorAttrMap.put(NodeAttribute.Location.toString(), locationsMap);
+        colorAttrMap.put(NodeAttribute.LOCATION.toString(), locationsMap);
         DiscreteMapping fillColorDiscreteMapping = null;
         for (Entry<String, HashMap<String, Color>> colorMapEntry : colorAttrMap.entrySet()) {
             fillColorDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(colorMapEntry.getKey(), String.class,
@@ -124,7 +124,7 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeLabelFontFace(VisualStyle visualStyle) {
-        DiscreteMapping fontDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.Department.toString(), 
+        DiscreteMapping fontDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(NodeAttribute.DEPARTMENT.toString(), 
                 String.class, BasicVisualLexicon.NODE_LABEL_FONT_FACE);
         fontDiscreteMapping.putMapValue(Location.UofT.toString(), new Font("Verdana", Font.BOLD, 12));
     }
@@ -136,9 +136,9 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
     protected void applyNodeShape(VisualStyle visualStyle) {
         Map<String, HashMap<String, NodeShape>> shapeAttrMap = new HashMap<String, HashMap<String, NodeShape>>();
         HashMap<String, NodeShape> departmentMap = new HashMap<String, NodeShape>();
-        departmentMap.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.Department.toString())), NodeShapeVisualProperty.TRIANGLE);
+        departmentMap.put((String) (this.socialNetwork.getAttrMap().get(NodeAttribute.DEPARTMENT.toString())), NodeShapeVisualProperty.TRIANGLE);
         departmentMap.put("N/A", NodeShapeVisualProperty.RECTANGLE);
-        shapeAttrMap.put(NodeAttribute.Department.toString(), departmentMap);
+        shapeAttrMap.put(NodeAttribute.DEPARTMENT.toString(), departmentMap);
         DiscreteMapping shapeDiscreteMapping = null;
         for (Entry<String, HashMap<String, NodeShape>> nodeShapeMapEntry : shapeAttrMap.entrySet()) {
             shapeDiscreteMapping = (DiscreteMapping) this.discreteMappingFactoryServiceRef.createVisualMappingFunction(nodeShapeMapEntry.getKey(), String.class,

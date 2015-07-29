@@ -150,7 +150,7 @@ public class PubSheetParser extends DefaultHandler {
             // column #s between 4-6. Rows that deviate from this range will be
             // ignored
             // and the user will be notified of this.
-            if (this.columns.length == 6 && !this.columns[0].equalsIgnoreCase(NodeAttribute.TimesCited.toString())) {
+            if (this.columns.length == 6 && !this.columns[0].equalsIgnoreCase(NodeAttribute.TIMES_CITED.toString())) {
                 // Get publication info
                 this.timesCited = this.columns[0].trim().isEmpty() ? "0" : this.columns[0].trim();
                 this.expectedCitations = this.columns[1].trim().isEmpty() ? "0.00" : this.columns[1].trim();

@@ -129,14 +129,14 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         int max = 0;
         
         edgeTable = this.network.getDefaultEdgeTable();
-        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.NumCopublications.toString());
+        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
         ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         min = getSmallestInCutoff(copubList, 5.0);
         max = getLargestInCutoff(copubList, 100.0);   
         
         ContinuousMapping<Integer, ?> mapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
-                EdgeAttribute.NumCopublications.toString(), Integer.class, BasicVisualLexicon.EDGE_TRANSPARENCY);
+                EdgeAttribute.COPUBLICATION_COUNT.toString(), Integer.class, BasicVisualLexicon.EDGE_TRANSPARENCY);
         // BRVs are used to set limits on edge transparency
         // (min edge transparency = 100; max edge transparency = 300)
         BoundaryRangeValues bv0 = new BoundaryRangeValues(100.0, 100.0, 100.0);
@@ -160,7 +160,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         int max = 0;
         
         edgeTable = this.network.getDefaultEdgeTable();
-        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.NumCopublications.toString());
+        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
         ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         min = getSmallestInCutoff(copubList, 5.0);
@@ -168,7 +168,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         
         // Specify EDGE_WIDTH
         ContinuousMapping<Integer, ?> edgeWidthContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
-                EdgeAttribute.NumCopublications.toString(), Integer.class, BasicVisualLexicon.EDGE_WIDTH);
+                EdgeAttribute.COPUBLICATION_COUNT.toString(), Integer.class, BasicVisualLexicon.EDGE_WIDTH);
         // BRVs are used to set limits on edge width (max edge width = 10; min edge width = 1)
         BoundaryRangeValues bv0 = new BoundaryRangeValues(1.0, 1.0, 1.0);
         BoundaryRangeValues bv1 = new BoundaryRangeValues(10.0, 10.0, 10.0);
@@ -208,7 +208,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     @Override
     protected void applyNodeLabel(VisualStyle visualStyle) {
         PassthroughMapping<Integer, ?> labelPassthroughMapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef
-                .createVisualMappingFunction(NodeAttribute.Label.toString(), Integer.class, BasicVisualLexicon.NODE_LABEL);
+                .createVisualMappingFunction(NodeAttribute.LABEL.toString(), Integer.class, BasicVisualLexicon.NODE_LABEL);
         visualStyle.addVisualMappingFunction(labelPassthroughMapping);        
     }
 
@@ -234,12 +234,12 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     @Override
     protected void applyNodeSize(VisualStyle visualStyle) {
         CyTable nodeTable = this.network.getDefaultNodeTable();
-        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TimesCited.toString());
+        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TIMES_CITED.toString());
         ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
         int minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
         int maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
         ContinuousMapping<Integer, ?> timesCitesContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
-                NodeAttribute.TimesCited.toString(), Integer.class, BasicVisualLexicon.NODE_SIZE);
+                NodeAttribute.TIMES_CITED.toString(), Integer.class, BasicVisualLexicon.NODE_SIZE);
         BoundaryRangeValues bv0 = new BoundaryRangeValues(10.0, 10.0, 10.0);
         BoundaryRangeValues bv1 = new BoundaryRangeValues(50.0, 50.0, 50.0);
         timesCitesContinuousMapping.addPoint(minNodeSize, bv0);

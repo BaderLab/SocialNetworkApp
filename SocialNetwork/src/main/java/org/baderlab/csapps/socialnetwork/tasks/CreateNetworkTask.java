@@ -51,6 +51,7 @@ import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NetworkAttribute;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyEdge;
@@ -167,7 +168,12 @@ public class CreateNetworkTask extends AbstractTask {
                 } else if (attrType instanceof Integer) {
                     edgeTable.createColumn(attrName, Integer.class, false);
                 } else if (attrType instanceof List) {
-                    edgeTable.createListColumn(attrName, String.class, false);
+                    // TODO: Find a better way to handle list attributes
+                    if (attrName.equals(EdgeAttribute.PUBS_PER_YEAR.toString())) {
+                        edgeTable.createListColumn(attrName, Integer.class, false);
+                    } else {
+                        edgeTable.createListColumn(attrName, String.class, false);                        
+                    }
                 }
             }
 
@@ -185,6 +191,7 @@ public class CreateNetworkTask extends AbstractTask {
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
                     .set("name", this.cyNetworkNamingServiceRef.getSuggestedNetworkTitle(this.appManager.getNetworkName()));
 
+            // TODO:
             // Add network attributes
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
@@ -320,8 +327,7 @@ public class CreateNetworkTask extends AbstractTask {
                 CytoscapeUtilities.notifyUser("Network already present");
             }
 
-            // Set the variable destroyView to true, the following snippet of
-            // code
+            // Set the variable destroyView to true, the following snippet of code
             // will destroy a view
             boolean destroyView = false;
             if (destroyView) {

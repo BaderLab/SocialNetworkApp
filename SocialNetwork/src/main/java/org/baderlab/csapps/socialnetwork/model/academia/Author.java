@@ -266,7 +266,7 @@ public class Author extends AbstractNode {
                 this.institutionList.add(institution);
             }            
         }
-        this.getNodeAttrMap().put(NodeAttribute.Institution.toString(), institutionList);
+        this.getNodeAttrMap().put(NodeAttribute.INSTITUTION.toString(), institutionList);
     }
 
     /**
@@ -387,19 +387,6 @@ public class Author extends AbstractNode {
      */
     public String getDepartment() {
         return this.department;
-    }
-    
-    /**
-     * Get the end year in the interval specified by the user
-     * 
-     * @return {@code int} endYear
-     */
-    private int getEndYear() {
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        if (Pattern.matches("[0-9]+", endYearTxt)) {
-            this.endYear = Integer.parseInt(endYearTxt);
-        }
-        return this.endYear;
     }
 
     /**
@@ -534,19 +521,6 @@ public class Author extends AbstractNode {
             this.pubMap = new TreeMap<Integer, List<Publication>>();
         }
         return this.pubMap;
-    }
-
-    /**
-     * Get the start year in the interval specified by the user
-     * 
-     * @return {@code int} startYear
-     */
-    private int getStartYear() {
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        if (Pattern.matches("[0-9]+", startYearTxt)) {
-            this.startYear = Integer.parseInt(startYearTxt);
-        }
-        return this.startYear;
     }
 
     /**
@@ -698,7 +672,7 @@ public class Author extends AbstractNode {
      */
     public void setDepartment(String department) {
         this.department = department;
-        this.getNodeAttrMap().put(NodeAttribute.Department.toString(), department);
+        this.getNodeAttrMap().put(NodeAttribute.DEPARTMENT.toString(), department);
     }
 
     /**
@@ -717,7 +691,7 @@ public class Author extends AbstractNode {
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-        this.getNodeAttrMap().put(NodeAttribute.FirstName.toString(), firstName);
+        this.getNodeAttrMap().put(NodeAttribute.FIRST_NAME.toString(), firstName);
     }
 
     /**
@@ -737,7 +711,7 @@ public class Author extends AbstractNode {
     @Override
     public void setLabel(String label) {
         this.label = label;
-        this.getNodeAttrMap().put(NodeAttribute.Label.toString(), label);
+        this.getNodeAttrMap().put(NodeAttribute.LABEL.toString(), label);
     }
 
     /**
@@ -747,7 +721,7 @@ public class Author extends AbstractNode {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
-        this.getNodeAttrMap().put(NodeAttribute.LastName.toString(), lastName);
+        this.getNodeAttrMap().put(NodeAttribute.LAST_NAME.toString(), lastName);
     }
 
     /**
@@ -766,7 +740,7 @@ public class Author extends AbstractNode {
         } else {
             this.location = location;
         }
-        this.getNodeAttrMap().put(NodeAttribute.Location.toString(), this.location);
+        this.getNodeAttrMap().put(NodeAttribute.LOCATION.toString(), this.location);
     }
 
     /**
@@ -776,7 +750,7 @@ public class Author extends AbstractNode {
      */
     public void setMainInstitution(String mainInstitution) {
         this.mainInstitution = mainInstitution;
-        this.getNodeAttrMap().put(NodeAttribute.MainInstitution.toString(), mainInstitution);
+        this.getNodeAttrMap().put(NodeAttribute.MAIN_INSTITUTION.toString(), mainInstitution);
     }
 
     /**
@@ -812,8 +786,8 @@ public class Author extends AbstractNode {
      */
     public void setPubList(List<String> pubList) {
         this.pubList = pubList;
-        this.getNodeAttrMap().put(NodeAttribute.Publications.toString(), pubList);
-        this.getNodeAttrMap().put(NodeAttribute.NumPublications.toString(), pubList.size());
+        this.getNodeAttrMap().put(NodeAttribute.PUBLICATIONS.toString(), pubList);
+        this.getNodeAttrMap().put(NodeAttribute.PUBLICATION_COUNT.toString(), pubList.size());
     }
 
     /**
@@ -834,7 +808,7 @@ public class Author extends AbstractNode {
      */
     public void setTimesCited(int timesCited) {
         this.timesCited = timesCited;
-        this.getNodeAttrMap().put(NodeAttribute.TimesCited.toString(), timesCited);
+        this.getNodeAttrMap().put(NodeAttribute.TIMES_CITED.toString(), timesCited);
     }
 
     /**
@@ -855,22 +829,18 @@ public class Author extends AbstractNode {
      */
     private void updatePubMap(Publication publication) {
         Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
-        String yearTxt = publication.getPubYear();
-        if (yearTxt != null) {
-            yearTxt = yearTxt.split("\\s+")[0];
-            if (Pattern.matches("[0-9]+", yearTxt)) {
-                int year = Integer.parseInt(yearTxt);
-                List<Publication> listOfPubs = pubMap.get(year);
-                if (listOfPubs == null) {
-                    listOfPubs = new ArrayList<Publication>();
-                    listOfPubs.add(publication);
-                    pubMap.put(year, listOfPubs);
-                } else {
-                    listOfPubs.add(publication);
-                }                
+        try {
+            int pubYear = publication.getPubYear();
+            List<Publication> listOfPubs = pubMap.get(pubYear);
+            if (listOfPubs == null) {
+                listOfPubs = new ArrayList<Publication>();
+                listOfPubs.add(publication);
+                pubMap.put(pubYear, listOfPubs);
             } else {
-                logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", yearTxt));
-            }
+                listOfPubs.add(publication);
+            }                
+        } catch (UnableToParseYearException e) {
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", publication.getRawPubDateTxt()));
         }
         if (this.getPubMap().size() > 0) {
             // Create an ArrayList where every index represents
@@ -878,7 +848,7 @@ public class Author extends AbstractNode {
             // year and Y is the latest year
             Set<Integer> yearSet = pubMap.keySet();
             List<Integer> pubsPerYearList = new ArrayList<Integer>();
-            int startYear = getStartYear(), endYear = getEndYear();
+            int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
             int size = endYear - startYear + 1;
             pubsPerYearList = new ArrayList<Integer>(size);
             // Iterate through every year

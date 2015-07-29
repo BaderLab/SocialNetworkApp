@@ -7,18 +7,25 @@ package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 // TODO: Write enum description
 public enum NodeAttribute {
     
-    Department("Department"),
-    FirstName("First Name"),
-    Institution("Institutions"),
-    Label("Label"),
-    LastName("Last Name"),
-    Location("Location"),
-    MainInstitution("Main Institution"),
-    NumPublications("# of Publications"),
-    Publications("Publications"),
-    TimesCited("Times Cited"),
+    DEPARTMENT("Department"),
+    FIRST_NAME("First Name"),
+    INSTITUTION("Institutions"),
+    LABEL("Label"),
+    LAST_NAME("Last Name"),
+    LOCATION("Location"),
+    MAIN_INSTITUTION("Main Institution"),
+    PUBLICATION_COUNT("# of Publications"),
+    PUBLICATIONS("Publications"),
+    TIMES_CITED("Times Cited"),
+    /**
+     * List attribute of author's pub count in 
+     * the years that author was active
+     */
     PubsPerYear("Pubs Per Year"),
-    Years("Years");
+    /**
+     * List attribute of years that author was active
+     */
+    Years("Years Active");
     
     private String attrName = null;
     

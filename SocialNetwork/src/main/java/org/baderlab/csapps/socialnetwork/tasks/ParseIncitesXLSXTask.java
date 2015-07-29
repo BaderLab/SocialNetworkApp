@@ -73,7 +73,7 @@ public class ParseIncitesXLSXTask extends AbstractTask {
         socialNetwork.setUnidentified_faculty(incitesParser.getUnidentifiedFacultyString());
 
         // Add info to social network map(s)
-        socialNetwork.getAttrMap().put(NodeAttribute.Department.toString(), incitesParser.getDepartmentName());
+        socialNetwork.getAttrMap().put(NodeAttribute.DEPARTMENT.toString(), incitesParser.getDepartmentName());
 
         // Create interaction
         Interaction interaction = new Interaction(pubList, Category.ACADEMIA, this.appManager.getMaxAuthorThreshold());

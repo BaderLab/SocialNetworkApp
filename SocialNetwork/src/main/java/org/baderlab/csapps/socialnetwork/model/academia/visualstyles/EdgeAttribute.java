@@ -8,11 +8,13 @@ package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 // TODO: Write enum description
 public enum EdgeAttribute {
     
-    Journal("Journal"),
-    NumCopublications("# of copubs"),
-    PublicationDate("Pub Date"),
-    TimesCited("Times Cited"),
-    Title("Title");
+    JOURNAL("Journal"),
+    COPUBLICATION_COUNT("# of copubs"),
+    PUBLICATION_DATE("Pub Date"),
+    PUBLICATIONS("Publications"),
+    TIMES_CITED("Times Cited"),
+    PUBS_PER_YEAR("Pubs Per Year"),
+    TITLE("Title");
     
     private String attrName = null;
     

@@ -41,11 +41,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
-import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyEdge;
 
 /**
@@ -54,6 +56,8 @@ import org.cytoscape.model.CyEdge;
  * @author Victor Kofia
  */
 public class Copublications extends AbstractEdge {
+    
+    private static final Logger logger = Logger.getLogger(Copublications.class.getName());
 
     /**
      * List of co-publications
@@ -83,10 +87,12 @@ public class Copublications extends AbstractEdge {
      *
      * @param Publication publication
      */
+    @SuppressWarnings("unchecked")
     public void addPublication(Publication publication) {
         this.getPubList().add(publication);
-        this.getEdgeAttrMap().put(EdgeAttribute.NumCopublications.toString(), this.getPubList().size());
-        ((ArrayList<String>) this.getEdgeAttrMap().get(NodeAttribute.Publications.toString())).add(publication.getTitle());
+        this.getEdgeAttrMap().put(EdgeAttribute.COPUBLICATION_COUNT.toString(), this.getPubList().size());
+        ((ArrayList<String>) this.getEdgeAttrMap().get(EdgeAttribute.PUBLICATIONS.toString())).add(publication.getTitle());
+        updateYearlyIntervalAttr();
     }
 
     /**
@@ -95,10 +101,47 @@ public class Copublications extends AbstractEdge {
     @Override
     public void constructEdgeAttrMap() {
         this.setEdgeAttrMap(new HashMap<String, Object>());
-        this.getEdgeAttrMap().put(EdgeAttribute.NumCopublications.toString(), this.getPubList().size());
+        this.getEdgeAttrMap().put(EdgeAttribute.COPUBLICATION_COUNT.toString(), this.getPubList().size());
         ArrayList<String> titles = new ArrayList<String>();
         titles.add(this.getPubList().get(0).getTitle());
-        this.getEdgeAttrMap().put(NodeAttribute.Publications.toString(), titles);
+        this.getEdgeAttrMap().put(EdgeAttribute.PUBLICATIONS.toString(), titles);
+        int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
+        int size = endYear - startYear + 1;
+        ArrayList<Integer> boolList = new ArrayList<Integer>(size);
+        int pubYear = -1;
+        try {
+            pubYear = this.pubList.get(0).getPubYear();
+        } catch (UnableToParseYearException e) {
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pubYear));
+        }
+        // TODO:
+        for (int year = startYear; year <= endYear; year++) {
+            boolList.add(pubYear == year ? 1 : 0);
+        }
+        this.edgeAttrMap.put(EdgeAttribute.PUBS_PER_YEAR.toString(), boolList);            
+    }
+    
+    /**
+     * 
+     */
+    private void updateYearlyIntervalAttr() {
+        int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer> boolList = (ArrayList<Integer>) this.getEdgeAttrMap().get(EdgeAttribute.PUBS_PER_YEAR.toString());
+        int pubYear = -1;
+        try {
+            pubYear = this.getPubList().get(this.getPubList().size() - 1).getPubYear();
+        } catch (UnableToParseYearException e) {
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pubYear));
+        }
+        // TODO:
+        for (int year = startYear; year <= endYear; year++) {
+            if (pubYear == year) {
+                int index = year - startYear;
+                boolList.set(index, boolList.get(index) + 1);                
+            }
+        }
+        this.edgeAttrMap.put(EdgeAttribute.PUBS_PER_YEAR.toString(), boolList);            
     }
 
     /* (non-Javadoc)
