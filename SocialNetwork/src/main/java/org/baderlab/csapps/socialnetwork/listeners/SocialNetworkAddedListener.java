@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -83,6 +84,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private InfoPanel infoPanel = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CySwingApplication cySwingApplicationServiceRef = null;
+    private boolean initialized = false;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -92,7 +94,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef,
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
-            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, InfoPanel infoPanel) {
+            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -102,8 +104,29 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
-        this.infoPanel = infoPanel;
         this.cytoPanelEast = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.EAST);
+    }
+    
+    private void updateInfoPanel(CyNetwork network) {
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        int startYear = -1, endYear = -1;
+        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+            startYear = Integer.parseInt(startYearTxt); 
+            endYear = Integer.parseInt(endYearTxt);            
+        }
+
+        this.infoPanel.getTextField().setText(String.valueOf(startYear));
+        this.infoPanel.getSliderButton().setMinimum(startYear);
+        this.infoPanel.getSliderButton().setMaximum(endYear);
+        this.infoPanel.getSliderButton().setValue(startYear);
+        this.infoPanel.setCyNetwork(network);
+        
+        this.infoPanel.updateUI();
+    }
+    
+    private void initializeInfoPanel(CyNetwork network) {
+        this.infoPanel = new InfoPanel(network);
     }
 
     /**
@@ -120,8 +143,14 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
             // Show app information panel (docked to the east)
-            // ----------------------------------------------------------------------------------------------------
-            this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+            // ---------------------------------------------------------------------------------------------------------
+            if (!initialized) {
+                initializeInfoPanel(this.network);
+                this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                initialized = true;
+            } else {
+                updateInfoPanel(this.network);
+            }
             // If the state of the cytoPanelWest is HIDE, show it
             if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
                 this.cytoPanelEast.setState(CytoPanelState.DOCK);
@@ -132,7 +161,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 return;
             }
             this.cytoPanelEast.setSelectedIndex(index);
-            // ----------------------------------------------------------------------------------------------------                
+            // ---------------------------------------------------------------------------------------------------------             
             // Add to network table
             this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
             this.socialNetwork.setCyNetwork(event.getNetwork());

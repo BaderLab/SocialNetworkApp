@@ -159,7 +159,7 @@ public class CytoscapeUtilities {
             CytoscapeUtilities.saveLocationMap(locationMap);
             if (defaultInstitution != null) {
                 CyTable cyTable = cyNetwork.getDefaultNodeTable();
-                CytoscapeUtilities.setNodeAttribute(cyTable, SUID, "Location", location);
+                CytoscapeUtilities.setCyTableAttribute(cyTable, SUID, "Location", location);
             }
         }
     }
@@ -243,27 +243,27 @@ public class CytoscapeUtilities {
     }
     
     /**
-     * Set the specified node attribute to a new value
+     * Set the specified table attribute to a new value
      * 
-     * @param CyTable nodeTable
+     * @param CyTable cyTable
      * @param Long SUID
      * @param String attributeName
      * @param Object value
      */
-    public static void setNodeAttribute(CyTable nodeTable, Long SUID, String attributeName, Object value) {
-        CyRow cyRow = nodeTable.getRow(SUID);
+    public static void setCyTableAttribute(CyTable cyTable, Long SUID, String attributeName, Object value) {
+        CyRow cyRow = cyTable.getRow(SUID);
         cyRow.set(attributeName, value);
     }
     
     /**
-     * Get the specified node attribute
+     * Get the specified table attribute
      * 
-     * @param CyTable nodeTable
+     * @param CyTable cyTable
      * @param Long SUID
      * @param String attributeName
      */
-    public static Object getNodeAttribute(CyTable nodeTable, Long SUID, String attributeName) {
-        CyRow cyRow = nodeTable.getRow(SUID);
+    public static Object getCyTableAttribute(CyTable cyTable, Long SUID, String attributeName) {
+        CyRow cyRow = cyTable.getRow(SUID);
         return cyRow.getAllValues().get(attributeName);
     }
 

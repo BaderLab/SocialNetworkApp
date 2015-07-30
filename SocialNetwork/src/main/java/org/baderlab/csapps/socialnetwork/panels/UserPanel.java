@@ -246,7 +246,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         this.cySwingAppRef = cySwingAppRef;
 
         this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(400, 200));
+        this.setPreferredSize(new Dimension(300, 200));
 
         // NOTE: An 'Academia' flavored UI has been set as the default
         this.setSelectedCategory(Category.ACADEMIA);

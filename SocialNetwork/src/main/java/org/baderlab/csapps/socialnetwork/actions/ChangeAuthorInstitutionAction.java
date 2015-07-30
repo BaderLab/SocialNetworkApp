@@ -54,9 +54,9 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
         Long SUID = this.cyNode.getSUID();
         // Get the institution of this author
         CyTable nodeTable = this.cyNetwork.getDefaultNodeTable();       
-        String authorName = (String) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Label");
+        String authorName = (String) CytoscapeUtilities.getCyTableAttribute(nodeTable, SUID, "Label");
         @SuppressWarnings("unchecked")
-        List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getNodeAttribute(nodeTable, SUID, "Institution");
+        List<String> listOfInstitutions = (List<String>) CytoscapeUtilities.getCyTableAttribute(nodeTable, SUID, "Institution");
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
             String title = String.format("Change main institution of %s", authorName);
             String listOfInstitArray[] = new String[listOfInstitutions.size()];
@@ -80,7 +80,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
                     } else {
                         if (!mainInstitution.equalsIgnoreCase("n/a")) {
                             mainInstitution = mainInstitution.toUpperCase();
-                            CytoscapeUtilities.setNodeAttribute(nodeTable, SUID, "Main Institution", mainInstitution);
+                            CytoscapeUtilities.setCyTableAttribute(nodeTable, SUID, "Main Institution", mainInstitution);
                             Map<String, String> locationMap = CytoscapeUtilities.getLocationMap();
                             String location = locationMap.get(mainInstitution);
                             if (location == null) {
@@ -88,7 +88,7 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
                                 locationMap.put(mainInstitution, location);
                                 CytoscapeUtilities.saveLocationMap(locationMap);
                             }
-                            CytoscapeUtilities.setNodeAttribute(nodeTable, SUID, "Location", location);                                
+                            CytoscapeUtilities.setCyTableAttribute(nodeTable, SUID, "Location", location);                                
                             outcome = JOptionPane.CANCEL_OPTION;                            
                         }
                     }   

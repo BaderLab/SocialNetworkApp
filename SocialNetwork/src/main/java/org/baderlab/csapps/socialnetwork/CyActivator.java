@@ -162,9 +162,6 @@ public class CyActivator extends AbstractCyActivator {
         // Add panel and action to the manager
         appManager.setUserPanelRef(userPanel);
         appManager.setUserPanelAction(userPanelAction);
-        
-        // Create & register information panel (docked to the west)
-        InfoPanel infoPanel = new InfoPanel();
 
         // Create and register listeners
         SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
@@ -175,7 +172,7 @@ public class CyActivator extends AbstractCyActivator {
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
                 visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
-                cyServiceRegistrarRef, cySwingApplicationServiceRef, infoPanel);
+                cyServiceRegistrarRef, cySwingApplicationServiceRef);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
