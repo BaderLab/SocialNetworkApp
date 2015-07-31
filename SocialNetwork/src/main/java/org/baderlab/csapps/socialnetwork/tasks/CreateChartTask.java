@@ -167,8 +167,7 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         Map<String,Object> chartProps = new HashMap<String, Object>();
         chartProps.put("cy_dataColumns", Arrays.asList(rangeColumnId));
         chartProps.put("cy_domainLabelsColumn", Arrays.asList(domainColumnId));
-        chartProps.put("cy_autoRange", "true");
-        //chartProps.put("cy_globalRange", "true"); // TODO: Specify range?
+        chartProps.put("cy_globalRange", "true");
         chartProps.put("cy_showDomainAxis", "true");
         chartProps.put("cy_showRangeAxis", "true");
         chartProps.put("cy_orientation", "VERTICAL");

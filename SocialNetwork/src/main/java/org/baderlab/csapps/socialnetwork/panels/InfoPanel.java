@@ -20,7 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -28,6 +30,13 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
+import org.cytoscape.work.TaskManager;
 
 
 public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListener, PropertyChangeListener {
@@ -40,12 +49,26 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private JSlider sliderButton = null;
     private JTextField textField = null;
     private CyNetwork cyNetwork = null;
-    private CyTable defaultEdgeTable = null;
     private int startYear, endYear;
+    private VisualMappingManager visualMappingManager = null;
+    private TaskManager<?, ?> taskManager = null;
+    private SocialNetwork socialNetwork = null;
+    private VisualStyleFactory visualStyleFactoryServiceRef;
+    private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
     
-    public InfoPanel(CyNetwork network) {
-        this.cyNetwork = network;
-        this.defaultEdgeTable = network.getDefaultEdgeTable();
+    public InfoPanel(SocialNetwork socialNetwork, TaskManager<?, ?> taskManager, VisualMappingManager visualMappingManager,
+            VisualStyleFactory vsFactory, VisualMappingFunctionFactory passthrough, VisualMappingFunctionFactory continuous,
+            VisualMappingFunctionFactory discrete) {
+        this.socialNetwork = socialNetwork;
+        this.taskManager = taskManager;
+        this.visualMappingManager = visualMappingManager;
+        this.visualStyleFactoryServiceRef = vsFactory;
+        this.passthroughMappingFactoryServiceRef = passthrough;
+        this.continuousMappingFactoryServiceRef = continuous;
+        this.discreteMappingFactoryServiceRef = discrete;
+        this.cyNetwork = socialNetwork.getCyNetwork();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(400, 200));
         
@@ -138,36 +161,60 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         int year = (int) source.getValue();
         if (!source.getValueIsAdjusting()) { //done adjusting
             this.textField.setText(String.valueOf(year));
-            // update the network
+            // Update the network
             // TODO: put this in a task
             // ------------------------------------------------------------------------------------
+            
+            
+            // TODO:
+            // Set opacity of deselected nodes and deselected edges to 0
+            VisualStyle vs = CytoscapeUtilities.getVisualStyle
+                    (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
+            
+            // Modify visual style
+            DiscreteMapping opacityMapping = (DiscreteMapping<String, ?>) this.discreteMappingFactoryServiceRef
+                    .createVisualMappingFunction(EdgeAttribute.PUBS_PER_YEAR.toString(), String.class, 
+                            BasicVisualLexicon.NODE_TRANSPARENCY);
+            
             Iterator<CyEdge> edgeIt = this.cyNetwork.getEdgeList().iterator();
-            HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
+            //HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
+            //HashSet<CyEdge> deselectedEdges = new HashSet<CyEdge>();
             HashSet<CyNode> selectedNodes = new HashSet<CyNode>();
             CyEdge edge = null;
+            CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
             while (edgeIt.hasNext()) {
                 edge = edgeIt.next();
                 List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, 
                         edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString());
                 if (pubsPerYear.get(year - startYear) == 1) {
-                    selectedEdges.add(edge);
+                    //selectedEdges.add(edge);
                     selectedNodes.add(edge.getSource());
                     selectedNodes.add(edge.getTarget());
+                    opacityMapping.putMapValue(pubsPerYear, 1.0);
+                } else {
+                    //deselectedEdges.add(edge);
+                    // TODO: Change opacity to 0
+                    opacityMapping.putMapValue(pubsPerYear, 0.0);
                 }
             }
             Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
             CyNode node = null;
-            HashSet<CyNode> deselectedNodes = new HashSet<CyNode>();
+            //HashSet<CyNode> deselectedNodes = new HashSet<CyNode>();
             while (nodeIt.hasNext()) {
                 node = nodeIt.next();
                 if (!selectedNodes.contains(node)) {
-                    // Either delete the node or set opacity to 0
-                    deselectedNodes.add(node);
+                    //deselectedNodes.add(node);
+                    // TODO: change opacity to 0
+                    opacityMapping.putMapValue(CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString()), 0.0);
+                } else {
+                    opacityMapping.putMapValue(CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString()), 1.0);
                 }
             }
-            
-            // TODO:
-            // cyNetwork.removeNodes(deselectedNodes);
+
+            vs.addVisualMappingFunction(opacityMapping);
+
+            // Set current visual style to new modified visual style
+            this.visualMappingManager.setCurrentVisualStyle(vs);
             
             // -------------------------------------------------------------------------------------
         } else { //value is adjusting; just set the text
@@ -179,8 +226,17 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         return cyNetwork;
     }
 
-    public void setCyNetwork(CyNetwork cyNetwork) {
-        this.cyNetwork = cyNetwork;
+    public void setSocialNetwork(SocialNetwork socialNetwork) {
+        this.socialNetwork = socialNetwork;
+        this.cyNetwork = socialNetwork.getCyNetwork();
+    }
+    
+    public void setStartYear(int startYear) {
+        this.startYear = startYear;
+    }
+    
+    public void setEndYear(int endYear) {
+        this.endYear = endYear;
     }
 
 }

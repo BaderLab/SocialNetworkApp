@@ -193,6 +193,28 @@ public class VisualStyles {
         }
         return this.visualStyleMap.get(visualStyle);
     }
+    
+    /**
+     * Get unique id (string) associated with visual style
+     *
+     * @param int visualStyleID
+     * @return String visual style
+     */
+    public static String toString(int type) {
+        String id = null;
+        switch(type) {
+            case PUBMED_VISUAL_STYLE:
+                id = "PubMed";
+                break;
+            case SCOPUS_VISUAL_STYLE:
+                id = "Scopus";
+                break;
+            case INCITES_VISUAL_STYLE:
+                id = "InCites";
+                break;
+        }
+        return id;
+    }
 
     /**
      * Get visual style list of a certain type

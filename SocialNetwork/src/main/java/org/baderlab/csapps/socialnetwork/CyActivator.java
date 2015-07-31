@@ -172,7 +172,7 @@ public class CyActivator extends AbstractCyActivator {
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
                 visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
-                cyServiceRegistrarRef, cySwingApplicationServiceRef);
+                cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);

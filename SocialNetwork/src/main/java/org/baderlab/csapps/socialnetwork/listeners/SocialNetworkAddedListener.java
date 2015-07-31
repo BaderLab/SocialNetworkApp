@@ -61,6 +61,7 @@ import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.work.TaskManager;
 
 /**
  * Adds relevant network information to network table once Cytoscape generates a
@@ -84,6 +85,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private InfoPanel infoPanel = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CySwingApplication cySwingApplicationServiceRef = null;
+    private TaskManager<?, ?> taskManager = null;
     private boolean initialized = false;
 
     /**
@@ -94,7 +96,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef,
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
-            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef) {
+            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -105,9 +107,10 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.cytoPanelEast = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.EAST);
+        this.taskManager = taskManager;
     }
     
-    private void updateInfoPanel(CyNetwork network) {
+    private void updateInfoPanel(SocialNetwork socialNetwork) {
         String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
         String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
         int startYear = -1, endYear = -1;
@@ -115,18 +118,21 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             startYear = Integer.parseInt(startYearTxt); 
             endYear = Integer.parseInt(endYearTxt);            
         }
-
+        
+        this.infoPanel.setStartYear(startYear);
+        this.infoPanel.setEndYear(endYear);
         this.infoPanel.getTextField().setText(String.valueOf(startYear));
         this.infoPanel.getSliderButton().setMinimum(startYear);
         this.infoPanel.getSliderButton().setMaximum(endYear);
         this.infoPanel.getSliderButton().setValue(startYear);
-        this.infoPanel.setCyNetwork(network);
+        this.infoPanel.setSocialNetwork(socialNetwork);
         
         this.infoPanel.updateUI();
     }
     
-    private void initializeInfoPanel(CyNetwork network) {
-        this.infoPanel = new InfoPanel(network);
+    private void initializeInfoPanel(SocialNetwork network) {
+        this.infoPanel = new InfoPanel(network, this.taskManager, this.vmmServiceRef, this.visualStyleFactoryServiceRef,
+                this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef);
     }
 
     /**
@@ -142,14 +148,18 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         // If the network being added is a social network, then
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
+            // Add to network table
+            this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
+            this.socialNetwork.setCyNetwork(event.getNetwork());
+            this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
             // ---------------------------------------------------------------------------------------------------------
             if (!initialized) {
-                initializeInfoPanel(this.network);
+                initializeInfoPanel(this.socialNetwork);
                 this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
                 initialized = true;
             } else {
-                updateInfoPanel(this.network);
+                updateInfoPanel(this.socialNetwork);
             }
             // If the state of the cytoPanelWest is HIDE, show it
             if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
@@ -162,10 +172,6 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             }
             this.cytoPanelEast.setSelectedIndex(index);
             // ---------------------------------------------------------------------------------------------------------             
-            // Add to network table
-            this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-            this.socialNetwork.setCyNetwork(event.getNetwork());
-            this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             int networkID = socialNetwork.getNetworkType();
             // Specify the default visual styles
             switch (networkID) {

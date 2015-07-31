@@ -333,6 +333,10 @@ public class SocialNetwork {
     public ArrayList<Author> getUnidentifiedFaculty() {
         return this.unidentifiedFaculty;
     }
+    
+    public int getVisualStyleId() {
+        return this.defaultVisualStyle;
+    }
 
     /**
      * Get visual style map
