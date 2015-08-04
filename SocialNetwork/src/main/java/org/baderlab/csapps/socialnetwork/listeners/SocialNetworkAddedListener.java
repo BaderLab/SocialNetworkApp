@@ -86,7 +86,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CySwingApplication cySwingApplicationServiceRef = null;
     private TaskManager<?, ?> taskManager = null;
-    private boolean initialized = false;
+    //private boolean initialized = false;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -110,6 +110,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.taskManager = taskManager;
     }
     
+    /*
     private void updateInfoPanel(SocialNetwork socialNetwork) {
         String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
         String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
@@ -129,6 +130,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         
         this.infoPanel.updateUI();
     }
+    */
     
     private void initializeInfoPanel(SocialNetwork network) {
         this.infoPanel = new InfoPanel(network, this.taskManager, this.vmmServiceRef, this.visualStyleFactoryServiceRef,
@@ -154,13 +156,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
             // ---------------------------------------------------------------------------------------------------------
-            if (!initialized) {
-                initializeInfoPanel(this.socialNetwork);
-                this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
-                initialized = true;
-            } else {
-                updateInfoPanel(this.socialNetwork);
-            }
+            initializeInfoPanel(this.socialNetwork);
+            this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
             // If the state of the cytoPanelWest is HIDE, show it
             if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
                 this.cytoPanelEast.setState(CytoPanelState.DOCK);
