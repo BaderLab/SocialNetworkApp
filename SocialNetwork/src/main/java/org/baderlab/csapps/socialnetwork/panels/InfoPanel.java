@@ -25,6 +25,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
+import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyEdge;
@@ -50,18 +51,19 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private JSlider sliderButton = null;
     private JTextField textField = null;
     private CyNetwork cyNetwork = null;
-    private int startYear, endYear;
+    private int startYear = -1, endYear = -1;
     private VisualMappingManager visualMappingManager = null;
     private TaskManager<?, ?> taskManager = null;
     private SocialNetwork socialNetwork = null;
     private VisualStyleFactory visualStyleFactoryServiceRef;
-    private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
-    private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
-    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef = null;
+    private VisualMappingFunctionFactory continuousMappingFactoryServiceRef = null;
+    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef = null;
+    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
     
     public InfoPanel(SocialNetwork socialNetwork, TaskManager<?, ?> taskManager, VisualMappingManager visualMappingManager,
             VisualStyleFactory vsFactory, VisualMappingFunctionFactory passthrough, VisualMappingFunctionFactory continuous,
-            VisualMappingFunctionFactory discrete) {
+            VisualMappingFunctionFactory discrete, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
         this.socialNetwork = socialNetwork;
         this.taskManager = taskManager;
         this.visualMappingManager = visualMappingManager;
@@ -69,14 +71,13 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.passthroughMappingFactoryServiceRef = passthrough;
         this.continuousMappingFactoryServiceRef = continuous;
         this.discreteMappingFactoryServiceRef = discrete;
+        this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.cyNetwork = socialNetwork.getCyNetwork();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(400, 200));
         
         String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
         String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        this.startYear = -1;
-        this.endYear = -1;
         if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
             this.startYear = Integer.parseInt(startYearTxt); 
             this.endYear = Integer.parseInt(endYearTxt);            
@@ -97,7 +98,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         labelAndTextField.add(textField);
         
         //Create the slider.
+        
+
         this.sliderButton = new JSlider(JSlider.HORIZONTAL, startYear, endYear, startYear);
+        this.sliderButton.setValue(startYear);
         this.sliderButton.addChangeListener(this);
         this.sliderButton.setPaintLabels(false);
 
@@ -161,78 +165,15 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
         if (!source.getValueIsAdjusting()) { //done adjusting
-            this.textField.setText(String.valueOf(year));
+            SocialNetworkAppManager.setSelectedYear(year);
             // Update the network
             // TODO: put this in a task
             // ------------------------------------------------------------------------------------
             
             // TODO:
+            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());
             
-            Iterator<CyEdge> edgeIt = this.cyNetwork.getEdgeList().iterator();
-            //HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
-            //HashSet<CyEdge> deselectedEdges = new HashSet<CyEdge>();
-            HashSet<CyNode> selectedNodes = new HashSet<CyNode>();
-            CyEdge edge = null;
-            CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
-            while (edgeIt.hasNext()) {
-                edge = edgeIt.next();
-                Object cyTableAttr = CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
-                        EdgeAttribute.PUBS_PER_YEAR.toString());
-                List<Integer> pubsPerYear = (List<Integer>) cyTableAttr;
-                if (pubsPerYear.get(year - startYear) == 1) {
-                    //selectedEdges.add(edge);
-                    selectedNodes.add(edge.getSource());
-                    selectedNodes.add(edge.getTarget());
-                    CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
-                            EdgeAttribute.IS_SELECTED.toString(), true);
-                } else {
-                    //deselectedEdges.add(edge);
-                    CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
-                            EdgeAttribute.IS_SELECTED.toString(), false);
-                }
-            }
-            Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
-            CyNode node = null;
-            CyTable defaultNodeTable = this.cyNetwork.getDefaultNodeTable();
-            //HashSet<CyNode> deselectedNodes = new HashSet<CyNode>();
-            while (nodeIt.hasNext()) {
-                node = nodeIt.next();
-                if (!selectedNodes.contains(node)) {
-                    //deselectedNodes.add(node);
-                    // TODO: change opacity to 0
-                    CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
-                            NodeAttribute.IS_SELECTED.toString(), false);
-                } else {
-                    CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
-                            NodeAttribute.IS_SELECTED.toString(), true);
-                }
-            }
-            
-            // Set opacity of deselected nodes and deselected edges to 0
-            VisualStyle vs = CytoscapeUtilities.getVisualStyle
-                    (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
-            
-            // Node visual style
-            DiscreteMapping nodeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
-                    .createVisualMappingFunction(NodeAttribute.IS_SELECTED.toString(), Boolean.class, 
-                            BasicVisualLexicon.NODE_TRANSPARENCY);
-
-            nodeOpacityMapping.putMapValue(false, 0.0);
-            nodeOpacityMapping.putMapValue(true, 255.0);
-            
-            // Edge visual style
-            DiscreteMapping edgeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
-                    .createVisualMappingFunction(EdgeAttribute.IS_SELECTED.toString(), Boolean.class, 
-                            BasicVisualLexicon.EDGE_TRANSPARENCY);
-
-            edgeOpacityMapping.putMapValue(false, 0.0);
-            edgeOpacityMapping.putMapValue(true, 255.0);
-
-            vs.addVisualMappingFunction(nodeOpacityMapping);
-
-            // Set current visual style to new modified visual style
-            this.visualMappingManager.setCurrentVisualStyle(vs);
-            
+                
             // -------------------------------------------------------------------------------------
         } else { //value is adjusting; just set the text
             this.textField.setText(String.valueOf(year));

@@ -48,6 +48,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademi
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
+import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -86,6 +87,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CySwingApplication cySwingApplicationServiceRef = null;
     private TaskManager<?, ?> taskManager = null;
+    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
     //private boolean initialized = false;
 
     /**
@@ -96,7 +98,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef,
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
-            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager) {
+            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager,
+            UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -108,6 +111,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.cytoPanelEast = cySwingApplicationServiceRef.getCytoPanel(CytoPanelName.EAST);
         this.taskManager = taskManager;
+        this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
     }
     
     /*
@@ -134,7 +138,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     
     private void initializeInfoPanel(SocialNetwork network) {
         this.infoPanel = new InfoPanel(network, this.taskManager, this.vmmServiceRef, this.visualStyleFactoryServiceRef,
-                this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef);
+                this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef, this.updateVisualStyleTaskFactory);        
     }
 
     /**

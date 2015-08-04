@@ -55,7 +55,6 @@ import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkDestroyedListene
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkNameChangedListener;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkSelectedListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
@@ -67,6 +66,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
@@ -163,39 +163,10 @@ public class CyActivator extends AbstractCyActivator {
         appManager.setUserPanelRef(userPanel);
         appManager.setUserPanelAction(userPanelAction);
 
-        // Create and register listeners
-        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
-        registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
-
-        SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
-        registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
-
-        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
-                visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
-                cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager);
-        registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
-
-        SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
-        registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
-
-        SaveSocialNetworkToProp saveSession = new SaveSocialNetworkToProp(appManager);
-        registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
-
-        RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
-                cySwingApplicationServiceRef, userPanelAction, userPanel);
-        registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
-        
-        final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
-        registerServiceListener(bc, customChartManager, "addCustomGraphicsFactory", "removeCustomGraphicsFactory", CyCustomGraphics2Factory.class);
-
         // Create and register task factories
         ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = new ApplyVisualStyleTaskFactory(vmmServiceRef, appManager);
         registerService(bc, applyVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
         
-        CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
-                vmmServiceRef, columnIdFactory);
-        registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
-
         CreateNetworkTaskFactory networkTaskFactoryRef = new CreateNetworkTaskFactory(cyNetworkNamingServiceRef, cyNetworkFactoryServiceRef,
                 cyNetworkManagerServiceRef, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef, cyLayoutManagerServiceRef, appManager);
         registerService(bc, networkTaskFactoryRef, TaskFactory.class, new Properties());
@@ -221,6 +192,39 @@ public class CyActivator extends AbstractCyActivator {
         
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
         registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        UpdateVisualStyleTaskFactory updateVisualStyleTaskFactoryRef = new UpdateVisualStyleTaskFactory(taskManager, appManager, vmmServiceRef,
+                discreteMappingFactoryServiceRef);
+        registerService(bc, updateVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        // Create and register listeners
+        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
+        registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
+
+        SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
+        registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
+
+        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
+                visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
+                cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager, updateVisualStyleTaskFactoryRef);
+        registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
+
+        SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
+        registerService(bc, networkNameChangedListener, RowsSetListener.class, new Properties());
+
+        SaveSocialNetworkToProp saveSession = new SaveSocialNetworkToProp(appManager);
+        registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
+
+        RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
+                cySwingApplicationServiceRef, userPanelAction, userPanel);
+        registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
+        
+        final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
+        registerServiceListener(bc, customChartManager, "addCustomGraphicsFactory", "removeCustomGraphicsFactory", CyCustomGraphics2Factory.class);
+        
+        CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
+                vmmServiceRef, columnIdFactory);
+        registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
 
         // Add dependencies to app manager
         // TODO:
