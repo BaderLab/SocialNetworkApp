@@ -43,6 +43,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -246,7 +247,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         this.cySwingAppRef = cySwingAppRef;
 
         this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(300, 200));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
 
         // NOTE: An 'Academia' flavored UI has been set as the default
         this.setSelectedCategory(Category.ACADEMIA);

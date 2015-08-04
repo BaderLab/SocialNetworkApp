@@ -137,8 +137,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     */
     
     private void initializeInfoPanel(SocialNetwork network) {
-        this.infoPanel = new InfoPanel(network, this.taskManager, this.vmmServiceRef, this.visualStyleFactoryServiceRef,
-                this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef, this.discreteMappingFactoryServiceRef, this.updateVisualStyleTaskFactory);        
+        this.infoPanel = new InfoPanel(network, this.taskManager, this.updateVisualStyleTaskFactory);        
     }
 
     /**
