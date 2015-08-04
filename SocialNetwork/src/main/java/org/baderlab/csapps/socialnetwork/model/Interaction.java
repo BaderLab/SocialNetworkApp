@@ -43,7 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
-import org.baderlab.csapps.socialnetwork.model.academia.Copublications;
+import org.baderlab.csapps.socialnetwork.model.academia.Copublication;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 
 /**
@@ -186,7 +186,7 @@ public class Interaction {
         int h = 0, i = 0, j = 0;
         Collaboration collaboration = null;
         Author author1 = null, author2 = null;
-        Copublications copublications = null;
+        Copublication copublications = null;
         Publication publication = null;
         List<Author> listOfNodes = null;
         HashSet<Publication> pubSet = new HashSet<Publication>();
@@ -232,13 +232,13 @@ public class Interaction {
                         // entered
                         // into map
                         if (!academiaMap.containsKey(collaboration)) {
-                            copublications = new Copublications(collaboration, publication);
+                            copublications = new Copublication(collaboration, publication);
                             ArrayList<AbstractEdge> edgeList = new ArrayList<AbstractEdge>();
                             edgeList.add(copublications);
                             academiaMap.put(collaboration, edgeList);
                         } else {
                             ArrayList<AbstractEdge> array = academiaMap.get(collaboration);
-                            copublications = (Copublications) array.get(0);
+                            copublications = (Copublication) array.get(0);
                             copublications.addPublication(publication);
                         }
                         j++;

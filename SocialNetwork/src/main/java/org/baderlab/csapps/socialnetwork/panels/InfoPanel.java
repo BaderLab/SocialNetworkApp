@@ -24,6 +24,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyEdge;
@@ -165,16 +166,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             // TODO: put this in a task
             // ------------------------------------------------------------------------------------
             
-            
             // TODO:
-            // Set opacity of deselected nodes and deselected edges to 0
-            VisualStyle vs = CytoscapeUtilities.getVisualStyle
-                    (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
-            
-            // Modify visual style
-            DiscreteMapping opacityMapping = (DiscreteMapping<String, ?>) this.discreteMappingFactoryServiceRef
-                    .createVisualMappingFunction(EdgeAttribute.PUBS_PER_YEAR.toString(), String.class, 
-                            BasicVisualLexicon.NODE_TRANSPARENCY);
             
             Iterator<CyEdge> edgeIt = this.cyNetwork.getEdgeList().iterator();
             //HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
@@ -184,34 +176,59 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
             while (edgeIt.hasNext()) {
                 edge = edgeIt.next();
-                List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, 
-                        edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString());
+                Object cyTableAttr = CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
+                        EdgeAttribute.PUBS_PER_YEAR.toString());
+                List<Integer> pubsPerYear = (List<Integer>) cyTableAttr;
                 if (pubsPerYear.get(year - startYear) == 1) {
                     //selectedEdges.add(edge);
                     selectedNodes.add(edge.getSource());
                     selectedNodes.add(edge.getTarget());
-                    opacityMapping.putMapValue(pubsPerYear, 1.0);
+                    CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
+                            EdgeAttribute.IS_SELECTED.toString(), true);
                 } else {
                     //deselectedEdges.add(edge);
-                    // TODO: Change opacity to 0
-                    opacityMapping.putMapValue(pubsPerYear, 0.0);
+                    CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
+                            EdgeAttribute.IS_SELECTED.toString(), false);
                 }
             }
             Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
             CyNode node = null;
+            CyTable defaultNodeTable = this.cyNetwork.getDefaultNodeTable();
             //HashSet<CyNode> deselectedNodes = new HashSet<CyNode>();
             while (nodeIt.hasNext()) {
                 node = nodeIt.next();
                 if (!selectedNodes.contains(node)) {
                     //deselectedNodes.add(node);
                     // TODO: change opacity to 0
-                    opacityMapping.putMapValue(CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString()), 0.0);
+                    CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
+                            NodeAttribute.IS_SELECTED.toString(), false);
                 } else {
-                    opacityMapping.putMapValue(CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), EdgeAttribute.PUBS_PER_YEAR.toString()), 1.0);
+                    CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
+                            NodeAttribute.IS_SELECTED.toString(), true);
                 }
             }
+            
+            // Set opacity of deselected nodes and deselected edges to 0
+            VisualStyle vs = CytoscapeUtilities.getVisualStyle
+                    (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
+            
+            // Node visual style
+            DiscreteMapping nodeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
+                    .createVisualMappingFunction(NodeAttribute.IS_SELECTED.toString(), Boolean.class, 
+                            BasicVisualLexicon.NODE_TRANSPARENCY);
 
-            vs.addVisualMappingFunction(opacityMapping);
+            nodeOpacityMapping.putMapValue(false, 0.0);
+            nodeOpacityMapping.putMapValue(true, 255.0);
+            
+            // Edge visual style
+            DiscreteMapping edgeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
+                    .createVisualMappingFunction(EdgeAttribute.IS_SELECTED.toString(), Boolean.class, 
+                            BasicVisualLexicon.EDGE_TRANSPARENCY);
+
+            edgeOpacityMapping.putMapValue(false, 0.0);
+            edgeOpacityMapping.putMapValue(true, 255.0);
+
+            vs.addVisualMappingFunction(nodeOpacityMapping);
 
             // Set current visual style to new modified visual style
             this.visualMappingManager.setCurrentVisualStyle(vs);

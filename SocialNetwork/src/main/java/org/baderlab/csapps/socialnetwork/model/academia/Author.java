@@ -855,7 +855,7 @@ public class Author extends AbstractNode {
             for (int year = startYear; year <= endYear; year++) {
                 pubsPerYearList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
             }
-            this.getNodeAttrMap().put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+            this.getNodeAttrMap().put(NodeAttribute.PUBS_PER_YEAR.toString(), pubsPerYearList);
         }
     }
 

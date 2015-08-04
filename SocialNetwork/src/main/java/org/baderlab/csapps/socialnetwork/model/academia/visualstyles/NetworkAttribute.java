@@ -8,10 +8,10 @@ package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 // TODO: Write enum description
 public enum NetworkAttribute {
     
-    ListUnidentifiedFaculty("List of unidentified Faculty"),
-    TotalFaculty("Total number of Faculty"),
-    TotalPublications("Total Publications"),
-    TotalUnidentifiedFaculty("Total number of unidentified Faculty");
+    UNIDENTIFIED_FACULTY_LIST("List of unidentified Faculty"),
+    TOTAL_FACULTY("Total number of Faculty"),
+    TOTAL_PUBLICATIONS("Total Publications"),
+    TOTAL_UNIDENTIFIED_FACULTY("Total number of unidentified Faculty");
     
     private String attrName = null;
     

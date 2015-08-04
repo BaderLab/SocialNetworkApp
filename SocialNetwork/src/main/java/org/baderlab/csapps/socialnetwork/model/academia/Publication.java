@@ -94,7 +94,7 @@ public class Publication extends AbstractEdge {
     private String pmid = null;
 
     /**
-     * Create new publication
+     * Create new {@link Publication}
      *
      * @param String pubYear
      * @param String title
@@ -112,7 +112,7 @@ public class Publication extends AbstractEdge {
             this.timesCited = timesCited;
         }
         this.expectedCitations = expectedCitations;
-        constructEdgeAttrMap();
+        // constructEdgeAttrMap(); TODO: Not necessary
 
         // Calculate the most used location
         this.calculateLocation();
@@ -158,6 +158,7 @@ public class Publication extends AbstractEdge {
         this.edgeAttrMap.put(EdgeAttribute.PUBLICATION_DATE.toString(), this.pubYear);
         this.edgeAttrMap.put(EdgeAttribute.JOURNAL.toString(), this.journal);
         this.edgeAttrMap.put(EdgeAttribute.TITLE.toString(), this.title);
+        this.edgeAttrMap.put(EdgeAttribute.IS_SELECTED.toString(), false);
     }
 
     /* (non-Javadoc)

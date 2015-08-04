@@ -1,5 +1,5 @@
 /**
- **                       SocialNetwork Cytoscape App
+  **                       SocialNetwork Cytoscape App
  **
  ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
@@ -143,10 +143,12 @@ public class CreateNetworkTask extends AbstractTask {
                     nodeTable.createColumn(attrName, String.class, false);
                 } else if (attrType instanceof Integer) {
                     nodeTable.createColumn(attrName, Integer.class, false);
+                } else if (attrType instanceof Boolean) {
+                    nodeTable.createColumn(attrName, Boolean.class, false);
                 } else if (attrType instanceof List) {
                     // TODO: Find a better way to handle lists that have integer values
-                    if (attrName.equals(NodeAttribute.PubsPerYear.toString()) ||
-                            attrName.equals(NodeAttribute.Years.toString())) { 
+                    if (attrName.equals(NodeAttribute.PUBS_PER_YEAR.toString()) ||
+                            attrName.equals(NodeAttribute.YEARS.toString())) { 
                         nodeTable.createListColumn(attrName, Integer.class, false);
                     } else {
                         nodeTable.createListColumn(attrName, String.class, false);                        
@@ -167,6 +169,8 @@ public class CreateNetworkTask extends AbstractTask {
                     edgeTable.createColumn(attrName, String.class, false);
                 } else if (attrType instanceof Integer) {
                     edgeTable.createColumn(attrName, Integer.class, false);
+                } else if (attrType instanceof Boolean) {
+                    edgeTable.createColumn(attrName, Boolean.class, false);
                 } else if (attrType instanceof List) {
                     // TODO: Find a better way to handle list attributes
                     if (attrName.equals(EdgeAttribute.PUBS_PER_YEAR.toString())) {
@@ -182,10 +186,10 @@ public class CreateNetworkTask extends AbstractTask {
             
             // Add all columns to network table
             networkTable = myNet.getDefaultNetworkTable();
-            networkTable.createColumn(NetworkAttribute.TotalPublications.toString(), Integer.class, false);
-            networkTable.createColumn(NetworkAttribute.TotalFaculty.toString(), Integer.class, false);
-            networkTable.createColumn(NetworkAttribute.TotalUnidentifiedFaculty.toString(), Integer.class, false);
-            networkTable.createColumn(NetworkAttribute.ListUnidentifiedFaculty.toString(), String.class, false);
+            networkTable.createColumn(NetworkAttribute.TOTAL_PUBLICATIONS.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.TOTAL_FACULTY.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.TOTAL_UNIDENTIFIED_FACULTY.toString(), Integer.class, false);
+            networkTable.createColumn(NetworkAttribute.UNIDENTIFIED_FACULTY_LIST.toString(), String.class, false);
 
             // Set network name
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
@@ -195,17 +199,17 @@ public class CreateNetworkTask extends AbstractTask {
             // Add network attributes
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(NetworkAttribute.TotalPublications.toString(),
+                    .set(NetworkAttribute.TOTAL_PUBLICATIONS.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
             myNet.getDefaultNetworkTable().getRow(myNet.getSUID())
-                    .set(NetworkAttribute.TotalFaculty.toString(), this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
+                    .set(NetworkAttribute.TOTAL_FACULTY.toString(), this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_faculty());
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(NetworkAttribute.TotalUnidentifiedFaculty.toString(),
+                    .set(NetworkAttribute.TOTAL_UNIDENTIFIED_FACULTY.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_uniden_faculty());
             myNet.getDefaultNetworkTable()
                     .getRow(myNet.getSUID())
-                    .set(NetworkAttribute.TotalPublications.toString(),
+                    .set(NetworkAttribute.TOTAL_PUBLICATIONS.toString(),
                             this.appManager.getSocialNetwork(this.appManager.getNetworkName()).getNum_publications());
 
             // Build network

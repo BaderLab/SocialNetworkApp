@@ -10,6 +10,7 @@ public enum NodeAttribute {
     DEPARTMENT("Department"),
     FIRST_NAME("First Name"),
     INSTITUTION("Institutions"),
+    IS_SELECTED("Is Selected"),
     LABEL("Label"),
     LAST_NAME("Last Name"),
     LOCATION("Location"),
@@ -21,11 +22,11 @@ public enum NodeAttribute {
      * List attribute of author's pub count in 
      * the years that author was active
      */
-    PubsPerYear("Pubs Per Year"),
+    PUBS_PER_YEAR("Pubs Per Year"),
     /**
      * List attribute of years that author was active
      */
-    Years("Years Active");
+    YEARS("Years Active");
     
     private String attrName = null;
     

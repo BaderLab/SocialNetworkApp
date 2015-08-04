@@ -55,9 +55,9 @@ import org.cytoscape.model.CyEdge;
  *
  * @author Victor Kofia
  */
-public class Copublications extends AbstractEdge {
+public class Copublication extends AbstractEdge {
     
-    private static final Logger logger = Logger.getLogger(Copublications.class.getName());
+    private static final Logger logger = Logger.getLogger(Copublication.class.getName());
 
     /**
      * List of co-publications
@@ -71,12 +71,12 @@ public class Copublications extends AbstractEdge {
     private Map<String, Object> edgeAttrMap = null;
 
     /**
-     * Create new {@link Copublications} tracker
+     * Create new {@link Copublication} tracker
      *
      * @param Collaboration collaboration
      * @param Publication publication
      */
-    public Copublications(Collaboration collaboration, Publication publication) {
+    public Copublication(Collaboration collaboration, Publication publication) {
         this.setPubList(new ArrayList<Publication>());
         this.getPubList().add(publication);
         this.constructEdgeAttrMap();
@@ -118,7 +118,8 @@ public class Copublications extends AbstractEdge {
         for (int year = startYear; year <= endYear; year++) {
             boolList.add(pubYear == year ? 1 : 0);
         }
-        this.edgeAttrMap.put(EdgeAttribute.PUBS_PER_YEAR.toString(), boolList);            
+        this.edgeAttrMap.put(EdgeAttribute.PUBS_PER_YEAR.toString(), boolList);   
+        this.edgeAttrMap.put(EdgeAttribute.IS_SELECTED.toString(), false);
     }
     
     /**

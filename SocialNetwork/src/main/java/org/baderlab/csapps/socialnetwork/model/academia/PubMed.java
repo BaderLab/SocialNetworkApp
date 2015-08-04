@@ -72,9 +72,10 @@ public class PubMed {
         nodeAttrMap.put(NodeAttribute.PUBLICATION_COUNT.toString(), 0);
         nodeAttrMap.put(NodeAttribute.PUBLICATIONS.toString(), new ArrayList<String>());
         nodeAttrMap.put(NodeAttribute.INSTITUTION.toString(), new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.IS_SELECTED.toString(), false);
         List<Integer> pubsPerYearList = new ArrayList<Integer>();
         pubsPerYearList.add(0);
-        nodeAttrMap.put(NodeAttribute.PubsPerYear.toString(), pubsPerYearList);
+        nodeAttrMap.put(NodeAttribute.PUBS_PER_YEAR.toString(), pubsPerYearList);
         String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
         String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
         if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
@@ -83,7 +84,7 @@ public class PubMed {
             for (int i = startYear; i <= endYear; i++) {
                 years.add(i);
             }
-            nodeAttrMap.put(NodeAttribute.Years.toString(), years);
+            nodeAttrMap.put(NodeAttribute.YEARS.toString(), years);
         }
         return nodeAttrMap;
     }
