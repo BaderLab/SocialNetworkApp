@@ -221,7 +221,7 @@ public class SocialNetworkAppManager {
      * Create a new Social Network App manager
      */
     public SocialNetworkAppManager() {
-        String outputDir = System.getProperty("java.io.tmpdir");
+        String outputDir = System.getProperty("user.home");
         String path = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
         File file = new File(path);
         Map<String, String> locationMap = new HashMap<String, String>();

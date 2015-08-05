@@ -75,7 +75,7 @@ public class IncitesInstitutionLocationMap {
     @SuppressWarnings("unchecked")
     public IncitesInstitutionLocationMap() {
         if (this.locationMap == null) {
-            String outputDir = System.getProperty("java.io.tmpdir");
+            String outputDir = System.getProperty("user.home");
             String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
             // Get map file in jar
             try {

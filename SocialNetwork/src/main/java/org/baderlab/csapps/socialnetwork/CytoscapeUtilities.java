@@ -118,7 +118,7 @@ public class CytoscapeUtilities {
     
     @SuppressWarnings("unchecked")
     public static Map<String, String> getLocationMap() {
-        String outputDir = System.getProperty("java.io.tmpdir");
+        String outputDir = System.getProperty("user.home");
         String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
         Map<String, String> locationMap = null;
         try {
@@ -137,7 +137,7 @@ public class CytoscapeUtilities {
     }
     
     public static void saveLocationMap(Map<String, String> locationMap) {
-        String outputDir = System.getProperty("java.io.tmpdir");
+        String outputDir = System.getProperty("user.home");
         String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
         FileOutputStream fout;
         try {
