@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -46,7 +47,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -256,7 +256,7 @@ public class Author extends AbstractNode {
      */
     public void addInstitution(String institution) {
         if (this.institutionList == null) {
-            this.institutionList = new ArrayList<String>();
+            this.institutionList = new LinkedList<String>();
         }
         if (institutionList.isEmpty()) {
             setMainInstitution(institution);
@@ -266,7 +266,8 @@ public class Author extends AbstractNode {
                 this.institutionList.add(institution);
             }            
         }
-        this.getNodeAttrMap().put(NodeAttribute.INSTITUTION.toString(), institutionList);
+        this.getNodeAttrMap().put(NodeAttribute.INSTITUTION.toString(), 
+                new ArrayList<String>(institutionList));
     }
 
     /**
@@ -631,7 +632,10 @@ public class Author extends AbstractNode {
             otherRank = rankMap.get(otherLocation);
         }
         if (rank > otherRank) {
-            otherAuthor.addInstitution(author.getInstitution());
+            // TODO: 
+            String mainInstitution = author.getMainInstitution();
+            otherAuthor.setMainInstitution(mainInstitution);
+            updateInstutionRanking(otherAuthor, mainInstitution);
             otherAuthor.setLocation(author.getLocation());
         } else if (rank == otherRank) {
             Author[] randomAuthorArray = new Author[] { author, otherAuthor };
@@ -640,10 +644,11 @@ public class Author extends AbstractNode {
             String randomInstitution = randomAuthorArray[i].getInstitution();
             String randomLocation = randomAuthorArray[i].getLocation();
             otherAuthor.addInstitution(randomInstitution);
+            updateInstutionRanking(otherAuthor, randomInstitution);
             otherAuthor.setLocation(randomLocation);
         }
     }
-
+    
     /**
      * Set value for alreadyBeenAdded <br>
      * NOTE: alreadyBeenAdded should be false unless a lone author publication
@@ -820,6 +825,20 @@ public class Author extends AbstractNode {
     @Override
     public String toString() {
         return this.lastName + ", " + this.firstName;
+    }
+
+    /**
+     * Set the main institution as the head in the linked list
+     * 
+     * @param Author author
+     * @param String mainInstitution
+     */
+    private void updateInstutionRanking(Author author, String mainInstitution) {
+        LinkedList<String> ll = (LinkedList<String>) author.getInstitutions();
+        if (ll.contains(mainInstitution)) {
+            ll.remove(mainInstitution);
+            ll.addFirst(mainInstitution);
+        }
     }
 
     /**
