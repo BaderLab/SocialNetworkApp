@@ -41,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -184,6 +185,12 @@ public class IncitesParserTest {
         Author author = CytoscapeUtilities.getAuthor("Some Person", collabArray); 
         if (author != null) {
             status = author.getMainInstitution().equals("UNIV TORONTO");
+            if (status) {
+                List<String> x = author.getInstitutions();
+                status = x.get(0).equals("UNIV TORONTO") &&
+                         x.get(1).equals("FLORIDA STATE UNIV") &&
+                         x.get(2).equals("GLYCAEM INDEX TESTING INC");
+            }
         }
         assertTrue(status);
     }
