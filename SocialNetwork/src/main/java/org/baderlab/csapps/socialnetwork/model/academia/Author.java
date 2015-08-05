@@ -837,8 +837,8 @@ public class Author extends AbstractNode {
         LinkedList<String> ll = (LinkedList<String>) author.getInstitutions();
         if (ll.contains(mainInstitution)) {
             ll.remove(mainInstitution);
-            ll.addFirst(mainInstitution);
         }
+        ll.addFirst(mainInstitution);
     }
 
     /**

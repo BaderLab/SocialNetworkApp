@@ -167,4 +167,24 @@ public class IncitesParserTest {
         }
         assertTrue(status);
     }
+    
+    @Test
+    /**
+     * Confirm that institutions are being ranked correctly.
+     */
+    public void testInstutionRanking() {
+        boolean status = false;
+        String path = getClass().getResource("incites_institution_ranking.xlsx").getFile();
+        File xlsxFile = new File(path);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
+        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
+        collaboratorSet.toArray(collabArray);
+        Author author = CytoscapeUtilities.getAuthor("Some Person", collabArray); 
+        if (author != null) {
+            status = author.getMainInstitution().equals("UNIV TORONTO");
+        }
+        assertTrue(status);
+    }
 }
