@@ -200,7 +200,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
         
         UpdateVisualStyleTaskFactory updateVisualStyleTaskFactoryRef = new UpdateVisualStyleTaskFactory(taskManager, appManager, vmmServiceRef,
-                discreteMappingFactoryServiceRef);
+                discreteMappingFactoryServiceRef, cyApplicationManagerServiceRef);
         registerService(bc, updateVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
         
         // Create and register listeners

@@ -10,10 +10,13 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
@@ -33,16 +36,19 @@ public class UpdateVisualStyleTask extends AbstractTask {
     
     private TaskManager<?, ?> taskManager = null;
     private VisualMappingManager visualMappingManager = null;
-    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
+    private VisualMappingFunctionFactory discreteMappingFactoryServiceRef = null;
+    private CyNetworkView cyNetworkView = null;
     private SocialNetwork socialNetwork = null;
     private CyNetwork cyNetwork = null;
     private int startYear = -1, endYear = -1;
     
     public UpdateVisualStyleTask(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
-            VisualMappingManager visualMappingManager,VisualMappingFunctionFactory discrete) {
+            VisualMappingManager visualMappingManager, VisualMappingFunctionFactory discrete,
+            CyApplicationManager cyApplicationManagerServiceRef) {
         this.taskManager = taskManager;
         this.socialNetwork = appManager.getCurrentlySelectedSocialNetwork();
-        this.cyNetwork = this.socialNetwork.getCyNetwork();
+        this.cyNetwork = cyApplicationManagerServiceRef.getCurrentNetwork();
+        this.cyNetworkView = cyApplicationManagerServiceRef.getCurrentNetworkView();
         this.visualMappingManager = visualMappingManager;
         this.discreteMappingFactoryServiceRef = discrete;
     }
@@ -72,40 +78,51 @@ public class UpdateVisualStyleTask extends AbstractTask {
         //HashSet<CyEdge> deselectedEdges = new HashSet<CyEdge>();
         HashSet<CyNode> selectedNodes = new HashSet<CyNode>();
         CyEdge edge = null;
+        View<CyEdge> edgeView = null;
         CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
         while (edgeIt.hasNext()) {
             edge = edgeIt.next();
+            edgeView = this.cyNetworkView.getEdgeView(edge);
             List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                     EdgeAttribute.PUBS_PER_YEAR.toString());
             if (pubsPerYear.get(year - startYear) == 1) {
                 //selectedEdges.add(edge);
                 selectedNodes.add(edge.getSource());
                 selectedNodes.add(edge.getTarget());
+                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
                 CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                         EdgeAttribute.IS_SELECTED.toString(), true);
             } else {
                 //deselectedEdges.add(edge);
+                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
                 CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                         EdgeAttribute.IS_SELECTED.toString(), false);
             }
         }
         Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
         CyNode node = null;
+        View<CyNode > nodeView = null;
         CyTable defaultNodeTable = this.cyNetwork.getDefaultNodeTable();
         // HashSet<CyNode> deselectedNodes = new HashSet<CyNode>();
         while (nodeIt.hasNext()) {
             node = nodeIt.next();
+            nodeView = this.cyNetworkView.getNodeView(node);
             if (!selectedNodes.contains(node)) {
                 //deselectedNodes.add(node);
                 // TODO: change opacity to 0
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);;
                 CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.IS_SELECTED.toString(), false);
             } else {
                 CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.IS_SELECTED.toString(), true);
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);
             }
         }
         
+        this.cyNetworkView.updateView();
+        
+        /*
         // Set opacity of deselected nodes and deselected edges to 0
         VisualStyle vs = CytoscapeUtilities.getVisualStyle
                 (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
@@ -130,6 +147,7 @@ public class UpdateVisualStyleTask extends AbstractTask {
 
         // Set current visual style to new modified visual style
         this.visualMappingManager.setCurrentVisualStyle(vs);
+        */
         
     }
 
