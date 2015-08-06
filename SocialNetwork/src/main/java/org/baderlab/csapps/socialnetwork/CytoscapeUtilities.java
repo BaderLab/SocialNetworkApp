@@ -72,6 +72,11 @@ public class CytoscapeUtilities {
     // TODO: Add documentation
     private static final Logger logger = Logger.getLogger(CytoscapeUtilities.class.getName());
     private static HashSet<String> locationSet = null;
+    private static PropsReader propsReader = null;
+    
+    public static void setPropsReader(PropsReader propsReader) {
+        CytoscapeUtilities.propsReader = propsReader;
+    }
     
     public static HashSet<String> getLocationSet() {
         if (CytoscapeUtilities.locationSet == null) {
@@ -114,54 +119,6 @@ public class CytoscapeUtilities {
     public static void notifyUser(String message) {
         NotificationThread notify = new NotificationThread(message);
         notify.start();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static Map<String, String> getLocationMap() {
-        String outputDir = System.getProperty("user.home");
-        String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
-        Map<String, String> locationMap = null;
-        try {
-            InputStream in = new FileInputStream(basename);
-            ObjectInputStream ois = new ObjectInputStream(in);
-            locationMap = (HashMap<String, String>) ois.readObject();
-            ois.close();
-        } catch (FileNotFoundException fileNotFoundException) {
-            logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
-        } catch (IOException ioException) {
-            logger.log(Level.SEVERE, "Exception occurred", ioException);
-        } catch (ClassNotFoundException classNotFoundException) {
-            logger.log(Level.SEVERE, "Exception occurred", classNotFoundException);
-        }
-        return locationMap;
-    }
-    
-    public static void saveLocationMap(Map<String, String> locationMap) {
-        String outputDir = System.getProperty("user.home");
-        String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
-        FileOutputStream fout;
-        try {
-            fout = new FileOutputStream(basename);
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(locationMap);
-            oos.close();
-        } catch (FileNotFoundException fileNotFoundException) {
-            logger.log(Level.SEVERE, "Exception occurred", fileNotFoundException);
-        } catch (IOException ioException) {
-            logger.log(Level.SEVERE, "Exception occurred", ioException);
-        }
-    }
-    
-    private static void updateLocationMap(String institution, String location, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
-        if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
-            Map<String, String> locationMap = CytoscapeUtilities.getLocationMap();
-            locationMap.put(institution, location);
-            CytoscapeUtilities.saveLocationMap(locationMap);
-            if (defaultInstitution != null) {
-                CyTable cyTable = cyNetwork.getDefaultNodeTable();
-                CytoscapeUtilities.setCyTableAttribute(cyTable, SUID, "Location", location);
-            }
-        }
     }
     
     //TODO: Write method description (perhaps change method name)
@@ -209,7 +166,14 @@ public class CytoscapeUtilities {
                             }
                             location = location.trim();
                             outcome = JOptionPane.CANCEL_OPTION;
-                            CytoscapeUtilities.updateLocationMap(institution, location, defaultInstitution, cyNetwork, SUID);
+                            if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
+                                CytoscapeUtilities.propsReader.getProperties().put(institution, location);
+                                if (defaultInstitution != null) {
+                                    CyTable cyTable = cyNetwork.getDefaultNodeTable();
+                                    CytoscapeUtilities.setCyTableAttribute(cyTable, SUID, "Location", location);
+                                }
+                            }
+
                         }
                     }
                 }

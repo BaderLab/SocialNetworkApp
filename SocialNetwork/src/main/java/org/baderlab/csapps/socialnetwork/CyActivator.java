@@ -103,6 +103,12 @@ public class CyActivator extends AbstractCyActivator {
     }
 
     public void start(BundleContext bc) {
+                
+        // Configuration properties
+        PropsReader propsReader = new PropsReader("socialnetwork", "socialnetwork.props");
+        Properties propsReaderServiceProps = new Properties();
+        propsReaderServiceProps.setProperty("cyPropertyName", "socialnetwork.props");
+        registerAllServices(bc, propsReader, propsReaderServiceProps);
 
         // Acquire services
         final CyApplicationManager cyApplicationManagerServiceRef = getService(bc, CyApplicationManager.class);
@@ -229,6 +235,8 @@ public class CyActivator extends AbstractCyActivator {
         // Add dependencies to app manager
         // TODO:
         // NOTE: Using setters violates dependency injection
+        appManager.setPropsReader(propsReader);
+        
         appManager.setParseSocialNetworkFileTaskFactory(parseSocialNetworkFileTaskFactoryRef);
 
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
@@ -244,6 +252,9 @@ public class CyActivator extends AbstractCyActivator {
         appManager.setCyAppManagerServiceRef(cyApplicationManagerServiceRef);
         
         appManager.setSearchPubMedTaskFactoryRef(searchPubMedTaskFactoryRef);
+        
+        // Add dependencies to CytoscapeUtilies
+        CytoscapeUtilities.setPropsReader(propsReader);
 
         // About Action
         serviceProperties = new HashMap<String, String>();
@@ -291,7 +302,7 @@ public class CyActivator extends AbstractCyActivator {
 
         // Menu item for changing the default institution of an author
         CyNodeViewContextMenuFactory changeAuthorInstitutionAction = new ChangeAuthorInstitutionAction(taskManager,
-                applyVisualStyleTaskFactoryRef);
+                applyVisualStyleTaskFactoryRef, propsReader);
         Properties changeAuthorInstitutionActionProps = new Properties();
         changeAuthorInstitutionActionProps.put("preferredMenu", "Apps");
         registerAllServices(bc, changeAuthorInstitutionAction, changeAuthorInstitutionActionProps);

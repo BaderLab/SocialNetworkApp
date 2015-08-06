@@ -75,7 +75,6 @@ public class SaveSocialNetworkToProp implements SessionAboutToBeSavedListener {
      * @param {@link SessionAboutToBeSavedEvent} e
      */
     public void handleEvent(SessionAboutToBeSavedEvent e) {
-
         String tmpDir = System.getProperty("java.io.tmpdir");
         File propFile = new File(tmpDir, "socialnetwork.props");
         try {
@@ -102,7 +101,6 @@ public class SaveSocialNetworkToProp implements SessionAboutToBeSavedListener {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         ArrayList<File> files = new ArrayList<File>();
         files.add(propFile);
         try {

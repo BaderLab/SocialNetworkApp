@@ -246,8 +246,10 @@ public class GenerateReports {
 
         String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
 
-        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
-        filenames.put("0a. Excluded publications", basename + "_excluded_pubs.html");
+        if (this.excludedPubs.size() > 0) {
+            this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
+            filenames.put("0a. Excluded publications", basename + "_excluded_pubs.html");            
+        }
         this.generateFiles(this.outputDir, this.networkName + "_pubByLocation_distinct", this.pubByLocation_distinct,
                 "Publications by Location - counting publications once for every distinct location");
         filenames.put("1a. Pub by location(txt) - distinct locations publication counts", basename + "_pubByLocation_distinct.txt");
@@ -281,9 +283,11 @@ public class GenerateReports {
      */
     public HashMap<String, String> createPubmedReports() {
         HashMap<String, String> filenames = new HashMap<String, String>();
-        String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
-        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
-        filenames.put("1a. Excluded publications", basename + "_excluded_pubs.html");
+        if (this.excludedPubs.size() > 0) {
+            String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
+            this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
+            filenames.put("1a. Excluded publications", basename + "_excluded_pubs.html");            
+        }
         return filenames;
     }
 
@@ -293,11 +297,7 @@ public class GenerateReports {
      * @return HashMap reports
      */
     public HashMap<String, String> createScopusReports() {
-        HashMap<String, String> filenames = new HashMap<String, String>();
-        String basename = this.outputDir + System.getProperty("file.separator") + this.networkName;
-        this.generateExcludedPubsReport(this.outputDir, this.networkName + "_excluded_pubs");
-        filenames.put("1a. Excluded publications", basename + "_excluded_pubs.html");
-        return filenames;
+        return createPubmedReports();
     }
 
     /**

@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.PropsReader;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
@@ -189,7 +190,7 @@ public class SocialNetworkAppManager {
      */
     private ShowUserPanelAction userPanelAction = null;
     /**
-     * A reference to the app's user panel. User will interact with app
+     * A reference to the app's main user panel. User will interact with app
      * primarily through this panel.
      */
     private UserPanel userPanelRef = null;
@@ -208,6 +209,7 @@ public class SocialNetworkAppManager {
      * Set of all visual styles currently supported by app
      */
     private HashSet<String> visualStyleSet = null;
+    private PropsReader propsReader = null;
     public static final int ANALYSISTYPE_INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
     public static final int ANALYSISTYPE_SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
 
@@ -217,18 +219,11 @@ public class SocialNetworkAppManager {
     
     private static final Logger logger = Logger.getLogger(SocialNetworkAppManager.class.getName());
     
-    /**
-     * Create a new Social Network App manager
-     */
-    public SocialNetworkAppManager() {
-        String outputDir = System.getProperty("user.home");
-        String path = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
-        File file = new File(path);
-        Map<String, String> locationMap = new HashMap<String, String>();
-        if (!file.isFile()) {
+    public void setPropsReader(PropsReader propsReader) {
+        this.propsReader = propsReader;
+        if (this.propsReader.getProperties().isEmpty()) {
             try {
                 InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
-                locationMap = new HashMap<String, String>();
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
                 String sCurrentLine = null;
                 while ((sCurrentLine = br.readLine()) != null) {
@@ -236,15 +231,11 @@ public class SocialNetworkAppManager {
                     String[] tokens = sCurrentLine.split("\t");
                     // Properly formed line
                     if (tokens.length == 2) {
-                       locationMap.put(tokens[0], tokens[1]);
+                       this.propsReader.getProperties().put(tokens[0], tokens[1]);
                     } else {
                         logger.log(Level.WARNING, "Misformed line in locationmap file\n \"" + sCurrentLine + "\n");
                     }
                 }
-                FileOutputStream fout = new FileOutputStream(path);
-                ObjectOutputStream oos = new ObjectOutputStream(fout);   
-                oos.writeObject(locationMap);
-                oos.close();
             } catch (FileNotFoundException e) {
                 logger.log(Level.SEVERE, "Exception occurred", e);
                 CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
@@ -253,6 +244,17 @@ public class SocialNetworkAppManager {
                 CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
             }
         }
+    }
+    
+    private PropsReader getPropsReader() {
+        return this.propsReader;
+    }
+    
+    /**
+     * Create a new Social Network App manager
+     */
+    public SocialNetworkAppManager() {
+
     }
 
     /**
@@ -543,7 +545,7 @@ public class SocialNetworkAppManager {
      *
      * @return Map social networks <br>
      * <i>key: network name</i> <br>
-     * <i>value: {CyNetwork, Category, CyNetworkView}</i>
+     * <i>value: social network</i>
      */
     public Map<String, SocialNetwork> getSocialNetworkMap() {
         if (this.socialNetworkMap == null) {

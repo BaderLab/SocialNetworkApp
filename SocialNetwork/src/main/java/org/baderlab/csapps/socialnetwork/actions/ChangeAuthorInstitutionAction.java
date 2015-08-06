@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Map;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -13,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.PropsReader;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CyMenuItem;
@@ -36,15 +36,18 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
     private CyNetwork cyNetwork = null;
     private TaskManager<?, ?> taskManager = null;
     private ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
+    private PropsReader propsReader = null;
 
     /**
      * 
      * @param TaskManager taskManager
      * @param ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef
      */
-    public ChangeAuthorInstitutionAction(TaskManager<?, ?> taskManager, ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef) {
+    public ChangeAuthorInstitutionAction(TaskManager<?, ?> taskManager, ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef,
+            PropsReader propsReader) {
         this.taskManager = taskManager;
         this.applyVisualStyleTaskFactoryRef = applyVisualStyleTaskFactoryRef;
+        this.propsReader = propsReader;
     }
 
     /**
@@ -82,13 +85,11 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
                         if (!mainInstitution.equalsIgnoreCase("n/a")) {
                             mainInstitution = mainInstitution.toUpperCase();
                             CytoscapeUtilities.setCyTableAttribute(nodeTable, SUID, NodeAttribute.MAIN_INSTITUTION.toString(), mainInstitution);
-                            Map<String, String> locationMap = CytoscapeUtilities.getLocationMap();
-                            String location = locationMap.get(mainInstitution);
+                            String location = (String) this.propsReader.getProperties().get(mainInstitution);
                             if (location == null) {
                                 location = "Other";
-                                locationMap.put(mainInstitution, location);
-                                CytoscapeUtilities.saveLocationMap(locationMap);
                             }
+                            this.propsReader.getProperties().put(mainInstitution, location);
                             CytoscapeUtilities.setCyTableAttribute(nodeTable, SUID, NodeAttribute.LOCATION.toString(), location);                                
                             outcome = JOptionPane.CANCEL_OPTION;                            
                         }
