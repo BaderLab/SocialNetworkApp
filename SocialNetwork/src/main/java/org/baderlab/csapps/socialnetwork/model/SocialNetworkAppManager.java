@@ -86,6 +86,15 @@ public class SocialNetworkAppManager {
     private static JTextField startDateTextFieldRef = null;
     private static JTextField endDateTextFieldRef = null;
     private static int selectedYear = -1;
+    private static SocialNetwork selectedSocialNetwork = null;
+    
+    public static SocialNetwork getSelectedSocialNetwork() {
+        return selectedSocialNetwork;
+    }
+    
+    public static void setSelectedSocialNetwork(SocialNetwork socialNetwork) {
+        selectedSocialNetwork = socialNetwork;
+    }
     
     public static int getSelectedYear() {
         return selectedYear;

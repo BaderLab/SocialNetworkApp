@@ -22,7 +22,6 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskManager;
 
 
@@ -35,15 +34,16 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     
     private JSlider sliderButton = null;
     private JTextField textField = null;
-    private CyNetwork cyNetwork = null;
     private int startYear = -1, endYear = -1;
     private TaskManager<?, ?> taskManager = null;
     private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private SocialNetwork socialNetwork = null;
+    private int lastYear = -1;
     
-    public InfoPanel(SocialNetwork socialNetwork, TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
+    public InfoPanel(TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork) {
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
-        this.cyNetwork = socialNetwork.getCyNetwork();
+        this.socialNetwork = socialNetwork;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
@@ -75,6 +75,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.sliderButton = new JSlider(JSlider.HORIZONTAL, startYear, endYear, startYear);
         this.sliderButton.setValue(startYear);
         this.sliderButton.addChangeListener(this);
+        //this.sliderButton.setMajorTickSpacing(10);
+        this.sliderButton.setMinorTickSpacing(1);
+        this.sliderButton.setPaintTicks(true);
+        this.sliderButton.setPaintLabels(true);
         this.sliderButton.setPaintLabels(false);
 
         JPanel labelTextSlider = new JPanel();
@@ -136,16 +140,13 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     public void stateChanged(ChangeEvent evt) {
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
-        if (!source.getValueIsAdjusting()) { //done adjusting
-            SocialNetworkAppManager.setSelectedYear(year);
-            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());
-        } else { //value is adjusting; just set the text
+        if (year != this.lastYear) {
             this.textField.setText(String.valueOf(year));
+            SocialNetworkAppManager.setSelectedYear(year);
+            SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
+            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());            
         }
-    }
-
-    public CyNetwork getCyNetwork() {
-        return cyNetwork;
+        this.lastYear = year;
     }
     
     public void setStartYear(int startYear) {
@@ -154,6 +155,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     
     public void setEndYear(int endYear) {
         this.endYear = endYear;
+    }
+    
+    public void setSocialNetwork(SocialNetwork socialNetwork) {
+        this.socialNetwork = socialNetwork;
     }
 
 }

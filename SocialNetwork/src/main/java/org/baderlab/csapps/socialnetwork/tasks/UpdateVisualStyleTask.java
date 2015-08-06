@@ -38,6 +38,8 @@ public class UpdateVisualStyleTask extends AbstractTask {
     private VisualMappingManager visualMappingManager = null;
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef = null;
     private CyNetworkView cyNetworkView = null;
+    private SocialNetworkAppManager appManager = null;
+    private CyApplicationManager cyApplicationManager = null;
     private SocialNetwork socialNetwork = null;
     private CyNetwork cyNetwork = null;
     private int startYear = -1, endYear = -1;
@@ -46,7 +48,8 @@ public class UpdateVisualStyleTask extends AbstractTask {
             VisualMappingManager visualMappingManager, VisualMappingFunctionFactory discrete,
             CyApplicationManager cyApplicationManagerServiceRef) {
         this.taskManager = taskManager;
-        this.socialNetwork = appManager.getCurrentlySelectedSocialNetwork();
+        this.appManager = appManager;
+        this.cyApplicationManager = cyApplicationManagerServiceRef;
         this.cyNetwork = cyApplicationManagerServiceRef.getCurrentNetwork();
         this.cyNetworkView = cyApplicationManagerServiceRef.getCurrentNetworkView();
         this.visualMappingManager = visualMappingManager;
@@ -58,9 +61,16 @@ public class UpdateVisualStyleTask extends AbstractTask {
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
+        SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
+        this.cyNetwork = socialNetwork.getCyNetwork();
+        this.cyNetworkView = this.cyApplicationManager.getCurrentNetworkView();
+        
+        if (this.cyNetworkView == null) {
+            return;
+        }
         
         taskMonitor.setTitle(String.format("Loading %s Visual Style ... ", 
-                VisualStyles.toString(this.socialNetwork.getVisualStyleId())));
+                VisualStyles.toString(socialNetwork.getVisualStyleId())));
         
         int year = SocialNetworkAppManager.getSelectedYear();
         
@@ -110,7 +120,7 @@ public class UpdateVisualStyleTask extends AbstractTask {
             if (!selectedNodes.contains(node)) {
                 //deselectedNodes.add(node);
                 // TODO: change opacity to 0
-                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);;
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
                 CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.IS_SELECTED.toString(), false);
             } else {

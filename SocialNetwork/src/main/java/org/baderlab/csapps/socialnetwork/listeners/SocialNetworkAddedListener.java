@@ -37,6 +37,7 @@
 
 package org.baderlab.csapps.socialnetwork.listeners;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -88,7 +89,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private CySwingApplication cySwingApplicationServiceRef = null;
     private TaskManager<?, ?> taskManager = null;
     private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
-    //private boolean initialized = false;
+    private boolean initialized = false;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -114,8 +115,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
     }
     
-    /*
-    private void updateInfoPanel(SocialNetwork socialNetwork) {
+    private void updateInfoPanel() {
         String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
         String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
         int startYear = -1, endYear = -1;
@@ -126,18 +126,23 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         
         this.infoPanel.setStartYear(startYear);
         this.infoPanel.setEndYear(endYear);
+        
+        /* Text field */
         this.infoPanel.getTextField().setText(String.valueOf(startYear));
+        
+        /* Slider button */
         this.infoPanel.getSliderButton().setMinimum(startYear);
         this.infoPanel.getSliderButton().setMaximum(endYear);
         this.infoPanel.getSliderButton().setValue(startYear);
-        this.infoPanel.setSocialNetwork(socialNetwork);
+        this.infoPanel.getSliderButton().repaint();
+        
+        this.infoPanel.setSocialNetwork(this.socialNetwork);
         
         this.infoPanel.updateUI();
     }
-    */
     
     private void initializeInfoPanel(SocialNetwork network) {
-        this.infoPanel = new InfoPanel(network, this.taskManager, this.updateVisualStyleTaskFactory);        
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork);        
     }
 
     /**
@@ -159,9 +164,14 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
             // ---------------------------------------------------------------------------------------------------------
-            initializeInfoPanel(this.socialNetwork);
-            this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
-            // If the state of the cytoPanelWest is HIDE, show it
+            if (!initialized) {
+                initializeInfoPanel(this.socialNetwork);                
+                this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                initialized = true;
+            } else {
+                updateInfoPanel();
+            }
+            // If the state of the cytoPanelEast is HIDE, show it
             if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
                 this.cytoPanelEast.setState(CytoPanelState.DOCK);
             }
