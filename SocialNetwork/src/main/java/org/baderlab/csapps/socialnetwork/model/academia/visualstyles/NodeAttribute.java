@@ -9,7 +9,7 @@ public enum NodeAttribute {
     
     DEPARTMENT("Department"),
     FIRST_NAME("First Name"),
-    INSTITUTION("Institutions"),
+    INSTITUTIONS("Institutions"),
     IS_SELECTED("Is Selected"),
     LABEL("Label"),
     LAST_NAME("Last Name"),

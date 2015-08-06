@@ -266,7 +266,7 @@ public class Author extends AbstractNode {
                 this.institutionList.add(institution);
             }            
         }
-        this.getNodeAttrMap().put(NodeAttribute.INSTITUTION.toString(), 
+        this.getNodeAttrMap().put(NodeAttribute.INSTITUTIONS.toString(), 
                 new ArrayList<String>(institutionList));
     }
 

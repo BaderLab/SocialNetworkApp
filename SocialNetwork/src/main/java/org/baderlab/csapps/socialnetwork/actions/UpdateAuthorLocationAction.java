@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JMenuItem;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CyMenuItem;
 import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
@@ -35,7 +36,7 @@ public class UpdateAuthorLocationAction implements CyNodeViewContextMenuFactory,
         CyRow cyRow = nodeTable.getRow(this.cyNode.getSUID());
         String authorName = (String) cyRow.getAllValues().get("Label");
         @SuppressWarnings("unchecked")
-        List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get("Institution");
+        List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get(NodeAttribute.INSTITUTIONS.toString());
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
             String institution = listOfInstitutions.get(0);       
             CytoscapeUtilities.createDialogBox(String.format("Update location of %s", authorName), institution, 
