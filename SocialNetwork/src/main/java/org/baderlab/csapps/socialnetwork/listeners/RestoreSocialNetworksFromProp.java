@@ -44,12 +44,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.swing.Action;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -61,6 +64,7 @@ import org.cytoscape.session.events.SessionLoadedEvent;
 import org.cytoscape.session.events.SessionLoadedListener;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.work.TaskManager;
 
 /**
  * Scans the properties file for any important information on social networks
@@ -72,10 +76,14 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
 
     private SocialNetworkAppManager appManager = null;
     private CyServiceRegistrar cyServiceRegistrar = null;
-    private CytoPanel cytoPanelWest = null;
+    private CytoPanel cytoPanelWest = null, cytoPanelEast = null;
     private ShowUserPanelAction userPanelAction = null;
     private CyNetworkViewManager viewManager = null;
     private UserPanel userPanel = null;
+    private InfoPanel infoPanel = null;
+    private TaskManager<?, ?> taskManager = null;
+    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private boolean initialized = false;
 
     /**
      * Constructor for {@link RestoreSocialNetworksFromProp}
@@ -84,15 +92,50 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
      * @param {@link CyNetworkViewManager} viewManager
      */
     public RestoreSocialNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
-            CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel) {
+            CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel,
+            TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;
         this.cyServiceRegistrar = cyServiceRegistrar;
         this.cytoPanelWest = cySwingApplicationService.getCytoPanel(CytoPanelName.WEST);
+        this.cytoPanelEast = cySwingApplicationService.getCytoPanel(CytoPanelName.EAST);
         this.userPanelAction = userPanelAction;
         this.userPanel = userPanel;
+        this.taskManager = taskManager;
+        this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
     }
+    
+    private void updateInfoPanel(SocialNetwork socialNetwork) {
+        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+        int startYear = -1, endYear = -1;
+        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+            startYear = Integer.parseInt(startYearTxt); 
+            endYear = Integer.parseInt(endYearTxt);            
+        }
+        
+        this.infoPanel.setStartYear(startYear);
+        this.infoPanel.setEndYear(endYear);
+        
+        /* Text field */
+        this.infoPanel.getTextField().setText(String.valueOf(startYear));
+        
+        /* Slider button */
+        this.infoPanel.getSliderButton().setMinimum(startYear);
+        this.infoPanel.getSliderButton().setMaximum(endYear);
+        this.infoPanel.getSliderButton().setValue(startYear);
+        this.infoPanel.getSliderButton().repaint();
+        
+        this.infoPanel.setSocialNetwork(socialNetwork);
+        
+        this.infoPanel.updateUI();
+    }
+    
+    private void initializeInfoPanel(SocialNetwork socialNetwork) {
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork);        
+    }
+
 
     /**
      * Invoked when a session is about to be loaded
@@ -122,7 +165,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                 return;
             }
             this.cytoPanelWest.setSelectedIndex(index);
-            this.userPanelAction.putValue(Action.NAME, "Hide Social Network");
+            this.userPanelAction.putValue(Action.NAME, "Hide Social Network");            
         }
 
         try {
@@ -153,6 +196,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
             Collection<CyNetworkView> views = null;
             int index = -1;
             // Identify the social networks in the loaded session
+            SocialNetwork network = null;
             for (CyNetwork n : e.getLoadedSession().getNetworks()) {
                 index = listOfSocialNetworks.indexOf(n.toString());
                 if (index > -1) {
@@ -168,12 +212,33 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                     socialNetwork.setNetworkView(networkView);
                     this.appManager.getSocialNetworkMap().put(n.toString(), socialNetwork);
                     this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
+                    network = socialNetwork;
                 }
             }
             in.close();
+            if (network != null) {
+                if (!initialized) {
+                    initializeInfoPanel(network);                
+                    this.cyServiceRegistrar.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                    initialized = true;
+                } else {
+                    updateInfoPanel(network);
+                }
+            }
+            // If the state of the cytoPanelEast is HIDE, show it
+            if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
+                this.cytoPanelEast.setState(CytoPanelState.DOCK);
+            }
+            // Select my panel
+            index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
+            if (index == -1) {
+                return;
+            }
+            this.cytoPanelEast.setSelectedIndex(index);
+            // ---------------------------------------------------------------------------------------------------------             
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
+        }        
     }
 
 }

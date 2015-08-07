@@ -37,7 +37,6 @@
 
 package org.baderlab.csapps.socialnetwork.listeners;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -144,23 +143,17 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private void initializeInfoPanel(SocialNetwork network) {
         this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork);        
     }
-
-    /**
-     * Adds network to network table and configures visual styles if necessary.
-     *
-     * @param {@link NetworkAddedEvent} event
-     */
-    public void handleEvent(NetworkAddedEvent event) {
-        this.network = event.getNetwork();
+    
+    private void handleNetwork(CyNetwork cyNetwork) {
         // Set mouse cursor to default (network's already been loaded)
         this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        String name = SocialNetworkAppManager.getNetworkName(event.getNetwork());
+        String name = SocialNetworkAppManager.getNetworkName(cyNetwork);
         // If the network being added is a social network, then
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
             // Add to network table
             this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-            this.socialNetwork.setCyNetwork(event.getNetwork());
+            this.socialNetwork.setCyNetwork(cyNetwork);
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
             // ---------------------------------------------------------------------------------------------------------
@@ -188,7 +181,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 case Category.INCITES:
                     // TODO:
                     if (CytoscapeUtilities.getVisualStyle("InCites", this.vmmServiceRef) == null) {
-                        IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(event.getNetwork(), this.socialNetwork, 
+                        IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
                         this.vmmServiceRef.addVisualStyle(incitesVisualStyle.getVisualStyle());                        
@@ -197,7 +190,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 case Category.SCOPUS:
                     // TODO:
                     if (CytoscapeUtilities.getVisualStyle("Scopus", this.vmmServiceRef) == null) {
-                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), this.socialNetwork, 
+                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
                         this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
@@ -206,7 +199,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 case Category.PUBMED:
                     // TODO:
                     if (CytoscapeUtilities.getVisualStyle("PubMed", this.vmmServiceRef) == null) {
-                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(event.getNetwork(), this.socialNetwork, 
+                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
                         this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
@@ -214,12 +207,22 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                     break;
             }
             if (CytoscapeUtilities.getVisualStyle("Social Network Chart", this.vmmServiceRef) ==  null) {
-                ChartVisualStyle chartVisualStyle = new ChartVisualStyle(event.getNetwork(), this.socialNetwork, 
+                ChartVisualStyle chartVisualStyle = new ChartVisualStyle(cyNetwork, this.socialNetwork, 
                         this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                         this.discreteMappingFactoryServiceRef, true);
                 this.vmmServiceRef.addVisualStyle(chartVisualStyle.getVisualStyle());                                                        
             }
             this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
         }
+    }
+
+    /**
+     * Adds network to network table and configures visual styles if necessary.
+     *
+     * @param {@link NetworkAddedEvent} event
+     */
+    public void handleEvent(NetworkAddedEvent event) {
+        this.network = event.getNetwork();
+        this.handleNetwork(this.network);
     }
 }

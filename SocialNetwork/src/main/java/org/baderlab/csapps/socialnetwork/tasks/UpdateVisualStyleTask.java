@@ -62,7 +62,7 @@ public class UpdateVisualStyleTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
-        this.cyNetwork = socialNetwork.getCyNetwork();
+        this.cyNetwork = this.cyApplicationManager.getCurrentNetwork();
         this.cyNetworkView = this.cyApplicationManager.getCurrentNetworkView();
         
         if (this.cyNetworkView == null) {

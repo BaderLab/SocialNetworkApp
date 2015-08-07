@@ -222,7 +222,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
         RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
-                cySwingApplicationServiceRef, userPanelAction, userPanel);
+                cySwingApplicationServiceRef, userPanelAction, userPanel, taskManager, updateVisualStyleTaskFactoryRef);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
         
         final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
