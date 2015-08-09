@@ -44,12 +44,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
@@ -73,6 +76,8 @@ import org.cytoscape.work.TaskManager;
  * @author Victor Kofia
  */
 public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
+    
+    private static final Logger logger = Logger.getLogger(RestoreSocialNetworksFromProp.class.getName());
 
     private SocialNetworkAppManager appManager = null;
     private CyServiceRegistrar cyServiceRegistrar = null;
@@ -217,24 +222,29 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
             }
             in.close();
             if (network != null) {
-                if (!initialized) {
-                    initializeInfoPanel(network);                
-                    this.cyServiceRegistrar.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
-                    initialized = true;
+                CyNetwork cyNetwork = network.getCyNetwork();
+                if (cyNetwork.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
+                    if (!initialized) {
+                        initializeInfoPanel(network);                
+                        this.cyServiceRegistrar.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                        initialized = true;
+                    } else {
+                        updateInfoPanel(network);
+                    }
+                    // If the state of the cytoPanelEast is HIDE, show it
+                    if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
+                        this.cytoPanelEast.setState(CytoPanelState.DOCK);
+                    }
+                    // Select my panel
+                    index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
+                    if (index == -1) {
+                        return;
+                    }
+                    this.cytoPanelEast.setSelectedIndex(index);              
                 } else {
-                    updateInfoPanel(network);
+                    logger.log(Level.WARNING, String.format("%s does not contain the pubs per year attribute. Time series feature disabled.", network.getNetworkName()));
                 }
             }
-            // If the state of the cytoPanelEast is HIDE, show it
-            if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
-                this.cytoPanelEast.setState(CytoPanelState.DOCK);
-            }
-            // Select my panel
-            index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
-            if (index == -1) {
-                return;
-            }
-            this.cytoPanelEast.setSelectedIndex(index);
             // ---------------------------------------------------------------------------------------------------------             
         } catch (Exception ex) {
             ex.printStackTrace();

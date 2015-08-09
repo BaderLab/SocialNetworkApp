@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -72,6 +73,8 @@ import org.cytoscape.work.TaskManager;
  *
  */
 public class SocialNetworkAddedListener implements NetworkAddedListener {
+    
+    private static final Logger logger = Logger.getLogger(SocialNetworkAddedListener.class.getName());
     
     private SocialNetworkAppManager appManager = null;
     private CyNetworkManager cyNetworkManagerServiceRef = null;
