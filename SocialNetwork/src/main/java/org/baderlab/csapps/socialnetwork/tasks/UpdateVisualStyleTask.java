@@ -29,8 +29,8 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 // TODO: ??
-public class HideNodesTask extends AbstractTask {
-    
+public class UpdateVisualStyleTask extends AbstractTask {
+
     private TaskManager<?, ?> taskManager = null;
     private VisualMappingManager visualMappingManager = null;
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef = null;
@@ -40,8 +40,8 @@ public class HideNodesTask extends AbstractTask {
     private SocialNetwork socialNetwork = null;
     private CyNetwork cyNetwork = null;
     private int startYear = -1, endYear = -1;
-    
-    public HideNodesTask(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
+
+    public UpdateVisualStyleTask(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
             VisualMappingManager visualMappingManager, VisualMappingFunctionFactory discrete,
             CyApplicationManager cyApplicationManagerServiceRef) {
         this.taskManager = taskManager;
@@ -52,7 +52,7 @@ public class HideNodesTask extends AbstractTask {
         this.visualMappingManager = visualMappingManager;
         this.discreteMappingFactoryServiceRef = discrete;
     }
-    
+
     /* (non-Javadoc)
      * @see org.cytoscape.work.AbstractTask#run(org.cytoscape.work.TaskMonitor)
      */
@@ -61,19 +61,19 @@ public class HideNodesTask extends AbstractTask {
         SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
         this.cyNetwork = this.cyApplicationManager.getCurrentNetwork();
         this.cyNetworkView = this.cyApplicationManager.getCurrentNetworkView();
-        
+
         if (this.cyNetworkView == null) {
             return;
         }
-        
+
         taskMonitor.setTitle(String.format("Loading %s Visual Style ... ", 
                 VisualStyles.toString(socialNetwork.getVisualStyleId())));
-        
+
         int year = SocialNetworkAppManager.getSelectedYear();
-        
+
         this.startYear = socialNetwork.getStartYear();
         this.endYear = socialNetwork.getEndYear();
-        
+
         Iterator<CyEdge> edgeIt = this.cyNetwork.getEdgeList().iterator();
         //HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
         //HashSet<CyEdge> deselectedEdges = new HashSet<CyEdge>();
@@ -82,30 +82,26 @@ public class HideNodesTask extends AbstractTask {
         View<CyEdge> edgeView = null;
         CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
         while (edgeIt.hasNext()) {
-            try {
             edge = edgeIt.next();
-            edgeView = this.cyNetworkView.getEdgeView(edge);
+            //edgeView = this.cyNetworkView.getEdgeView(edge);
             List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                     EdgeAttribute.PUBS_PER_YEAR.toString());
-            if (year < 0) {
-                System.out.println("...");
-            }
             if (pubsPerYear.get(year - startYear) == 1) {
-                //selectedEdges.add(edge);
                 selectedNodes.add(edge.getSource());
                 selectedNodes.add(edge.getTarget());
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
-                CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
-                        EdgeAttribute.IS_SELECTED.toString(), true);
-            } else {
-                //deselectedEdges.add(edge);
-                edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
-                CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
-                        EdgeAttribute.IS_SELECTED.toString(), false);
-            }
-            } catch (Exception e) {
-                System.out.println("...");
-            }
+                //CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
+                //        EdgeAttribute.IS_SELECTED.toString(), true);
+            } 
+            /*
+             
+                else {
+                    //deselectedEdges.add(edge);
+                    //edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
+                    //CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
+                    //       EdgeAttribute.IS_SELECTED.toString(), false);
+                }
+            
+            */
         }
         Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
         CyNode node = null;
@@ -122,19 +118,19 @@ public class HideNodesTask extends AbstractTask {
                 CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.IS_SELECTED.toString(), false);
             } else {
+                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);
                 CytoscapeUtilities.setCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.IS_SELECTED.toString(), true);
-                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);
             }
         }
-        
+
         this.cyNetworkView.updateView();
-        
+
         /*
         // Set opacity of deselected nodes and deselected edges to 0
         VisualStyle vs = CytoscapeUtilities.getVisualStyle
                 (VisualStyles.toString(socialNetwork.getVisualStyleId()), this.visualMappingManager);
-        
+
         // Node visual style
         DiscreteMapping nodeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
                 .createVisualMappingFunction(NodeAttribute.IS_SELECTED.toString(), Boolean.class, 
@@ -142,7 +138,7 @@ public class HideNodesTask extends AbstractTask {
 
         nodeOpacityMapping.putMapValue(false, 0.0);
         nodeOpacityMapping.putMapValue(true, 255.0);
-        
+
         // Edge visual style
         DiscreteMapping edgeOpacityMapping = (DiscreteMapping<Boolean, ?>) this.discreteMappingFactoryServiceRef
                 .createVisualMappingFunction(EdgeAttribute.IS_SELECTED.toString(), Boolean.class, 
@@ -155,8 +151,8 @@ public class HideNodesTask extends AbstractTask {
 
         // Set current visual style to new modified visual style
         this.visualMappingManager.setCurrentVisualStyle(vs);
-        */
-        
+         */
+
     }
 
 }

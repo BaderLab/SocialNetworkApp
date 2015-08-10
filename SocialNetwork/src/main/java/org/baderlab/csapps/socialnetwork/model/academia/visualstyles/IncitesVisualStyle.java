@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
@@ -65,10 +66,10 @@ public class IncitesVisualStyle extends BaseAcademiaVisualStyle {
      * @param CyNetwork network
      * @param SocialNetwork socialNetwork
      */
-    public IncitesVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
+    public IncitesVisualStyle(CyApplicationManager cyApplicationManager, CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
             VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
             VisualMappingFunctionFactory discreteMappingFactoryServiceRef, boolean isChart) {
-        super(network, socialNetwork, visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
+        super(cyApplicationManager, network, socialNetwork, visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
                 discreteMappingFactoryServiceRef, isChart);
     }
     

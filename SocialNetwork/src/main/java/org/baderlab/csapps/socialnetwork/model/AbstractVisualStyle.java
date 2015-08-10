@@ -89,6 +89,13 @@ public abstract class AbstractVisualStyle {
     protected abstract void applyNodeLabelFontFace(VisualStyle visualStyle);
     
     /**
+     * Specify the node label position
+     * 
+     * @param VisualStyle visualStyle
+     */
+    protected abstract void applyNodeLabelPosition(VisualStyle visualStyle);
+    
+    /**
      * Specify the edge width
      * 
      * @param VisualStyle visualStyle

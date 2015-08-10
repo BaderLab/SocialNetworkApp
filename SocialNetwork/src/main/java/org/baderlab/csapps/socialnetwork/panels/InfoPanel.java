@@ -136,11 +136,13 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     public void stateChanged(ChangeEvent evt) {
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
-        if (year != this.lastYear) {
+        if (!source.getValueIsAdjusting()) { //done adjusting            
             this.textField.setText(String.valueOf(year));
             SocialNetworkAppManager.setSelectedYear(year);
             SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
             this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());            
+        } else {
+            this.textField.setText(String.valueOf(year));
         }
         this.lastYear = year;
     }

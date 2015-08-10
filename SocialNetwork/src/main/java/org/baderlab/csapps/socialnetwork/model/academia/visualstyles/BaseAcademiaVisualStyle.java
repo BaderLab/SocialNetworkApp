@@ -43,6 +43,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -69,17 +70,20 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     protected VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
     protected SocialNetwork socialNetwork = null;
     protected VisualStyle visualStyle = null;
+    protected CyApplicationManager cyApplicationManagerServiceRef = null;
 
     /**
      * ??
      * 
      * @param CyNetwork network
      */
-    public BaseAcademiaVisualStyle(CyNetwork network, SocialNetwork socialNetwork, VisualStyleFactory visualStyleFactoryServiceRef,
-            VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
-            VisualMappingFunctionFactory discreteMappingFactoryServiceRef, boolean isChart) {
+    public BaseAcademiaVisualStyle(CyApplicationManager cyApplicationManagerServiceRef, CyNetwork network, SocialNetwork socialNetwork, 
+            VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, 
+            VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
+            boolean isChart) {
         this.network = network;
         this.socialNetwork = socialNetwork;
+        this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
         this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
         this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
         this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
@@ -221,6 +225,14 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
     }
 
     /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeLabelPosition(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeLabelPosition(VisualStyle visualStyle) {
+        // TODO: Set default node label position
+    }
+
+    /* (non-Javadoc)
      * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeShape(org.cytoscape.view.vizmap.VisualStyle)
      */
     @Override
@@ -273,6 +285,9 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         
         // Specify NODE_LABEL_FONT_FACE
         applyNodeLabelFontFace(visualStyle);
+        
+        // Specify NODE_LABEL_POSITION
+        applyNodeLabelPosition(visualStyle);
         
     }
 
