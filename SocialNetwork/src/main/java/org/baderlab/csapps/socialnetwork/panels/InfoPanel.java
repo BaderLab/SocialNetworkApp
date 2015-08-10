@@ -47,13 +47,9 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
-        
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
-            this.startYear = Integer.parseInt(startYearTxt); 
-            this.endYear = Integer.parseInt(endYearTxt);            
-        }
+
+        this.startYear = socialNetwork.getStartYear(); 
+        this.endYear = socialNetwork.getEndYear();            
         
         //Create the label.
         JLabel sliderLabel = new JLabel("Selected Year: ", JLabel.CENTER);
@@ -159,6 +155,26 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     
     public void setSocialNetwork(SocialNetwork socialNetwork) {
         this.socialNetwork = socialNetwork;
+    }
+    
+    public void update(SocialNetwork socialNetwork) {
+        this.setSocialNetwork(socialNetwork);
+        
+        int startYear = socialNetwork.getStartYear();
+        int endYear = socialNetwork.getEndYear();
+        this.setStartYear(startYear);
+        this.setEndYear(endYear);
+        
+        /* Text field */
+        this.getTextField().setText(String.valueOf(startYear));
+        
+        /* Slider button */
+        this.getSliderButton().setMinimum(startYear);
+        this.getSliderButton().setMaximum(endYear);
+        this.getSliderButton().setValue(startYear);
+        this.getSliderButton().repaint();
+        
+        this.updateUI();
     }
 
 }

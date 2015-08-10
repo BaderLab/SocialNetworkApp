@@ -111,36 +111,9 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
     }
     
-    private void updateInfoPanel(SocialNetwork socialNetwork) {
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        int startYear = -1, endYear = -1;
-        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
-            startYear = Integer.parseInt(startYearTxt); 
-            endYear = Integer.parseInt(endYearTxt);            
-        }
-        
-        this.infoPanel.setStartYear(startYear);
-        this.infoPanel.setEndYear(endYear);
-        
-        /* Text field */
-        this.infoPanel.getTextField().setText(String.valueOf(startYear));
-        
-        /* Slider button */
-        this.infoPanel.getSliderButton().setMinimum(startYear);
-        this.infoPanel.getSliderButton().setMaximum(endYear);
-        this.infoPanel.getSliderButton().setValue(startYear);
-        this.infoPanel.getSliderButton().repaint();
-        
-        this.infoPanel.setSocialNetwork(socialNetwork);
-        
-        this.infoPanel.updateUI();
-    }
-    
     private void initializeInfoPanel(SocialNetwork socialNetwork) {
         this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork);        
     }
-
 
     /**
      * Invoked when a session is about to be loaded
@@ -186,6 +159,8 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
             ArrayList<String> listOfNumPubs = new ArrayList<String>();
             ArrayList<String> listOfNumFaculty = new ArrayList<String>();
             ArrayList<String> listOfNumUnidenFaculty = new ArrayList<String>();
+            ArrayList<String> listOfStartYear = new ArrayList<String>();
+            ArrayList<String> listOfEndYear = new ArrayList<String>();
             while (line != null) {
                 networkData = line.split(",");
                 listOfSocialNetworks.add(networkData[0]);
@@ -193,6 +168,8 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                 listOfNumPubs.add(networkData[2]);
                 listOfNumFaculty.add(networkData[3]);
                 listOfNumUnidenFaculty.add(networkData[4]);
+                listOfStartYear.add(networkData[5]);
+                listOfEndYear.add(networkData[6]);
                 line = in.readLine();
             }
 
@@ -210,6 +187,8 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                     socialNetwork.setNum_publications(Integer.valueOf(listOfNumPubs.get(index)));
                     socialNetwork.setNum_faculty(Integer.valueOf(listOfNumFaculty.get(index)));
                     socialNetwork.setNum_uniden_faculty(Integer.valueOf(listOfNumUnidenFaculty.get(index)));
+                    socialNetwork.setStartYear(Integer.valueOf(listOfStartYear.get(index)));
+                    socialNetwork.setEndYear(Integer.valueOf(listOfEndYear.get(index)));
                     views = this.viewManager.getNetworkViews(n);
                     if (views.size() != 0) {
                         networkView = views.iterator().next();
@@ -227,9 +206,10 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                     if (!initialized) {
                         initializeInfoPanel(network);                
                         this.cyServiceRegistrar.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                        SocialNetworkAppManager.setInfoPanel(this.infoPanel);
                         initialized = true;
                     } else {
-                        updateInfoPanel(network);
+                        this.infoPanel.update(network);
                     }
                     // If the state of the cytoPanelEast is HIDE, show it
                     if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
@@ -242,7 +222,8 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
                     }
                     this.cytoPanelEast.setSelectedIndex(index);              
                 } else {
-                    logger.log(Level.WARNING, String.format("%s does not contain the pubs per year attribute. Time series feature disabled.", network.getNetworkName()));
+                    logger.log(Level.WARNING, String.format("Display Options panel disabled because %s does not contain the pubs per year attribute.",
+                            network.getNetworkName()));
                 }
             }
             // ---------------------------------------------------------------------------------------------------------             

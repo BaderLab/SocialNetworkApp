@@ -204,7 +204,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, updateVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
         
         // Create and register listeners
-        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager);
+        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager, cyServiceRegistrarRef, taskManager, updateVisualStyleTaskFactoryRef);
         registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 
         SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);

@@ -56,6 +56,7 @@ import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.PropsReader;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
+import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.CreateNetworkTaskFactory;
@@ -85,6 +86,15 @@ public class SocialNetworkAppManager {
     private static JTextField endDateTextFieldRef = null;
     private static int selectedYear = -1;
     private static SocialNetwork selectedSocialNetwork = null;
+    private static InfoPanel infoPanelRef = null;
+    
+    public static InfoPanel getInfoPanel() {
+        return infoPanelRef;
+    }
+    
+    public static void setInfoPanel(InfoPanel infoPanel) {
+        infoPanelRef = infoPanel;
+    }
     
     public static SocialNetwork getSelectedSocialNetwork() {
         return selectedSocialNetwork;

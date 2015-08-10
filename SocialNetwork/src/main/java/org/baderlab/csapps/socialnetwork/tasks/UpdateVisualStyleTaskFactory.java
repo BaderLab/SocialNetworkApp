@@ -29,7 +29,7 @@ public class UpdateVisualStyleTaskFactory extends AbstractTaskFactory {
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new UpdateVisualStyleTask(taskManager, appManager, visualMappingManager, discreteMappingFactoryServiceRef,
+        return new TaskIterator(new HideNodesTask(taskManager, appManager, visualMappingManager, discreteMappingFactoryServiceRef,
                 cyApplicationManagerServiceRef));
     }
 

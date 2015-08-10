@@ -3,7 +3,6 @@ package org.baderlab.csapps.socialnetwork.tasks;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -20,8 +19,6 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
@@ -32,7 +29,7 @@ import org.cytoscape.work.TaskMonitor;
  * @author Victor Kofia
  */
 // TODO: ??
-public class UpdateVisualStyleTask extends AbstractTask {
+public class HideNodesTask extends AbstractTask {
     
     private TaskManager<?, ?> taskManager = null;
     private VisualMappingManager visualMappingManager = null;
@@ -44,7 +41,7 @@ public class UpdateVisualStyleTask extends AbstractTask {
     private CyNetwork cyNetwork = null;
     private int startYear = -1, endYear = -1;
     
-    public UpdateVisualStyleTask(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
+    public HideNodesTask(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
             VisualMappingManager visualMappingManager, VisualMappingFunctionFactory discrete,
             CyApplicationManager cyApplicationManagerServiceRef) {
         this.taskManager = taskManager;
@@ -74,14 +71,8 @@ public class UpdateVisualStyleTask extends AbstractTask {
         
         int year = SocialNetworkAppManager.getSelectedYear();
         
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        this.startYear = -1;
-        this.endYear = -1;
-        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
-            this.startYear = Integer.parseInt(startYearTxt); 
-            this.endYear = Integer.parseInt(endYearTxt);            
-        }
+        this.startYear = socialNetwork.getStartYear();
+        this.endYear = socialNetwork.getEndYear();
         
         Iterator<CyEdge> edgeIt = this.cyNetwork.getEdgeList().iterator();
         //HashSet<CyEdge> selectedEdges = new HashSet<CyEdge>();
@@ -91,10 +82,14 @@ public class UpdateVisualStyleTask extends AbstractTask {
         View<CyEdge> edgeView = null;
         CyTable defaultEdgeTable = this.cyNetwork.getDefaultEdgeTable();
         while (edgeIt.hasNext()) {
+            try {
             edge = edgeIt.next();
             edgeView = this.cyNetworkView.getEdgeView(edge);
             List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                     EdgeAttribute.PUBS_PER_YEAR.toString());
+            if (year < 0) {
+                System.out.println("...");
+            }
             if (pubsPerYear.get(year - startYear) == 1) {
                 //selectedEdges.add(edge);
                 selectedNodes.add(edge.getSource());
@@ -107,6 +102,9 @@ public class UpdateVisualStyleTask extends AbstractTask {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
                 CytoscapeUtilities.setCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                         EdgeAttribute.IS_SELECTED.toString(), false);
+            }
+            } catch (Exception e) {
+                System.out.println("...");
             }
         }
         Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();

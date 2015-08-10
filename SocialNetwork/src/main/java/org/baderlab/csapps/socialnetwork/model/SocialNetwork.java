@@ -109,6 +109,23 @@ public class SocialNetwork {
     private int num_faculty = 0;
     private int num_uniden_faculty = 0;
     private String unidentified_faculty = "";
+    private int startYear = -1, endYear = -1;
+    
+    public void setStartYear(int startYear) {
+        this.startYear = startYear;
+    }
+    
+    public int getStartYear() {
+        return this.startYear;
+    }
+    
+    public void setEndYear(int endYear) {
+        this.endYear = endYear;
+    }
+    
+    public int getEndYear() {
+        return this.endYear;
+    }
 
     /**
      * Create a new {@link SocialNetwork}

@@ -84,7 +84,7 @@ public class SaveSocialNetworkToProp implements SessionAboutToBeSavedListener {
             // Save social networks in current session to file
             Iterator<Entry<String, SocialNetwork>> it = this.appManager.getSocialNetworkMap().entrySet().iterator();
             Entry<String, SocialNetwork> pair = null;
-            String networkName = null, type = null, numPub = null, numFaculty = null, numFacultyUniden = null;
+            String networkName = null, type = null, numPub = null, numFaculty = null, numFacultyUniden = null, startYear = null, endYear = null;
             SocialNetwork socialNetwork = null;
             while (it.hasNext()) {
                 pair = it.next();
@@ -94,7 +94,9 @@ public class SaveSocialNetworkToProp implements SessionAboutToBeSavedListener {
                 numPub = String.valueOf(socialNetwork.getNum_publications());
                 numFaculty = String.valueOf(socialNetwork.getNum_faculty());
                 numFacultyUniden = String.valueOf(socialNetwork.getNum_uniden_faculty());
-                writer.write(networkName + "," + type + "," + numPub + "," + numFaculty + "," + numFacultyUniden);
+                startYear = String.valueOf(socialNetwork.getStartYear());
+                endYear = String.valueOf(socialNetwork.getEndYear());
+                writer.write(networkName + "," + type + "," + numPub + "," + numFaculty + "," + numFacultyUniden + "," + startYear + "," + endYear);
                 writer.newLine();
             }
             writer.close();

@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.listeners;
 
 import java.awt.Cursor;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -48,6 +49,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -117,32 +119,6 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
     }
     
-    private void updateInfoPanel() {
-        String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
-        String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
-        int startYear = -1, endYear = -1;
-        if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
-            startYear = Integer.parseInt(startYearTxt); 
-            endYear = Integer.parseInt(endYearTxt);            
-        }
-        
-        this.infoPanel.setStartYear(startYear);
-        this.infoPanel.setEndYear(endYear);
-        
-        /* Text field */
-        this.infoPanel.getTextField().setText(String.valueOf(startYear));
-        
-        /* Slider button */
-        this.infoPanel.getSliderButton().setMinimum(startYear);
-        this.infoPanel.getSliderButton().setMaximum(endYear);
-        this.infoPanel.getSliderButton().setValue(startYear);
-        this.infoPanel.getSliderButton().repaint();
-        
-        this.infoPanel.setSocialNetwork(this.socialNetwork);
-        
-        this.infoPanel.updateUI();
-    }
-    
     private void initializeInfoPanel(SocialNetwork network) {
         this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork);        
     }
@@ -156,28 +132,43 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
             // Add to network table
             this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
+            String startYearTxt = SocialNetworkAppManager.getStartDateTextFieldRef().getText().trim();
+            String endYearTxt = SocialNetworkAppManager.getEndDateTextFieldRef().getText().trim();
+            int startYear = -1, endYear = -1;
+            if (Pattern.matches("[0-9]+", startYearTxt) && Pattern.matches("[0-9]+", endYearTxt)) {
+                startYear = Integer.parseInt(startYearTxt); 
+                endYear = Integer.parseInt(endYearTxt);            
+            }
+            this.socialNetwork.setStartYear(startYear);
+            this.socialNetwork.setEndYear(endYear);
             this.socialNetwork.setCyNetwork(cyNetwork);
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
-            // ---------------------------------------------------------------------------------------------------------
-            if (!initialized) {
-                initializeInfoPanel(this.socialNetwork);                
-                this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
-                initialized = true;
+            // ------------------------------------------------------------------------------------------------------------
+            if (cyNetwork.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
+                if (!initialized) {
+                    initializeInfoPanel(this.socialNetwork);                
+                    this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
+                    SocialNetworkAppManager.setInfoPanel(this.infoPanel);
+                    initialized = true;
+                } else {
+                    this.infoPanel.update(this.socialNetwork);;
+                }
+                // If the state of the cytoPanelEast is HIDE, show it
+                if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
+                    this.cytoPanelEast.setState(CytoPanelState.DOCK);
+                }
+                // Select my panel
+                int index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
+                if (index == -1) {
+                    return;
+                }
+                this.cytoPanelEast.setSelectedIndex(index);         
             } else {
-                updateInfoPanel();
+                logger.log(Level.WARNING, String.format("Display Options panel disabled because %s does not contain the pubs per year attribute.",
+                        this.socialNetwork.getNetworkName()));
             }
-            // If the state of the cytoPanelEast is HIDE, show it
-            if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
-                this.cytoPanelEast.setState(CytoPanelState.DOCK);
-            }
-            // Select my panel
-            int index = this.cytoPanelEast.indexOfComponent(this.infoPanel);
-            if (index == -1) {
-                return;
-            }
-            this.cytoPanelEast.setSelectedIndex(index);
-            // ---------------------------------------------------------------------------------------------------------             
+            // -----------------------------------------------------------------------------------------------------------          
             int networkID = socialNetwork.getNetworkType();
             // Specify the default visual styles
             switch (networkID) {
