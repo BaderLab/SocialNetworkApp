@@ -359,16 +359,24 @@ public class Author extends AbstractNode {
      * strings.
      */
     public void format() {
+        try {
         // Verify that the first letters in both first and last names are
         // uppercase, and all following letters
         // are in lowercase
-        String firstName = this.getFirstName().substring(0, 1).toUpperCase() + this.getFirstName().substring(1).toLowerCase();
-        this.setFirstName(firstName);
-        String lastName = this.getLastName().substring(0, 1).toUpperCase() + this.getLastName().substring(1).toLowerCase();
-        this.setLastName(lastName);
+        if (this.getFirstName().length() > 0) {
+            String firstName = this.getFirstName().substring(0, 1).toUpperCase() + this.getFirstName().substring(1).toLowerCase();
+            this.setFirstName(firstName);                
+        }
+        if (this.getLastName().length() > 0) {
+            String lastName = this.getLastName().substring(0, 1).toUpperCase() + this.getLastName().substring(1).toLowerCase();
+            this.setLastName(lastName);            
+        }
         // Ensure that the first and middle initials are capitalized
         this.setFirstInitial(this.getFirstInitial().toUpperCase());
         this.setMiddleInitial(this.getMiddleInitial().toUpperCase());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     /**
