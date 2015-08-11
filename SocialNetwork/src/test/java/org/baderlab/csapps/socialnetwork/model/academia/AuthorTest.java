@@ -339,5 +339,35 @@ public class AuthorTest {
         }
         assertTrue(!switched);
     }
+    
+    @Test
+    /**
+     * Verify that an author's first and last name will be properly formatted even though
+     * the author's first name consists of a single initial and the last name consists of
+     * an empty string.
+     */
+    public void testEmptyLastName() {
+        boolean status = false;
+        Author author = new Author(" D", Category.PUBMED);
+        String firstName = author.getFirstName();
+        String lastName = author.getLastName();
+        status = firstName.equals("D") && lastName.equals("N/a");
+        assertTrue(status);
+    }
+    
+    @Test
+    /**
+     * Verify that an author's first and last name will be properly formatted even though
+     * the author's first name consists of an empty string and the last name consists of
+     * a single initial.
+     */
+    public void testEmptyFirstName() {
+        boolean status = false;
+        Author author = new Author("D ", Category.PUBMED);
+        String firstName = author.getFirstName();
+        String lastName = author.getLastName();
+        status = firstName.equals("N/a") && lastName.equals("D");
+        assertTrue(status);
+    }
 
 }

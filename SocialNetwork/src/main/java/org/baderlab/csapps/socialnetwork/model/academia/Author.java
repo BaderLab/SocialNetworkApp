@@ -643,7 +643,7 @@ public class Author extends AbstractNode {
             // TODO: 
             String mainInstitution = author.getMainInstitution();
             otherAuthor.setMainInstitution(mainInstitution);
-            updateInstutionRanking(otherAuthor, mainInstitution);
+            updateInstitutionRanking(otherAuthor, mainInstitution);
             otherAuthor.setLocation(author.getLocation());
         } else if (rank == otherRank) {
             Author[] randomAuthorArray = new Author[] { author, otherAuthor };
@@ -652,7 +652,7 @@ public class Author extends AbstractNode {
             String randomInstitution = randomAuthorArray[i].getInstitution();
             String randomLocation = randomAuthorArray[i].getLocation();
             otherAuthor.addInstitution(randomInstitution);
-            updateInstutionRanking(otherAuthor, randomInstitution);
+            updateInstitutionRanking(otherAuthor, randomInstitution);
             otherAuthor.setLocation(randomLocation);
         }
     }
@@ -733,7 +733,10 @@ public class Author extends AbstractNode {
      * @param String lastName
      */
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        if (lastName.trim().isEmpty()) {
+            return;
+        }
+        this.lastName = lastName;            
         this.getNodeAttrMap().put(NodeAttribute.LAST_NAME.toString(), lastName);
     }
 
@@ -841,7 +844,7 @@ public class Author extends AbstractNode {
      * @param Author author
      * @param String mainInstitution
      */
-    private void updateInstutionRanking(Author author, String mainInstitution) {
+    private void updateInstitutionRanking(Author author, String mainInstitution) {
         LinkedList<String> ll = (LinkedList<String>) author.getInstitutions();
         if (ll.contains(mainInstitution)) {
             ll.remove(mainInstitution);
