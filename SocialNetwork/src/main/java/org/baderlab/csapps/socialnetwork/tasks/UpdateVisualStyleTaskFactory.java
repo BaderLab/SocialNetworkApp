@@ -16,21 +16,22 @@ public class UpdateVisualStyleTaskFactory extends AbstractTaskFactory {
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
     private SocialNetworkAppManager appManager = null;
     private CyApplicationManager cyApplicationManagerServiceRef = null;
-
+    private ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
     
     public UpdateVisualStyleTaskFactory(TaskManager<?, ?> taskManager, SocialNetworkAppManager appManager,
             VisualMappingManager visualMappingManager, VisualMappingFunctionFactory discrete, 
-            CyApplicationManager cyApplicationManagerServiceRef) {
+            CyApplicationManager cyApplicationManagerServiceRef, ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef) {
         this.taskManager = taskManager;
         this.appManager = appManager;
         this.visualMappingManager = visualMappingManager;
         this.discreteMappingFactoryServiceRef = discrete;
         this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
+        this.applyVisualStyleTaskFactoryRef = applyVisualStyleTaskFactoryRef;
     }
 
     public TaskIterator createTaskIterator() {
         return new TaskIterator(new UpdateVisualStyleTask(taskManager, appManager, visualMappingManager, discreteMappingFactoryServiceRef,
-                cyApplicationManagerServiceRef));
+                cyApplicationManagerServiceRef, applyVisualStyleTaskFactoryRef));
     }
 
 }

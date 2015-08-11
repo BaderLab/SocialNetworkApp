@@ -140,7 +140,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             this.textField.setText(String.valueOf(year));
             SocialNetworkAppManager.setSelectedYear(year);
             SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
-            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());            
+            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());   
         } else {
             this.textField.setText(String.valueOf(year));
         }
