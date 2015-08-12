@@ -119,7 +119,6 @@ public class Copublication extends AbstractEdge {
             boolList.add(pubYear == year ? 1 : 0);
         }
         this.edgeAttrMap.put(EdgeAttribute.PUBS_PER_YEAR.toString(), boolList);   
-        this.edgeAttrMap.put(EdgeAttribute.IS_SELECTED.toString(), false);
     }
     
     /**

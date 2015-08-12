@@ -158,7 +158,6 @@ public class Publication extends AbstractEdge {
         this.edgeAttrMap.put(EdgeAttribute.PUBLICATION_DATE.toString(), this.pubYear);
         this.edgeAttrMap.put(EdgeAttribute.JOURNAL.toString(), this.journal);
         this.edgeAttrMap.put(EdgeAttribute.TITLE.toString(), this.title);
-        this.edgeAttrMap.put(EdgeAttribute.IS_SELECTED.toString(), false);
     }
 
     /* (non-Javadoc)

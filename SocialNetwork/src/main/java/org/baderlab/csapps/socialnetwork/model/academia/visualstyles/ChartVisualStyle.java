@@ -41,7 +41,7 @@ public class ChartVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeLabelPosition(VisualStyle visualStyle) {
-        
+     /*   
      // Get the current Visual Lexicon
         VisualLexicon lexicon = this.cyApplicationManagerServiceRef.getCurrentRenderingEngine().getVisualLexicon();
         
@@ -60,7 +60,7 @@ public class ChartVisualStyle extends BaseAcademiaVisualStyle {
             }
 
         }
-        
+      */
     }
 
     /* (non-Javadoc)

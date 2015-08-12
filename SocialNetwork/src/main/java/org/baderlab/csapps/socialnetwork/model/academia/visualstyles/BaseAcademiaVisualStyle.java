@@ -160,11 +160,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
      */
     @Override
     protected void applyEdgeVisibility(VisualStyle visualStyle) {
-        DiscreteMapping<Boolean, Boolean> edgeVisibilityMapping = (DiscreteMapping<Boolean, Boolean>) this.discreteMappingFactoryServiceRef
-                .createVisualMappingFunction(EdgeAttribute.IS_SELECTED.toString(), Boolean.class, 
-                        BasicVisualLexicon.EDGE_VISIBLE);
-        edgeVisibilityMapping.putMapValue(false, false);
-        edgeVisibilityMapping.putMapValue(true, true);
+        // TODO: Set default visibility
     }
 
     /* (non-Javadoc)
@@ -315,11 +311,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
      */
     @Override
     protected void applyNodeVisibility(VisualStyle visualStyle) {
-        DiscreteMapping<Boolean, Boolean> nodeVisibilityMapping = (DiscreteMapping<Boolean, Boolean>) this.discreteMappingFactoryServiceRef
-                .createVisualMappingFunction(NodeAttribute.IS_SELECTED.toString(), Boolean.class, 
-                        BasicVisualLexicon.NODE_VISIBLE);
-        nodeVisibilityMapping.putMapValue(false, false);
-        nodeVisibilityMapping.putMapValue(true, true);
+        // TODO: Set default visibility 
     }
 
     /* (non-Javadoc)

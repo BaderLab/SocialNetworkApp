@@ -4,13 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
-import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -22,6 +24,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.work.TaskManager;
 
 
@@ -39,11 +42,14 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private SocialNetwork socialNetwork = null;
     private int lastYear = -1;
+    private CyServiceRegistrar cyServiceRegistrarRef = null;
     
-    public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork) {
+    public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork,
+            CyServiceRegistrar cyServiceRegistrarRef) {
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.socialNetwork = socialNetwork;
+        this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
@@ -81,6 +87,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         labelTextSlider.add(labelAndTextField, BorderLayout.NORTH);
         labelTextSlider.add(this.sliderButton, BorderLayout.SOUTH);
         this.add(labelTextSlider);
+        this.add(this.createCloseButton());
     }
     
     /**
@@ -177,6 +184,24 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.getSliderButton().repaint();
         
         this.updateUI();
+    }
+    
+    /**
+     * Create close button. Close button closes current panel
+     *
+     * @return JButton closeButton
+     */
+    private JButton createCloseButton() {
+        JButton closeButton = new JButton("Close");
+        closeButton.setToolTipText("Close Social Network Display Options Panel");
+        // Clicking of button results in the closing of current panel
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                SocialNetworkAppManager.setInfoPanel(null);
+                InfoPanel.this.cyServiceRegistrarRef.unregisterService(InfoPanel.this, CytoPanelComponent.class);
+            }
+        });
+        return closeButton;
     }
 
 }

@@ -83,7 +83,6 @@ public class HideAuthorsTask extends AbstractTask {
              }
         }
 
-        
         Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
         CyNode node = null;
         View<CyNode > nodeView = null;

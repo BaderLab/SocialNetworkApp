@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.swing.Action;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -88,7 +87,6 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
     private InfoPanel infoPanel = null;
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
-    private boolean initialized = false;
 
     /**
      * Constructor for {@link RestoreSocialNetworksFromProp}
@@ -112,7 +110,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
     }
     
     private void initializeInfoPanel(SocialNetwork socialNetwork) {
-        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork);        
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork, this.cyServiceRegistrar);        
     }
 
     /**
@@ -203,11 +201,10 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
             if (network != null) {
                 CyNetwork cyNetwork = network.getCyNetwork();
                 if (cyNetwork.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
-                    if (!initialized) {
+                    if (SocialNetworkAppManager.getInfoPanel() == null) {
                         initializeInfoPanel(network);                
                         this.cyServiceRegistrar.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
                         SocialNetworkAppManager.setInfoPanel(this.infoPanel);
-                        initialized = true;
                     } else {
                         this.infoPanel.update(network);
                     }

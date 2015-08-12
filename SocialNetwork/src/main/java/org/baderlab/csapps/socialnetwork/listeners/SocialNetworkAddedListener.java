@@ -94,7 +94,6 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private CySwingApplication cySwingApplicationServiceRef = null;
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
-    private boolean initialized = false;
     private CyApplicationManager cyApplicationManagerServiceRef = null;
 
     /**
@@ -122,8 +121,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
     }
     
-    private void initializeInfoPanel(SocialNetwork network) {
-        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork);        
+    private void initializeInfoPanel() {
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef);        
     }
     
     private void handleNetwork(CyNetwork cyNetwork) {
@@ -149,11 +148,10 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             // Show app information panel (docked to the east)
             // ------------------------------------------------------------------------------------------------------------
             if (cyNetwork.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
-                if (!initialized) {
-                    initializeInfoPanel(this.socialNetwork);                
+                if (SocialNetworkAppManager.getInfoPanel() == null) {
+                    initializeInfoPanel();                
                     this.cyServiceRegistrarRef.registerService(this.infoPanel, CytoPanelComponent.class, new Properties());
                     SocialNetworkAppManager.setInfoPanel(this.infoPanel);
-                    initialized = true;
                 } else {
                     this.infoPanel.update(this.socialNetwork);;
                 }

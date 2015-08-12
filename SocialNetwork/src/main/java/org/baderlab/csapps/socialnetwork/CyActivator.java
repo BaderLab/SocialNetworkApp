@@ -252,7 +252,7 @@ public class CyActivator extends AbstractCyActivator {
         
         appManager.setSearchPubMedTaskFactoryRef(searchPubMedTaskFactoryRef);
         
-        // Add dependencies to CytoscapeUtilies
+        // Add dependencies to CytoscapeUtilities
         CytoscapeUtilities.setPropsReader(propsReader);
 
         // About Action
