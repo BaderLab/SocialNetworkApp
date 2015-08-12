@@ -3,6 +3,7 @@ package org.baderlab.csapps.socialnetwork.panels;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +51,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.socialNetwork = socialNetwork;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setLayout(new BorderLayout());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
 
@@ -83,11 +84,16 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.sliderButton.setPaintLabels(true);
         this.sliderButton.setPaintLabels(false);
 
-        JPanel labelTextSlider = new JPanel();
-        labelTextSlider.add(labelAndTextField, BorderLayout.NORTH);
-        labelTextSlider.add(this.sliderButton, BorderLayout.SOUTH);
-        this.add(labelTextSlider);
-        this.add(this.createCloseButton());
+        JPanel sliderPanel = new JPanel();
+        sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
+        sliderPanel.add(labelAndTextField);
+        sliderPanel.add(this.sliderButton);
+        
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.add(this.createCloseButton());
+        
+        this.add(sliderPanel, BorderLayout.NORTH);
+        this.add(controlPanel, BorderLayout.SOUTH);
     }
     
     /**
