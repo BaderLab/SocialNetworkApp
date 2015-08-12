@@ -55,7 +55,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -87,7 +87,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
     private UserPanel userPanel = null;
     private InfoPanel infoPanel = null;
     private TaskManager<?, ?> taskManager = null;
-    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private boolean initialized = false;
 
     /**
@@ -98,7 +98,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
      */
     public RestoreSocialNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
             CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel,
-            TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
+            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;

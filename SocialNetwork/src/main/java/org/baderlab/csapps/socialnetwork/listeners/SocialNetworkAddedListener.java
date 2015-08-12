@@ -51,7 +51,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisual
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
-import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
@@ -93,7 +93,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CySwingApplication cySwingApplicationServiceRef = null;
     private TaskManager<?, ?> taskManager = null;
-    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private boolean initialized = false;
     private CyApplicationManager cyApplicationManagerServiceRef = null;
 
@@ -106,7 +106,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
             CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager,
-            UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef) {
+            HideAuthorsTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;

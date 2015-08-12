@@ -66,7 +66,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ParsePubMedXMLTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseScopusCSVTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
-import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CyAction;
@@ -199,8 +199,7 @@ public class CyActivator extends AbstractCyActivator {
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
         registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
         
-        UpdateVisualStyleTaskFactory updateVisualStyleTaskFactoryRef = new UpdateVisualStyleTaskFactory(taskManager, appManager, vmmServiceRef,
-                discreteMappingFactoryServiceRef, cyApplicationManagerServiceRef, applyVisualStyleTaskFactoryRef);
+        HideAuthorsTaskFactory updateVisualStyleTaskFactoryRef = new HideAuthorsTaskFactory(cyApplicationManagerServiceRef);
         registerService(bc, updateVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
         
         // Create and register listeners

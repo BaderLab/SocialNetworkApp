@@ -53,6 +53,7 @@ import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.view.vizmap.mappings.BoundaryRangeValues;
 import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 
 /**
@@ -65,12 +66,12 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
 
     protected VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
+    protected CyApplicationManager cyApplicationManagerServiceRef = null;
     protected VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
     protected CyNetwork network = null;
     protected VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
     protected SocialNetwork socialNetwork = null;
     protected VisualStyle visualStyle = null;
-    protected CyApplicationManager cyApplicationManagerServiceRef = null;
 
     /**
      * ??
@@ -118,6 +119,9 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         // Specify EDGE_TRANSPARENCY
         applyEdgeTransparency(visualStyle);
         
+        // Specify EDGE_VISIBILITY
+        applyEdgeVisibility(visualStyle);
+        
     }
 
     /* (non-Javadoc)
@@ -149,6 +153,18 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         mapping.addPoint(1, bv0);
         mapping.addPoint(max / 2, bv1);
         visualStyle.addVisualMappingFunction(mapping);        
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeVisibility(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyEdgeVisibility(VisualStyle visualStyle) {
+        DiscreteMapping<Boolean, Boolean> edgeVisibilityMapping = (DiscreteMapping<Boolean, Boolean>) this.discreteMappingFactoryServiceRef
+                .createVisualMappingFunction(EdgeAttribute.IS_SELECTED.toString(), Boolean.class, 
+                        BasicVisualLexicon.EDGE_VISIBLE);
+        edgeVisibilityMapping.putMapValue(false, false);
+        edgeVisibilityMapping.putMapValue(true, true);
     }
 
     /* (non-Javadoc)
@@ -289,6 +305,21 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         // Specify NODE_LABEL_POSITION
         applyNodeLabelPosition(visualStyle);
         
+        // Specify NODE_VISIBLE
+        applyNodeVisibility(visualStyle);
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeVisibility(org.cytoscape.view.vizmap.VisualStyle)
+     */
+    @Override
+    protected void applyNodeVisibility(VisualStyle visualStyle) {
+        DiscreteMapping<Boolean, Boolean> nodeVisibilityMapping = (DiscreteMapping<Boolean, Boolean>) this.discreteMappingFactoryServiceRef
+                .createVisualMappingFunction(NodeAttribute.IS_SELECTED.toString(), Boolean.class, 
+                        BasicVisualLexicon.NODE_VISIBLE);
+        nodeVisibilityMapping.putMapValue(false, false);
+        nodeVisibilityMapping.putMapValue(true, true);
     }
 
     /* (non-Javadoc)

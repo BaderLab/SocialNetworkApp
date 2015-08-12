@@ -19,7 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.work.TaskManager;
@@ -36,11 +36,11 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private JTextField textField = null;
     private int startYear = -1, endYear = -1;
     private TaskManager<?, ?> taskManager = null;
-    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private SocialNetwork socialNetwork = null;
     private int lastYear = -1;
     
-    public InfoPanel(TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork) {
+    public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork) {
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.socialNetwork = socialNetwork;

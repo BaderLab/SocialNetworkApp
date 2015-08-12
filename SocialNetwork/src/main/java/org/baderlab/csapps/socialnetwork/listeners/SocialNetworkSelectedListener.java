@@ -44,7 +44,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
-import org.baderlab.csapps.socialnetwork.tasks.UpdateVisualStyleTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CytoPanel;
@@ -68,7 +68,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
     private SocialNetwork socialNetwork = null;
     private CytoPanel cytoPanelEast = null;
     private TaskManager<?, ?> taskManager = null;
-    private UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory = null;
+    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
 
     /**
@@ -77,7 +77,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
      * @param {@link SocialNetworkAppManager} appManager
      */
     public SocialNetworkSelectedListener(SocialNetworkAppManager appManager, CyServiceRegistrar cyServiceRegistrarRef, 
-            TaskManager<?, ?> taskManager, UpdateVisualStyleTaskFactory updateVisualStyleTaskFactory) {
+            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory) {
         super();
         this.appManager = appManager;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
