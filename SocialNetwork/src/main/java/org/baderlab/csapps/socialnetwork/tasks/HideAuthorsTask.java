@@ -95,6 +95,7 @@ public class HideAuthorsTask extends AbstractTask {
         }
 
         this.cyNetworkView.updateView();
+        
     }
 
 }

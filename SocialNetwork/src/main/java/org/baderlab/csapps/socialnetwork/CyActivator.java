@@ -196,14 +196,22 @@ public class CyActivator extends AbstractCyActivator {
                 taskManager, parseIncitesXLSXTaskFactoryRef, parsePubMedXMLTaskFactoryRef, parseScopusCSVTaskFactoryRef);
         registerService(bc, parseSocialNetworkFileTaskFactoryRef, TaskFactory.class, new Properties());
         
+        final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
+        registerServiceListener(bc, customChartManager, "addCustomGraphicsFactory", "removeCustomGraphicsFactory", CyCustomGraphics2Factory.class);
+
+        HideAuthorsTaskFactory hideAuthorsTaskFactoryRef = new HideAuthorsTaskFactory(cyApplicationManagerServiceRef);
+        registerService(bc, hideAuthorsTaskFactoryRef, TaskFactory.class, new Properties());
+        
+        CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
+                vmmServiceRef, columnIdFactory, taskManager, hideAuthorsTaskFactoryRef);
+        registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
+        
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
         registerService(bc, searchPubMedTaskFactoryRef, TaskFactory.class, new Properties());
         
-        HideAuthorsTaskFactory updateVisualStyleTaskFactoryRef = new HideAuthorsTaskFactory(cyApplicationManagerServiceRef);
-        registerService(bc, updateVisualStyleTaskFactoryRef, TaskFactory.class, new Properties());
         
         // Create and register listeners
-        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager, cyServiceRegistrarRef, taskManager, updateVisualStyleTaskFactoryRef);
+        SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager, cyServiceRegistrarRef, taskManager, hideAuthorsTaskFactoryRef);
         registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 
         SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
@@ -211,7 +219,7 @@ public class CyActivator extends AbstractCyActivator {
 
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
                 visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
-                cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager, updateVisualStyleTaskFactoryRef, cyApplicationManagerServiceRef);
+                cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager, hideAuthorsTaskFactoryRef, cyApplicationManagerServiceRef);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
@@ -221,15 +229,9 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
         RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
-                cySwingApplicationServiceRef, userPanelAction, userPanel, taskManager, updateVisualStyleTaskFactoryRef);
+                cySwingApplicationServiceRef, userPanelAction, userPanel, taskManager, hideAuthorsTaskFactoryRef);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
-        
-        final SocialNetworkChartListener customChartManager = new SocialNetworkChartListener();
-        registerServiceListener(bc, customChartManager, "addCustomGraphicsFactory", "removeCustomGraphicsFactory", CyCustomGraphics2Factory.class);
-        
-        CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
-                vmmServiceRef, columnIdFactory);
-        registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
+                
 
         // Add dependencies to app manager
         // TODO:

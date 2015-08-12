@@ -12,6 +12,7 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
@@ -20,11 +21,13 @@ import org.cytoscape.view.model.VisualLexicon;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics2;
 import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics2Factory;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.values.CyColumnIdentifier;
 import org.cytoscape.view.presentation.property.values.CyColumnIdentifierFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
@@ -36,6 +39,8 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     private SocialNetworkChartListener customChartListener;
     private VisualMappingManager visualMappingManager;
     private CyColumnIdentifierFactory columnIdFactory;
+    private TaskManager<?, ?> taskManager;
+    private HideAuthorsTaskFactory hideAuthorsTaskFactory;
 
     // Tunable fields are set by the user
     // Note: Callables are used for the selection lists in order to provide a custom toString() method
@@ -51,11 +56,14 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     public ListSingleSelection<Callable<VisualProperty<CyCustomGraphics2<?>>>> visualProperties;
     
     public CreateChartTask(CyApplicationManager applicationManager, SocialNetworkChartListener customChartManager, 
-            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory) {
+            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory, TaskManager<?, ?> taskManager,
+            HideAuthorsTaskFactory hideAuthorsTaskFactory) {
         this.applicationManager = applicationManager;
         this.customChartListener = customChartManager;
         this.visualMappingManager = visualMappingManager;
         this.columnIdFactory = columnIdFactory;
+        this.taskManager = taskManager;
+        this.hideAuthorsTaskFactory = hideAuthorsTaskFactory;
         this.domainColumnNames = computeNumericNodeColumns();
         this.rangeColumnNames = computeNumericNodeColumns();
         this.visualProperties = computeVisualProperties();
@@ -161,6 +169,17 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
             return;
         }
         
+        CyNetwork network = applicationManager.getCurrentNetwork();
+        
+        // All nodes and edges have to be made visible before applying charts
+        for (final CyNode node : network.getNodeList()) {
+            networkView.getNodeView(node).clearValueLock(BasicVisualLexicon.NODE_VISIBLE);                 
+        }
+
+        for (final CyEdge edge : network.getEdgeList()) {
+            networkView.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);                    
+        }
+        
         // Set the chart properties, tell the chart to use the new column we created as the data source.
         CyColumnIdentifier domainColumnId = columnIdFactory.createColumnIdentifier(domainColumn.getName());
         CyColumnIdentifier rangeColumnId = columnIdFactory.createColumnIdentifier(rangeColumn.getName());
@@ -186,7 +205,9 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         visualStyle.setDefaultValue(visualProperty, customGraphics);
         
         // must do this or charts won't show up instantly
-        networkView.updateView();
+        networkView.updateView();            
+        
+        this.taskManager.execute(this.hideAuthorsTaskFactory.createTaskIterator());
     }
     
 }

@@ -14,7 +14,7 @@ public class HideAuthorsTaskFactory extends AbstractTaskFactory {
     }
 
     public TaskIterator createTaskIterator() {
-        return new TaskIterator(new HideAuthorsTask(cyApplicationManagerServiceRef));
+        return new TaskIterator(new HideAuthorsTask(this.cyApplicationManagerServiceRef));
     }
 
 }
