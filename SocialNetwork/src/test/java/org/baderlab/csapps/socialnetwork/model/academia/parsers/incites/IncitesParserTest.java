@@ -173,7 +173,7 @@ public class IncitesParserTest {
     /**
      * Confirm that institutions are being ranked correctly.
      */
-    public void testInstutionRanking() {
+    public void testInstitutionRanking() {
         boolean status = false;
         String path = getClass().getResource("incites_institution_ranking.xlsx").getFile();
         File xlsxFile = new File(path);

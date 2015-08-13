@@ -37,24 +37,17 @@
 
 package org.baderlab.csapps.socialnetwork.model;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.JTextField;
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.PropsReader;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
@@ -226,7 +219,6 @@ public class SocialNetworkAppManager {
      * Set of all visual styles currently supported by app
      */
     private HashSet<String> visualStyleSet = null;
-    private PropsReader propsReader = null;
     public static final int ANALYSISTYPE_INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
     public static final int ANALYSISTYPE_SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
 
@@ -235,37 +227,6 @@ public class SocialNetworkAppManager {
     private int analysis_type = SocialNetworkAppManager.ANALYSISTYPE_INCITES;
     
     private static final Logger logger = Logger.getLogger(SocialNetworkAppManager.class.getName());
-    
-    public void setPropsReader(PropsReader propsReader) {
-        this.propsReader = propsReader;
-        if (this.propsReader.getProperties().isEmpty()) {
-            try {
-                InputStream in = this.getClass().getResourceAsStream("locationsmap.txt");
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String sCurrentLine = null;
-                while ((sCurrentLine = br.readLine()) != null) {
-                    // Tokenize the line
-                    String[] tokens = sCurrentLine.split("\t");
-                    // Properly formed line
-                    if (tokens.length == 2) {
-                       this.propsReader.getProperties().put(tokens[0], tokens[1]);
-                    } else {
-                        logger.log(Level.WARNING, "Misformed line in locationmap file\n \"" + sCurrentLine + "\n");
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, "Exception occurred", e);
-                CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
-            }
-        }
-    }
-    
-    private PropsReader getPropsReader() {
-        return this.propsReader;
-    }
     
     /**
      * Create a new Social Network App manager

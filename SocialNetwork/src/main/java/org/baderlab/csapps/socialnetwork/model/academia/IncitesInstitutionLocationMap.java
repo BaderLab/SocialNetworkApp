@@ -37,15 +37,18 @@
 
 package org.baderlab.csapps.socialnetwork.model.academia;
 
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 
 /**
  * Tools for manipulating Incites data
@@ -75,20 +78,44 @@ public class IncitesInstitutionLocationMap {
     @SuppressWarnings("unchecked")
     public IncitesInstitutionLocationMap() {
         if (this.locationMap == null) {
-            String outputDir = System.getProperty("user.home");
-            String basename = outputDir + System.getProperty("file.separator") + "social_network_locations.sn";
-            // Get map file in jar
-            try {
-                InputStream in = new FileInputStream(basename);
-                ObjectInputStream ois = new ObjectInputStream(in);
-                this.locationMap = (HashMap<String, String>) ois.readObject();
-                ois.close();
-            } catch (FileNotFoundException e) {
-                logger.log(Level.SEVERE, "Exception occurred", e);
-            } catch (IOException e) {
-                logger.log(Level.SEVERE, "Exception occurred", e);
-            } catch (ClassNotFoundException e) {
-                logger.log(Level.SEVERE, "Exception occurred", e);
+            this.locationMap = new HashMap<String, String>();
+            if (CytoscapeUtilities.getPropsReader() != null) {
+                Map<Object, Object> props = CytoscapeUtilities.getPropsReader().getProperties();
+                Iterator<Entry<Object, Object>> it = props.entrySet().iterator();
+                Entry<Object, Object> item = null;
+                String institution = null, location = null;
+                while (it.hasNext()) {
+                    item = it.next();
+                    institution = (String) item.getKey();
+                    location = (String) item.getValue();
+                    this.locationMap.put(institution, location);
+                }
+            } else {
+                // Allows for testing - all the tests were failing without NullPointerExceptions
+                // before
+                // --------------------------------------------------------------------------------
+                try {
+                    InputStream in = getClass().getResourceAsStream("locationsmap.txt");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    String sCurrentLine = null;
+                    while ((sCurrentLine = br.readLine()) != null) {
+                        // Tokenize the line
+                        String[] tokens = sCurrentLine.split("\t");
+                        // Properly formed line
+                        if (tokens.length == 2) {
+                           this.locationMap.put(tokens[0], tokens[1]);
+                        } else {
+                            logger.log(Level.WARNING, "Misformed line in locationmap file\n \"" + sCurrentLine + "\n");
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    logger.log(Level.SEVERE, "Exception occurred", e);
+                    CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
+                } catch (IOException e) {
+                    logger.log(Level.SEVERE, "Exception occurred", e);
+                    CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
+                }
+                // --------------------------------------------------------------------------------
             }
         }
     }

@@ -236,8 +236,6 @@ public class CyActivator extends AbstractCyActivator {
         // Add dependencies to app manager
         // TODO:
         // NOTE: Using setters violates dependency injection
-        appManager.setPropsReader(propsReader);
-        
         appManager.setParseSocialNetworkFileTaskFactory(parseSocialNetworkFileTaskFactoryRef);
 
         appManager.setNetworkTaskFactoryRef(networkTaskFactoryRef);
@@ -254,7 +252,7 @@ public class CyActivator extends AbstractCyActivator {
         
         appManager.setSearchPubMedTaskFactoryRef(searchPubMedTaskFactoryRef);
         
-        // Add dependencies to CytoscapeUtilities
+        // Add dependencies to Cytoscape Utilities
         CytoscapeUtilities.setPropsReader(propsReader);
 
         // About Action

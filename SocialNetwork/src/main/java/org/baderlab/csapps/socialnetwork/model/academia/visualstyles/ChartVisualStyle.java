@@ -38,6 +38,7 @@ public class ChartVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeLabelPosition(VisualStyle visualStyle) {
+     // TODO: temporarily disabled
      /*   
      // Get the current Visual Lexicon
         VisualLexicon lexicon = this.cyApplicationManagerServiceRef.getCurrentRenderingEngine().getVisualLexicon();

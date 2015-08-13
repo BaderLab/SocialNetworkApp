@@ -236,7 +236,7 @@ public class Author extends AbstractNode {
                 this.setLastName(IncitesParser.parseLastName(rawAuthorText));
                 this.setLabel(this.getFirstName() + " " + this.getLastName());
                 this.addInstitution(IncitesParser.parseInstitution(rawAuthorText));
-                this.setLocation((String) CytoscapeUtilities.getPropsReader().getProperties().get(this.getInstitution()));
+                this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
                 break;
 
         }

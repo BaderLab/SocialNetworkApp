@@ -37,12 +37,15 @@
 
 package org.baderlab.csapps.socialnetwork;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -65,15 +68,6 @@ public class CytoscapeUtilities {
     // TODO: Add documentation
     private static final Logger logger = Logger.getLogger(CytoscapeUtilities.class.getName());
     private static HashSet<String> locationSet = null;
-    private static PropsReader propsReader = null;
-    
-    public static void setPropsReader(PropsReader propsReader) {
-        CytoscapeUtilities.propsReader = propsReader;
-    }
-    
-    public static PropsReader getPropsReader() {
-        return CytoscapeUtilities.propsReader;
-    }
     
     public static HashSet<String> getLocationSet() {
         if (CytoscapeUtilities.locationSet == null) {
@@ -164,7 +158,9 @@ public class CytoscapeUtilities {
                             location = location.trim();
                             outcome = JOptionPane.CANCEL_OPTION;
                             if (!institution.trim().isEmpty() && !location.trim().isEmpty()) {
-                                CytoscapeUtilities.propsReader.getProperties().put(institution, location);
+                                
+                                CytoscapeUtilities.propsReader.getProperties().put(institution, location); // TODO:
+                                
                                 if (defaultInstitution != null) {
                                     CyTable cyTable = cyNetwork.getDefaultNodeTable();
                                     CytoscapeUtilities.setCyTableAttribute(cyTable, SUID, "Location", location);
@@ -301,5 +297,38 @@ public class CytoscapeUtilities {
         props.load(inputStream);
         return props;
     }
+    
+    public static void setPropsReader(PropsReader propsReader) {
+        CytoscapeUtilities.propsReader = propsReader;
+        if (CytoscapeUtilities.propsReader.getProperties().isEmpty()) {
+            try {
+                InputStream in = CytoscapeUtilities.class.getResourceAsStream("academia/locationsmap.txt");
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                String sCurrentLine = null;
+                while ((sCurrentLine = br.readLine()) != null) {
+                    // Tokenize the line
+                    String[] tokens = sCurrentLine.split("\t");
+                    // Properly formed line
+                    if (tokens.length == 2) {
+                       CytoscapeUtilities.propsReader.getProperties().put(tokens[0], tokens[1]);
+                    } else {
+                        logger.log(Level.WARNING, "Misformed line in locationmap file\n \"" + sCurrentLine + "\n");
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                logger.log(Level.SEVERE, "Exception occurred", e);
+                CytoscapeUtilities.notifyUser("Failed to load location map. FileNotFoundException.");
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Exception occurred", e);
+                CytoscapeUtilities.notifyUser("Failed to load location map. IOException.");
+            }
+        }
+    }
+    
+    public static PropsReader getPropsReader() {
+        return CytoscapeUtilities.propsReader;
+    }
+    
+    private static PropsReader propsReader = null;
 
 }
