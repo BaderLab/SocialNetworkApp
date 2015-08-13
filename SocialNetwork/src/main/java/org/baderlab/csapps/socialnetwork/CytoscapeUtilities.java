@@ -71,6 +71,10 @@ public class CytoscapeUtilities {
         CytoscapeUtilities.propsReader = propsReader;
     }
     
+    public static PropsReader getPropsReader() {
+        return CytoscapeUtilities.propsReader;
+    }
+    
     public static HashSet<String> getLocationSet() {
         if (CytoscapeUtilities.locationSet == null) {
             CytoscapeUtilities.locationSet = new HashSet<String>();
@@ -270,10 +274,8 @@ public class CytoscapeUtilities {
             // "host");-->can't access with maven implementaion
             this.build_props.setProperty("git.build.time", "1900/01/01 00:00:00 +0000 (GMT)");
         }
-
         CytoscapeUtilities.buildId = "Build: " + this.build_props.getProperty("build.number") + " from GIT: "
                 + this.build_props.getProperty("git.commit.id") + " by: " + this.build_props.getProperty("build.user");
-
     }
 
     /**

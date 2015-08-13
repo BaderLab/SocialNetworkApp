@@ -48,6 +48,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.xmlbeans.impl.common.Levenshtein;
+import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -123,10 +124,6 @@ public class Author extends AbstractNode {
      * List of all institutions that author is affiliated with
      */
     private List<String> institutionList = null;
-    /**
-     * location Map
-     */
-    private IncitesInstitutionLocationMap locationMap = null;
     /**
      * The start year in the interval specified by the user
      */
@@ -229,7 +226,6 @@ public class Author extends AbstractNode {
         switch (origin) {
 
             case Category.INCITES:
-                this.locationMap = locationMap;
                 // Initialize attribute map for Incites author
                 this.setNodeAttrMap(IncitesParser.constructIncitesAttrMap());
                 this.setFirstName(IncitesParser.parseFirstName(rawAuthorText));
@@ -240,7 +236,7 @@ public class Author extends AbstractNode {
                 this.setLastName(IncitesParser.parseLastName(rawAuthorText));
                 this.setLabel(this.getFirstName() + " " + this.getLastName());
                 this.addInstitution(IncitesParser.parseInstitution(rawAuthorText));
-                this.setLocation(locationMap.getLocationMap().get(this.getInstitution()));
+                this.setLocation((String) CytoscapeUtilities.getPropsReader().getProperties().get(this.getInstitution()));
                 break;
 
         }
@@ -629,7 +625,8 @@ public class Author extends AbstractNode {
     public void prioritizeInstitution(Author author, Author otherAuthor) {
         String location = author.getLocation();
         String otherLocation = otherAuthor.getLocation();
-        Map<String, Integer> rankMap = this.locationMap.getLocationRankingMap();
+        IncitesInstitutionLocationMap locationMap = new IncitesInstitutionLocationMap();
+        Map<String, Integer> rankMap = locationMap.getLocationRankingMap();
         // Initialize rank and otherRank to a low rank
         // NOTE: Highest rank is 6 and lowest rank is 1
         int rank = 0, otherRank = 0;

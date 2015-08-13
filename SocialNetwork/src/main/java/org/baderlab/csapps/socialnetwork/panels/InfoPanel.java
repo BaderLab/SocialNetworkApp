@@ -42,7 +42,6 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private SocialNetwork socialNetwork = null;
-    private int lastYear = -1;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     
     public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork,
@@ -64,9 +63,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         
         this.textField = new JTextField();
         this.textField.setEditable(false);
-        this.textField.setText(String.valueOf(startYear));
+        //this.textField.setText(String.valueOf(startYear));
+        this.textField.setText("N/A");
         this.textField.setColumns(5);
-        this.textField.addPropertyChangeListener(this);
+        //this.textField.addPropertyChangeListener(this);
         
         JPanel labelAndTextField = new JPanel();
         labelAndTextField.add(sliderLabel);
@@ -96,7 +96,6 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.add(controlPanel, BorderLayout.SOUTH);
         
         // Set initial values
-        this.textField.setText(String.valueOf(startYear));
         SocialNetworkAppManager.setSelectedYear(startYear);
         SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
         
@@ -155,7 +154,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     public void stateChanged(ChangeEvent evt) {
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
-        if (!source.getValueIsAdjusting()) { //done adjusting            
+        if (!source.getValueIsAdjusting()) { //done adjusting
             this.textField.setText(String.valueOf(year));
             SocialNetworkAppManager.setSelectedYear(year);
             SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
@@ -163,7 +162,6 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         } else {
             this.textField.setText(String.valueOf(year));
         }
-        this.lastYear = year;
     }
     
     public void setStartYear(int startYear) {
@@ -187,7 +185,8 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.setEndYear(endYear);
         
         /* Text field */
-        this.getTextField().setText(String.valueOf(startYear));
+        this.getTextField().setText("N/A");
+        this.getTextField().repaint();
         
         /* Slider button */
         this.getSliderButton().setMinimum(startYear);
