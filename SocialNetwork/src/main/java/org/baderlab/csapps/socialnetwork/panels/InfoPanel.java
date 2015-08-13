@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.util.Hashtable;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -25,7 +27,10 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.TaskManager;
 
 
@@ -46,6 +51,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     
     public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork,
             CyServiceRegistrar cyServiceRegistrarRef) {
+               
+        JPanel filterPanel = new JPanel();
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
+        
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.socialNetwork = socialNetwork;
@@ -64,7 +73,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.textField = new JTextField();
         this.textField.setEditable(false);
         //this.textField.setText(String.valueOf(startYear));
-        this.textField.setText("N/A");
+        this.textField.setText("ALL");
         this.textField.setColumns(5);
         //this.textField.addPropertyChangeListener(this);
         
@@ -73,21 +82,27 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         labelAndTextField.add(textField);
         
         //Create the slider.
-        
-
         this.sliderButton = new JSlider(JSlider.HORIZONTAL, startYear, endYear, startYear);
         this.sliderButton.setValue(startYear);
         this.sliderButton.addChangeListener(this);
-        //this.sliderButton.setMajorTickSpacing(10);
         this.sliderButton.setMinorTickSpacing(1);
         this.sliderButton.setPaintTicks(true);
         this.sliderButton.setPaintLabels(true);
-        this.sliderButton.setPaintLabels(false);
+        this.sliderButton.setSnapToTicks(true);
+      //Create the label table
+        Hashtable labelTable = new Hashtable();
+        labelTable.put( new Integer(this.startYear), new JLabel(String.valueOf(this.startYear)) );
+        labelTable.put( new Integer(this.endYear), new JLabel(String.valueOf(this.endYear)) );
+        this.sliderButton.setLabelTable(labelTable);
 
         JPanel sliderPanel = new JPanel();
+        sliderPanel.setBorder(BorderFactory.createTitledBorder("Filter"));
         sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
         sliderPanel.add(labelAndTextField);
         sliderPanel.add(this.sliderButton);
+        JPanel sliderControlPanel = new JPanel(new FlowLayout());
+        sliderControlPanel.add(this.createShowAllButton());
+        sliderPanel.add(sliderControlPanel);
         
         JPanel controlPanel = new JPanel(new FlowLayout());
         controlPanel.add(this.createCloseButton());
@@ -154,7 +169,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     public void stateChanged(ChangeEvent evt) {
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
-        if (!source.getValueIsAdjusting()) { //done adjusting
+        if (!source.getValueIsAdjusting()) { // Done adjusting
             this.textField.setText(String.valueOf(year));
             SocialNetworkAppManager.setSelectedYear(year);
             SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
@@ -185,14 +200,29 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.setEndYear(endYear);
         
         /* Text field */
-        this.getTextField().setText("N/A");
-        this.getTextField().repaint();
+        this.textField.setText("ALL");
+        this.textField.repaint();
         
         /* Slider button */
-        this.getSliderButton().setMinimum(startYear);
-        this.getSliderButton().setMaximum(endYear);
-        this.getSliderButton().setValue(startYear);
-        this.getSliderButton().repaint();
+        this.sliderButton.setMinimum(startYear);
+        this.sliderButton.setMaximum(endYear);
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put( new Integer(this.startYear), new JLabel(String.valueOf(this.startYear)) );
+        labelTable.put( new Integer(this.endYear), new JLabel(String.valueOf(this.endYear)) );
+        this.sliderButton.setLabelTable(labelTable);
+        //this.sliderButton.setValue(startYear);
+        this.sliderButton.repaint();
+        
+        // All nodes and edges have to be made visible 
+        for (final CyNode node : socialNetwork.getCyNetwork().getNodeList()) {
+            this.socialNetwork.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
+        }
+
+        for (final CyEdge edge : socialNetwork.getCyNetwork().getEdgeList()) {
+            this.socialNetwork.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
+        }
+        
+        this.socialNetwork.getNetworkView().updateView();
         
         this.updateUI();
     }
@@ -213,6 +243,18 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             }
         });
         return closeButton;
+    }
+    
+    private JButton createShowAllButton() {
+        JButton showAllButton = new JButton("Show All Nodes and Edges");
+        showAllButton.setToolTipText("Show every node and edge in the existing network.");
+        // Clicking of button results in the closing of current panel
+        showAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                // Iterate over the nodes and edges
+            }
+        });
+        return showAllButton;
     }
 
 }

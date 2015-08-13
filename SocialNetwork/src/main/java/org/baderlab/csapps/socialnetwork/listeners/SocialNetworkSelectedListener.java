@@ -49,8 +49,13 @@ import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelState;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.TaskManager;
 
 /**
@@ -70,6 +75,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
+    private CyNetworkViewManager cyNetworkViewManagerServiceRef = null;
 
     /**
      * Creates a new {@link SocialNetworkAppManager} object
@@ -77,8 +83,10 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
      * @param {@link SocialNetworkAppManager} appManager
      */
     public SocialNetworkSelectedListener(SocialNetworkAppManager appManager, CyServiceRegistrar cyServiceRegistrarRef, 
-            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory) {
+            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, 
+            CyNetworkViewManager cyNetworkViewManagerServiceRef) {
         super();
+        this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
         this.appManager = appManager;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.taskManager = taskManager;
@@ -102,6 +110,10 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
                 this.userPanel.addNetworkVisualStyle(socialNetwork);
                 this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
                 if (network.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
+                    
+                    CyNetworkView networkView = this.cyNetworkViewManagerServiceRef.getNetworkViews(network).iterator().next();
+                    this.socialNetwork.setNetworkView(networkView);
+                                        
                     InfoPanel infoPanel = SocialNetworkAppManager.getInfoPanel();
                     infoPanel.update(this.socialNetwork);;
                     // If the state of the cytoPanelEast is HIDE, show it

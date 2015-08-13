@@ -173,11 +173,11 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         
         // All nodes and edges have to be made visible before applying charts
         for (final CyNode node : network.getNodeList()) {
-            networkView.getNodeView(node).clearValueLock(BasicVisualLexicon.NODE_VISIBLE);                 
+            networkView.getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
         }
 
         for (final CyEdge edge : network.getEdgeList()) {
-            networkView.getEdgeView(edge).clearValueLock(BasicVisualLexicon.EDGE_VISIBLE);                    
+            networkView.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
         }
         
         // Set the chart properties, tell the chart to use the new column we created as the data source.
@@ -207,7 +207,9 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         // must do this or charts won't show up instantly
         networkView.updateView();            
         
+        /*
         this.taskManager.execute(this.hideAuthorsTaskFactory.createTaskIterator());
+        */
     }
     
 }
