@@ -251,7 +251,17 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         // Clicking of button results in the closing of current panel
         showAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                // Iterate over the nodes and edges
+                // All nodes and edges have to be made visible 
+                for (final CyNode node : socialNetwork.getCyNetwork().getNodeList()) {
+                    socialNetwork.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
+                }
+
+                for (final CyEdge edge : socialNetwork.getCyNetwork().getEdgeList()) {
+                    socialNetwork.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
+                }
+                socialNetwork.getNetworkView().updateView();
+                InfoPanel.this.getTextField().setText("ALL");
+                InfoPanel.this.getTextField().repaint();
             }
         });
         return showAllButton;
