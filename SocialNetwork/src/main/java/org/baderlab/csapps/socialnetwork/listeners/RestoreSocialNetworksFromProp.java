@@ -55,6 +55,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribu
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -87,6 +88,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
     private InfoPanel infoPanel = null;
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
 
     /**
      * Constructor for {@link RestoreSocialNetworksFromProp}
@@ -96,7 +98,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
      */
     public RestoreSocialNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
             CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel,
-            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory) {
+            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;
@@ -107,10 +109,12 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
         this.userPanel = userPanel;
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
+        this.showAllNodesTaskFactory = showAllNodesTaskFactory;
     }
     
     private void initializeInfoPanel(SocialNetwork socialNetwork) {
-        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork, this.cyServiceRegistrar);        
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork, this.cyServiceRegistrar,
+                this.showAllNodesTaskFactory);        
     }
 
     /**

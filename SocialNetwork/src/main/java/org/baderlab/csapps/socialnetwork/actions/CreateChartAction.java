@@ -11,6 +11,11 @@ import org.cytoscape.work.TaskManager;
 
 public class CreateChartAction extends AbstractCyAction {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
     private CreateChartTaskFactory createChartTaskFactory = null;
     private TaskManager<?, ?> taskManagerServiceRef = null;
 

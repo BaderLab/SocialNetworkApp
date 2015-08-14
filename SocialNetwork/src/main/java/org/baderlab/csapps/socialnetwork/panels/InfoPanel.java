@@ -25,6 +25,7 @@ import javax.swing.event.ChangeListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyEdge;
@@ -48,9 +49,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private SocialNetwork socialNetwork = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
     
     public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork,
-            CyServiceRegistrar cyServiceRegistrarRef) {
+            CyServiceRegistrar cyServiceRegistrarRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
                
         JPanel filterPanel = new JPanel();
         filterPanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
@@ -59,6 +61,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.socialNetwork = socialNetwork;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
+        this.showAllNodesTaskFactory = showAllNodesTaskFactory;
         this.setLayout(new BorderLayout());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
@@ -90,7 +93,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.sliderButton.setPaintLabels(true);
         this.sliderButton.setSnapToTicks(true);
       //Create the label table
-        Hashtable labelTable = new Hashtable();
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         labelTable.put( new Integer(this.startYear), new JLabel(String.valueOf(this.startYear)) );
         labelTable.put( new Integer(this.endYear), new JLabel(String.valueOf(this.endYear)) );
         this.sliderButton.setLabelTable(labelTable);
@@ -251,17 +254,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         // Clicking of button results in the closing of current panel
         showAllButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                // All nodes and edges have to be made visible 
-                for (final CyNode node : socialNetwork.getCyNetwork().getNodeList()) {
-                    socialNetwork.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
-                }
-
-                for (final CyEdge edge : socialNetwork.getCyNetwork().getEdgeList()) {
-                    socialNetwork.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
-                }
-                socialNetwork.getNetworkView().updateView();
-                InfoPanel.this.getTextField().setText("ALL");
-                InfoPanel.this.getTextField().repaint();
+                InfoPanel.this.taskManager.execute(InfoPanel.this.showAllNodesTaskFactory.createTaskIterator());
             }
         });
         return showAllButton;

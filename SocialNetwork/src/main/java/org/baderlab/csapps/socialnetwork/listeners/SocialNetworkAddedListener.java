@@ -52,6 +52,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisu
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
@@ -95,6 +96,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private CyApplicationManager cyApplicationManagerServiceRef = null;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -105,7 +107,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
             CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager,
-            HideAuthorsTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef) {
+            HideAuthorsTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef,
+            ShowAllNodesTaskFactory showAllNodesTaskFactory) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -119,10 +122,12 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
+        this.showAllNodesTaskFactory = showAllNodesTaskFactory;
     }
     
     private void initializeInfoPanel() {
-        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef);        
+        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
+                this.showAllNodesTaskFactory);        
     }
     
     private void handleNetwork(CyNetwork cyNetwork) {
