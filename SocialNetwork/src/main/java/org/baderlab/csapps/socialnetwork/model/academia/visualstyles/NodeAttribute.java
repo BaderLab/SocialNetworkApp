@@ -26,7 +26,7 @@ public enum NodeAttribute {
     /**
      * List attribute of years that author was active
      */
-    YEARS("Years Active");
+    YEARS_ACTIVE("Years Active");
     
     private String attrName = null;
     

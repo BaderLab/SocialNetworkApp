@@ -102,7 +102,7 @@ public class IncitesParser {
             for (int i = startYear; i <= endYear; i++) {
                 years.add(i);
             }
-            nodeAttrMap.put(NodeAttribute.YEARS.toString(), years);
+            nodeAttrMap.put(NodeAttribute.YEARS_ACTIVE.toString(), years);
         }
         return nodeAttrMap;
     }

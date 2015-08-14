@@ -70,7 +70,7 @@ public class HideAuthorsTask extends AbstractTask {
             edgeView = this.cyNetworkView.getEdgeView(edge);
             List<Integer> pubsPerYear = (List<Integer>) CytoscapeUtilities.getCyTableAttribute(defaultEdgeTable, edge.getSUID(), 
                     EdgeAttribute.PUBS_PER_YEAR.toString());
-            if (pubsPerYear.get(year - this.startYear) >= 1) { // TODO:
+            if (pubsPerYear.get(year - this.startYear) > 0) { // TODO:
                 selectedNodes.add(edge.getSource());
                 selectedNodes.add(edge.getTarget());
                 sourceView = this.cyNetworkView.getNodeView(edge.getSource());

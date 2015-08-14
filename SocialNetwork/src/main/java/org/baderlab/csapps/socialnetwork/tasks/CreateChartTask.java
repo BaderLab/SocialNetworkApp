@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
@@ -27,7 +28,6 @@ import org.cytoscape.view.presentation.property.values.CyColumnIdentifierFactory
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
@@ -39,8 +39,8 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     private SocialNetworkChartListener customChartListener;
     private VisualMappingManager visualMappingManager;
     private CyColumnIdentifierFactory columnIdFactory;
-    private TaskManager<?, ?> taskManager;
-    private HideAuthorsTaskFactory hideAuthorsTaskFactory;
+    private Callable<CyColumn> defaultDomain;
+    private Callable<CyColumn> defaultRange;
 
     // Tunable fields are set by the user
     // Note: Callables are used for the selection lists in order to provide a custom toString() method
@@ -56,16 +56,15 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     public ListSingleSelection<Callable<VisualProperty<CyCustomGraphics2<?>>>> visualProperties;
     
     public CreateChartTask(CyApplicationManager applicationManager, SocialNetworkChartListener customChartManager, 
-            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory, TaskManager<?, ?> taskManager,
-            HideAuthorsTaskFactory hideAuthorsTaskFactory) {
+            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory) {
         this.applicationManager = applicationManager;
         this.customChartListener = customChartManager;
         this.visualMappingManager = visualMappingManager;
         this.columnIdFactory = columnIdFactory;
-        this.taskManager = taskManager;
-        this.hideAuthorsTaskFactory = hideAuthorsTaskFactory;
         this.domainColumnNames = computeNumericNodeColumns();
+        this.domainColumnNames.setSelectedValue(this.defaultDomain);
         this.rangeColumnNames = computeNumericNodeColumns();
+        this.rangeColumnNames.setSelectedValue(this.defaultRange);
         this.visualProperties = computeVisualProperties();
     }
     
@@ -80,29 +79,27 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         
         List<Callable<CyColumn>> numericColumnNames = new ArrayList<Callable<CyColumn>>();
         
+        Callable<CyColumn> callableColumn = null;
+        
         for(final CyColumn column : nodeColumns) {
             if (column.getType() == List.class) {
                 if((Number.class.isAssignableFrom(column.getListElementType())) && !column.isPrimaryKey()) {
-                    numericColumnNames.add(new Callable<CyColumn>() {
+                    callableColumn = new Callable<CyColumn>() {
                         public CyColumn call() { 
                             return column; 
                         }
                         public String toString() { 
                             return column.getName(); 
                         }
-                    });
+                    };
+                    if (column.getName().equals(NodeAttribute.YEARS_ACTIVE.toString())) {
+                        this.defaultDomain = callableColumn;
+                    }
+                    if (column.getName().equals(NodeAttribute.PUBS_PER_YEAR.toString())) {
+                        this.defaultRange = callableColumn;
+                    }
+                    numericColumnNames.add(callableColumn);
                 }
-            } else {
-                if((Number.class.isAssignableFrom(column.getType())) && !column.isPrimaryKey()) {
-                    numericColumnNames.add(new Callable<CyColumn>() {
-                        public CyColumn call() { 
-                            return column; 
-                        }
-                        public String toString() { 
-                            return column.getName(); 
-                        }
-                    });
-                }       
             }
         }
         
@@ -206,10 +203,6 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         
         // must do this or charts won't show up instantly
         networkView.updateView();            
-        
-        /*
-        this.taskManager.execute(this.hideAuthorsTaskFactory.createTaskIterator());
-        */
     }
     
 }

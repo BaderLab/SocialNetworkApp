@@ -203,7 +203,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, hideAuthorsTaskFactoryRef, TaskFactory.class, new Properties());
         
         CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
-                vmmServiceRef, columnIdFactory, taskManager, hideAuthorsTaskFactoryRef);
+                vmmServiceRef, columnIdFactory);
         registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
         
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
