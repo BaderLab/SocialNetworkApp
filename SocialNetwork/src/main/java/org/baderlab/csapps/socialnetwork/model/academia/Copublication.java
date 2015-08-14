@@ -108,13 +108,13 @@ public class Copublication extends AbstractEdge {
         int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
         int size = endYear - startYear + 1;
         ArrayList<Integer> boolList = new ArrayList<Integer>(size);
+        Publication pub = this.pubList.get(0);
         int pubYear = -1;
         try {
-            pubYear = this.pubList.get(0).getPubYear();
+            pubYear = pub.getPubYear();
         } catch (UnableToParseYearException e) {
-            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pubYear));
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pub.getRawPubDateTxt()));
         }
-        // TODO:
         for (int year = startYear; year <= endYear; year++) {
             boolList.add(pubYear == year ? 1 : 0);
         }
@@ -128,13 +128,13 @@ public class Copublication extends AbstractEdge {
         int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
         @SuppressWarnings("unchecked")
         ArrayList<Integer> boolList = (ArrayList<Integer>) this.getEdgeAttrMap().get(EdgeAttribute.PUBS_PER_YEAR.toString());
+        Publication pub = this.getPubList().get(this.getPubList().size() - 1);
         int pubYear = -1;
         try {
-            pubYear = this.getPubList().get(this.getPubList().size() - 1).getPubYear();
+            pubYear = pub.getPubYear();
         } catch (UnableToParseYearException e) {
-            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pubYear));
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", pub.getRawPubDateTxt()));
         }
-        // TODO:
         for (int year = startYear; year <= endYear; year++) {
             if (pubYear == year) {
                 int index = year - startYear;

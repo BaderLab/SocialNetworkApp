@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
@@ -54,7 +55,7 @@ import org.cytoscape.model.CyEdge;
  * @author Victor Kofia
  */
 public class Publication extends AbstractEdge {
-    
+
     private static final Logger logger = Logger.getLogger(Publication.class.getName());
 
     /**
@@ -255,14 +256,15 @@ public class Publication extends AbstractEdge {
      */
     public int getPubYear() throws UnableToParseYearException {
         if (this.pubYear != null) {
-            this.pubYear = this.pubYear.split("\\s+")[0];
-            if (Pattern.matches("[0-9]+", this.pubYear)) {
-                return Integer.parseInt(this.pubYear);                
-            }            
+            Pattern r = Pattern.compile("\\d{4}");
+            Matcher m = r.matcher(this.pubYear);
+            if (m.find( )) {
+                return Integer.valueOf(m.group(0));
+            }
         }
         throw new UnableToParseYearException();
     }
-    
+
     /**
      * Get raw publication date text
      * 
@@ -396,7 +398,7 @@ public class Publication extends AbstractEdge {
     public void setTimesCited(String timesCited) {
         this.timesCited = timesCited;
     }
-    
+
 
     /**
      * Set publication title
