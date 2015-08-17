@@ -44,8 +44,8 @@ public class HideAuthorsTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
-        this.cyNetwork = this.cyApplicationManager.getCurrentNetwork();
-        this.cyNetworkView = this.cyApplicationManager.getCurrentNetworkView();
+        this.cyNetwork = socialNetwork.getCyNetwork();
+        this.cyNetworkView = socialNetwork.getNetworkView();
 
         if (this.cyNetworkView == null) {
             return;

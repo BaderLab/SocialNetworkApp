@@ -46,19 +46,19 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private JTextField textField = null;
     private int startYear = -1, endYear = -1;
     private TaskManager<?, ?> taskManager = null;
-    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
+    private HideAuthorsTaskFactory hideAuthorsTaskFactory = null;
     private SocialNetwork socialNetwork = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
     
-    public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, SocialNetwork socialNetwork,
+    public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory hideAuthorsTaskFactory, SocialNetwork socialNetwork,
             CyServiceRegistrar cyServiceRegistrarRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
                
         JPanel filterPanel = new JPanel();
         filterPanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
         
         this.taskManager = taskManager;
-        this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
+        this.hideAuthorsTaskFactory = hideAuthorsTaskFactory;
         this.socialNetwork = socialNetwork;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
@@ -176,7 +176,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             this.textField.setText(String.valueOf(year));
             SocialNetworkAppManager.setSelectedYear(year);
             SocialNetworkAppManager.setSelectedSocialNetwork(this.socialNetwork);
-            this.taskManager.execute(this.updateVisualStyleTaskFactory.createTaskIterator());   
+            this.taskManager.execute(this.hideAuthorsTaskFactory.createTaskIterator());                
         } else {
             this.textField.setText(String.valueOf(year));
         }
