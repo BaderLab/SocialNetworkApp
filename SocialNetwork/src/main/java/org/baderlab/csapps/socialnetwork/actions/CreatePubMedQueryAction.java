@@ -1,8 +1,11 @@
 package org.baderlab.csapps.socialnetwork.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -52,9 +55,13 @@ public class CreatePubMedQueryAction extends AbstractCyAction {
         HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
         filters.add(filter1);
         filters.add(filter2);
-        File textFile = this.fileUtil.getFile(this.cySwingApp.getJFrame(), "Data File Selection",FileUtil.LOAD, filters);
+        // TODO: Perhaps putting the below code into a task might be a good idea in the future.
+        // Loading large files may cause the user interface to hang
+        // --------------------------------------------------------------------------------------------------------------
+        File inputFile = this.fileUtil.getFile(this.cySwingApp.getJFrame(), "Data File Selection", FileUtil.LOAD, filters);
         try {
-            Scanner scan = new Scanner(textFile);
+            logger.log(Level.INFO, String.format("Creating PubMed query from %s", inputFile.getAbsolutePath()));
+            Scanner scan = new Scanner(inputFile);
             String author = null;
             ArrayList<String> authorList = new ArrayList<String>();
             while (scan.hasNextLine()) {
@@ -62,17 +69,44 @@ public class CreatePubMedQueryAction extends AbstractCyAction {
                 authorList.add(author);
             }
             StringBuffer query = new StringBuffer();
-            // TODO:
+            String author1 = null, author2 = null;
+            for (int i = 0; i < authorList.size(); i++) {
+                author1 = authorList.get(i);
+                for (int j = i + 1; j < authorList.size(); j++) {
+                    author2 = authorList.get(j);
+                    query.append('(').append(author1).append("[au]").append(" OR ")
+                    .append(author2).append("[au]").append(')');
+                    if (j < authorList.size() - 1) {
+                        query.append(" AND ");
+                    }
+                }
+                if (i < authorList.size() - 2) {
+                    query.append(" AND ");
+                }
+            }            
+            File outputFile = this.fileUtil.getFile(this.cySwingApp.getJFrame(), "Save PubMed query", FileUtil.SAVE, filters);
+            logger.log(Level.INFO, String.format("Saving PubMed query to %s", outputFile.getAbsolutePath()));
+            // if file doesnt exists, then create it
+            if (!outputFile.exists()) {
+                outputFile.createNewFile();
+            }
+            FileWriter fw = new FileWriter(outputFile.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(query.toString());
+            bw.close();  
+          // -----------------------------------------------------------------------------------------------------------
         } catch (FileNotFoundException e1) {
             logger.log(Level.SEVERE, e1.getMessage());
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            logger.log(Level.SEVERE, e1.getMessage());
         }
-        
         
         // TODO: Put code for generating PubMed query into a separate task to prevent hanging of UI
         // for large jobs.
         /*
         this.taskManagerServiceRef.execute(this.createPubMedQueryTaskFactory.createTaskIterator());
-        */
+         */
         
     }
 
