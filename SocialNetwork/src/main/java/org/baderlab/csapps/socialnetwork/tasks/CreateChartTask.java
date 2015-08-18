@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
@@ -25,8 +27,10 @@ import org.cytoscape.view.presentation.customgraphics.CyCustomGraphics2Factory;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.values.CyColumnIdentifier;
 import org.cytoscape.view.presentation.property.values.CyColumnIdentifierFactory;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
@@ -35,12 +39,18 @@ import org.cytoscape.work.util.ListSingleSelection;
 
 public class CreateChartTask extends AbstractTask implements TunableValidator {
     
-    private CyApplicationManager applicationManager;
+    private CyApplicationManager cyAppManager;
     private SocialNetworkChartListener customChartListener;
     private VisualMappingManager visualMappingManager;
     private CyColumnIdentifierFactory columnIdFactory;
     private Callable<CyColumn> defaultDomain;
     private Callable<CyColumn> defaultRange;
+    protected VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
+    protected VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
+    protected VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
+    private SocialNetwork socialNetwork = null;
+    private VisualStyleFactory visualStyleFactoryServiceRef = null;
+
 
     // Tunable fields are set by the user
     // Note: Callables are used for the selection lists in order to provide a custom toString() method
@@ -56,11 +66,18 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     public ListSingleSelection<Callable<VisualProperty<CyCustomGraphics2<?>>>> visualProperties;
     
     public CreateChartTask(CyApplicationManager applicationManager, SocialNetworkChartListener customChartManager, 
-            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory) {
-        this.applicationManager = applicationManager;
+            VisualMappingManager visualMappingManager, CyColumnIdentifierFactory columnIdFactory, SocialNetworkAppManager socialNetworkAppManager,
+            VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
+            VisualMappingFunctionFactory discreteMappingFactoryServiceRef, VisualStyleFactory visualStyleFactoryServiceRef) {
+        this.cyAppManager = applicationManager;
         this.customChartListener = customChartManager;
         this.visualMappingManager = visualMappingManager;
         this.columnIdFactory = columnIdFactory;
+        this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
+        this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
+        this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
+        this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
+        this.socialNetwork = socialNetworkAppManager.getCurrentlySelectedSocialNetwork();
         this.domainColumnNames = computeNumericNodeColumns();
         this.domainColumnNames.setSelectedValue(this.defaultDomain);
         this.rangeColumnNames = computeNumericNodeColumns();
@@ -73,7 +90,7 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
      * Select the columns from the node table that are numeric.
      */
     private ListSingleSelection<Callable<CyColumn>> computeNumericNodeColumns() {
-        CyNetwork network = applicationManager.getCurrentNetwork();
+        CyNetwork network = cyAppManager.getCurrentNetwork();
         CyTable nodeTable = network.getDefaultNodeTable();
         Collection<CyColumn> nodeColumns = nodeTable.getColumns();
         
@@ -158,16 +175,21 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         CyCustomGraphics2Factory<?> customGraphicsFactory = customChartListener.getFactory();
         
         // Get the current network view
-        VisualStyle chartVisualStyle = CytoscapeUtilities.getVisualStyle("Social Network Chart", visualMappingManager);
-        visualMappingManager.setCurrentVisualStyle(chartVisualStyle);
-        CyNetworkView networkView = applicationManager.getCurrentNetworkView();
+        
+        CyNetwork network = this.socialNetwork.getCyNetwork();
+        
+        ChartVisualStyle chartVisualStyle = new ChartVisualStyle(cyAppManager, network, this.socialNetwork, 
+                this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
+                this.discreteMappingFactoryServiceRef, true);
+        visualMappingManager.addVisualStyle(chartVisualStyle.getVisualStyle());                                                        
+        visualMappingManager.setCurrentVisualStyle(chartVisualStyle.getVisualStyle());
+        
+        CyNetworkView networkView = this.socialNetwork.getNetworkView();
         if(networkView == null) {
             monitor.showMessage(TaskMonitor.Level.ERROR, "No network view");
             return;
         }
-        
-        CyNetwork network = applicationManager.getCurrentNetwork();
-        
+                
         // All nodes and edges have to be made visible before applying charts
         for (final CyNode node : network.getNodeList()) {
             networkView.getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 

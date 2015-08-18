@@ -4,6 +4,9 @@ import java.awt.Color;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.view.model.VisualLexicon;
+import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -38,27 +41,21 @@ public class ChartVisualStyle extends BaseAcademiaVisualStyle {
      */
     @Override
     protected void applyNodeLabelPosition(VisualStyle visualStyle) {
-     // TODO: temporarily disabled
-     /*   
-     // Get the current Visual Lexicon
+        // TODO: Disabled temporarily
+        // Get the current Visual Lexicon
         VisualLexicon lexicon = this.cyApplicationManagerServiceRef.getCurrentRenderingEngine().getVisualLexicon();
-        
         // Try to get the label visual property by its ID
         VisualProperty vp = lexicon.lookup(CyNode.class, "NODE_LABEL_POSITION");
-
         if (vp != null) {
             // If the property is supported by this rendering engine,
             // use the serialization string value to create the actual property value
             Object position = vp.parseSerializableString("N,S,c,0.00,-5.00");
-            
             // If the parsed value is ok, apply it to the visual style
             // as default value or a visual mapping
             if (position != null) {
                 visualStyle.setDefaultValue(vp, position);                
             }
-
         }
-      */
     }
 
     /* (non-Javadoc)

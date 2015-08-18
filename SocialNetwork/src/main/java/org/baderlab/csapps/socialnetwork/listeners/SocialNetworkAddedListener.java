@@ -206,6 +206,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                     }
                     break;
             }
+            // TODO: Temporarily disable this
+            /*
             if (CytoscapeUtilities.getVisualStyle("Social Network Chart", this.vmmServiceRef) ==  null) {
                 ChartVisualStyle chartVisualStyle = new ChartVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
                         this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
@@ -213,6 +215,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 this.vmmServiceRef.addVisualStyle(chartVisualStyle.getVisualStyle());                                                        
             }
             this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
+            */
         }
     }
 

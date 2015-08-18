@@ -205,7 +205,8 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, hideAuthorsTaskFactoryRef, TaskFactory.class, new Properties());
         
         CreateChartTaskFactory createChartTaskFactory = new CreateChartTaskFactory(cyApplicationManagerServiceRef, customChartManager, 
-                vmmServiceRef, columnIdFactory);
+                vmmServiceRef, columnIdFactory, appManager, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef,
+                discreteMappingFactoryServiceRef, visualStyleFactoryServiceRef);
         registerService(bc, createChartTaskFactory, TaskFactory.class, new Properties());
         
         SearchPubMedTaskFactory searchPubMedTaskFactoryRef = new SearchPubMedTaskFactory(appManager);
@@ -302,7 +303,7 @@ public class CyActivator extends AbstractCyActivator {
         serviceProperties.put("inMenuBar", "true");
         serviceProperties.put("preferredMenu", "Apps.Social Network");
         CreateChartAction createChartAction = new CreateChartAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef, 
-                createChartTaskFactory, taskManager, createChartTaskFactory);
+                createChartTaskFactory, taskManager, createChartTaskFactory, appManager);
         registerService(bc, createChartAction, CyAction.class, new Properties());
         
         // Create & register new menu item (for updating the location that a specific author

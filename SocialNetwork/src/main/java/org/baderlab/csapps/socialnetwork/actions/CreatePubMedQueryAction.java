@@ -59,6 +59,9 @@ public class CreatePubMedQueryAction extends AbstractCyAction {
         // Loading large files may cause the user interface to hang
         // --------------------------------------------------------------------------------------------------------------
         File inputFile = this.fileUtil.getFile(this.cySwingApp.getJFrame(), "Data File Selection", FileUtil.LOAD, filters);
+        if (inputFile == null) {
+            return;
+        }
         try {
             logger.log(Level.INFO, String.format("Creating PubMed query from %s", inputFile.getAbsolutePath()));
             Scanner scan = new Scanner(inputFile);
@@ -87,14 +90,16 @@ public class CreatePubMedQueryAction extends AbstractCyAction {
             File outputFile = this.fileUtil.getFile(this.cySwingApp.getJFrame(), "Save PubMed query", FileUtil.SAVE, filters);
             logger.log(Level.INFO, String.format("Saving PubMed query to %s", outputFile.getAbsolutePath()));
             // if file doesnt exists, then create it
-            if (!outputFile.exists()) {
+            if (outputFile != null && !outputFile.exists()) {
                 outputFile.createNewFile();
+            } else {
+                return;
             }
             FileWriter fw = new FileWriter(outputFile.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(query.toString());
             bw.close();  
-          // -----------------------------------------------------------------------------------------------------------
+          // ------------------------------------------------------------------------------------------------------------
         } catch (FileNotFoundException e1) {
             logger.log(Level.SEVERE, e1.getMessage());
         } catch (IOException e1) {

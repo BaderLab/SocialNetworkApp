@@ -100,7 +100,7 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
                 break;
         }
         if (isChart) {
-            networkName = "Social Network Chart";
+            networkName = String.format("%s Chart", socialNetwork.getNetworkName());
         }
         this.visualStyle = visualStyleFactoryServiceRef.createVisualStyle(networkName);
         applyVisualStyle(this.visualStyle);
@@ -279,6 +279,9 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         // Specify NODE_LABEL
         applyNodeLabel(visualStyle);
         
+        // Specify NODE_LABEL_POSITION
+        applyNodeLabelPosition(visualStyle);
+        
         // Specify NODE_SIZE
         applyNodeSize(visualStyle);
         
@@ -296,9 +299,6 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         
         // Specify NODE_LABEL_FONT_FACE
         applyNodeLabelFontFace(visualStyle);
-        
-        // Specify NODE_LABEL_POSITION
-        applyNodeLabelPosition(visualStyle);
         
         // Specify NODE_VISIBLE
         applyNodeVisibility(visualStyle);
