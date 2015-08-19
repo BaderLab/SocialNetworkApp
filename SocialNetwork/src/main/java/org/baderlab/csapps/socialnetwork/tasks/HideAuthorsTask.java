@@ -3,11 +3,14 @@ package org.baderlab.csapps.socialnetwork.tasks;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
+import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -26,6 +29,8 @@ import org.cytoscape.work.TaskMonitor;
  */
 // TODO: Write task description
 public class HideAuthorsTask extends AbstractTask {
+    
+    private static final Logger logger = Logger.getLogger(HideAuthorsTask.class.getName());
 
     private CyNetworkView cyNetworkView = null;
     private CyApplicationManager cyApplicationManager = null;
@@ -80,18 +85,26 @@ public class HideAuthorsTask extends AbstractTask {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);
             } else {
                 edgeView.setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, false);
-             }
+            }
         }
 
         Iterator<CyNode> nodeIt = this.cyNetwork.getNodeList().iterator();
         CyNode node = null;
         View<CyNode > nodeView = null;
+        CyTable defaultNodeTable = this.cyNetwork.getDefaultNodeTable();
         while (nodeIt.hasNext()) {
-            node = nodeIt.next();
-            nodeView = this.cyNetworkView.getNodeView(node);
-            if (!selectedNodes.contains(node)) {
-                nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
-            } 
+            try {
+                node = nodeIt.next();
+                nodeView = this.cyNetworkView.getNodeView(node);
+                if (!selectedNodes.contains(node)) {
+                    nodeView.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+                } 
+            } catch (Exception e) {
+                String label = (String) CytoscapeUtilities.getCyTableAttribute(defaultNodeTable, node.getSUID(), 
+                        NodeAttribute.LABEL.toString());
+                logger.log(Level.WARNING, String.format("Unable to hide \"%s\"", label.trim()));
+            }
+
         }
 
         this.cyNetworkView.updateView();

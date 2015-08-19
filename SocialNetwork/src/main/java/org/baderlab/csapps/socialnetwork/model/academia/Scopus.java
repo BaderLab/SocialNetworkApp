@@ -196,7 +196,7 @@ public class Scopus {
                     // the year doesn't match assume something is wonky with
                     // this line
                     // skip this record, print out the line and continue
-                    logger.log(Level.WARNING, "Unable to parse scopus line: " + line.toString());
+                    logger.log(Level.WARNING, String.format("Unable to parse Scopus line: %s", line.toString()));
                     continue;
                 }
                 subjectArea = columns[3].replace("\"", "");
