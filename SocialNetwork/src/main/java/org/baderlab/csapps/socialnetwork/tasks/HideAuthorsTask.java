@@ -97,7 +97,7 @@ public class HideAuthorsTask extends AbstractTask {
                 node = nodeIt.next();
                 nodeView = this.cyNetworkView.getNodeView(node);
                 if (!selectedNodes.contains(node)) {
-                    nodeView.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+                    nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
                 } 
             } catch (Exception e) {
                 String label = (String) CytoscapeUtilities.getCyTableAttribute(defaultNodeTable, node.getSUID(), 

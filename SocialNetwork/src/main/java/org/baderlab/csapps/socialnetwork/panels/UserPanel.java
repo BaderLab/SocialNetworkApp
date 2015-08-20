@@ -340,7 +340,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
                 networkTablePane.setPreferredSize(new Dimension(200, 100));
                 this.getNetworkPanelRef().add(networkTablePane, BorderLayout.NORTH);
 
-                this.setNetworkSummaryPanelRef(this.createNetworkSummaryPanel(socialNetwork));
+                this.setNetworkSummaryPanelRef(this.createNetworkSummaryPanel());
                 this.getNetworkPanelRef().add(this.getNetworkSummaryPanelRef(), BorderLayout.CENTER);
 
                 // Add network info to table
@@ -583,7 +583,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @param SocialNetwork socialNetwork
      * @return JPanel networkSummaryPanel
      */
-    public JPanel createNetworkSummaryPanel(SocialNetwork socialNetwork) {
+    public JPanel createNetworkSummaryPanel() {
         // Create network summary panel
         JPanel networkSummaryPanel = new JPanel();
         networkSummaryPanel.setLayout(new BorderLayout());
@@ -1238,6 +1238,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         }
         this.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
         this.getNetworkSummaryPaneRef().setText(networkSummary);
+        this.getNetworkSummaryPaneRef().revalidate();
+        this.getNetworkSummaryPaneRef().repaint();
         this.getFileSummaryPaneRef().setText("");
 
         GenerateReports gr = new GenerateReports(socialNetwork);

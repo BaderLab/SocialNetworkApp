@@ -1,15 +1,20 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -20,6 +25,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class EutilsSearchParser extends DefaultHandler {
+    
+    private final String USER_AGENT = "Mozilla/5.0";
 
     /**
      * XML Parsing variables. Used to temporarily store data.
@@ -47,6 +54,32 @@ public class EutilsSearchParser extends DefaultHandler {
     private StringBuilder retMax = null;
 
     private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
+    
+    /**
+     * Send a POST request
+     * 
+     * @param HttpsURLConnection con
+     * @param String parameters
+     * 
+     * @return int response code
+     * 
+     * @throws ProtocolException
+     * @throws IOException
+     */
+    private int sendPOST(HttpsURLConnection con, String parameters) throws ProtocolException, IOException {
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(parameters);
+        wr.flush();
+        wr.close();
+
+        return con.getResponseCode();
+    }
 
     /**
      * Create a new eUtils search parser
@@ -62,9 +95,15 @@ public class EutilsSearchParser extends DefaultHandler {
         try {
             // Create new SAXParser
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            // Get Query Key & Web Env
-            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
-            saxParser.parse(url, this);
+            
+            URL obj = new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi");
+            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+            int responseCode = sendPOST(con, String.format("db=pubmed&term=%s", query));
+            logger.log(Level.INFO, String.format("Eutils response code: %d", responseCode));
+            if (responseCode != 200) {
+                return;
+            }
+            saxParser.parse(new InputSource(con.getInputStream()), this);
         } catch (ParserConfigurationException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");

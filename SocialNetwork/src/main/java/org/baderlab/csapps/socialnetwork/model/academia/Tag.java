@@ -60,10 +60,23 @@ public class Tag {
      */
     public Tag(String queryKey, String webEnv, int retStart, int retMax) {
         this.tag = "";
+        this.tag = augmentDatabase(this.tag, "pubmed");
         this.tag = augmentQueryKey(this.tag, queryKey);
         this.tag = augmentWebEnv(this.tag, webEnv);
         this.tag = augmentRetStart(this.tag, String.valueOf(retStart));
         this.tag = augmentRetMax(this.tag, String.valueOf(retMax));
+    }
+    
+    /**
+     * Augment query with database
+     *
+     * @param String query
+     * @param String database
+     * 
+     * @return String query
+     */
+    private String augmentDatabase(String query, String database) {
+        return String.format("%s&db=%s", query, database);
     }
 
     /**
@@ -71,6 +84,7 @@ public class Tag {
      *
      * @param String query
      * @param String queryKey
+     * 
      * @return String query
      */
     private String augmentQueryKey(String query, String queryKey) {

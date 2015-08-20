@@ -80,6 +80,7 @@ public class SocialNetworkAppManager {
     private static int selectedYear = -1;
     private static SocialNetwork selectedSocialNetwork = null;
     private static InfoPanel infoPanelRef = null;
+   
     
     public static InfoPanel getInfoPanel() {
         return infoPanelRef;

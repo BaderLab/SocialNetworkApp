@@ -1,11 +1,15 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -51,6 +55,8 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     // TODO: Write description
     private HashMap<String, Publication> pubMap = null;
     
+    private final String USER_AGENT = "Mozilla/5.0";
+    
     /**
      * Create PubMap
      * 
@@ -64,6 +70,32 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             pub = it.next();
             this.pubMap.put(pub.getPMID(), pub);
         }
+    }
+    
+    /**
+     * Send a POST request
+     * 
+     * @param HttpsURLConnection con
+     * @param Tag parameters
+     * 
+     * @return int response code
+     * 
+     * @throws ProtocolException
+     * @throws IOException
+     */
+    private int sendPOST(HttpsURLConnection con, Tag parameters) throws ProtocolException, IOException {
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(parameters.toString());
+        wr.flush();
+        wr.close();
+
+        return con.getResponseCode();
     }
 
     /**
@@ -85,13 +117,17 @@ public class EutilsTimesCitedParser extends DefaultHandler {
             this.pmid = new StringBuilder();
             this.timesCited = new StringBuilder();
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            String url = null;
             while (retStart < totalPubs) {
                 // Use newly discovered queryKey and webEnv to build a tag
                 Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-                // Load all publications at once
-                url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-                saxParser.parse(url, this);
+                URL obj = new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi");
+                HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+                int responseCode = sendPOST(con, tag);
+                logger.log(Level.INFO, String.format("Eutils response code: %d", responseCode));
+                if (responseCode != 200) {
+                    return;
+                }
+                saxParser.parse(con.getInputStream(), this);                
                 retStart += retMax;
             }
         } catch (ParserConfigurationException e) {
