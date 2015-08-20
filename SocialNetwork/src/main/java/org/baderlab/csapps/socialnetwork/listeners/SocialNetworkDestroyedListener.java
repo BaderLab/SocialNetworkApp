@@ -96,6 +96,10 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
         String name = this.appManager.getNetworkName(event.getNetwork());
         Map<String, SocialNetwork> map = this.appManager.getSocialNetworkMap();
         if (map.containsKey(name)) {
+            if (map.size() == 2) {
+                SocialNetworkAppManager.getInfoPanel().closePanel();
+                SocialNetworkAppManager.setInfoPanel(null);                
+            }
             map.remove(name);
             // Remove network from table
             DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();

@@ -47,7 +47,6 @@ import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademiaVisualStyle;
-import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;

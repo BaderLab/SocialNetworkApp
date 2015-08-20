@@ -42,14 +42,14 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
      */
     private static final long serialVersionUID = 1L;
     
+    private CyServiceRegistrar cyServiceRegistrarRef = null;
+    private HideAuthorsTaskFactory hideAuthorsTaskFactory = null;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
     private JSlider sliderButton = null;
-    private JTextField textField = null;
+    private SocialNetwork socialNetwork = null;
     private int startYear = -1, endYear = -1;
     private TaskManager<?, ?> taskManager = null;
-    private HideAuthorsTaskFactory hideAuthorsTaskFactory = null;
-    private SocialNetwork socialNetwork = null;
-    private CyServiceRegistrar cyServiceRegistrarRef = null;
-    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
+    private JTextField textField = null;
     
     public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory hideAuthorsTaskFactory, SocialNetwork socialNetwork,
             CyServiceRegistrar cyServiceRegistrarRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
@@ -120,17 +120,55 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     }
     
     /**
+     * Close the info panel
+     */
+    public void closePanel() {
+        SocialNetworkAppManager.setInfoPanel(null);
+        InfoPanel.this.cyServiceRegistrarRef.unregisterService(InfoPanel.this, CytoPanelComponent.class);
+    }
+    
+    /**
+     * Create close button. Close button closes current panel
+     *
+     * @return JButton closeButton
+     */
+    private JButton createCloseButton() {
+        JButton closeButton = new JButton("Close");
+        closeButton.setToolTipText("Close Social Network Display Options Panel");
+        // Clicking of button results in the closing of current panel
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                SocialNetworkAppManager.setInfoPanel(null);
+                InfoPanel.this.cyServiceRegistrarRef.unregisterService(InfoPanel.this, CytoPanelComponent.class);
+            }
+        });
+        return closeButton;
+    }
+    
+    private JButton createShowAllButton() {
+        JButton showAllButton = new JButton("Show All Nodes and Edges");
+        showAllButton.setToolTipText("Show every node and edge in the existing network.");
+        // Clicking of button results in the closing of current panel
+        showAllButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                InfoPanel.this.taskManager.execute(InfoPanel.this.showAllNodesTaskFactory.createTaskIterator());
+            }
+        });
+        return showAllButton;
+    }
+    
+    /**
     *
     * @return {@link Component} component
     */
    public Component getComponent() {
        return this;
    }
-    
+
     public CytoPanelName getCytoPanelName() {
         return CytoPanelName.EAST;
     }
-    
+
     public Icon getIcon() {
         URL iconURL = this.getClass().getResource("socialNetwork_logo_small.png");
         ImageIcon SNIcon = null;
@@ -139,7 +177,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         }
         return SNIcon;
     }
-    
+
     public JSlider getSliderButton() {
         return this.sliderButton;
     }
@@ -160,15 +198,27 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             }
         }
     }
-
+    
+    public void setEndYear(int endYear) {
+        this.endYear = endYear;
+    }
+    
     public void setSliderButton(JSlider sliderButton) {
         this.sliderButton = sliderButton;
     }
-
+    
+    public void setSocialNetwork(SocialNetwork socialNetwork) {
+        this.socialNetwork = socialNetwork;
+    }
+    
+    public void setStartYear(int startYear) {
+        this.startYear = startYear;
+    }
+    
     public void setTextField(JTextField textField) {
         this.textField = textField;
     }
-
+    
     public void stateChanged(ChangeEvent evt) {
         JSlider source = (JSlider) evt.getSource();
         int year = (int) source.getValue();
@@ -180,18 +230,6 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         } else {
             this.textField.setText(String.valueOf(year));
         }
-    }
-    
-    public void setStartYear(int startYear) {
-        this.startYear = startYear;
-    }
-    
-    public void setEndYear(int endYear) {
-        this.endYear = endYear;
-    }
-    
-    public void setSocialNetwork(SocialNetwork socialNetwork) {
-        this.socialNetwork = socialNetwork;
     }
     
     public void update(SocialNetwork socialNetwork) {
@@ -226,38 +264,9 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         }
         
         this.socialNetwork.getNetworkView().updateView();
+
         
         this.updateUI();
-    }
-    
-    /**
-     * Create close button. Close button closes current panel
-     *
-     * @return JButton closeButton
-     */
-    private JButton createCloseButton() {
-        JButton closeButton = new JButton("Close");
-        closeButton.setToolTipText("Close Social Network Display Options Panel");
-        // Clicking of button results in the closing of current panel
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                SocialNetworkAppManager.setInfoPanel(null);
-                InfoPanel.this.cyServiceRegistrarRef.unregisterService(InfoPanel.this, CytoPanelComponent.class);
-            }
-        });
-        return closeButton;
-    }
-    
-    private JButton createShowAllButton() {
-        JButton showAllButton = new JButton("Show All Nodes and Edges");
-        showAllButton.setToolTipText("Show every node and edge in the existing network.");
-        // Clicking of button results in the closing of current panel
-        showAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                InfoPanel.this.taskManager.execute(InfoPanel.this.showAllNodesTaskFactory.createTaskIterator());
-            }
-        });
-        return showAllButton;
     }
 
 }

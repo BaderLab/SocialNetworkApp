@@ -37,6 +37,7 @@
 
 package org.baderlab.csapps.socialnetwork.listeners;
 
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -45,9 +46,11 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribu
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
+import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -73,6 +76,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CyNetworkViewManager cyNetworkViewManagerServiceRef = null;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
 
     /**
      * Creates a new {@link SocialNetworkAppManager} object
@@ -81,7 +85,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
      */
     public SocialNetworkSelectedListener(SocialNetworkAppManager appManager, CyServiceRegistrar cyServiceRegistrarRef, 
             TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, 
-            CyNetworkViewManager cyNetworkViewManagerServiceRef) {
+            CyNetworkViewManager cyNetworkViewManagerServiceRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
         super();
         this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
         this.appManager = appManager;
@@ -89,6 +93,12 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
         this.taskManager = taskManager;
         this.userPanel = this.appManager.getUserPanelRef();
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
+        this.showAllNodesTaskFactory = showAllNodesTaskFactory;
+    }
+    
+    private InfoPanel initializeInfoPanel() {
+        return new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
+                this.showAllNodesTaskFactory);        
     }
 
     /**
@@ -112,7 +122,15 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
                     this.socialNetwork.setNetworkView(networkView);
                                         
                     InfoPanel infoPanel = SocialNetworkAppManager.getInfoPanel();
-                    infoPanel.update(this.socialNetwork);;
+                    
+                    if (infoPanel == null) {
+                        infoPanel = initializeInfoPanel();                
+                        this.cyServiceRegistrarRef.registerService(infoPanel, CytoPanelComponent.class, new Properties());
+                        SocialNetworkAppManager.setInfoPanel(infoPanel);
+                    } else {
+                        infoPanel.update(this.socialNetwork);;
+                    }
+                    
                     // If the state of the cytoPanelEast is HIDE, show it
                     if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
                         this.cytoPanelEast.setState(CytoPanelState.DOCK);
