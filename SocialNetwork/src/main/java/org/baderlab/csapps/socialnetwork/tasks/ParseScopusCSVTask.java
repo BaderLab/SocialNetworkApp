@@ -62,7 +62,7 @@ public class ParseScopusCSVTask extends AbstractTask {
         Interaction interaction = new Interaction(pubList, Category.ACADEMIA, this.appManager.getMaxAuthorThreshold());
         if (interaction.getExcludedPublications().size() == pubList.size()) {
             this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            String message = "Network couldn't be loaded. Adjust max author threshold";
+            String message = "Network couldn't be loaded. Try adjusting max author threshold.";
             logger.log(Level.SEVERE, message);
             CytoscapeUtilities.notifyUser(message);
             return;

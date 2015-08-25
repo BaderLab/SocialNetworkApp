@@ -48,6 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -92,9 +93,11 @@ public class Scopus {
         nodeAttrMap.put(NodeAttribute.LABEL.toString(), "N/A");
         nodeAttrMap.put(NodeAttribute.FIRST_NAME.toString(), "N/A");
         nodeAttrMap.put(NodeAttribute.LAST_NAME.toString(), "N/A");
+        nodeAttrMap.put(NodeAttribute.MAIN_INSTITUTION.toString(), "N/A");
         nodeAttrMap.put(NodeAttribute.TIMES_CITED.toString(), 0);
         nodeAttrMap.put(NodeAttribute.PUBLICATION_COUNT.toString(), 0);
         nodeAttrMap.put(NodeAttribute.PUBLICATIONS.toString(), new ArrayList<String>());
+        nodeAttrMap.put(NodeAttribute.INSTITUTIONS.toString(), new ArrayList<String>());
         List<Integer> pubsPerYearList = new ArrayList<Integer>();
         pubsPerYearList.add(0);
         nodeAttrMap.put(NodeAttribute.PUBS_PER_YEAR.toString(), pubsPerYearList);
@@ -165,13 +168,44 @@ public class Scopus {
         }
         return authorList;
     }
-
+    
     /**
-     * Get Scopus publication list
-     *
+     * Return affiliations 
+     * 
+     * @param String affiliations
+     * @return ArrayList affiliationsList
+     */
+    private ArrayList<String> parseAffiliations(String affiliations) {
+        ArrayList<String> affiliationList = new ArrayList<String>();
+        String[] contents = affiliations.split(";");
+        for (String affil : contents) {
+        	affiliationList.add(affil);
+        }
+        return affiliationList;
+    }
+    
+    /**
+     * Match the authors in the co-author list to the affiliations in the affiliation list
+     * 
+     * @param ArrayList coauthorList
+     * @param ArrayList affiliationList
+     */
+    private void matchAffiliations(ArrayList<Author> coauthorList, ArrayList<String> affiliationList) {
+    	if (coauthorList.size() != affiliationList.size()) {
+    		logger.log(Level.WARNING, "# of authors does not correspond to # of affiliations");
+    		return;
+    	}
+    	for (int i = 0; i < coauthorList.size(); i++) {
+    		coauthorList.get(i).addInstitution(affiliationList.get(i));
+    	}
+    }
+    
+    /**
+     * Parse the default file that Scopus exports
+     * 
      * @param {@link File} csv
      */
-    private void parseScopusPubList(File csv) {
+    private void defaultParseScopus(File csv) {
         Scanner in = null;
         try {
             setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
@@ -181,8 +215,9 @@ public class Scopus {
             String[] columns = null;
             Publication pub = null;
             ArrayList<Author> coauthorList = new ArrayList<Author>();
+            ArrayList<String> affiliationList = new ArrayList<String>();
             String title = null, subjectArea = null, timesCited = null;
-            String numericalData = null;
+            String numericalData = null, affiliation = null;
             // Parse for publications
             while (in.hasNext()) {
                 line = in.nextLine();
@@ -192,6 +227,9 @@ public class Scopus {
                 coauthorList = this.parseAuthors(authors);
                 title = columns[1].replace("\"", "");
                 year = columns[2].replace("\"", "");
+                affiliation = columns[13].replace("\"", "");
+                affiliationList = this.parseAffiliations(affiliation);
+                this.matchAffiliations(coauthorList, affiliationList);
                 if (!this.matchYear(year)) {
                     // the year doesn't match assume something is wonky with
                     // this line
@@ -218,7 +256,40 @@ public class Scopus {
                 in.close();
             }
         }
+    }
 
+    /**
+     * Get Scopus publication list
+     *
+     * @param {@link File} csv
+     */
+    private void parseScopusPubList(File csv) {
+        Scanner in = null;
+        try {
+            in = new Scanner(csv);
+            String line = null;
+            String[] columns = null;
+            if (in.hasNext()) {
+                line = in.nextLine();
+                columns = splitQuoted("\"", ",", line);
+                if (columns.length == 14) {
+                	defaultParseScopus(csv);
+                } else if (columns.length == 41) {
+                	logger.log(Level.INFO, "41 column file recognized");
+                } else {
+                	logger.log(Level.INFO, String.format("# of columns in this file is %d", columns.length));
+                	CytoscapeUtilities.notifyUser("Invalid Scopus data fail. # of columns should be either 16 or 41.");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            logger.log(Level.SEVERE, "Exception occurred", e);
+            taskMonitor.setStatusMessage("File not found");
+            CytoscapeUtilities.notifyUser("Unable to locate Scopus data file.\nPlease re-load" + " file and try again.");
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
     }
 
     /**

@@ -1,10 +1,7 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,7 +13,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
