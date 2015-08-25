@@ -1,16 +1,22 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.commons.io.FileUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -30,7 +36,8 @@ public class EutilsRetrievalParser extends DefaultHandler {
 
     private static final Logger logger = Logger.getLogger(EutilsRetrievalParser.class.getName());
     
-    private final String USER_AGENT = "Mozilla/5.0";
+    private final String USER_AGENT = "esummary/1.0";
+    private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
     /**
      * XML Parsing variables. Used to temporarily store data.
@@ -93,7 +100,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
     private int sendPOST(HttpsURLConnection con, Tag parameters) throws ProtocolException, IOException {
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", USER_AGENT);
-        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+        con.setRequestProperty("Content-Type", CONTENT_TYPE);
         
         // Send post request
         con.setDoOutput(true);
@@ -104,6 +111,26 @@ public class EutilsRetrievalParser extends DefaultHandler {
 
         return con.getResponseCode();
     }
+    
+    // TODO: Delete. Here for testing purposes.
+    /*
+    private void printContents(HttpsURLConnection con) {
+    	try {
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+	
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			FileUtils.writeStringToFile(new File("C:\\Users\\SloGGy\\Desktop\\retrieval.txt"), response.toString());
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    */
 
     /**
      * Create a new eUtils retrieval parser
@@ -130,10 +157,11 @@ public class EutilsRetrievalParser extends DefaultHandler {
                 URL obj = new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi");
                 HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
                 int responseCode = sendPOST(con, tag);
-                logger.log(Level.INFO, String.format("Eutils response code: %d", responseCode));
                 if (responseCode != 200) {
+                	logger.log(Level.INFO, String.format("Eutils response code: %d", responseCode));
                     return;
                 }
+                //printContents(con);
                 saxParser.parse(con.getInputStream(), this);
                 retStart += retMax;
             }
