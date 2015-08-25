@@ -48,7 +48,7 @@ public class ParsePubMedXMLTask extends AbstractTask {
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-        taskMonitor.setTitle("Loading Network");
+        taskMonitor.setTitle("Loading PubMed Network ...");
         String networkName = this.appManager.getNetworkName();
 
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.PUBMED);

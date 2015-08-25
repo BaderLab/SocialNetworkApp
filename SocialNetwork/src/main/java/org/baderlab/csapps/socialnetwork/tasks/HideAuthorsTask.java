@@ -56,11 +56,13 @@ public class HideAuthorsTask extends AbstractTask {
             return;
         }
                 
-        taskMonitor.setTitle(String.format("Loading %s Visual Style ... ", 
-                VisualStyles.toString(socialNetwork.getVisualStyleId())));
-
         int year = SocialNetworkAppManager.getSelectedYear();
 
+        taskMonitor.setTitle(String.format("Filtering %s to year %d ", socialNetwork.getNetworkName(), year));
+        
+        logger.log(Level.INFO, String.format("Loading %s Visual Style ... ", 
+        		VisualStyles.toString(socialNetwork.getVisualStyleId())));
+        
         this.startYear = socialNetwork.getStartYear();
         this.endYear = socialNetwork.getEndYear();
 

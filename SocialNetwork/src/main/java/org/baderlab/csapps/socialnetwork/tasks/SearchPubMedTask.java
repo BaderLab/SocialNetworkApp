@@ -48,7 +48,7 @@ public class SearchPubMedTask extends AbstractTask {
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-        taskMonitor.setTitle("Searching PubMed");
+        taskMonitor.setTitle("Searching PubMed ...");
         String searchTerm = this.appManager.getSearchTerm();
         int maxAuthorThreshold = this.appManager.getMaxAuthorThreshold();
         

@@ -48,7 +48,7 @@ public class ParseScopusCSVTask extends AbstractTask {
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-        taskMonitor.setTitle("Loading Network");
+        taskMonitor.setTitle("Loading Scopus Network ...");
         String networkName = this.appManager.getNetworkName();
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
         Scopus scopus = new Scopus(this.appManager.getNetworkFile(), taskMonitor);

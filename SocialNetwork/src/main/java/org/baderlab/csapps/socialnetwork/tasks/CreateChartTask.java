@@ -161,7 +161,7 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
     
     @Override
     public void run(TaskMonitor monitor) throws Exception {
-        monitor.setTitle("Generating Charts");
+        monitor.setTitle("Generating Charts ...");
         
         // Get the values the user selected
         final CyColumn domainColumn = domainColumnNames.getSelectedValue().call();

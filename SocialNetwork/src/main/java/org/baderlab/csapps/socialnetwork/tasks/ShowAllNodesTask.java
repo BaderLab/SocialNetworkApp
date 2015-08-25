@@ -17,6 +17,7 @@ public class ShowAllNodesTask extends AbstractTask {
      */
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
+        taskMonitor.setTitle("Showing all nodes and edges ...");
         SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
         InfoPanel infoPanel = SocialNetworkAppManager.getInfoPanel();
         // All nodes and edges have to be made visible 
