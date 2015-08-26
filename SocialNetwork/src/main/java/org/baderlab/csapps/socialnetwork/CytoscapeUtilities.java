@@ -302,7 +302,7 @@ public class CytoscapeUtilities {
         CytoscapeUtilities.propsReader = propsReader;
         if (CytoscapeUtilities.propsReader.getProperties().isEmpty()) {
             try {
-                InputStream in = CytoscapeUtilities.class.getResourceAsStream("academia/locationsmap.txt");
+                InputStream in = CytoscapeUtilities.class.getResourceAsStream("model/academia/locationsmap.txt");
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
                 String sCurrentLine = null;
                 while ((sCurrentLine = br.readLine()) != null) {
