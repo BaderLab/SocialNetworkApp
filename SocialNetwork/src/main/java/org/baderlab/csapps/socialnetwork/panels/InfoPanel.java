@@ -254,16 +254,18 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         //this.sliderButton.setValue(startYear);
         this.sliderButton.repaint();
         
-        // All nodes and edges have to be made visible 
-        for (final CyNode node : socialNetwork.getCyNetwork().getNodeList()) {
-            this.socialNetwork.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
+        if (this.socialNetwork.getNetworkView() != null) {
+            // All nodes and edges have to be made visible 
+            for (final CyNode node : socialNetwork.getCyNetwork().getNodeList()) {
+                this.socialNetwork.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_VISIBLE, true);                 
+            }
+            
+            for (final CyEdge edge : socialNetwork.getCyNetwork().getEdgeList()) {
+                this.socialNetwork.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
+            }
+            
+            this.socialNetwork.getNetworkView().updateView();            
         }
-
-        for (final CyEdge edge : socialNetwork.getCyNetwork().getEdgeList()) {
-            this.socialNetwork.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
-        }
-        
-        this.socialNetwork.getNetworkView().updateView();
 
         
         this.updateUI();

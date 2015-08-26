@@ -150,7 +150,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             this.socialNetwork.setCyNetwork(cyNetwork);
             this.appManager.getUserPanelRef().addNetworkToNetworkPanel(socialNetwork);
             // Show app information panel (docked to the east)
-            // ------------------------------------------------------------------------------------------------------------
+            // ---------------------------------------------------------------------------------------------------------------
             if (cyNetwork.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
                 if (SocialNetworkAppManager.getInfoPanel() == null) {
                     initializeInfoPanel();                
@@ -173,37 +173,38 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                 logger.log(Level.WARNING, String.format("Display Options panel disabled because %s does not contain the pubs per year attribute.",
                         this.socialNetwork.getNetworkName()));
             }
-            // -----------------------------------------------------------------------------------------------------------          
+            // ---------------------------------------------------------------------------------------------------------------          
             int networkID = socialNetwork.getNetworkType();
             // Specify the default visual styles
+            // TODO: Add all the visual styles at one go once the app starts. There are only three visual styles.
             switch (networkID) {
                 case Category.INCITES:
                     // TODO:
-                    if (CytoscapeUtilities.getVisualStyle("InCites", this.vmmServiceRef) == null) {
+                    if (CytoscapeUtilities.getVisualStyle(String.format("%s_InCites", this.socialNetwork.getNetworkName()), this.vmmServiceRef) == null) {
                         IncitesVisualStyle incitesVisualStyle = new IncitesVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
-                        this.vmmServiceRef.addVisualStyle(incitesVisualStyle.getVisualStyle());                        
+                        this.vmmServiceRef.addVisualStyle(incitesVisualStyle.getVisualStyle());                                                
                     }
                     break;
                 case Category.SCOPUS:
                     // TODO:
-                    if (CytoscapeUtilities.getVisualStyle("Scopus", this.vmmServiceRef) == null) {
-                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
+                    if (CytoscapeUtilities.getVisualStyle(String.format("%s_Scopus", this.socialNetwork.getNetworkName()), this.vmmServiceRef) == null) {
+                        BaseAcademiaVisualStyle scopusVisualStyle = new BaseAcademiaVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
-                        this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
+                        this.vmmServiceRef.addVisualStyle(scopusVisualStyle.getVisualStyle());                                                
                     }
                     break;
                 case Category.PUBMED:
                     // TODO:
-                    if (CytoscapeUtilities.getVisualStyle("PubMed", this.vmmServiceRef) == null) {
-                        BaseAcademiaVisualStyle basicVisualStyle = new BaseAcademiaVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
+                    if (CytoscapeUtilities.getVisualStyle(String.format("%s_PubMed", this.socialNetwork.getNetworkName()), this.vmmServiceRef) == null) {
+                        BaseAcademiaVisualStyle pubmedVisualStyle = new BaseAcademiaVisualStyle(cyApplicationManagerServiceRef, cyNetwork, this.socialNetwork, 
                                 this.visualStyleFactoryServiceRef, this.passthroughMappingFactoryServiceRef, this.continuousMappingFactoryServiceRef,
                                 this.discreteMappingFactoryServiceRef, false);
-                        this.vmmServiceRef.addVisualStyle(basicVisualStyle.getVisualStyle());                        
+                        this.vmmServiceRef.addVisualStyle(pubmedVisualStyle.getVisualStyle());                        
+                        break;                        
                     }
-                    break;
             }
             // TODO: Temporarily disable this
             /*
@@ -213,8 +214,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
                         this.discreteMappingFactoryServiceRef, true);
                 this.vmmServiceRef.addVisualStyle(chartVisualStyle.getVisualStyle());                                                        
             }
-            this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
             */
+            this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
         }
     }
 

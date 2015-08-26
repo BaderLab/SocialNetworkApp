@@ -39,6 +39,7 @@ package org.baderlab.csapps.socialnetwork.tasks;
 
 import java.util.Iterator;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.VisualStyles;
 import org.cytoscape.view.vizmap.VisualMappingManager;
@@ -112,18 +113,19 @@ public class ApplyVisualStyleTask extends AbstractTask {
         this.setTaskMonitor(taskMonitor);
         VisualStyle visualStyle = null;
         String visualStyleName = null;
-        switch (this.appManager.getVisualStyleID()) {
+        SocialNetwork socialNetwork = this.appManager.getCurrentlySelectedSocialNetwork();
+        switch (socialNetwork.getVisualStyleId()) {
             case Category.DEFAULT:
                 visualStyleName = "Default";
                 break;
             case VisualStyles.INCITES_VISUAL_STYLE:
-                visualStyleName = "InCites";
+                visualStyleName = String.format("%s_InCites", socialNetwork.getNetworkName());
                 break;
             case VisualStyles.PUBMED_VISUAL_STYLE:
-                visualStyleName = "PubMed";
+                visualStyleName = String.format("%s_PubMed", socialNetwork.getNetworkName());
                 break;
             case VisualStyles.SCOPUS_VISUAL_STYLE:
-                visualStyleName = "Scopus";
+                visualStyleName = String.format("%s_Scopus", socialNetwork.getNetworkName());
                 break;
         }
         visualStyle = getVisualStyle(visualStyleName);

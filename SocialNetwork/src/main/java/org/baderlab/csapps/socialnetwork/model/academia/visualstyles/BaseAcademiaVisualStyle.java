@@ -90,13 +90,13 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         String networkName = null;
         switch(this.socialNetwork.getNetworkType()) {
             case Category.PUBMED:
-                networkName = "PubMed";
+                networkName = String.format("%s_PubMed", socialNetwork.getNetworkName());
                 break;
             case Category.INCITES:
-                networkName = "InCites";
+                networkName = String.format("%s_InCites", socialNetwork.getNetworkName());
                 break;
             case Category.SCOPUS:
-                networkName = "Scopus";
+                networkName = String.format("%s_Scopus", socialNetwork.getNetworkName());
                 break;
         }
         if (isChart) {
