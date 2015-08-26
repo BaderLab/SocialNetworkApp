@@ -51,18 +51,18 @@ public class HideAuthorsTask extends AbstractTask {
         SocialNetwork socialNetwork = SocialNetworkAppManager.getSelectedSocialNetwork();
         this.cyNetwork = socialNetwork.getCyNetwork();
         this.cyNetworkView = socialNetwork.getNetworkView();
-
+ 
         if (this.cyNetworkView == null) {
             return;
         }
-                
+
         int year = SocialNetworkAppManager.getSelectedYear();
 
-        taskMonitor.setTitle(String.format("Filtering %s to year %d ", socialNetwork.getNetworkName(), year));
-        
+        taskMonitor.setTitle(String.format("Filtering \"%s\" to year %d ...", socialNetwork.getNetworkName(), year));
+
         logger.log(Level.INFO, String.format("Loading %s Visual Style ... ", 
         		VisualStyles.toString(socialNetwork.getVisualStyleId())));
-        
+ 
         this.startYear = socialNetwork.getStartYear();
         this.endYear = socialNetwork.getEndYear();
 
@@ -97,20 +97,19 @@ public class HideAuthorsTask extends AbstractTask {
         while (nodeIt.hasNext()) {
             try {
                 node = nodeIt.next();
-                nodeView = this.cyNetworkView.getNodeView(node);
                 if (!selectedNodes.contains(node)) {
+                    nodeView = this.cyNetworkView.getNodeView(node);
                     nodeView.setLockedValue(BasicVisualLexicon.NODE_VISIBLE, false);
                 } 
             } catch (Exception e) {
                 String label = (String) CytoscapeUtilities.getCyTableAttribute(defaultNodeTable, node.getSUID(), 
                         NodeAttribute.LABEL.toString());
-                logger.log(Level.WARNING, String.format("Unable to hide \"%s\"", label.trim()));
+                logger.log(Level.WARNING, String.format("Unable to hide \"%s\" because %s", label.trim(), e.getMessage()));
             }
-
         }
 
         this.cyNetworkView.updateView();
-        
+
     }
 
 }
