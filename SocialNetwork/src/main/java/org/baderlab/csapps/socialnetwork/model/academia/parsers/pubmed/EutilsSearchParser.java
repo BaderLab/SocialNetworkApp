@@ -1,26 +1,15 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.commons.io.FileUtils;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -31,10 +20,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 // TODO: Write class description
 public class EutilsSearchParser extends DefaultHandler {
-    
-    private final String USER_AGENT = "esearch/1.0";
-    private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
-    
+
     /**
      * XML Parsing variables. Used to temporarily store data.
      */
@@ -61,52 +47,6 @@ public class EutilsSearchParser extends DefaultHandler {
     private StringBuilder retMax = null;
 
     private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
-    
-    /**
-     * Send a POST request
-     * 
-     * @param HttpsURLConnection con
-     * @param String parameters
-     * 
-     * @return int response code
-     * 
-     * @throws ProtocolException
-     * @throws IOException
-     */
-    private int sendPOST(HttpsURLConnection con, String parameters) throws ProtocolException, IOException {
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        con.setRequestProperty("Content-Type", CONTENT_TYPE);
-        
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(parameters);
-        wr.flush();
-        wr.close();
-
-        return con.getResponseCode();
-    }
-    
-    // TODO: Delete. Here for testing purposes.
-    /*
-    private void printContents(HttpsURLConnection con) {
-    	try {
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-	
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-			FileUtils.writeStringToFile(new File("C:\\Users\\SloGGy\\Desktop\\search.txt"), response.toString());
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    }
-    */
 
     /**
      * Create a new eUtils search parser
@@ -122,16 +62,9 @@ public class EutilsSearchParser extends DefaultHandler {
         try {
             // Create new SAXParser
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            
-            URL obj = new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi");
-            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-            int responseCode = sendPOST(con, String.format("db=pubmed&term=%s", query));
-            if (responseCode != 200) {
-            	logger.log(Level.INFO, String.format("Entrez utilities response code: %d", responseCode));
-                return;
-            }
-            // printContents(con); TODO
-            saxParser.parse(new InputSource(con.getInputStream()), this);
+            // Get Query Key & Web Env
+            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
+            saxParser.parse(url, this);
         } catch (ParserConfigurationException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
