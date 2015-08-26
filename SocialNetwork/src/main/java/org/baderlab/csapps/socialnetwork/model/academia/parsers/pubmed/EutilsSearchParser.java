@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 // TODO: Write class description
 public class EutilsSearchParser extends DefaultHandler {
     
-    private final String USER_AGENT = "esearch/1.0";
+    private final String USER_AGENT = "esearch/1.0 ";
     private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
     
     /**
@@ -101,7 +101,7 @@ public class EutilsSearchParser extends DefaultHandler {
 				response.append(inputLine);
 			}
 			in.close();
-			FileUtils.writeStringToFile(new File("C:\\Users\\SloGGy\\Desktop\\search.txt"), response.toString());
+			FileUtils.writeStringToFile(new File("~/Desktop/search.txt"), response.toString());
     	} catch (Exception e) {
     		e.printStackTrace();
     	}

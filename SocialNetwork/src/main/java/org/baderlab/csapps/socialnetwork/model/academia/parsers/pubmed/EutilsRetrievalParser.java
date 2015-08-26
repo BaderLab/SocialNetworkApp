@@ -32,7 +32,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
 
     private static final Logger logger = Logger.getLogger(EutilsRetrievalParser.class.getName());
     
-    private final String USER_AGENT = "esummary/1.0";
+    private final String USER_AGENT = "esummary/1.0 ";
     private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
     /**
@@ -121,7 +121,7 @@ public class EutilsRetrievalParser extends DefaultHandler {
 				response.append(inputLine);
 			}
 			in.close();
-			FileUtils.writeStringToFile(new File("C:\\Users\\SloGGy\\Desktop\\retrieval.txt"), response.toString());
+			FileUtils.writeStringToFile(new File("~/Desktop/search.txt"), response.toString());
     	} catch (Exception e) {
     		e.printStackTrace();
     	}

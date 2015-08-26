@@ -61,7 +61,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
     // TODO: Write description
     private HashMap<String, Publication> pubMap = null;
     
-    private final String USER_AGENT = "esummary/1.0";
+    private final String USER_AGENT = "esummary/1.0 ";
     private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
     
     /**
@@ -118,7 +118,7 @@ public class EutilsTimesCitedParser extends DefaultHandler {
 				response.append(inputLine);
 			}
 			in.close();
-			FileUtils.writeStringToFile(new File("C:\\Users\\SloGGy\\Desktop\\times_cited.txt"), response.toString());
+			FileUtils.writeStringToFile(new File("~/Desktop/times_cited.txt"), response.toString());
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
