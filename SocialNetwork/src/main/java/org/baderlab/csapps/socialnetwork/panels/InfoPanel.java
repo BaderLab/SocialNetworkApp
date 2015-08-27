@@ -24,6 +24,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -42,6 +43,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
      */
     private static final long serialVersionUID = 1L;
     
+    private CreateChartTaskFactory createChartTaskFactory = null;
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private HideAuthorsTaskFactory hideAuthorsTaskFactory = null;
     private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
@@ -52,7 +54,8 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
     private JTextField textField = null;
     
     public InfoPanel(TaskManager<?, ?> taskManager, HideAuthorsTaskFactory hideAuthorsTaskFactory, SocialNetwork socialNetwork,
-            CyServiceRegistrar cyServiceRegistrarRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
+            CyServiceRegistrar cyServiceRegistrarRef, ShowAllNodesTaskFactory showAllNodesTaskFactory,
+            CreateChartTaskFactory createChartTaskFactory) {
                
         JPanel filterPanel = new JPanel();
         filterPanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
@@ -62,6 +65,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.socialNetwork = socialNetwork;
         this.cyServiceRegistrarRef = cyServiceRegistrarRef;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
+        this.createChartTaskFactory = createChartTaskFactory;
         this.setLayout(new BorderLayout());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension((int) screenSize.getWidth() / 5, 200));
@@ -84,7 +88,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         labelAndTextField.add(sliderLabel);
         labelAndTextField.add(textField);
         
-        //Create the slider.
+        // Create the slider.
         this.sliderButton = new JSlider(JSlider.HORIZONTAL, startYear, endYear, startYear);
         this.sliderButton.setValue(startYear);
         this.sliderButton.addChangeListener(this);
@@ -92,7 +96,8 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         this.sliderButton.setPaintTicks(true);
         this.sliderButton.setPaintLabels(true);
         this.sliderButton.setSnapToTicks(true);
-      //Create the label table
+        
+        // Create the label table
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         labelTable.put( new Integer(this.startYear), new JLabel(String.valueOf(this.startYear)) );
         labelTable.put( new Integer(this.endYear), new JLabel(String.valueOf(this.endYear)) );
@@ -103,9 +108,10 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
         sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
         sliderPanel.add(labelAndTextField);
         sliderPanel.add(this.sliderButton);
-        JPanel sliderControlPanel = new JPanel(new FlowLayout());
-        sliderControlPanel.add(this.createShowAllButton());
-        sliderPanel.add(sliderControlPanel);
+        JPanel sliderAndChartControlPanel = new JPanel(new FlowLayout());
+        sliderAndChartControlPanel.add(this.createGenerateChartButton());
+        sliderAndChartControlPanel.add(this.createShowAllButton());
+        sliderPanel.add(sliderAndChartControlPanel);
         
         JPanel controlPanel = new JPanel(new FlowLayout());
         controlPanel.add(this.createCloseButton());
@@ -143,6 +149,22 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
             }
         });
         return closeButton;
+    }
+    
+    /**
+     * 
+     * @return JButton generateChartButton
+     */
+    private JButton createGenerateChartButton() {
+        JButton generateChartButton = new JButton("Chart");
+        generateChartButton.setToolTipText("Create charts for each node in the existing network");
+        // Clicking of button results in the closing of current panel
+        generateChartButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                InfoPanel.this.taskManager.execute(InfoPanel.this.createChartTaskFactory.createTaskIterator());
+            }
+        });
+        return generateChartButton;
     }
     
     private JButton createShowAllButton() {

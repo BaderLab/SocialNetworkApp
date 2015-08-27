@@ -54,6 +54,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -89,6 +90,7 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
     private TaskManager<?, ?> taskManager = null;
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
+    private CreateChartTaskFactory createChartTaskFactory = null;
 
     /**
      * Constructor for {@link RestoreSocialNetworksFromProp}
@@ -98,7 +100,8 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
      */
     public RestoreSocialNetworksFromProp(SocialNetworkAppManager appManager, CyNetworkViewManager viewManager, CyServiceRegistrar cyServiceRegistrar,
             CySwingApplication cySwingApplicationService, ShowUserPanelAction userPanelAction, UserPanel userPanel,
-            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
+            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, ShowAllNodesTaskFactory showAllNodesTaskFactory,
+            CreateChartTaskFactory createChartTaskFactory) {
         super();
         this.appManager = appManager;
         this.viewManager = viewManager;
@@ -110,11 +113,12 @@ public class RestoreSocialNetworksFromProp implements SessionLoadedListener {
         this.taskManager = taskManager;
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
+        this.createChartTaskFactory = createChartTaskFactory;
     }
     
     private void initializeInfoPanel(SocialNetwork socialNetwork) {
         this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, socialNetwork, this.cyServiceRegistrar,
-                this.showAllNodesTaskFactory);        
+                this.showAllNodesTaskFactory, this.createChartTaskFactory);        
     }
 
     /**

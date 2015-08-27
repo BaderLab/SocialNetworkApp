@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ChangeAuthorInstitutionAction;
-import org.baderlab.csapps.socialnetwork.actions.CreateChartAction;
 import org.baderlab.csapps.socialnetwork.actions.CreatePubMedQueryAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
@@ -217,7 +216,7 @@ public class CyActivator extends AbstractCyActivator {
         
         // Create and register listeners
         SocialNetworkSelectedListener networkSelectedListener = new SocialNetworkSelectedListener(appManager, cyServiceRegistrarRef, taskManager, 
-                hideAuthorsTaskFactoryRef, cyNetworkViewManagerServiceRef, showAllNodesTaskFactoryRef);
+                hideAuthorsTaskFactoryRef, cyNetworkViewManagerServiceRef, showAllNodesTaskFactoryRef, createChartTaskFactory);
         registerService(bc, networkSelectedListener, SetSelectedNetworksListener.class, new Properties());
 
         SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
@@ -226,7 +225,7 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
                 visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
                 cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager, hideAuthorsTaskFactoryRef, cyApplicationManagerServiceRef,
-                showAllNodesTaskFactoryRef);
+                showAllNodesTaskFactoryRef, createChartTaskFactory);
         registerService(bc, networkAddedListener, NetworkAddedListener.class, new Properties());
 
         SocialNetworkNameChangedListener networkNameChangedListener = new SocialNetworkNameChangedListener(appManager, cyNetworkManagerServiceRef);
@@ -236,7 +235,7 @@ public class CyActivator extends AbstractCyActivator {
         registerService(bc, saveSession, SessionAboutToBeSavedListener.class, new Properties());
 
         RestoreSocialNetworksFromProp restoreSession = new RestoreSocialNetworksFromProp(appManager, cyNetworkViewManagerServiceRef, cyServiceRegistrarRef,
-                cySwingApplicationServiceRef, userPanelAction, userPanel, taskManager, hideAuthorsTaskFactoryRef, showAllNodesTaskFactoryRef);
+                cySwingApplicationServiceRef, userPanelAction, userPanel, taskManager, hideAuthorsTaskFactoryRef, showAllNodesTaskFactoryRef, createChartTaskFactory);
         registerService(bc, restoreSession, SessionLoadedListener.class, new Properties());
                 
 
@@ -298,13 +297,6 @@ public class CyActivator extends AbstractCyActivator {
         CreatePubMedQueryAction createPubMedQueryAction = new CreatePubMedQueryAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 taskManager, fileUtil, cySwingApplicationServiceRef);
         registerService(bc, createPubMedQueryAction, CyAction.class, new Properties());
-        
-        // Chart Action
-        serviceProperties.put("inMenuBar", "true");
-        serviceProperties.put("preferredMenu", "Apps.Social Network");
-        CreateChartAction createChartAction = new CreateChartAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef, 
-                createChartTaskFactory, taskManager, createChartTaskFactory, appManager);
-        registerService(bc, createChartAction, CyAction.class, new Properties());
         
         // Create & register new menu item (for updating the location that a specific author
         // has been assigned to)

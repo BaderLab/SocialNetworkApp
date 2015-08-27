@@ -45,6 +45,7 @@ import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
@@ -77,6 +78,7 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
     private CyServiceRegistrar cyServiceRegistrarRef = null;
     private CyNetworkViewManager cyNetworkViewManagerServiceRef = null;
     private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
+    private CreateChartTaskFactory createChartTaskFactory = null;
 
     /**
      * Creates a new {@link SocialNetworkAppManager} object
@@ -85,7 +87,8 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
      */
     public SocialNetworkSelectedListener(SocialNetworkAppManager appManager, CyServiceRegistrar cyServiceRegistrarRef, 
             TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, 
-            CyNetworkViewManager cyNetworkViewManagerServiceRef, ShowAllNodesTaskFactory showAllNodesTaskFactory) {
+            CyNetworkViewManager cyNetworkViewManagerServiceRef, ShowAllNodesTaskFactory showAllNodesTaskFactory,
+            CreateChartTaskFactory createChartTaskFactory) {
         super();
         this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
         this.appManager = appManager;
@@ -94,11 +97,12 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
         this.userPanel = this.appManager.getUserPanelRef();
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
+        this.createChartTaskFactory = createChartTaskFactory;
     }
     
     private InfoPanel initializeInfoPanel() {
         return new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
-                this.showAllNodesTaskFactory);        
+                this.showAllNodesTaskFactory, this.createChartTaskFactory);        
     }
 
     /**

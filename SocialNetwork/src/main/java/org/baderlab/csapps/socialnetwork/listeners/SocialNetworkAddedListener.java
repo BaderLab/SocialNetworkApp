@@ -50,6 +50,7 @@ import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.BaseAcademi
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.IncitesVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
+import org.baderlab.csapps.socialnetwork.tasks.CreateChartTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
@@ -96,6 +97,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
     private CyApplicationManager cyApplicationManagerServiceRef = null;
     private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
+    private CreateChartTaskFactory createChartTaskFactory = null;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
@@ -107,7 +109,7 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
             VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
             CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager,
             HideAuthorsTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef,
-            ShowAllNodesTaskFactory showAllNodesTaskFactory) {
+            ShowAllNodesTaskFactory showAllNodesTaskFactory, CreateChartTaskFactory createChartTaskFactory) {
         super();
         this.appManager = appManager;
         this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
@@ -122,11 +124,12 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
+        this.createChartTaskFactory = createChartTaskFactory;
     }
     
     private void initializeInfoPanel() {
         this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
-                this.showAllNodesTaskFactory);        
+                this.showAllNodesTaskFactory, this.createChartTaskFactory);        
     }
     
     private void handleNetwork(CyNetwork cyNetwork) {
