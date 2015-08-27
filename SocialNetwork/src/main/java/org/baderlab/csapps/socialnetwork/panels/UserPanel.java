@@ -55,7 +55,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -72,7 +71,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -168,10 +166,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * Reference to network table
      */
     private JTable networkTableRef = null;
-    /**
-     * Reference to the search box. Necessary for extracting queries.
-     */
-    private JTextField searchBoxRef = null;
+
     /**
      * Search filter
      */
@@ -254,8 +249,8 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         this.setSelectedCategory(Category.ACADEMIA);
 
         // Add top panel
-        this.topPanelRef = this.createTopPanel();
-        this.add(this.topPanelRef, BorderLayout.NORTH);
+        //this.topPanelRef = this.createTopPanel();
+        //this.add(this.topPanelRef, BorderLayout.NORTH);
 
         // Add the default info panel (Academia)
         this.academiaPanel = new AcademiaPanel(appManager, this.fileUtil, this.cySwingAppRef);
@@ -636,68 +631,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     }
 
     /**
-     * Create new search box. Will allow user to search any social website
-     *
-     * @return JTextField searchBox
-     */
-    private JTextField createSearchBox() {
-        // Create searchbox. Save a reference to it, and add
-        JTextField searchBox = new JTextField();
-        searchBox.setEditable(true);
-        // Tapping enter results in the automatic generation of a network
-        searchBox.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent event) {
-                if (getSearchBox().getText().trim().isEmpty()) {
-                    CytoscapeUtilities.notifyUser("Please enter a search term into the search box");
-                } else if (!isValidInput(getSearchBox().getText().trim())) {
-                    CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
-                } else {
-                    createNetwork(UserPanel.this.appManager,
-                    // getAcademiaPanel().thresholdIsSelected(),
-                            true, // TODO: Suppose that the threshold radio
-                                  // button is always selected
-                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(), getSearchBox().getText().trim(), getSelectedCategory());
-                }
-            }
-        });
-        return searchBox;
-    }
-
-    /**
-     * Create search button. Search button allows user to commit search. NOTE:
-     * Button not 100% necessary. Its function can be duplicated by a simple tap
-     * on the return key
-     *
-     * @return JButton search
-     */
-    private JButton createSearchButton() {
-        // URL iconURL =
-        // Thread.currentThread().getContextClassLoader().getResource("search.png");
-        URL iconURL = this.getClass().getClassLoader().getResource("search.png");
-        ImageIcon iconSearch = new ImageIcon(iconURL);
-        JButton searchButton = new JButton(iconSearch);
-        searchButton.setToolTipText("Search");
-        searchButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent event) {
-                if (getSearchBox().getText().trim().isEmpty()) {
-                    CytoscapeUtilities.notifyUser("Please enter a search term");
-                } else if (!isValidInput(getSearchBox().getText().trim())) {
-                    CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
-                } else {
-                    createNetwork(UserPanel.this.appManager,
-                    // getAcademiaPanel().thresholdIsSelected(),
-                            true, // TODO: Suppose that the threshold radio
-                                  // button is always selected
-                            getAcademiaPanel().getThresholdTextAreaRef().getText().trim(), getSearchBox().getText().trim(), getSelectedCategory());
-                }
-            }
-        });
-        return searchButton;
-    }
-
-    /**
      * Create search option selector.
      *
      * @return JComboBox optionSelector
@@ -716,43 +649,12 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         return searchOptionSelector;
     }
 
-    /**
-     * Create new search panel. Will allow user to search for a particular
-     * network. A default search filter will also be made available to the user.
-     *
-     * @return JPanel searchPanel
-     */
-    private JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel();
-
-        // Organize panel horizontally.
-        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
-
-        searchPanel.setBorder(BorderFactory.createTitledBorder("PubMed Search"));
-
-        // Add search box to panel
-        this.setSearchBox(this.createSearchBox());
-        searchPanel.add(this.getSearchBox());
-
-        // Add search button to panel
-        searchPanel.add(this.createSearchButton()); // TODO: Disabled temporarily
-
-        // Add search filter to panel
-        /**
-         * NOTE: DISABLED TEMPORARILY
-         */
-        // UserPanel.setSearchFilter(UserPanel.createSearchFilter());
-        // searchPanel.add(UserPanel.getSearchFilter());
-
-        return searchPanel;
-    }
-
-    /**
+    /*
      * Create new top panel for use in main app panel. Top panel will contain
      * search box and category option selector.
      *
      * @return JPanel topPanel
-     */
+     *
     private JPanel createTopPanel() {
 
         JPanel topPanel = new JPanel();
@@ -760,13 +662,14 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         topPanel.setLayout(new BorderLayout());
         /**
          * NOTE: DISABLED TEMPORARILY
-         */
+         *
         // TODO: Enable at future date
         // topPanel.add(UserPanel.createCategoryPanel(), BorderLayout.NORTH);
         topPanel.add(this.createSearchPanel(), BorderLayout.SOUTH);
 
         return topPanel;
     }
+    */
 
     /**
      * Create visual style panel. Will allow the user to switch visual styles
@@ -898,15 +801,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     }
 
     /**
-     * Get user panel searchbox
-     *
-     * @return JTextField searchBox
-     */
-    public JTextField getSearchBox() {
-        return this.searchBoxRef;
-    }
-
-    /**
      * Get search filter
      *
      * @return JComboBox searchFilter
@@ -1009,21 +903,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
     }
 
     /**
-     * Return true iff input does not contain illegal characters i.e. (!@#$%^&*)
-     *
-     * @param String input
-     * @return boolean
-     */
-    private boolean isValidInput(String input) {
-        Pattern pattern = Pattern.compile("[!@#$%^&*~]+?");
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Switch info panel to the new one that user's selected
      */
     private void performInfoPanelSwitch() {
@@ -1114,15 +993,6 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      */
     public void setNetworkTableRef(JTable networkTableRef) {
         this.networkTableRef = networkTableRef;
-    }
-
-    /**
-     * Set user panel searchbox
-     *
-     * @param JTextField searchBox
-     */
-    public void setSearchBox(JTextField searchBox) {
-        this.searchBoxRef = searchBox;
     }
 
     /**

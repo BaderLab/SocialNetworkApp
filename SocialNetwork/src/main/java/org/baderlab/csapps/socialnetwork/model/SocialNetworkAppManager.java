@@ -37,6 +37,7 @@
 
 package org.baderlab.csapps.socialnetwork.model;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -110,6 +111,8 @@ public class SocialNetworkAppManager {
         if (SocialNetworkAppManager.startDateTextFieldRef == null) {
             int year = Calendar.getInstance().get(Calendar.YEAR) - 5;
             startDateTextFieldRef = new JTextField(String.valueOf(year));
+            startDateTextFieldRef.setMaximumSize( 
+                    new Dimension(Integer.MAX_VALUE, startDateTextFieldRef.getPreferredSize().height) );
         }
         return SocialNetworkAppManager.startDateTextFieldRef;
     }
@@ -118,6 +121,8 @@ public class SocialNetworkAppManager {
         if (SocialNetworkAppManager.endDateTextFieldRef == null) {
             int year = Calendar.getInstance().get(Calendar.YEAR);
             endDateTextFieldRef = new JTextField(String.valueOf(year));
+            endDateTextFieldRef.setMaximumSize( 
+                    new Dimension(Integer.MAX_VALUE, endDateTextFieldRef.getPreferredSize().height) );
         }
         return SocialNetworkAppManager.endDateTextFieldRef;
     }

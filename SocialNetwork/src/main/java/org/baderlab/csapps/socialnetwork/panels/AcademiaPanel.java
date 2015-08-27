@@ -39,6 +39,9 @@ package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -60,6 +63,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
@@ -101,6 +105,10 @@ public class AcademiaPanel {
     private JRadioButton thresholdRadioButtonRef = null;
     private JTextField startDateTextFieldRef = null;
     private JTextField endDateTextFieldRef = null;
+    /**
+     * Reference to the search box. Necessary for extracting queries.
+     */
+    private JTextField searchBox = null;
 
     /**
      * A reference to a data file. Used to verify correct file path.
@@ -127,6 +135,118 @@ public class AcademiaPanel {
         this.fileUtil = fileUtil;
         this.cySwingAppRef = cySwingAppRef;
     }
+    
+    private JRadioButton selectPubMedSearchRadioButton = null;
+    private JRadioButton selectFileInputRadioButton = null;
+    
+    /**
+     * Create new search panel. Will allow user to search for a particular
+     * network. A default search filter will also be made available to the user.
+     *
+     * @return JPanel searchPanel
+     */
+    private JPanel createSelectionPanel() {
+        
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
+        
+        this.selectPubMedSearchRadioButton = new JRadioButton("PubMed Search", true);
+        this.selectPubMedSearchRadioButton.setFocusable(true);
+
+        // Create Scopus radio button
+        this.selectFileInputRadioButton = new JRadioButton("File Input", false);
+        this.selectFileInputRadioButton.setFocusable(false);
+
+        // Ensures that only one button is selected at a time
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(this.selectPubMedSearchRadioButton);
+        buttonGroup.add(this.selectFileInputRadioButton);
+        
+        JPanel pubmedOptionPanel = new JPanel();
+
+        // Organize panel horizontally.
+        pubmedOptionPanel.setLayout(new BoxLayout(pubmedOptionPanel, BoxLayout.X_AXIS));
+
+        //searchPanel.setBorder(BorderFactory.createTitledBorder("PubMed Search"));
+        pubmedOptionPanel.add(this.selectPubMedSearchRadioButton);
+        pubmedOptionPanel.add(Box.createHorizontalStrut(5));
+        // Add search box to panel
+        this.searchBox = this.createSearchBox();
+        pubmedOptionPanel.add(this.searchBox);
+
+        // Add search button to panel
+        /*
+        searchPanel.add(this.createSearchButton()); // TODO: Disabled temporarily
+         */
+
+        // Add search filter to panel
+        /**
+         * NOTE: DISABLED TEMPORARILY
+         */
+        // UserPanel.setSearchFilter(UserPanel.createSearchFilter());
+        // searchPanel.add(UserPanel.getSearchFilter());
+        
+        JPanel fileInputOptionPanel = new JPanel(new GridLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.anchor = GridBagConstraints.WEST;
+        fileInputOptionPanel.add(this.selectFileInputRadioButton, gbc);
+        fileInputOptionPanel.add(Box.createHorizontalStrut(5), BorderLayout.CENTER);
+
+        selectionPanel.add(pubmedOptionPanel);
+        selectionPanel.add(fileInputOptionPanel);
+        
+        return selectionPanel;
+    }
+    
+
+    /**
+     * Return true iff input does not contain illegal characters i.e. (!@#$%^&*)
+     *
+     * @param String input
+     * @return boolean
+     */
+    private boolean isValidInput(String input) {
+        Pattern pattern = Pattern.compile("[!@#$%^&*~]+?");
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Create new search box. Will allow user to search any social website
+     *
+     * @return JTextField searchBox
+     */
+    private JTextField createSearchBox() {
+        // Create searchbox. Save a reference to it, and add
+        JTextField searchBox = new JTextField();
+        searchBox.setMaximumSize( 
+                new Dimension(Integer.MAX_VALUE, searchBox.getPreferredSize().height) );
+        searchBox.setEditable(true);
+        // Tapping enter results in the automatic generation of a network
+        searchBox.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent event) {
+                if (AcademiaPanel.this.selectPubMedSearchRadioButton.isSelected()) {
+                    if (AcademiaPanel.this.searchBox.getText().trim().isEmpty()) {
+                        CytoscapeUtilities.notifyUser("Please enter a search term into the search box");
+                    } else if (!isValidInput(AcademiaPanel.this.searchBox.getText().trim())) {
+                        CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
+                    } else {
+                        UserPanel.createNetwork(AcademiaPanel.this.appManager,
+                                // getAcademiaPanel().thresholdIsSelected(),
+                                true, // TODO: Suppose that the threshold radio button is always selected
+                                AcademiaPanel.this.getThresholdTextAreaRef().getText().trim(), AcademiaPanel.this.searchBox.getText().trim(), Category.ACADEMIA);
+                    }                    
+                }
+            }
+        });
+        return searchBox;
+    }
 
     /**
      * Create academia info panel. In addition to PubMed specific features, this
@@ -136,16 +256,35 @@ public class AcademiaPanel {
      */
     public JPanel createAcademiaInfoPanel() {
         JPanel academiaInfoPanel = new JPanel();
-
-        JPanel wrapperPanel = new JPanel();
-        wrapperPanel.setLayout(new BorderLayout());
-        wrapperPanel.add(this.createDatabaseInfoPanel(), BorderLayout.NORTH);
-        //wrapperPanel.add(this.createAdvancedOptionsPanel(), BorderLayout.SOUTH);
-
-        academiaInfoPanel.setLayout(new BorderLayout());
-        academiaInfoPanel.setName("Academia");
         academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
-        academiaInfoPanel.add(wrapperPanel, BorderLayout.NORTH);
+        academiaInfoPanel.setName("Academia");
+        academiaInfoPanel.setLayout(new BoxLayout(academiaInfoPanel, BoxLayout.Y_AXIS));
+        
+        /*
+        JPanel searchAndDatabasePanel = new JPanel();
+        searchAndDatabasePanel.setLayout(new BorderLayout());
+        searchAndDatabasePanel.add(this.createSearchPanel(), BorderLayout.NORTH);        
+        searchAndDatabasePanel.add(this.createDatabaseInfoPanel(), BorderLayout.SOUTH);
+        
+        JPanel advancedOptionsAndCreateNetworkButtonPanel = new JPanel();
+        
+        advancedOptionsAndCreateNetworkButtonPanel.add(this.createAdvancedOptionsPanel(), BorderLayout.NORTH);
+        advancedOptionsAndCreateNetworkButtonPanel.add(buttonWrapper, BorderLayout.SOUTH);
+        
+        JPanel wrapperPanel = new JPanel();
+        wrapperPanel.add(searchAndDatabasePanel, BorderLayout.NORTH);
+        wrapperPanel.add(advancedOptionsAndCreateNetworkButtonPanel, BorderLayout.SOUTH);
+        */
+        
+        JPanel buttonWrapper = new JPanel();
+        buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
+
+        academiaInfoPanel.add(this.createSelectionPanel());
+        academiaInfoPanel.add(this.createDatabaseInfoPanel());
+        academiaInfoPanel.add(this.createSpecifyNetworkNamePanel());
+        academiaInfoPanel.add(this.createAdvancedOptionsPanel());
+        academiaInfoPanel.add(buttonWrapper);
+        
         // Set a reference to this panel for later access
         this.setAcademiaInfoPanelRef(academiaInfoPanel);
 
@@ -160,7 +299,7 @@ public class AcademiaPanel {
      */
     private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
-        advancedOptionsPanel.setCollapsed(true);
+        advancedOptionsPanel.setCollapsed(false);
         advancedOptionsPanel.add(this.createSpecifyMaxAuthorThresholdPanel(), BorderLayout.NORTH);
         advancedOptionsPanel.add(this.createSpecifyTimeIntervalPanel(), BorderLayout.SOUTH);
         return advancedOptionsPanel;
@@ -176,7 +315,7 @@ public class AcademiaPanel {
 
         // Create new Database info panel.
         JPanel databaseInfoPanel = new JPanel();
-        databaseInfoPanel.setBorder(BorderFactory.createTitledBorder("Database"));
+        //databaseInfoPanel.setBorder(BorderFactory.createTitledBorder("File Input"));
 
         // Set layout
         databaseInfoPanel.setLayout(new BoxLayout(databaseInfoPanel, BoxLayout.Y_AXIS));
@@ -186,17 +325,6 @@ public class AcademiaPanel {
 
         // Add load panel
         databaseInfoPanel.add(createLoadDataPanel());
-        
-
-        // Add faculty panel
-        databaseInfoPanel.add(createSpecifyNetworkNamePanel());
-
-        databaseInfoPanel.add(createAdvancedOptionsPanel());
-        // Add 'create network button' to panel
-        // Button wrapper added for cosmetic reasons
-        JPanel buttonWrapper = new JPanel();
-        buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
-        databaseInfoPanel.add(buttonWrapper);
 
         return databaseInfoPanel;
     }
@@ -210,7 +338,7 @@ public class AcademiaPanel {
         JPanel databasePanel = new JPanel();
 
         // Set bordered title
-        databasePanel.setBorder(BorderFactory.createTitledBorder("Select Database"));
+        databasePanel.setBorder(BorderFactory.createTitledBorder("Select Type"));
 
         // Organize panel horizontally.
         databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
@@ -298,7 +426,10 @@ public class AcademiaPanel {
         // Create new text field and set reference. Reference will be used later
         // on to verify
         // correct file path
-        this.setLoadTextField(new JTextField());
+        JTextField loadTextField = new JTextField();
+        loadTextField.setMaximumSize( 
+                new Dimension(Integer.MAX_VALUE, loadTextField.getPreferredSize().height) );
+        this.setLoadTextField(loadTextField);
         this.getPathTextFieldRef().setEditable(true);
         // Add text field
         loadDataPanel.add(this.getPathTextFieldRef());
@@ -320,32 +451,47 @@ public class AcademiaPanel {
         createNetworkButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                // check to see which analysis type is selected
-                if (AcademiaPanel.this.incitesRadioButtonRef.isSelected()) {
-                    AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
-                }
-                if (AcademiaPanel.this.pubmedRadioButtonRef.isSelected()) {
-                    AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_PUBMED);
-                }
-                if (AcademiaPanel.this.scopusRadioButtonRef.isSelected()) {
-                    AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
-                }
-                if (getSelectedFileRef() == null || getFacultyTextFieldRef().getText() == null) {
-                    CytoscapeUtilities.notifyUser("Please select a file and/or specify network name.");
-                } else {
-                    if (!getSelectedFileRef().getAbsolutePath().trim().equalsIgnoreCase(getPathTextFieldRef().getText().trim())) {
-                        CytoscapeUtilities.notifyUser("Please select a file.");
-                    } else if (getFacultyTextFieldRef().getText().trim().isEmpty()) {
-                        CytoscapeUtilities.notifyUser("Please specify network name.");
+                
+                if (AcademiaPanel.this.selectPubMedSearchRadioButton.isSelected()) {
+                    if (AcademiaPanel.this.searchBox.getText().trim().isEmpty()) {
+                        CytoscapeUtilities.notifyUser("Please enter a search term into the search box");
+                    } else if (!isValidInput(AcademiaPanel.this.searchBox.getText().trim())) {
+                        CytoscapeUtilities.notifyUser("Illegal characters present. Please enter a valid search term.");
                     } else {
-                        try {
-                            int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
-                            AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
-                        } catch (FileNotFoundException e) {
-                            CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
+                        UserPanel.createNetwork(AcademiaPanel.this.appManager,
+                        // getAcademiaPanel().thresholdIsSelected(),
+                        true, // TODO: Suppose that the threshold radio button is always selected
+                        AcademiaPanel.this.getThresholdTextAreaRef().getText().trim(), AcademiaPanel.this.searchBox.getText().trim(), Category.ACADEMIA);
+                    }
+                } else {
+                    // check to see which analysis type is selected
+                    if (AcademiaPanel.this.incitesRadioButtonRef.isSelected()) {
+                        AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_INCITES);
+                    }
+                    if (AcademiaPanel.this.pubmedRadioButtonRef.isSelected()) {
+                        AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_PUBMED);
+                    }
+                    if (AcademiaPanel.this.scopusRadioButtonRef.isSelected()) {
+                        AcademiaPanel.this.appManager.setAnalysis_type(SocialNetworkAppManager.ANALYSISTYPE_SCOPUS);
+                    }
+                    if (getSelectedFileRef() == null || getFacultyTextFieldRef().getText() == null) {
+                        CytoscapeUtilities.notifyUser("Please select a file and/or specify network name.");
+                    } else {
+                        if (!getSelectedFileRef().getAbsolutePath().trim().equalsIgnoreCase(getPathTextFieldRef().getText().trim())) {
+                            CytoscapeUtilities.notifyUser("Please select a file.");
+                        } else if (getFacultyTextFieldRef().getText().trim().isEmpty()) {
+                            CytoscapeUtilities.notifyUser("Please specify network name.");
+                        } else {
+                            try {
+                                int maxAuthorThreshold = UserPanel.getValidThreshold(true, getThresholdTextAreaRef().getText());
+                                AcademiaPanel.this.appManager.createNetwork(getSelectedFileRef(), maxAuthorThreshold);
+                            } catch (FileNotFoundException e) {
+                                CytoscapeUtilities.notifyUser(getPathTextFieldRef().getText() + " does not exist");
+                            }
                         }
                     }
                 }
+                
             }
         });
         return createNetworkButton;
@@ -363,7 +509,10 @@ public class AcademiaPanel {
         // Create new text field and set reference. Reference will be used later
         // on to verify
         // correct file path
-        this.setFacultyTextFieldRef(new JTextField());
+        JTextField facultyTextField = new JTextField();
+        facultyTextField.setMaximumSize( 
+                new Dimension(Integer.MAX_VALUE, facultyTextField.getPreferredSize().height) );
+        this.setFacultyTextFieldRef(facultyTextField);
         getFacultyTextFieldRef().setEditable(true);
         // Add text field
         specifyNetworkNamePanel.add(getFacultyTextFieldRef());
@@ -480,10 +629,12 @@ public class AcademiaPanel {
      */
     public JTextArea getThresholdTextAreaRef() {
         if (this.thresholdTextAreaRef == null) {
-            JTextArea textArea = new JTextArea("500");
+            JTextArea thresholdTextArea = new JTextArea("500");
+            thresholdTextArea.setMaximumSize( 
+                    new Dimension(Integer.MAX_VALUE, thresholdTextArea.getPreferredSize().height) );
             Border border = BorderFactory.createLineBorder(Color.GRAY);
-            textArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(0, 5, 0, 5)));
-            setThresholdTextAreaRef(textArea);
+            thresholdTextArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+            setThresholdTextAreaRef(thresholdTextArea);
         }
         return this.thresholdTextAreaRef;
     }
