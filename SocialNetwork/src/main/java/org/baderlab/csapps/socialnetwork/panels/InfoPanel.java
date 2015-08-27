@@ -156,7 +156,7 @@ public class InfoPanel extends JPanel implements CytoPanelComponent, ChangeListe
      * @return JButton generateChartButton
      */
     private JButton createGenerateChartButton() {
-        JButton generateChartButton = new JButton("Chart");
+        JButton generateChartButton = new JButton("Create Chart");
         generateChartButton.setToolTipText("Create charts for each node in the existing network");
         // Clicking of button results in the closing of current panel
         generateChartButton.addActionListener(new ActionListener() {

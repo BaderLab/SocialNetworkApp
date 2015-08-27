@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.listeners.SocialNetworkChartListener;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.ChartVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
+import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
@@ -197,6 +199,13 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
 
         for (final CyEdge edge : network.getEdgeList()) {
             networkView.getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_VISIBLE, true);                    
+        }
+        
+        InfoPanel infoPanel = SocialNetworkAppManager.getInfoPanel();
+        if (infoPanel != null) {
+            JTextField infoPanelTextField = infoPanel.getTextField();
+            infoPanelTextField.setText("ALL");
+            infoPanelTextField.repaint();
         }
         
         // Set the chart properties, tell the chart to use the new column we created as the data source.

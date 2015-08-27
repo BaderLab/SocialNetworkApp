@@ -735,7 +735,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
         searchPanel.add(this.getSearchBox());
 
         // Add search button to panel
-        searchPanel.add(this.createSearchButton());
+        searchPanel.add(this.createSearchButton()); // TODO: Disabled temporarily
 
         // Add search filter to panel
         /**
