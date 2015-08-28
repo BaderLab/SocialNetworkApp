@@ -136,6 +136,10 @@ public class Author extends AbstractNode {
      * The end year in the interval specified by the user
      */
     private int endYear = 0;
+    /**
+     * Sum of the expected citations of all the papers that author has been involved in 
+     */
+    private double totalExpectedCitations = 0.0;
     
     /**
      * Create a new author with the first name, last name and middle initial
@@ -283,23 +287,28 @@ public class Author extends AbstractNode {
         int timesCited = this.getTimesCited();
         ArrayList<String> listOfPublicationTitles = (ArrayList<String>) this.getPubList();
         if (publication.isSingleAuthored()) {
-            if (!this.hasAlreadyBeenAdded()) {
-                this.setTimesCited(timesCited + publication.getTimesCited());
-                listOfPublicationTitles.add(publication.getTitle());
-                this.setPubList(listOfPublicationTitles);
-                this.updateYearToListOfPubsMap(publication);
-                this.updateYearToTimesCitedMap(publication);
-                this.setAlreadyBeenAdded(true);
-            } else {
-                this.setAlreadyBeenAdded(false);
+            this.setAlreadyBeenAdded(!this.hasAlreadyBeenAdded());
+            if (this.hasAlreadyBeenAdded()) {
+                return;
             }
-        } else {
-            this.setTimesCited(timesCited + publication.getTimesCited());
-            listOfPublicationTitles.add(publication.getTitle());
-            this.setPubList(listOfPublicationTitles);
-            this.updateYearToListOfPubsMap(publication);
-            this.updateYearToTimesCitedMap(publication);
         }
+        this.setTimesCited(timesCited + publication.getTimesCited());
+        listOfPublicationTitles.add(publication.getTitle());
+        this.setPubList(listOfPublicationTitles);
+        this.updateYearToListOfPubsMap(publication);
+        this.updateYearToTimesCitedMap(publication);
+        this.updateExpectedCitations(publication);
+    }
+    
+    /**
+     * Retrieve the expected citations of the specified publication
+     * and update author's total expected citations value
+     * 
+     * @param Publication publication
+     */
+    private void updateExpectedCitations(Publication publication) {
+        this.totalExpectedCitations += publication.getExpectedCitations();
+        this.nodeAttrMap.put(NodeAttribute.EXPECTED_CITATIONS.toString(), this.totalExpectedCitations / this.getPubList().size());
     }
 
     /**

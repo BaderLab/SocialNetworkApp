@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.EdgeAttribute;
@@ -66,7 +65,7 @@ public class Publication extends AbstractEdge {
     /**
      * The expected number of citations Publication expects to receive
      */
-    private String expectedCitations = null;
+    private String expectedCitationsRawText = null;
     /**
      * The journal to which Publication belongs
      */
@@ -110,7 +109,7 @@ public class Publication extends AbstractEdge {
         if (timesCited != null && Pattern.matches("[0-9]+", timesCited)) {
             this.timesCited = timesCited;
         }
-        this.expectedCitations = expectedCitations;
+        this.expectedCitationsRawText = expectedCitations;
         // constructEdgeAttrMap(); TODO: Not necessary
 
         // Calculate the most used location
@@ -215,10 +214,14 @@ public class Publication extends AbstractEdge {
     /**
      * Get expected citations
      *
-     * @return String expectedCitations
+     * @return double expectedCitations
      */
-    public String getExpectedCitations() {
-        return this.expectedCitations;
+    public double getExpectedCitations() {
+        double expectedCitations = 0.0;
+        if (this.expectedCitationsRawText != null && Pattern.matches("[0-9]+(\\.[0-9]+)?", this.expectedCitationsRawText)) {
+            return Double.parseDouble(this.expectedCitationsRawText);
+        }
+        return expectedCitations;
     }
 
     /**
@@ -259,7 +262,7 @@ public class Publication extends AbstractEdge {
         if (this.pubYear != null) {
             Pattern r = Pattern.compile("\\d{4}");
             Matcher m = r.matcher(this.pubYear);
-            if (m.find( )) {
+            if (m.find()) {
                 return Integer.valueOf(m.group(0));
             }
         }
@@ -352,7 +355,7 @@ public class Publication extends AbstractEdge {
      * @param String expectedCitations
      */
     public void setExpectedCitations(String expectedCitations) {
-        this.expectedCitations = expectedCitations;
+        this.expectedCitationsRawText = expectedCitations;
     }
 
     /**

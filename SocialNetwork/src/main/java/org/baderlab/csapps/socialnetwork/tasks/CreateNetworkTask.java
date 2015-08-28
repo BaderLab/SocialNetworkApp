@@ -143,6 +143,8 @@ public class CreateNetworkTask extends AbstractTask {
                     nodeTable.createColumn(attrName, String.class, false);
                 } else if (attrType instanceof Integer) {
                     nodeTable.createColumn(attrName, Integer.class, false);
+                } else if (attrType instanceof Double) {
+                    nodeTable.createColumn(attrName, Double.class, false);
                 } else if (attrType instanceof Boolean) {
                     nodeTable.createColumn(attrName, Boolean.class, false);
                 } else if (attrType instanceof List) {
@@ -169,6 +171,8 @@ public class CreateNetworkTask extends AbstractTask {
                     edgeTable.createColumn(attrName, String.class, false);
                 } else if (attrType instanceof Integer) {
                     edgeTable.createColumn(attrName, Integer.class, false);
+                } else if (attrType instanceof Double) {
+                    nodeTable.createColumn(attrName, Double.class, false);
                 } else if (attrType instanceof Boolean) {
                     edgeTable.createColumn(attrName, Boolean.class, false);
                 } else if (attrType instanceof List) {
