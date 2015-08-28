@@ -44,11 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.xmlbeans.impl.common.Levenshtein;
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -115,7 +113,13 @@ public class Author extends AbstractNode {
      * Key: <i>year</i> <br>
      * Value: <i>List of publications published during year</i>
      */
-    private Map<Integer, List<Publication>> pubMap = null;
+    private Map<Integer, List<Publication>> yearToListOfPubsMap = null;
+    /**
+     * Map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i># of times that author has been cited in year</i>
+     */
+    private Map<Integer, Integer> yearToTimesCitedMap = null;
     /**
      * The current institution that author is affiliated with
      */
@@ -283,7 +287,8 @@ public class Author extends AbstractNode {
                 this.setTimesCited(timesCited + publication.getTimesCited());
                 listOfPublicationTitles.add(publication.getTitle());
                 this.setPubList(listOfPublicationTitles);
-                this.updatePubMap(publication);
+                this.updateYearToListOfPubsMap(publication);
+                this.updateYearToTimesCitedMap(publication);
                 this.setAlreadyBeenAdded(true);
             } else {
                 this.setAlreadyBeenAdded(false);
@@ -292,7 +297,8 @@ public class Author extends AbstractNode {
             this.setTimesCited(timesCited + publication.getTimesCited());
             listOfPublicationTitles.add(publication.getTitle());
             this.setPubList(listOfPublicationTitles);
-            this.updatePubMap(publication);
+            this.updateYearToListOfPubsMap(publication);
+            this.updateYearToTimesCitedMap(publication);
         }
     }
 
@@ -519,13 +525,13 @@ public class Author extends AbstractNode {
      * Key: <i>year</i> <br>
      * Value: <i>List of publications published during year</i>
      * 
-     * @return Map pubMap
+     * @return Map yearToListOfPubsMap
      */
-    private Map<Integer, List<Publication>> getPubMap() {
-        if (this.pubMap == null) {
-            this.pubMap = new TreeMap<Integer, List<Publication>>();
+    private Map<Integer, List<Publication>> getYearToListOfPubsMap() {
+        if (this.yearToListOfPubsMap == null) {
+            this.yearToListOfPubsMap = new HashMap<Integer, List<Publication>>();
         }
-        return this.pubMap;
+        return this.yearToListOfPubsMap;
     }
 
     /**
@@ -804,17 +810,6 @@ public class Author extends AbstractNode {
     }
 
     /**
-     * Get map of all publications author has authored / co-authored <br>
-     * Key: <i>year</i> <br>
-     * Value: <i>List of publications published during year</i>
-     * 
-     * @param Map pubMap
-     */
-    private void setPubMap(Map<Integer, List<Publication>> pubMap) {
-        this.pubMap = pubMap;
-    }
-
-    /**
      * Set author's total number of citations
      *
      * @param int timesCited
@@ -850,12 +845,15 @@ public class Author extends AbstractNode {
     }
 
     /**
-     * Add this publication to the publication treemap
+     * Update {@code yearToListOfPubsMap} with publication. {@code yearToListOfPubsMap} is a {@link HashMap} where: <br>
+     * <br>
+     * Key: <i>year</i> <br>
+     * Value: <i>List of publications published during year</i>
      *
      * @param Publication publication
      */
-    private void updatePubMap(Publication publication) {
-        Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getPubMap();
+    private void updateYearToListOfPubsMap(Publication publication) {
+        Map<Integer, List<Publication>> pubMap = (Map<Integer, List<Publication>>) this.getYearToListOfPubsMap();
         try {
             int pubYear = publication.getPubYear();
             List<Publication> listOfPubs = pubMap.get(pubYear);
@@ -869,7 +867,8 @@ public class Author extends AbstractNode {
         } catch (UnableToParseYearException e) {
             logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", publication.getRawPubDateTxt()));
         }
-        if (this.getPubMap().size() > 0) {
+        /* Update pubs per year attribute */
+        if (this.getYearToListOfPubsMap().size() > 0) {
             // Create an ArrayList where every index represents
             // a year in the interval X to Y where X is the earliest
             // year and Y is the latest year
@@ -880,10 +879,63 @@ public class Author extends AbstractNode {
             pubsPerYearList = new ArrayList<Integer>(size);
             // Iterate through every year
             for (int year = startYear; year <= endYear; year++) {
+                // Add number of publications published in year
                 pubsPerYearList.add(yearSet.contains(year) ? pubMap.get(year).size() : 0);
             }
             this.getNodeAttrMap().put(NodeAttribute.PUBS_PER_YEAR.toString(), pubsPerYearList);
         }
+    }
+    
+    /**
+     * Update {@code yearToTimesCitedMap} with publication. {@code yearToTimesCitedMap} is a {@link HashMap} where: <br>
+     * <br>
+     * Key: <i>year</i> <br>
+     * Value: <i># of times that author has been cited in year</i>
+     *
+     * @param Publication publication
+     */
+    private void updateYearToTimesCitedMap(Publication publication) {
+        Map<Integer, Integer> yearToTimesCitedMap = (Map<Integer, Integer>) this.getYearToTimesCitedMap();
+        try {
+            int pubYear = publication.getPubYear();
+            Integer timesCited = yearToTimesCitedMap.get(pubYear);
+            if (timesCited == null) {
+                yearToTimesCitedMap.put(pubYear, publication.getTimesCited());
+            } else {
+                yearToTimesCitedMap.put(pubYear, timesCited + publication.getTimesCited());
+            }                
+        } catch (UnableToParseYearException e) {
+            logger.log(Level.WARNING, String.format("Year could not be parsed from raw text: %s", publication.getRawPubDateTxt()));
+        }
+        /* Update pubs per year attribute */
+        if (this.getYearToTimesCitedMap().size() > 0) {
+            // Create an ArrayList where every index represents
+            // a year in the interval X to Y where X is the earliest
+            // year and Y is the latest year
+            Set<Integer> yearSet = yearToTimesCitedMap.keySet();
+            List<Integer> citationsPerYearList = new ArrayList<Integer>();
+            int startYear = SocialNetworkAppManager.getStartYear(), endYear = SocialNetworkAppManager.getEndYear();
+            int size = endYear - startYear + 1;
+            citationsPerYearList = new ArrayList<Integer>(size);
+            // Iterate through every year
+            for (int year = startYear; year <= endYear; year++) {
+                // Add number of publications published in year
+                citationsPerYearList.add(yearSet.contains(year) ? yearToTimesCitedMap.get(year) : 0);
+            }
+            this.getNodeAttrMap().put(NodeAttribute.CITATIONS_PER_YEAR.toString(), citationsPerYearList);
+        }
+    }
+
+    /**
+     * Map of all publications author has authored / co-authored <br>
+     * Key: <i>year</i> <br>
+     * Value: <i># of times that author has been cited in year</i>
+     */
+    private Map<Integer, Integer> getYearToTimesCitedMap() {
+        if (this.yearToTimesCitedMap == null) {
+            this.yearToTimesCitedMap = new HashMap<Integer, Integer>();
+        }
+        return this.yearToTimesCitedMap;        
     }
 
 }

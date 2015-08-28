@@ -14,7 +14,6 @@ public enum EdgeAttribute {
     PUBLICATIONS("Publications"),
     TIMES_CITED("Times Cited"),
     PUBS_PER_YEAR("Pubs Per Year"),
-    CITATIONS_PER_YEAR("Citations Per Year"),
     IS_SELECTED("Is Selected"),
     TITLE("Title");
     

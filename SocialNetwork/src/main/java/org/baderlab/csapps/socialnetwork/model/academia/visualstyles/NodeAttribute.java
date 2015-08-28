@@ -18,6 +18,8 @@ public enum NodeAttribute {
     PUBLICATION_COUNT("# of Publications"),
     PUBLICATIONS("Publications"),
     TIMES_CITED("Times Cited"),
+    CITATIONS_PER_YEAR("Citations Per Year"),
+
     /**
      * List attribute of author's pub count in 
      * the years that author was active
