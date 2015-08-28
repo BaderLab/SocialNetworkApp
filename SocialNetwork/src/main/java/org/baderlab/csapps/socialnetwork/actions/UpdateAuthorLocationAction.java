@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.baderlab.csapps.socialnetwork.tasks.ApplyVisualStyleTaskFactory;
@@ -39,10 +40,12 @@ public class UpdateAuthorLocationAction implements CyNodeViewContextMenuFactory,
         List<String> listOfInstitutions = (List<String>) cyRow.getAllValues().get(NodeAttribute.INSTITUTIONS.toString());
         if (listOfInstitutions != null && listOfInstitutions.size() > 0) {
             String institution = listOfInstitutions.get(0);       
-            CytoscapeUtilities.createDialogBox(String.format("Update location of %s", authorName), institution, 
+            int outcome = CytoscapeUtilities.createDialogBox(String.format("Update location of %s", authorName), institution, 
                     this.cyNetwork, 
                     cyNode.getSUID());
-            this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());
+            if (outcome == JOptionPane.OK_OPTION) {
+                this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());                
+            }
         } else {
             CytoscapeUtilities.notifyUser(String.format("%s is not assigned to an institution.", authorName));            
         }

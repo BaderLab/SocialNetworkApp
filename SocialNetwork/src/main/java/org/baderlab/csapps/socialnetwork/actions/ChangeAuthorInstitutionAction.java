@@ -96,8 +96,9 @@ public class ChangeAuthorInstitutionAction implements CyNodeViewContextMenuFacto
                     }   
                 }
             }
-
-            this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());
+            if (outcome == JOptionPane.OK_OPTION) {
+                this.taskManager.execute(this.applyVisualStyleTaskFactoryRef.createTaskIterator());                
+            }
 
         } else {
             CytoscapeUtilities.notifyUser(String.format("%s is not assigned to an institution.", authorName));

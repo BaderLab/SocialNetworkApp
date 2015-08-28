@@ -113,7 +113,7 @@ public class CytoscapeUtilities {
     }
     
     //TODO: Write method description (perhaps change method name)
-    public static void createDialogBox(String title, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
+    public static int createDialogBox(String title, String defaultInstitution, CyNetwork cyNetwork, Long SUID) {
         JTextField institutionTextField = new JTextField(5);
         if (defaultInstitution != null) {
             institutionTextField.setText(defaultInstitution);
@@ -171,7 +171,8 @@ public class CytoscapeUtilities {
                     }
                 }
             }
-        }    
+        }
+        return outcome;
     }
     
     /**
