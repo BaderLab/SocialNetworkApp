@@ -140,6 +140,10 @@ public class Author extends AbstractNode {
      * Sum of the expected citations of all the papers that author has been involved in 
      */
     private double totalExpectedCitations = 0.0;
+    /**
+     * Author's expected citations
+     */
+    private double expectedCitations = 0.0;
     
     /**
      * Create a new author with the first name, last name and middle initial
@@ -308,7 +312,18 @@ public class Author extends AbstractNode {
      */
     private void updateExpectedCitations(Publication publication) {
         this.totalExpectedCitations += publication.getExpectedCitations();
-        this.nodeAttrMap.put(NodeAttribute.EXPECTED_CITATIONS.toString(), this.totalExpectedCitations / this.getPubList().size());
+        this.expectedCitations = this.totalExpectedCitations / this.getPubList().size();
+        this.nodeAttrMap.put(NodeAttribute.EXPECTED_CITATIONS.toString(), this.expectedCitations);
+    }
+    
+    /**
+     * Get author's expected citations. Value is calculated by dividing the total expected citations of 
+     * all of author's publications divided by the number of publications
+     * 
+     * @return double expectedCitations
+     */
+    public double getExpectedCitations() {
+        return this.expectedCitations;
     }
 
     /**

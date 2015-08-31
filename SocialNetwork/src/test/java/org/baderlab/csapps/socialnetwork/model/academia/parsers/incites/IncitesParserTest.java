@@ -194,4 +194,38 @@ public class IncitesParserTest {
         }
         assertTrue(status);
     }
+    
+    @Test
+    /**
+     * Confirm that the expected citations value of each author is being calculated correctly
+     */
+    public void testExpectedCitations() {
+        boolean status = false;
+        String path = getClass().getResource("expected_citations.xlsx").getFile();
+        File xlsxFile = new File(path);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
+        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
+        collaboratorSet.toArray(collabArray);
+        // Retrieve authors
+        Author bashir = CytoscapeUtilities.getAuthor("Julian Bashir", collabArray); 
+        Author nerys = CytoscapeUtilities.getAuthor("Kira Nerys", collabArray); 
+        Author sisko = CytoscapeUtilities.getAuthor("Benjamin Sisko", collabArray); 
+        Author quark = CytoscapeUtilities.getAuthor("R Quark", collabArray); 
+        // Verifying expected citations value
+        if (bashir != null && nerys != null && sisko != null && quark != null) {
+            status = String.format( "%.2f", bashir.getExpectedCitations()).equals("0.37");
+            if (status) {
+                status = String.format( "%.2f", nerys.getExpectedCitations()).equals("0.40");
+                if (status) {
+                    status = String.format( "%.2f", sisko.getExpectedCitations()).equals("0.40");
+                    if (status) {
+                        status = String.format( "%.2f", quark.getExpectedCitations()).equals("0.34");
+                    }
+                }
+            }
+        }
+        assertTrue(status);
+    }
 }
