@@ -150,7 +150,8 @@ public class CreateNetworkTask extends AbstractTask {
                 } else if (attrType instanceof List) {
                     // TODO: Find a better way to handle lists that have integer values
                     if (attrName.equals(NodeAttribute.PUBS_PER_YEAR.toString()) ||
-                            attrName.equals(NodeAttribute.YEARS_ACTIVE.toString())) { 
+                            attrName.equals(NodeAttribute.YEARS_ACTIVE.toString()) ||
+                            attrName.equals(NodeAttribute.CITATIONS_PER_YEAR.toString())) { 
                         nodeTable.createListColumn(attrName, Integer.class, false);
                     } else {
                         nodeTable.createListColumn(attrName, String.class, false);                        

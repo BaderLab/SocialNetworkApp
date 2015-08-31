@@ -19,7 +19,7 @@ public enum NodeAttribute {
     PUBLICATIONS("Publications"),
     TIMES_CITED("Times Cited"),
     CITATIONS_PER_YEAR("Citations Per Year"),
-    EXPECTED_CITATIONS("Category Actual / Expected Citations"),
+    ACTUAL_EXPECTED_CITATIONS("Category Actual / Expected Citations"),
     /**
      * List attribute of author's pub count in 
      * the years that author was active

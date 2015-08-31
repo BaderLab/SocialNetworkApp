@@ -301,7 +301,7 @@ public class Author extends AbstractNode {
         this.setPubList(listOfPublicationTitles);
         this.updateYearToListOfPubsMap(publication);
         this.updateYearToTimesCitedMap(publication);
-        if (this.nodeAttrMap.get(NodeAttribute.EXPECTED_CITATIONS.toString()) != null) {
+        if (this.nodeAttrMap.get(NodeAttribute.ACTUAL_EXPECTED_CITATIONS.toString()) != null) {
             this.updateExpectedCitations(publication);            
         }
     }
@@ -315,7 +315,7 @@ public class Author extends AbstractNode {
     private void updateExpectedCitations(Publication publication) {
         this.totalExpectedCitations += publication.getExpectedCitations();
         this.expectedCitations = this.totalExpectedCitations / this.getPubList().size();
-        this.nodeAttrMap.put(NodeAttribute.EXPECTED_CITATIONS.toString(), this.expectedCitations);
+        this.nodeAttrMap.put(NodeAttribute.ACTUAL_EXPECTED_CITATIONS.toString(), this.expectedCitations);
     }
     
     /**
