@@ -301,7 +301,9 @@ public class Author extends AbstractNode {
         this.setPubList(listOfPublicationTitles);
         this.updateYearToListOfPubsMap(publication);
         this.updateYearToTimesCitedMap(publication);
-        this.updateExpectedCitations(publication);
+        if (this.nodeAttrMap.get(NodeAttribute.EXPECTED_CITATIONS.toString()) != null) {
+            this.updateExpectedCitations(publication);            
+        }
     }
     
     /**

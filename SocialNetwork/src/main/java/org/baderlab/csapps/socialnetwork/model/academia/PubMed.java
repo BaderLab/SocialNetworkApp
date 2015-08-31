@@ -72,7 +72,6 @@ public class PubMed {
         nodeAttrMap.put(NodeAttribute.PUBLICATION_COUNT.toString(), 0);
         nodeAttrMap.put(NodeAttribute.PUBLICATIONS.toString(), new ArrayList<String>());
         nodeAttrMap.put(NodeAttribute.INSTITUTIONS.toString(), new ArrayList<String>());
-        nodeAttrMap.put(NodeAttribute.EXPECTED_CITATIONS.toString(), 0.0);
         List<Integer> pubsPerYearList = new ArrayList<Integer>();
         pubsPerYearList.add(0);
         nodeAttrMap.put(NodeAttribute.PUBS_PER_YEAR.toString(), pubsPerYearList);
