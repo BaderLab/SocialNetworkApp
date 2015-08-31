@@ -851,7 +851,7 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      * @return String panelTitle
      */
     public String getTitle() {
-        return "Social Network";
+        return "Social Network Input Panel";
     }
 
     /**
