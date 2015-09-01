@@ -1,15 +1,28 @@
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -52,6 +65,7 @@ public class EutilsSearchParser extends DefaultHandler {
      * Create a new eUtils search parser
      * 
      * @param Query query
+     * @throws IOException 
      */
     public EutilsSearchParser(Query query) {
         this.queryKey = new StringBuilder();
@@ -59,12 +73,27 @@ public class EutilsSearchParser extends DefaultHandler {
         this.webEnv = new StringBuilder();
         this.retStart = new StringBuilder();
         this.retMax = new StringBuilder();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
         try {
             // Create new SAXParser
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            // Get Query Key & Web Env
-            String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=%s", query);
-            saxParser.parse(url, this);
+            
+            HttpPost httpPost = new HttpPost("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi");
+            List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+            nvps.add(new BasicNameValuePair("db", "pubmed"));
+            nvps.add(new BasicNameValuePair("term", query.toString()));
+            nvps.add(new BasicNameValuePair("usehistory", "y"));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            response = httpclient.execute(httpPost);
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode != 200) {
+            	logger.log(Level.INFO, String.format("Eutils response code: %d", responseCode));
+                return;
+            }
+            HttpEntity entity = response.getEntity();
+            saxParser.parse(new InputSource(entity.getContent()), this);
+            response.close();        		
         } catch (ParserConfigurationException e) {
             logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please " + "try again some other time.");
