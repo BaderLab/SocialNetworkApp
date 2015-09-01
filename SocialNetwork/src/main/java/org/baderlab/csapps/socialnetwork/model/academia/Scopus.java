@@ -43,11 +43,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -71,16 +73,6 @@ public class Scopus {
 
         private static final long serialVersionUID = 1L;
     }
-
-    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
-
-    /**
-     * Progress bar variables
-     */
-    private int currentSteps = 0;
-    private int totalSteps = 0;
-    private double progress = 0.0;
-    private TaskMonitor taskMonitor = null;
 
     /**
      * Construct Scopus attribute map
@@ -113,6 +105,16 @@ public class Scopus {
         return nodeAttrMap;   
     }
 
+    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
+    /**
+     * Progress bar variables
+     */
+    private int currentSteps = 0;
+    private int totalSteps = 0;
+    private double progress = 0.0;
+
+    private TaskMonitor taskMonitor = null;
+
     /**
      * Reference to Scopus publication list
      */
@@ -142,6 +144,31 @@ public class Scopus {
     }
 
     /**
+     * Match the co-authors in the co-author list with the specified affiliations
+     * 
+     * @param ArrayList coauthorList
+     * @param String affiliations
+     */
+    private void matchAuthors(ArrayList<Author> coauthorList, String affiliations) {
+    	Map<String, Author> coauthorMap = new HashMap<String, Author>();
+    	for (Author coauthor : coauthorList) {
+    		coauthorMap.put(String.format("%s, %s", coauthor.getLastName(), coauthor.getFirstInitial()), coauthor);
+    	}
+    	String[] affilArray = affiliations.split(";"), content = null;
+    	String authorName = null, institution = null;
+    	for (int i = 0; i < affilArray.length; i++) {
+    		content = affilArray[i].split("\\.,");
+    		if (content.length == 2) {
+    			authorName = content[0].trim();
+    			institution = content[1].trim();
+    			if (coauthorMap.get(authorName) != null) {
+    				coauthorMap.get(authorName).addInstitution(institution);
+    			}
+    		}
+    	}
+    }
+
+    /**
      * Match year. Used for verifying validity of Scopus data file.
      *
      * @param String rawText
@@ -152,7 +179,7 @@ public class Scopus {
         Matcher matcher = pattern.matcher(rawText.trim());
         return matcher.find();
     }
-
+    
     /**
      * Return authors
      *
@@ -178,22 +205,34 @@ public class Scopus {
         try {
             setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
             in = new Scanner(csv);
+            // Get # of columns
+            if (!in.hasNextLine()) {
+            	return;
+            }
+            String columnTitlesRawText = in.nextLine();
+            String[] columnTitlesArray = columnTitlesRawText.split(",");
+            int numColumns = columnTitlesArray.length;
             // Skip column headers
             String line = null, authors = null, year = null;
             String[] columns = null;
             Publication pub = null;
             ArrayList<Author> coauthorList = new ArrayList<Author>();
             String title = null, subjectArea = null, timesCited = null;
-            String numericalData = null;
+            String numericalData = null, affiliations = null;
             // Parse for publications
-            while (in.hasNext()) {
+            while (in.hasNextLine()) {
                 line = in.nextLine();
                 // Only split by commas not contained in quotes.
-                columns = splitQuoted("\"", ",", line);
+                columns = splitQuoted("\"", ",", line, numColumns);
                 authors = columns[0].replace("\"", "");
                 coauthorList = this.parseAuthors(authors);
                 title = columns[1].replace("\"", "");
                 year = columns[2].replace("\"", "");
+                // Add affiliations only if the Scopus document has the 'Authors with Affiliations' column
+                if (numColumns > 14) {
+                	affiliations = columns[14].replace("\"", "");
+                	matchAuthors(coauthorList, affiliations);                	
+                }
                 if (!this.matchYear(year)) {
                     // the year doesn't match assume something is wonky with
                     // this line
@@ -224,6 +263,20 @@ public class Scopus {
     }
 
     /**
+     * Set progress monitor
+     *
+     * @param TaskMonitor taskMonitor
+     * @param String taskName
+     * @param int totalSteps
+     */
+    private void setProgressMonitor(String taskName, int totalSteps) {
+        this.taskMonitor.setTitle(taskName);
+        this.taskMonitor.setProgress(0.0);
+        this.currentSteps = 0;
+        this.totalSteps = totalSteps;
+    }
+
+    /**
      * Set publication list
      *
      * @param ArrayList pubList
@@ -238,18 +291,20 @@ public class Scopus {
      * @param String quote
      * @param String separator
      * @param String s
+     * @param int numColumns
+     * 
      * @return String[] array
      */
-    private String[] splitQuoted(String quote, String separator, String s) {
+    private String[] splitQuoted(String quote, String separator, String s, int numColumns) {
         // Scopus file has 14 fields.
-        String[] columns = new String[14];
+        String[] columns = new String[numColumns];
         int current = 0;
         int index = 0;
         int startindex = 0;
         int firstquote = s.indexOf(quote);
         int nextquote = s.indexOf(quote, current + 1);
         int nextcomma = s.indexOf(separator);
-        while (current < s.length() && index < 14) {
+        while (current < s.length() && index < numColumns) {
             if (nextcomma > current && (nextcomma < firstquote || nextcomma > nextquote)) {
                 columns[index] = (s.substring(startindex, nextcomma));
                 startindex = nextcomma + 1;
@@ -265,20 +320,6 @@ public class Scopus {
             }
         }
         return columns;
-    }
-
-    /**
-     * Set progress monitor
-     *
-     * @param TaskMonitor taskMonitor
-     * @param String taskName
-     * @param int totalSteps
-     */
-    private void setProgressMonitor(String taskName, int totalSteps) {
-        this.taskMonitor.setTitle(taskName);
-        this.taskMonitor.setProgress(0.0);
-        this.currentSteps = 0;
-        this.totalSteps = totalSteps;
     }
 
     /**
