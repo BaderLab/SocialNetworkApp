@@ -567,7 +567,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
      */
     private JPanel createNetworkPanel() {
         JPanel networkPanel = new JPanel();
+        /*
         networkPanel.setBorder(BorderFactory.createTitledBorder("Social Network"));
+        */
         networkPanel.setLayout(new BorderLayout());
         return networkPanel;
     }

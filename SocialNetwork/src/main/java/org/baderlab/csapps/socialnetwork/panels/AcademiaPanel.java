@@ -153,7 +153,6 @@ public class AcademiaPanel {
         this.selectPubMedSearchRadioButton = new JRadioButton("PubMed Search", true);
         this.selectPubMedSearchRadioButton.setFocusable(true);
 
-        // Create Scopus radio button
         this.selectFileInputRadioButton = new JRadioButton("File Input", false);
         this.selectFileInputRadioButton.setFocusable(false);
 
@@ -173,6 +172,7 @@ public class AcademiaPanel {
         // Add search box to panel
         this.searchBox = this.createSearchBox();
         pubmedOptionPanel.add(this.searchBox);
+        pubmedOptionPanel.add(Box.createHorizontalStrut(5));
 
         // Add search button to panel
         /*
@@ -256,7 +256,9 @@ public class AcademiaPanel {
      */
     public JPanel createAcademiaInfoPanel() {
         JPanel academiaInfoPanel = new JPanel();
+        /*
         academiaInfoPanel.setBorder(BorderFactory.createTitledBorder("Academia"));
+        */
         academiaInfoPanel.setName("Academia");
         academiaInfoPanel.setLayout(new BoxLayout(academiaInfoPanel, BoxLayout.Y_AXIS));
         
@@ -278,7 +280,8 @@ public class AcademiaPanel {
         
         JPanel buttonWrapper = new JPanel();
         buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
-
+        
+        academiaInfoPanel.add(Box.createVerticalStrut(5));
         academiaInfoPanel.add(this.createSelectionPanel());
         academiaInfoPanel.add(this.createDatabaseInfoPanel());
         academiaInfoPanel.add(this.createSpecifyNetworkNamePanel());
