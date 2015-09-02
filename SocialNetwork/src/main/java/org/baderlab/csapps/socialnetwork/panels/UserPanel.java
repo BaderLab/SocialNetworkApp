@@ -1108,7 +1108,9 @@ public class UserPanel extends JPanel implements CytoPanelComponent {
             }
             networkSummary = socialNetwork.getNetworkSummary();
         }
+        /*
         this.getNetworkSummaryPanelRef().setBorder(BorderFactory.createTitledBorder(networkName + " Summary"));
+        */
         this.getNetworkSummaryPaneRef().setText(networkSummary);
         this.getNetworkSummaryPaneRef().revalidate();
         this.getNetworkSummaryPaneRef().repaint();
