@@ -133,6 +133,7 @@ public class AcademiaPanel {
     private FileUtil fileUtil = null;
     private JLabel pubMedSearchLabel = null;
     protected CySwingApplication cySwingAppRef = null;
+    private JPanel bottomPanel = null;
 
     /**
      * Constructor for {@link AcademiaPanel}
@@ -193,13 +194,33 @@ public class AcademiaPanel {
     private JPanel createSelectionPanel() {
         
         JPanel selectionPanel = new JPanel();
+        selectionPanel.setMaximumSize( 
+                new Dimension(Integer.MAX_VALUE, 40) );
         selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
         
         this.selectPubMedSearchRadioButton = new JRadioButton("", true);
         this.selectPubMedSearchRadioButton.setFocusable(true);
+        this.selectPubMedSearchRadioButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JRadioButton selectPubMedSearchRadioButton = (JRadioButton) e.getSource();
+                if (selectPubMedSearchRadioButton.isSelected()) {
+                	AcademiaPanel.this.bottomPanel.setVisible(false);
+                	AcademiaPanel.this.bottomPanel.repaint();
+                }
+            }
+        });
 
         this.selectFileInputRadioButton = new JRadioButton("File Input", false);
         this.selectFileInputRadioButton.setFocusable(false);
+        this.selectFileInputRadioButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JRadioButton selectFileInputRadioButton = (JRadioButton) e.getSource();
+                if (selectFileInputRadioButton.isSelected()) {
+                	AcademiaPanel.this.bottomPanel.setVisible(true);
+                	AcademiaPanel.this.bottomPanel.repaint();
+                }
+            }
+        });
 
         // Ensures that only one button is selected at a time
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -272,8 +293,6 @@ public class AcademiaPanel {
     private JTextField createSearchBox() {
         // Create searchbox. Save a reference to it, and add
         JTextField searchBox = new JTextField();
-        searchBox.setMaximumSize( 
-                new Dimension(Integer.MAX_VALUE, searchBox.getPreferredSize().height) );
         searchBox.setEditable(true);
         // Tapping enter results in the automatic generation of a network
         searchBox.addActionListener(new ActionListener() {
@@ -326,14 +345,20 @@ public class AcademiaPanel {
         wrapperPanel.add(advancedOptionsAndCreateNetworkButtonPanel, BorderLayout.SOUTH);
         */
         
-        JPanel buttonWrapper = new JPanel();
-        buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
-        
         academiaInfoPanel.add(Box.createVerticalStrut(5));
         academiaInfoPanel.add(this.createSelectionPanel());
-        academiaInfoPanel.add(this.createDatabaseInfoPanel());
-        academiaInfoPanel.add(this.createSpecifyNetworkNamePanel());
+        
+        this.bottomPanel = new JPanel();
+        this.bottomPanel.setVisible(false);
+        this.bottomPanel.setLayout(new BoxLayout(this.bottomPanel, BoxLayout.Y_AXIS));
+        
+        this.bottomPanel.add(this.createDatabaseInfoPanel());
+        this.bottomPanel.add(this.createSpecifyNetworkNamePanel());
+        academiaInfoPanel.add(this.bottomPanel);
         academiaInfoPanel.add(this.createAdvancedOptionsPanel());
+        
+        JPanel buttonWrapper = new JPanel();
+        buttonWrapper.add(this.createNetworkButton(), BorderLayout.CENTER);
         academiaInfoPanel.add(buttonWrapper);
         
         // Set a reference to this panel for later access
@@ -375,7 +400,9 @@ public class AcademiaPanel {
         databaseInfoPanel.add(createDatabasePanel());
 
         // Add load panel
+        /*
         databaseInfoPanel.add(createLoadDataPanel());
+        */
 
         return databaseInfoPanel;
     }
@@ -392,7 +419,7 @@ public class AcademiaPanel {
         databasePanel.setBorder(BorderFactory.createTitledBorder("Select Type"));
         
         // Organize panel horizontally.
-        databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
+        databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.Y_AXIS));
 
         // Create InCites radio button
         this.incitesRadioButtonRef = new JRadioButton("InCites", true);
@@ -411,13 +438,38 @@ public class AcademiaPanel {
         buttonGroup.add(this.incitesRadioButtonRef);
         buttonGroup.add(this.pubmedRadioButtonRef);
         buttonGroup.add(this.scopusRadioButtonRef);
+        
+        JPanel typePanel = new JPanel();
+        typePanel.setLayout(new BoxLayout(typePanel, BoxLayout.X_AXIS));
 
-        databasePanel.add(this.incitesRadioButtonRef);
-        databasePanel.add(this.pubmedRadioButtonRef);
-        databasePanel.add(this.scopusRadioButtonRef);
+        typePanel.add(this.incitesRadioButtonRef);
+        typePanel.add(this.pubmedRadioButtonRef);
+        typePanel.add(this.scopusRadioButtonRef);
+        
+        databasePanel.add(typePanel);
 
         databasePanel.setMaximumSize( 
-        		new Dimension(Integer.MAX_VALUE, databasePanel.getPreferredSize().height + 5) );
+        		new Dimension(Integer.MAX_VALUE, 100) );
+        
+        JPanel loadDataPanel = new JPanel();
+        /*
+        loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
+        */
+        loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
+        // Create new text field and set reference. Reference will be used later
+        // on to verify
+        // correct file path
+        JTextField loadTextField = new JTextField();
+        loadTextField.setMaximumSize( 
+                new Dimension(Integer.MAX_VALUE, loadTextField.getPreferredSize().height) );
+        this.setLoadTextField(loadTextField);
+        this.getPathTextFieldRef().setEditable(true);
+        // Add text field
+        loadDataPanel.add(this.getPathTextFieldRef());
+        // Add load data button
+        loadDataPanel.add(this.createLoadButton());
+        
+        databasePanel.add(loadDataPanel);
         
         return databasePanel;
 
@@ -475,7 +527,9 @@ public class AcademiaPanel {
      */
     private JPanel createLoadDataPanel() {
         JPanel loadDataPanel = new JPanel();
+        /*
         loadDataPanel.setBorder(BorderFactory.createTitledBorder("Load File"));
+        */
         loadDataPanel.setLayout(new BoxLayout(loadDataPanel, BoxLayout.X_AXIS));
         // Create new text field and set reference. Reference will be used later
         // on to verify
