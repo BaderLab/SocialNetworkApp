@@ -416,6 +416,9 @@ public class AcademiaPanel {
         databasePanel.add(this.pubmedRadioButtonRef);
         databasePanel.add(this.scopusRadioButtonRef);
 
+        databasePanel.setMaximumSize( 
+        		new Dimension(Integer.MAX_VALUE, databasePanel.getPreferredSize().height + 5) );
+        
         return databasePanel;
 
     }
