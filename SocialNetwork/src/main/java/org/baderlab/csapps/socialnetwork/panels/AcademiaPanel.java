@@ -39,6 +39,8 @@ package org.baderlab.csapps.socialnetwork.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
@@ -46,15 +48,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -62,6 +72,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -120,6 +131,7 @@ public class AcademiaPanel {
      */
     private SocialNetworkAppManager appManager = null;
     private FileUtil fileUtil = null;
+    private JLabel pubMedSearchLabel = null;
     protected CySwingApplication cySwingAppRef = null;
 
     /**
@@ -139,6 +151,39 @@ public class AcademiaPanel {
     private JRadioButton selectPubMedSearchRadioButton = null;
     private JRadioButton selectFileInputRadioButton = null;
     
+    private JLabel createPubMedSearchLabel() {
+    	final JLabel pubMedSearchLabel = new JLabel("PubMed Search");
+    	pubMedSearchLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    	pubMedSearchLabel.setToolTipText("Click to go to PubMed search tutorial");
+    	pubMedSearchLabel.addMouseListener(new MouseAdapter() {
+    		
+    		@Override
+    		public void mouseEntered(MouseEvent e) {
+    			pubMedSearchLabel.setForeground(Color.BLUE);
+    		}
+    		
+    		@Override
+    		public void mouseExited(MouseEvent e) {
+    			pubMedSearchLabel.setForeground(Color.BLACK);
+    		}
+    		
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+					Desktop.getDesktop().browse(new URI("http://www.nlm.nih.gov/bsd/mms/medlineelements.html"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (URISyntaxException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+            }
+
+        });
+    	return pubMedSearchLabel;
+    }
+    
     /**
      * Create new search panel. Will allow user to search for a particular
      * network. A default search filter will also be made available to the user.
@@ -150,7 +195,7 @@ public class AcademiaPanel {
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
         
-        this.selectPubMedSearchRadioButton = new JRadioButton("PubMed Search", true);
+        this.selectPubMedSearchRadioButton = new JRadioButton("", true);
         this.selectPubMedSearchRadioButton.setFocusable(true);
 
         this.selectFileInputRadioButton = new JRadioButton("File Input", false);
@@ -168,7 +213,10 @@ public class AcademiaPanel {
 
         //searchPanel.setBorder(BorderFactory.createTitledBorder("PubMed Search"));
         pubmedOptionPanel.add(this.selectPubMedSearchRadioButton);
+        this.pubMedSearchLabel = this.createPubMedSearchLabel();
+        pubmedOptionPanel.add(this.pubMedSearchLabel);
         pubmedOptionPanel.add(Box.createHorizontalStrut(5));
+        
         // Add search box to panel
         this.searchBox = this.createSearchBox();
         pubmedOptionPanel.add(this.searchBox);
@@ -342,7 +390,7 @@ public class AcademiaPanel {
 
         // Set bordered title
         databasePanel.setBorder(BorderFactory.createTitledBorder("Select Type"));
-
+        
         // Organize panel horizontally.
         databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.X_AXIS));
 
