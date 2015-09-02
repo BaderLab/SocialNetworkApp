@@ -155,14 +155,18 @@ public class Scopus {
     		coauthorMap.put(String.format("%s, %s", coauthor.getLastName(), coauthor.getFirstInitial()), coauthor);
     	}
     	String[] affilArray = affiliations.split(";"), content = null;
-    	String authorName = null, institution = null;
+    	String authorName = null;
+    	StringBuffer institution = new StringBuffer();
     	for (int i = 0; i < affilArray.length; i++) {
     		content = affilArray[i].split("\\.,");
-    		if (content.length == 2) {
+    		if (content.length > 1) {
     			authorName = content[0].trim();
-    			institution = content[1].trim();
+    			institution.setLength(0);
+    			for (int j = 1; j < content.length; j++) {
+    				institution.append(content[j].trim());    				
+    			}
     			if (coauthorMap.get(authorName) != null) {
-    				coauthorMap.get(authorName).addInstitution(institution);
+    				coauthorMap.get(authorName).addInstitution(institution.toString());
     			}
     		}
     	}
