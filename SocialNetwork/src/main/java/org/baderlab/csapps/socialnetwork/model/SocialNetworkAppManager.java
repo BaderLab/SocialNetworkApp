@@ -61,6 +61,7 @@ import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTask;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
@@ -233,6 +234,8 @@ public class SocialNetworkAppManager {
     private int analysis_type = SocialNetworkAppManager.ANALYSISTYPE_INCITES;
     
     private static final Logger logger = Logger.getLogger(SocialNetworkAppManager.class.getName());
+    
+    private CySwingApplication cySwingApp = null;
     
     /**
      * Create a new Social Network App manager
@@ -881,6 +884,24 @@ public class SocialNetworkAppManager {
      */
     public String getNeighborListAttribute() {
         return this.neighborListAttribute;
+    }
+
+    /**
+     * Get cySwingApp
+     * 
+     * @return CySwingApplication cySwingApp
+     */
+    public CySwingApplication getCySwingApp() {
+        return cySwingApp;
+    }
+
+    /**
+     * Set cySwingApp
+     * 
+     * @param CySwingApplication cySwingApp
+     */
+    public void setCySwingApp(CySwingApplication cySwingApp) {
+        this.cySwingApp = cySwingApp;
     }
 
 }

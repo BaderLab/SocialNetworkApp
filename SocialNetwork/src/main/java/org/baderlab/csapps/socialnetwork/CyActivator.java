@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Properties;
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ChangeAuthorInstitutionAction;
-import org.baderlab.csapps.socialnetwork.actions.CreatePubMedQueryAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowAboutPanelAction;
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
@@ -258,6 +257,8 @@ public class CyActivator extends AbstractCyActivator {
         
         appManager.setSearchPubMedTaskFactoryRef(searchPubMedTaskFactoryRef);
         
+        appManager.setCySwingApp(cySwingApplicationServiceRef);
+        
         // Add dependencies to Cytoscape Utilities
         CytoscapeUtilities.setPropsReader(propsReader);
 
@@ -290,13 +291,6 @@ public class CyActivator extends AbstractCyActivator {
                 exportNthDegreeNeighborsTaskFactoryRef, appManager);
 
         registerService(bc, exportNeighborsAction, CyAction.class, new Properties());
-        
-        // Action for creating PubMed queries from a list of authors
-        serviceProperties.put("inMenuBar", "true");
-        serviceProperties.put("preferredMenu", "Apps.Social Network");
-        CreatePubMedQueryAction createPubMedQueryAction = new CreatePubMedQueryAction(serviceProperties, cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
-                taskManager, fileUtil, cySwingApplicationServiceRef);
-        registerService(bc, createPubMedQueryAction, CyAction.class, new Properties());
         
         // Create & register new menu item (for updating the location that a specific author
         // has been assigned to)

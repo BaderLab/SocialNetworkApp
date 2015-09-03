@@ -165,6 +165,9 @@ public class Scopus {
     			if (m.find()) {
     			    authorName = m.group(1);
     			}
+    			if (authorName.equalsIgnoreCase("chatfield, s")) {
+    			    System.out.println("...");
+    			}
     			institution.setLength(0);
     			for (int j = 1; j < content.length; j++) {
     				institution.append(content[j].trim());    				
@@ -304,7 +307,6 @@ public class Scopus {
      * @return String[] array
      */
     private String[] splitQuoted(String quote, String separator, String s, int numColumns) {
-        // Scopus file has 14 fields.
         String[] columns = new String[numColumns];
         int current = 0;
         int index = 0;

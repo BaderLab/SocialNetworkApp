@@ -50,12 +50,18 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -70,6 +76,7 @@ import javax.swing.JTextField;
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
@@ -128,6 +135,10 @@ public class AcademiaPanel {
     private JLabel pubMedSearchLabel = null;
     protected CySwingApplication cySwingAppRef = null;
     private JPanel bottomPanel = null;
+    private JPanel buildPubMedQueryPanel = null;
+    private JTextField buildPubMedQueryTextField = null;
+    
+    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
 
     /**
      * Constructor for {@link AcademiaPanel}
@@ -198,6 +209,8 @@ public class AcademiaPanel {
             public void actionPerformed(ActionEvent e) {
                 JRadioButton selectPubMedSearchRadioButton = (JRadioButton) e.getSource();
                 if (selectPubMedSearchRadioButton.isSelected()) {
+                    AcademiaPanel.this.searchBox.setEnabled(true);
+                    AcademiaPanel.this.buildPubMedQueryPanel.setVisible(true);
                 	AcademiaPanel.this.bottomPanel.setVisible(false);
                 	AcademiaPanel.this.bottomPanel.repaint();
                 }
@@ -210,6 +223,8 @@ public class AcademiaPanel {
             public void actionPerformed(ActionEvent e) {
                 JRadioButton selectFileInputRadioButton = (JRadioButton) e.getSource();
                 if (selectFileInputRadioButton.isSelected()) {
+                    AcademiaPanel.this.searchBox.setEnabled(false);
+                    AcademiaPanel.this.buildPubMedQueryPanel.setVisible(false);
                 	AcademiaPanel.this.bottomPanel.setVisible(true);
                 	AcademiaPanel.this.bottomPanel.repaint();
                 }
@@ -371,6 +386,64 @@ public class AcademiaPanel {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
         advancedOptionsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
         advancedOptionsPanel.setCollapsed(false);
+        this.buildPubMedQueryPanel = new JPanel();
+        this.buildPubMedQueryPanel.setLayout(new BoxLayout(this.buildPubMedQueryPanel, BoxLayout.X_AXIS));
+        this.buildPubMedQueryPanel.setBorder(BorderFactory.createTitledBorder("Build PubMed Query"));
+        this.buildPubMedQueryTextField = new JTextField();
+        JButton buildPubMedQueryButton = new JButton("...");
+        buildPubMedQueryButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FileChooserFilter filter1 = new FileChooserFilter("text file", "txt");
+                FileChooserFilter filter2 = new FileChooserFilter("text file", "TXT");
+                HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
+                filters.add(filter1);
+                filters.add(filter2);
+                // TODO: Perhaps putting the below code into a task might be a good idea in the future.
+                // Loading large files may cause the user interface to hang
+                // --------------------------------------------------------------------------------------------------------------
+                File inputFile = AcademiaPanel.this.fileUtil.getFile(AcademiaPanel.this.appManager.getCySwingApp().getJFrame(), "Data File Selection", FileUtil.LOAD, filters);
+                if (inputFile == null) {
+                    return;
+                }
+                try {
+                    logger.log(Level.INFO, String.format("Creating PubMed query from %s", inputFile.getAbsolutePath()));
+                    Scanner scan = new Scanner(inputFile);
+                    String author = null;
+                    ArrayList<String> authorList = new ArrayList<String>();
+                    while (scan.hasNextLine()) {
+                        author = scan.nextLine();
+                        authorList.add(author);
+                    }
+                    StringBuffer query = new StringBuffer();
+                    String author1 = null, author2 = null;
+                    for (int i = 0; i < authorList.size(); i++) {
+                        author1 = authorList.get(i);
+                        for (int j = i + 1; j < authorList.size(); j++) {
+                            author2 = authorList.get(j);
+                            query.append('(').append(author1).append("[au]").append(" OR ")
+                            .append(author2).append("[au]").append(')');
+                            if (j < authorList.size() - 1) {
+                                query.append(" AND ");
+                            }
+                        }
+                        if (i < authorList.size() - 2) {
+                            query.append(" AND ");
+                        }
+                    }            
+                    AcademiaPanel.this.buildPubMedQueryTextField.setText(query.toString());
+                    AcademiaPanel.this.searchBox.setText(query.toString());
+                  // ------------------------------------------------------------------------------------------------------------
+                } catch (FileNotFoundException e1) {
+                    logger.log(Level.SEVERE, e1.getMessage());
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    logger.log(Level.SEVERE, e1.getMessage());
+                }
+            }
+        });
+        this.buildPubMedQueryPanel.add(this.buildPubMedQueryTextField);
+        this.buildPubMedQueryPanel.add(buildPubMedQueryButton);
+        advancedOptionsPanel.add(this.buildPubMedQueryPanel);
         advancedOptionsPanel.add(this.createSpecifyMaxAuthorThresholdPanel(), BorderLayout.NORTH);
         advancedOptionsPanel.add(this.createSpecifyTimeIntervalPanel(), BorderLayout.SOUTH);
         return advancedOptionsPanel;
