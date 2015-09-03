@@ -151,7 +151,7 @@ public class Scopus {
     private void matchAuthors(ArrayList<Author> coauthorList, String affiliations) {
     	Map<String, Author> coauthorMap = new HashMap<String, Author>();
     	for (Author coauthor : coauthorList) {
-    		coauthorMap.put(String.format("%s, %s", coauthor.getLastName(), coauthor.getFirstInitial()), coauthor);
+    		coauthorMap.put(String.format("%s, %s", coauthor.getLastName().toLowerCase(), coauthor.getFirstInitial().toLowerCase()), coauthor);
     	}
     	String[] affilArray = affiliations.split(";"), content = null;
     	String authorName = null;
@@ -159,8 +159,8 @@ public class Scopus {
     	for (int i = 0; i < affilArray.length; i++) {
     		content = affilArray[i].split("\\.,");
     		if (content.length > 1) {
-    			authorName = content[0].trim();
-    			Pattern r = Pattern.compile("(^[A-Za-z]+, [A-Z])(\\..+)?$");
+    			authorName = content[0].trim().toLowerCase();
+    			Pattern r = Pattern.compile("(^[a-z]+, [a-z])(\\..+)?$");
     			Matcher m = r.matcher(authorName);
     			if (m.find()) {
     			    authorName = m.group(1);
