@@ -58,7 +58,6 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -67,10 +66,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -105,7 +101,7 @@ public class AcademiaPanel {
      * A reference to the max author threshold text field. Used to set the max #
      * of authors in a publication that the app will build a network out of.
      */
-    private JTextArea thresholdTextAreaRef = null;
+    private JTextField thresholdTextFieldRef = null;
 
     // TODO: Write description for these instance variables
     private JRadioButton incitesRadioButtonRef = null;
@@ -373,6 +369,7 @@ public class AcademiaPanel {
      */
     private BasicCollapsiblePanel createAdvancedOptionsPanel() {
         BasicCollapsiblePanel advancedOptionsPanel = new BasicCollapsiblePanel("Advanced Options");
+        advancedOptionsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
         advancedOptionsPanel.setCollapsed(false);
         advancedOptionsPanel.add(this.createSpecifyMaxAuthorThresholdPanel(), BorderLayout.NORTH);
         advancedOptionsPanel.add(this.createSpecifyTimeIntervalPanel(), BorderLayout.SOUTH);
@@ -617,7 +614,7 @@ public class AcademiaPanel {
         // correct file path
         JTextField facultyTextField = new JTextField();
         facultyTextField.setMaximumSize( 
-                new Dimension(Integer.MAX_VALUE, facultyTextField.getPreferredSize().height) );
+                new Dimension(Integer.MAX_VALUE, facultyTextField.getPreferredSize().height));
         this.setFacultyTextFieldRef(facultyTextField);
         getFacultyTextFieldRef().setEditable(true);
         // Add text field
@@ -667,6 +664,7 @@ public class AcademiaPanel {
      */
     private JPanel createSpecifyTimeIntervalPanel() {
         BasicCollapsiblePanel specifyTimeIntervalPanel = new BasicCollapsiblePanel("Time Interval");
+        specifyTimeIntervalPanel.setCollapsed(false);
         specifyTimeIntervalPanel.add(getStartDatePanel(), BorderLayout.NORTH);
         specifyTimeIntervalPanel.add(getEndDatePanel(), BorderLayout.SOUTH);
         return specifyTimeIntervalPanel;
@@ -729,20 +727,18 @@ public class AcademiaPanel {
     }
 
     /**
-     * Get a reference to the threshold JTextArea
+     * Get a reference to the threshold JTextField
      *
-     * @return {@link JTextArea} thresholdTextAreaRef
+     * @return {@link JTextField} thresholdTextFieldRef
      */
-    public JTextArea getThresholdTextAreaRef() {
-        if (this.thresholdTextAreaRef == null) {
-            JTextArea thresholdTextArea = new JTextArea("500");
-            thresholdTextArea.setMaximumSize( 
-                    new Dimension(Integer.MAX_VALUE, thresholdTextArea.getPreferredSize().height) );
-            Border border = BorderFactory.createLineBorder(Color.GRAY);
-            thresholdTextArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(0, 5, 0, 5)));
-            setThresholdTextAreaRef(thresholdTextArea);
+    public JTextField getThresholdTextAreaRef() {
+        if (this.thresholdTextFieldRef == null) {
+            JTextField thresholdTextField = new JTextField("500");
+            thresholdTextField.setMaximumSize( 
+                    new Dimension(Integer.MAX_VALUE, thresholdTextField.getPreferredSize().height) );
+            setThresholdTextAreaRef(thresholdTextField);
         }
-        return this.thresholdTextAreaRef;
+        return this.thresholdTextFieldRef;
     }
 
     /**
@@ -798,10 +794,10 @@ public class AcademiaPanel {
 
     /**
      *
-     * @param {@link JTextArea} thresholdTextFieldRef
+     * @param {@link JTextField} thresholdTextFieldRef
      */
-    private void setThresholdTextAreaRef(JTextArea thresholdTextFieldRef) {
-        this.thresholdTextAreaRef = thresholdTextFieldRef;
+    private void setThresholdTextAreaRef(JTextField thresholdTextFieldRef) {
+        this.thresholdTextFieldRef = thresholdTextFieldRef;
     }
 
     /**
