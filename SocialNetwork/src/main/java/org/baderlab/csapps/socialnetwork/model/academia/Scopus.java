@@ -49,7 +49,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
@@ -161,6 +160,11 @@ public class Scopus {
     		content = affilArray[i].split("\\.,");
     		if (content.length > 1) {
     			authorName = content[0].trim();
+    			Pattern r = Pattern.compile("(^[A-Za-z]+, [A-Z])(\\..+)?$");
+    			Matcher m = r.matcher(authorName);
+    			if (m.find()) {
+    			    authorName = m.group(1);
+    			}
     			institution.setLength(0);
     			for (int j = 1; j < content.length; j++) {
     				institution.append(content[j].trim());    				
