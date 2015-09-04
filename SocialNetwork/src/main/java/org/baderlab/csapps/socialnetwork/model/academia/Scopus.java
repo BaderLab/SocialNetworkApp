@@ -160,13 +160,10 @@ public class Scopus {
     		content = affilArray[i].split("\\.,");
     		if (content.length > 1) {
     			authorName = content[0].trim().toLowerCase();
-    			Pattern r = Pattern.compile("(^[a-z]+, [a-z])(\\..+)?$");
+    			Pattern r = Pattern.compile("(^[a-z]+-?[a-z]+, [a-z])(\\..+)?$");
     			Matcher m = r.matcher(authorName);
     			if (m.find()) {
     			    authorName = m.group(1);
-    			}
-    			if (authorName.equalsIgnoreCase("chatfield, s")) {
-    			    System.out.println("...");
     			}
     			institution.setLength(0);
     			for (int j = 1; j < content.length; j++) {
