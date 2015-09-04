@@ -56,11 +56,8 @@ public class Query {
      */
     public Query(String rawQuery) {
         rawQuery = rawQuery.replace(",", "");
-        this.query = rawQuery.replace(" ", "+");
-        /*
         rawQuery = rawQuery.replace(" ", "+");
         this.query = augmentHistory(rawQuery);
-        */
     }
 
     /**
