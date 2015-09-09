@@ -104,9 +104,9 @@ public class PubMed {
         for (int i = retStart; i < retMax; i++) {
             pub = pubList.get(i);
             pmids.append(pub.getPMID());
-            pmids.append("[UID]");
+            //pmids.append("[UID]");
             if (i < (retMax - 1)) {
-                pmids.append(" OR ");
+                pmids.append(",");
             }
         }
         return pmids.toString();

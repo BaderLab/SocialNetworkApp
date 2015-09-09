@@ -55,9 +55,10 @@ public class Query {
      * @param String rawQuery
      */
     public Query(String rawQuery) {
-        rawQuery = rawQuery.replace(",", "");
+        //rawQuery = rawQuery.replace(",", "");
         rawQuery = rawQuery.replace(" ", "+");
-        this.query = augmentHistory(rawQuery);
+        this.query = rawQuery;
+        //this.query = augmentHistory(rawQuery);
     }
 
     /**
