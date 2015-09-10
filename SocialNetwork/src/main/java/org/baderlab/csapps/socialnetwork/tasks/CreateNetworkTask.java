@@ -353,7 +353,8 @@ public class CreateNetworkTask extends AbstractTask {
 
             TaskIterator taskIterator = new TaskIterator();
             taskIterator.append(layoutTaskIterator);
-            int visualStyleID = this.appManager.getCurrentlySelectedSocialNetwork().getDefaultVisualStyle();
+            int visualStyleID = socialNetwork.getDefaultVisualStyle();
+            //int visualStyleID = this.appManager.getCurrentlySelectedSocialNetwork().getDefaultVisualStyle();
             this.appManager.setVisualStyleID(visualStyleID);
             this.appManager.getUserPanelRef().setSelectedVisualStyle(visualStyleID);
             taskIterator.append(this.appManager.getApplyVisualStyleTaskFactoryRef().createTaskIterator());

@@ -111,7 +111,18 @@ public class SocialNetwork {
     private String unidentified_faculty = "";
     private int startYear = -1, endYear = -1;
     
-    public void setStartYear(int startYear) {
+    private EutilsSearchResults eutilsSearchResults = null;
+    
+    
+    public EutilsSearchResults getEutilsSearchResults() {
+		return eutilsSearchResults;
+	}
+
+	public void setEutilsSearchResults(EutilsSearchResults eutilsSearchResults) {
+		this.eutilsSearchResults = eutilsSearchResults;
+	}
+
+	public void setStartYear(int startYear) {
         this.startYear = startYear;
     }
     

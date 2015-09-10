@@ -37,7 +37,7 @@
 
 package org.baderlab.csapps.socialnetwork.model.academia;
 
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +45,7 @@ import java.util.regex.Pattern;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRetrievalParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedParser;
-import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedXmlParser;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
-import org.cytoscape.work.TaskMonitor;
 
 /**
  * Methods & fields for manipulating PubMed data
@@ -88,51 +85,18 @@ public class PubMed {
         return nodeAttrMap;
     }
     
-    /**
-     * Use the pmids of the specified publications to construct a query (for
-     * eUtils). The various pmids will be combined with an OR operator.
-     * 
-     * @param ArrayList pubList
-     * @return String eUtilsPMIDs
-     */
-    public static String getEutilsPMIDs(ArrayList<Publication> pubList) {
-        Publication pub = null;
-        int retStart = 0;
-        int totalPubs = pubList.size();
-        int retMax = totalPubs > 400 ? 400 : totalPubs;
-        StringBuilder pmids = new StringBuilder();
-        for (int i = retStart; i < retMax; i++) {
-            pub = pubList.get(i);
-            pmids.append(pub.getPMID());
-            //pmids.append("[UID]");
-            if (i < (retMax - 1)) {
-                pmids.append(",");
-            }
-        }
-        return pmids.toString();
-    }
+    
 
     /**
      * A list containing all the results that search session has yielded
      */
     private ArrayList<Publication> pubList = null;
 
-    /**
-     * Create a new {@link PubMed} session from xmlFile
-     *
-     * @param File xmlFile
-     * @param TaskMonitor taskMonitor
-     */
-    public PubMed(File xmlFile, TaskMonitor taskMonitor) {
-        PubMedXmlParser xmlParser = new PubMedXmlParser(xmlFile, taskMonitor);
-        ArrayList<Publication> pubList = xmlParser.getPubList();
-        if (pubList.size() < 1) {
-            return; // stop here if there are no publications
-        }
-        setPubList(pubList);
-        setPmcRefCount(this.getPubList());
+   
+    public PubMed(ArrayList<Publication> pubList ){
+    	 this.pubList = pubList;
     }
-
+    
     /**
      * Create a new {@link PubMed} search session
      *
@@ -151,7 +115,7 @@ public class PubMed {
         String webEnv = eUtilsSearchParser.getWebEnv();
         EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(queryKey, webEnv, retStart, retMax, totalPubs);
         totalPubs = eUtilsRetParser.getTotalPubs();
-        setPubList(eUtilsRetParser.getPubList());
+        this.pubList = eUtilsRetParser.getPubList();
     }
 
     /**
@@ -171,31 +135,6 @@ public class PubMed {
      */
     public int getTotalHits() {
         return this.pubList != null ? this.pubList.size() : 0;
-    }
-
-    /**
-     * Set the PmcRefCount of the publications in the list.
-     * 
-     * @param ArrayList pubList
-     */
-    private void setPmcRefCount(ArrayList<Publication> pubList) {
-        Query query = new Query(PubMed.getEutilsPMIDs(pubList));
-        EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query);
-        int retStart = eUtilsSearchParser.getRetStart();
-        int retMax = eUtilsSearchParser.getRetMax();
-        String queryKey = eUtilsSearchParser.getQueryKey();
-        String webEnv = eUtilsSearchParser.getWebEnv();
-        EutilsTimesCitedParser eUtilsTimesCitedParser = new EutilsTimesCitedParser(pubList, queryKey, webEnv, retStart, retMax);
-        setPubList(eUtilsTimesCitedParser.getPubList());
-    }
-
-    /**
-     * Set the publication list
-     * 
-     * @param ArrayList pubList
-     */
-    private void setPubList(ArrayList<Publication> pubList) {
-        this.pubList = pubList;
     }
 
 }

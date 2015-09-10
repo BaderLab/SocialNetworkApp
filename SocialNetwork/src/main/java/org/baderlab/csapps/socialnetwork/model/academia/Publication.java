@@ -1,5 +1,5 @@
 /**
- **                       SocialNetwork Cytoscape App
+  **                       SocialNetwork Cytoscape App
  **
  ** Copyright (c) 2013-2015 Bader Lab, Donnelly Centre for Cellular and Biomolecular
  ** Research, University of Toronto
@@ -308,7 +308,7 @@ public class Publication extends AbstractEdge {
         final int prime = 13;
         int result = 1;
         result += prime * result + ((this.title == null) ? 0 : this.title.hashCode());
-        result += prime * result + this.timesCited.hashCode();
+        result += prime * result + ((this.timesCited == null) ? 0 : this.timesCited.hashCode());
         return result;
     }
 

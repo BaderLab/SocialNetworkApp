@@ -187,7 +187,7 @@ public class Author extends AbstractNode {
                 String[] pubmedNames = rawAuthorText.split("\\s");
                 if (pubmedNames.length == 1) {
                     this.lastName = pubmedNames[0];
-                } else {
+                } else if(pubmedNames.length > 1){
                     String lastName = pubmedNames[0];
                     int i = 1;
                     for (i = 1; i < pubmedNames.length - 1; i++) {
