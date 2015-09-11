@@ -39,8 +39,10 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.Search;
+import org.baderlab.csapps.socialnetwork.model.SearchPubmedTask;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -74,10 +76,11 @@ public class SearchTest {
      */
     public void testPubmedSearch() {
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.PUBMED);
         appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
-        Search search = new Search("pawson t", Category.ACADEMIA, appManager);
+        SearchPubmedTask search = new SearchPubmedTask("pawson t", Category.ACADEMIA, appManager,socialNetwork);
         int hits = search.getTotalHits();
-        int results = search.getResults().size();
+        int results = socialNetwork.getPublications().size();
         assertTrue(hits == results);
     }
 

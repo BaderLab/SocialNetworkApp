@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.baderlab.csapps.socialnetwork.model.EutilsSearchResults;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
-import org.baderlab.csapps.socialnetwork.model.academia.PubMed;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;

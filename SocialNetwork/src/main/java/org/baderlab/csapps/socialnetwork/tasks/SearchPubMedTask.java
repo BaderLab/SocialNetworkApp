@@ -11,7 +11,7 @@ import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
-import org.baderlab.csapps.socialnetwork.model.Search;
+import org.baderlab.csapps.socialnetwork.model.SearchPubmedTask;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
@@ -58,11 +58,14 @@ public class SearchPubMedTask extends AbstractTask {
             CytoscapeUtilities.notifyUser(message);
             return;
         }
+        SocialNetwork socialNetwork = new SocialNetwork(searchTerm, Category.PUBMED);
+                
         // Create new search session
-        Search search = new Search(searchTerm, Category.ACADEMIA, this.appManager);
+        SearchPubmedTask search = new SearchPubmedTask(searchTerm, Category.ACADEMIA, this.appManager,socialNetwork);
+        search.run(taskMonitor);
         // Get a list of the results that are going to serve as edges. Exact
         // result type may vary with website
-        List<? extends AbstractEdge> results = search.getResults();
+        List<? extends AbstractEdge> results = socialNetwork.getPublications();
         if (results == null) {
             this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             String message = "No results found";
@@ -80,7 +83,6 @@ public class SearchPubMedTask extends AbstractTask {
         
         Map<Collaboration, ArrayList<AbstractEdge>> map = null;
         Interaction interaction = null;
-        SocialNetwork socialNetwork = null;
         
         interaction = new Interaction(results, Category.PUBMED, maxAuthorThreshold);
         map = interaction.getAbstractMap();
@@ -89,10 +91,6 @@ public class SearchPubMedTask extends AbstractTask {
             CytoscapeUtilities.notifyUser("Network couldn't be loaded. Adjust max author threshold.");
             return;
         }
-        socialNetwork = new SocialNetwork(searchTerm, Category.PUBMED);
-        
-        //add the translated query to the socilanetowrk object
-        socialNetwork.setQueryTranslation(search.getQueryTranslation());
         
         ArrayList<Publication> pubList = (ArrayList<Publication>) results;
         socialNetwork.setPublications(pubList);
