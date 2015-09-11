@@ -90,6 +90,10 @@ public class SearchPubMedTask extends AbstractTask {
             return;
         }
         socialNetwork = new SocialNetwork(searchTerm, Category.PUBMED);
+        
+        //add the translated query to the socilanetowrk object
+        socialNetwork.setQueryTranslation(search.getQueryTranslation());
+        
         ArrayList<Publication> pubList = (ArrayList<Publication>) results;
         socialNetwork.setPublications(pubList);
         socialNetwork.setExcludedPubs(interaction.getExcludedPublications());

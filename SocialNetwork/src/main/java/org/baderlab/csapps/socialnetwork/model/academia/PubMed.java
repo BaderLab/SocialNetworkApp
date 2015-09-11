@@ -92,6 +92,7 @@ public class PubMed {
      */
     private ArrayList<Publication> pubList = null;
 
+    private String queryTranslation = "";
    
     public PubMed(ArrayList<Publication> pubList ){
     	 this.pubList = pubList;
@@ -117,6 +118,7 @@ public class PubMed {
         EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(queryKey, webEnv, retStart, retMax, totalPubs);
         totalPubs = eUtilsRetParser.getTotalPubs();
         this.pubList = eUtilsRetParser.getPubList();
+        this.queryTranslation = eUtilsSearchParser.getQueryTranslation();
     }
 
     /**
@@ -138,4 +140,7 @@ public class PubMed {
         return this.pubList != null ? this.pubList.size() : 0;
     }
 
+	public String getQueryTranslation() {
+		return queryTranslation;
+	}
 }

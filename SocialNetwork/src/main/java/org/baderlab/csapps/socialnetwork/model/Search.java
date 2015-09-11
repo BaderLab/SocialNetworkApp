@@ -58,6 +58,8 @@ public class Search {
      * Total hits
      */
     public int totalHits = 0;
+    
+    private String queryTranslation = "";
 
     /**
      * Create a new search session
@@ -75,6 +77,7 @@ public class Search {
                 PubMed pubmed = new PubMed(searchTerm);
                 this.results = pubmed.getPubList();
                 this.totalHits = pubmed.getTotalHits();
+                this.queryTranslation = pubmed.getQueryTranslation();
                 break;
         }
     }
@@ -97,4 +100,7 @@ public class Search {
         return this.totalHits;
     }
 
+    public String getQueryTranslation(){
+    	return this.queryTranslation;
+    }
 }

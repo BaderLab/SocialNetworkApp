@@ -27,8 +27,7 @@ public class QueryPubmedForCitationsTask extends AbstractTask{
 		
 		Query query = new Query(getEutilsPMIDs(this.socialNetwork.getPublications()));
         EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query);
-        this.socialNetwork.setQueryTranslation(eUtilsSearchParser.getQueryTranslation());
-        System.out.println(eUtilsSearchParser.getQueryTranslation());
+     
         EutilsSearchResults results = new EutilsSearchResults(eUtilsSearchParser.getRetStart(),eUtilsSearchParser.getRetMax(),eUtilsSearchParser.getQueryKey(),eUtilsSearchParser.getWebEnv());
         socialNetwork.setEutilsSearchResults(results);
         
