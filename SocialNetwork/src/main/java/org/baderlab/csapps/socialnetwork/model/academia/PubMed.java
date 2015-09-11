@@ -105,6 +105,7 @@ public class PubMed {
     public PubMed(String searchTerm) {
         Query query = new Query(searchTerm);
         EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query);
+        System.out.println(eUtilsSearchParser.getQueryTranslation());
         int totalPubs = eUtilsSearchParser.getTotalPubs();
         if (totalPubs < 1) {
             return; // stop here if there are no results

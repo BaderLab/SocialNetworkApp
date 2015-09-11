@@ -110,11 +110,20 @@ public class SocialNetwork {
     private int num_uniden_faculty = 0;
     private String unidentified_faculty = "";
     private int startYear = -1, endYear = -1;
+    private String queryTranslation = "";
     
     private EutilsSearchResults eutilsSearchResults = null;
     
     
-    public EutilsSearchResults getEutilsSearchResults() {
+    public String getQueryTranslation() {
+		return queryTranslation;
+	}
+
+	public void setQueryTranslation(String queryTranslation) {
+		this.queryTranslation = queryTranslation;
+	}
+
+	public EutilsSearchResults getEutilsSearchResults() {
 		return eutilsSearchResults;
 	}
 
@@ -260,6 +269,9 @@ public class SocialNetwork {
                 info = "<html>" + "Total # of publications: " + this.num_publications;
                 if (this.getExcludedPubs().size() > 0) {
                     info += "<br>Total # of excluded publications: " + this.getExcludedPubs().size();
+                }
+                if (!this.queryTranslation.equals("")) {
+                    info += "<br>PubMed translated query: " + this.queryTranslation;
                 }
                 break;
         }

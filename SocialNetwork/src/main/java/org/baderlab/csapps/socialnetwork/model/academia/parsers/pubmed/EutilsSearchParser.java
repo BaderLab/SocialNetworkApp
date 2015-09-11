@@ -42,6 +42,11 @@ public class EutilsSearchParser extends DefaultHandler {
     boolean isTotalPubs = false;
     boolean isRetStart = false;
     boolean isRetMax = false;
+    boolean isQuerytranslation = false;
+    /**
+     * querytranslation. just to see what ncbi translates a query into
+     */
+    private StringBuilder queryTranslation = null;
     /**
      * Unique queryKey. Necessary for retrieving search results
      */
@@ -74,6 +79,7 @@ public class EutilsSearchParser extends DefaultHandler {
         this.webEnv = new StringBuilder();
         this.retStart = new StringBuilder();
         this.retMax = new StringBuilder();
+	this.queryTranslation = new StringBuilder();
         
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
@@ -88,7 +94,8 @@ public class EutilsSearchParser extends DefaultHandler {
             nvps.add(new BasicNameValuePair("db", "pubmed"));
             nvps.add(new BasicNameValuePair("term", query.toString()));
             nvps.add(new BasicNameValuePair("usehistory", "y"));
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps,"UTF-8"));
+	    httpPost.addHeader("User-Agent","elink/1.0");
             response = httpclient.execute(httpPost);
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode != 200) {
@@ -134,6 +141,9 @@ public class EutilsSearchParser extends DefaultHandler {
         if (this.isRetMax) {
             this.retMax.append(ch, start, length);
         }
+        if (this.isQuerytranslation) {
+            this.queryTranslation.append(ch, start, length);
+        }
     }
 
     /* (non-Javadoc)
@@ -155,6 +165,9 @@ public class EutilsSearchParser extends DefaultHandler {
         }
         if (qName.equalsIgnoreCase("RetMax")) {
             this.isRetMax = false;
+        }
+        if (qName.equalsIgnoreCase("QueryTranslation")) {
+            this.isQuerytranslation = false;
         }
     }
 
@@ -194,6 +207,14 @@ public class EutilsSearchParser extends DefaultHandler {
             return 0;
         }
     }
+
+	public String getQueryTranslation(){
+		if(this.queryTranslation != null)
+			return this.queryTranslation.toString();
+
+		else
+			return "";
+	}
 
     /**
      * Get total pubs
@@ -243,6 +264,10 @@ public class EutilsSearchParser extends DefaultHandler {
         if (qName.equalsIgnoreCase("RetMax")) {
             this.isRetMax = true;
             this.retMax.setLength(0);
+        }
+        if (qName.equalsIgnoreCase("QueryTranslation")) {
+            this.isQuerytranslation = true;
+            this.queryTranslation.setLength(0);
         }
     }
 
