@@ -213,7 +213,7 @@ public class CreateChartTask extends AbstractTask implements TunableValidator {
         CyColumnIdentifier rangeColumnId = columnIdFactory.createColumnIdentifier(rangeColumn.getName());
         Map<String,Object> chartProps = new HashMap<String, Object>();
         chartProps.put("cy_dataColumns", Arrays.asList(rangeColumnId));
-        chartProps.put("cy_domainLabelsColumn", Arrays.asList(domainColumnId));
+        chartProps.put("cy_domainLabelsColumn", domainColumnId);
         chartProps.put("cy_globalRange", "true");
         chartProps.put("cy_showDomainAxis", "true");
         chartProps.put("cy_showRangeAxis", "true");
