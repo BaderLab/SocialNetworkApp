@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -45,6 +46,8 @@ public class PubMedParserTest {
      */
    public void testHitCount() throws Exception {
         String path = getClass().getResource("pubmed_hit_count.xml").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        path = URLDecoder.decode(path,"UTF-8");
         File xmlFile = new File(path);
         SocialNetwork socialNetwork = new SocialNetwork("test", Category.PUBMED);
         SocialNetworkAppManager appmanager = new SocialNetworkAppManager();
@@ -65,6 +68,7 @@ public class PubMedParserTest {
     public void testTimesCited() {
         boolean status = false;
         String path = getClass().getResource("pubmed_times_cited.xml").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
         File xmlFile = new File(path);
         PubMed pubmed = new PubMed(xmlFile, taskMonitor);
         Interaction interaction = new Interaction(pubmed.getPubList(), Category.ACADEMIA, 500);

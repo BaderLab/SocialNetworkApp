@@ -39,14 +39,18 @@ package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
@@ -78,10 +82,13 @@ public class IncitesParserTest {
      * the app. It is therefore imperative that defective rows be tracked and
      * dealt with accordingly.
      */
-    public void testDefectiveRowsExist() {
+    public void testDefectiveRowsExist() throws Exception {
         String path = this.getClass().getResource("defective_rows_exist.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File defectiveRowsExistFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(defectiveRowsExistFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(defectiveRowsExistFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         assertTrue(incitesParser.getDefectiveRows() == 7);
     }
 
@@ -89,10 +96,13 @@ public class IncitesParserTest {
     /**
      * Confirm the non-existence of defective rows in a valid spreadsheet
      */
-    public void testDefectiveRowsNonExistent() {
+    public void testDefectiveRowsNonExistent() throws Exception {
         String path = this.getClass().getResource("no_defective_rows.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File defectiveRowsNotExistFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(defectiveRowsNotExistFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(defectiveRowsNotExistFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         assertTrue(incitesParser.getDefectiveRows() == 0);
     }
 
@@ -100,10 +110,13 @@ public class IncitesParserTest {
     /**
      * Confirm correct identification of existing faculty
      */
-    public void testIdentifiedFaculty() {
+    public void testIdentifiedFaculty() throws Exception {
         String path = this.getClass().getResource("faculty.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File ignoredRowsNotExistFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         ArrayList<Author> identifiedFacultyList = incitesParser.getIdentifiedFacultyList();
         assertTrue(identifiedFacultyList.size() == 14);
     }
@@ -116,10 +129,13 @@ public class IncitesParserTest {
      * presence of ignored rows means that some data has been lost.
      * Ideally, there should be ZERO ignored rows after parsing a data file.
      */
-    public void testIgnoredRowsNonExistent() {
+    public void testIgnoredRowsNonExistent() throws Exception {
         String path = this.getClass().getResource("no_ignored_rows.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File ignoredRowsNotExistFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         assertTrue(incitesParser.getIgnoredRows() == 0);
     }
 
@@ -129,10 +145,13 @@ public class IncitesParserTest {
      * NOTE: A lone author is one who has published
      * a paper by himself / herself
      */
-    public void testLoneAuthor() {
+    public void testLoneAuthor() throws Exception {
         String path = this.getClass().getResource("lone_author_exists.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File loneAuthorFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(loneAuthorFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(loneAuthorFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         ArrayList<Author> loneAuthorList = incitesParser.getLoneAuthorList();
         assertTrue(loneAuthorList.size() == 1);
     }
@@ -141,10 +160,13 @@ public class IncitesParserTest {
     /**
      * Confirm correct identification of missing faculty
      */
-    public void testUnidentifiedFaculty() {
+    public void testUnidentifiedFaculty() throws Exception {
         String path = this.getClass().getResource("faculty.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File ignoredRowsNotExistFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(ignoredRowsNotExistFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         ArrayList<Author> unidentifiedFacultyList = incitesParser.getUnidentifiedFacultyList();
         assertTrue(unidentifiedFacultyList.size() == 13);
     }
@@ -153,11 +175,14 @@ public class IncitesParserTest {
     /**
      * Confirm that the calculated times cited value for the main author is correct
      */
-    public void testTimesCited() {
+    public void testTimesCited() throws Exception {
         boolean status = false;
         String path = getClass().getResource("incites_times_cited.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File xlsxFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
         Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
@@ -173,11 +198,14 @@ public class IncitesParserTest {
     /**
      * Confirm that institutions are being ranked correctly.
      */
-    public void testInstitutionRanking() {
+    public void testInstitutionRanking() throws Exception {
         boolean status = false;
         String path = getClass().getResource("incites_institution_ranking.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File xlsxFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
         Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
@@ -199,11 +227,14 @@ public class IncitesParserTest {
     /**
      * Confirm that the expected citations value of each author is being calculated correctly
      */
-    public void testExpectedCitations() {
+    public void testExpectedCitations() throws Exception {
         boolean status = false;
         String path = getClass().getResource("expected_citations.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
         File xlsxFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(xlsxFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
         Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];

@@ -43,9 +43,13 @@ import static org.mockito.Mockito.mock;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsRetrievalParser;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
+import org.baderlab.csapps.socialnetwork.tasks.CreatePublicationNetworkFromPublications;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.FileUtil;
+import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +63,7 @@ public class SearchTest {
 
     private FileUtil fileUtil = mock(FileUtil.class);
     private CySwingApplication cySwingAppRef = mock(CySwingApplication.class);
+    private TaskMonitor taskMonitor = mock(TaskMonitor.class);
 
     @Before
     public void setUp() throws Exception {
@@ -73,14 +78,24 @@ public class SearchTest {
      * Verify that the number of hits declared by PubMed's xml file is equal
      * to the total number of results returned by search
      */
-    public void testPubmedSearch() {
+    public void testPubmedSearch() throws Exception {
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         SocialNetwork socialNetwork = new SocialNetwork("test",Category.PUBMED);
         appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
+        Query query = new Query("pawson t");
+        EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query,socialNetwork);
+        eUtilsSearchParser.run(taskMonitor);
+     	        
+        EutilsRetrievalParser eUtilsRetParser = new EutilsRetrievalParser(socialNetwork);
+        eUtilsRetParser.run(taskMonitor);
+        
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);
+        	 
         //SearchPubmedTask search = new SearchPubmedTask("pawson t", Category.ACADEMIA, appManager,socialNetwork);
-        //int hits = search.getTotalHits();
-        //int results = socialNetwork.getPublications().size();
-        //assertTrue(hits == results);
+        int hits = socialNetwork.getEutilsResults().getTotalPubs();
+        int results = socialNetwork.getPublications().size();
+        assertTrue(hits == results);
     }
 
 }

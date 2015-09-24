@@ -39,14 +39,18 @@ package org.baderlab.csapps.socialnetwork.model.academia;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
@@ -70,10 +74,13 @@ public class InteractionTest {
      * Verify the correct calculation of times cited in two publications
      * NOTE: The publications being tested only have three distinct authors
      */
-    public void testTimesCitedMultiplePub() {
+    public void testTimesCitedMultiplePub() throws Exception {
         String path = this.getClass().getResource("times_cited_multiple_pub.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test", Category.INCITES);
         File timesCitedFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         boolean status = true;
@@ -98,10 +105,13 @@ public class InteractionTest {
      * NOTE: The publication being tested only has two authors and each author
      * has been duplicated once (i.e. Jack, Giant (UNIV); Jack, Giant (UNIV)
      */
-    public void testTimesCitedSinglePub() {
+    public void testTimesCitedSinglePub() throws Exception {
         String path = this.getClass().getResource("times_cited_single_pub.xlsx").getFile();
+        path = URLDecoder.decode(path,"UTF-8");
+        SocialNetwork socialNetwork = new SocialNetwork("test", Category.INCITES);
         File timesCitedFile = new File(path);
-        IncitesParser incitesParser = new IncitesParser(timesCitedFile, taskMonitor);
+        IncitesParser incitesParser = new IncitesParser(timesCitedFile, socialNetwork);
+        incitesParser.run(taskMonitor);
         Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
         Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
         Collaboration cons = (Collaboration) map.keySet().toArray()[0];
