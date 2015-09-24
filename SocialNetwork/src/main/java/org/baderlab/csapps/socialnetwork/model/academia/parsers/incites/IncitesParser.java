@@ -37,6 +37,7 @@
 
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -55,12 +57,14 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.baderlab.csapps.socialnetwork.model.Category;
+import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
 import org.baderlab.csapps.socialnetwork.model.academia.IncitesInstitutionLocationMap;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.MonitoredFileInputStream;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
+import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -72,7 +76,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author Victor Kofia
  */
-public class IncitesParser {
+public class IncitesParser extends AbstractTask {
 
     /**
      * Construct Incites attribute map
@@ -221,29 +225,19 @@ public class IncitesParser {
      * incites
      */
     private IncitesInstitutionLocationMap locationMap = null;
+    
+    private File file = null; 
+    private SocialNetwork socialNetwork = null; 
 
     /**
      * Constructor for {@link IncitesParser}
      *
      * @param File file
-     * @param TaskMonitor taskMonitor
+     * @param SocialNetwork socialNetwork
      */
-    public IncitesParser(File file, TaskMonitor taskMonitor) {
-        this.locationMap = new IncitesInstitutionLocationMap();
-        OPCPackage pkg;
-        try {
-            MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(file, taskMonitor, "Parsing InCites XLSX ...");
-            pkg = OPCPackage.open(fileInputStream);
-            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
-            int numSheets = workbook.getNumberOfSheets();
-            this.parseFacultyXLSX(pkg, numSheets);
-            this.parsePubsXLSX(pkg, numSheets);
-            this.calculateSummary();
-        } catch (InvalidFormatException e) {
-            logger.log(Level.SEVERE, "Exception occurred", e);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Exception occurred", e);
-        }
+    public IncitesParser(File file, SocialNetwork socialNetwork) {
+        this.file = file;
+        this.socialNetwork = socialNetwork;
     }
 
     /**
@@ -614,5 +608,49 @@ public class IncitesParser {
     public void updateIgnoredRows() {
         this.ignoredRows++;
     }
+
+	@Override
+	public void run(TaskMonitor taskMonitor) throws Exception {
+		
+        taskMonitor.setTitle("Loading InCites Network ...");
+		this.locationMap = new IncitesInstitutionLocationMap();
+        OPCPackage pkg;
+        try {
+            MonitoredFileInputStream fileInputStream = new MonitoredFileInputStream(file, taskMonitor, "Parsing InCites XLSX ...");
+            pkg = OPCPackage.open(fileInputStream);
+            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+            int numSheets = workbook.getNumberOfSheets();
+            this.parseFacultyXLSX(pkg, numSheets);
+            this.parsePubsXLSX(pkg, numSheets);
+            this.calculateSummary();
+            
+            if (getIgnoredRows() >= 1) {
+                logger.log(Level.WARNING, "Some rows could not be parsed.");
+            }
+            if (getIdentifiedFacultyList().size() == 0) {
+                logger.log(Level.WARNING, "Unable to identify faculty. Please verify that InCites data file is valid");
+            }
+            ArrayList<Publication> pubList = getPubList();
+            if (pubList == null) {
+                //this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                logger.log(Level.SEVERE, "Invalid file. This InCites file is corrupt.");
+                return;
+            }
+            // Add summary attributes
+            socialNetwork.setPublications(getPubList());
+            socialNetwork.setFaculty(getFacultySet());
+            socialNetwork.setUnidentifiedFaculty(getUnidentifiedFacultyList());
+            socialNetwork.setUnidentified_faculty(getUnidentifiedFacultyString());
+
+            // Add info to social network map(s)
+            socialNetwork.getAttrMap().put(NodeAttribute.DEPARTMENT.toString(), getDepartmentName());
+
+        } catch (InvalidFormatException e) {
+            logger.log(Level.SEVERE, "Exception occurred", e);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Exception occurred", e);
+        }
+		
+	}
 
 }
