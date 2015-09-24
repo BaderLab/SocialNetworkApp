@@ -58,7 +58,7 @@ import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTask;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTask;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory;
-import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTask;
+import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -351,7 +351,7 @@ public class SocialNetworkAppManager {
     private String searchTerm = null;
     
     /**
-     * Set search term. Will later be retrieved by {@link SearchPubMedTask}
+     * Set search term. Will later be retrieved by {@link SearchPubMedTaskFactory}
      * 
      * @param String searchTerm
      */

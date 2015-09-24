@@ -12,6 +12,8 @@ import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.Query;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedTask;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedXmlParserTask;
 import org.cytoscape.work.AbstractTaskFactory;
@@ -46,8 +48,11 @@ public class ParsePubMedXMLTaskFactory extends AbstractTaskFactory {
     	pubmedxmlIterator.append(parsePubmed);
     	
     	//query pubmed for additional citations from pubmed (which aren't found in the xml file)
-    	QueryPubmedForCitationsTask addcitations = new QueryPubmedForCitationsTask(socialNetwork);
-    	pubmedxmlIterator.append(addcitations);
+        EutilsSearchParser addCitations = new EutilsSearchParser(null,socialNetwork);
+        pubmedxmlIterator.append(addCitations);
+   	
+    	//QueryPubmedForCitationsTask addcitations = new QueryPubmedForCitationsTask(socialNetwork);
+    	//pubmedxmlIterator.append(addcitations);
     	
     	//parse pubmed results and add citation data.
     	EutilsTimesCitedTask parsecitations = new EutilsTimesCitedTask(socialNetwork);

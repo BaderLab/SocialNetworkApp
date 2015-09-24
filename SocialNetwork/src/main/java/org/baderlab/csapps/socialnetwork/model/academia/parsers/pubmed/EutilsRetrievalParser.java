@@ -87,20 +87,16 @@ public class EutilsRetrievalParser extends AbstractTask{
      * @param int retMax
      * @param int totalPubs
      */
-    public EutilsRetrievalParser(String queryKey, String webEnv, int retStart, int retMax, int totalPubs,SocialNetwork socialNetwork) {
+    public EutilsRetrievalParser(SocialNetwork socialNetwork) {
         this.rawAuthorText = new StringBuilder();
         this.journal = new StringBuilder();
         this.pubDate = new StringBuilder();
         this.pmid = new StringBuilder();
         this.timesCited = new StringBuilder();
         this.title = new StringBuilder();
-        
-        this.queryKey = queryKey;
-        this.webEnv = webEnv;
-        this.retStart = retStart;
-        this.retMax = retMax;
-        this.totalPubs = totalPubs;
         this.socialNetwork = socialNetwork;
+        
+        
        
     }
 
@@ -108,7 +104,16 @@ public class EutilsRetrievalParser extends AbstractTask{
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
 		 try {
-		        taskMonitor.setStatusMessage("Retrieving records from PubMed ...");   
+		        taskMonitor.setStatusMessage("Retrieving records from PubMed ...");  
+		        
+		        if(socialNetwork.getEutilsResults() != null){
+		        	this.queryKey = socialNetwork.getEutilsResults().getQueryKey();
+		        	this.webEnv = socialNetwork.getEutilsResults().getWebEnv();
+		        	this.retStart = socialNetwork.getEutilsResults().getRetStart();
+		        	this.retMax = socialNetwork.getEutilsResults().getRetMax();
+		        	this.totalPubs = socialNetwork.getEutilsResults().getTotalPubs();
+		        }	        
+		        
 		        taskMonitor.setProgress(0);
 			 SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 	            EutilsParser parser = new EutilsParser();
@@ -120,6 +125,7 @@ public class EutilsRetrievalParser extends AbstractTask{
 	                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
 	                saxParser.parse(url, parser);
 	                retStart += retMax;
+	                taskMonitor.setProgress((int) (((double) retStart/totalPubs) * 100));
 	                
 	            }
 	            socialNetwork.setPublications(parser.getPubList());

@@ -41,7 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.model.academia.EutilsKeys;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -87,6 +89,8 @@ public class SocialNetwork {
      * The network's attribute map (stores all network table attr)
      */
     private Map<String, Object> attrMap = null;
+    
+    private EutilsKeys eutilsResults = null;
 
     /**
      * The network's set of publications used to create it
@@ -608,5 +612,15 @@ public class SocialNetwork {
         }
         return locations_summary;
     }
+
+	public EutilsKeys getEutilsResults() {
+		return eutilsResults;
+	}
+
+	public void setEutilsResults(EutilsKeys eutilsResults) {
+		this.eutilsResults = eutilsResults;
+	}
+    
+    
 
 }
