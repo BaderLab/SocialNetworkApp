@@ -114,10 +114,7 @@ public class SocialNetwork {
     private int num_uniden_faculty = 0;
     private String unidentified_faculty = "";
     private int startYear = -1, endYear = -1;
-    private String queryTranslation = "";
-    
-    private EutilsSearchResults eutilsSearchResults = null;
-    
+    private String queryTranslation = "";   
     
     public String getQueryTranslation() {
 		return queryTranslation;
@@ -125,14 +122,6 @@ public class SocialNetwork {
 
 	public void setQueryTranslation(String queryTranslation) {
 		this.queryTranslation = queryTranslation;
-	}
-
-	public EutilsSearchResults getEutilsSearchResults() {
-		return eutilsSearchResults;
-	}
-
-	public void setEutilsSearchResults(EutilsSearchResults eutilsSearchResults) {
-		this.eutilsSearchResults = eutilsSearchResults;
 	}
 
 	public void setStartYear(int startYear) {

@@ -64,6 +64,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -73,10 +74,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.ParseScopus;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.BasicCollapsiblePanel;
 import org.cytoscape.util.swing.FileChooserFilter;
@@ -138,7 +140,7 @@ public class AcademiaPanel {
     private JPanel buildPubMedQueryPanel = null;
     private JTextField buildPubMedQueryTextField = null;
     
-    private static final Logger logger = Logger.getLogger(Scopus.class.getName());
+    private static final Logger logger = Logger.getLogger(ParseScopus.class.getName());
 
     /**
      * Constructor for {@link AcademiaPanel}

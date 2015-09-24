@@ -97,12 +97,11 @@ public class EutilsSearchParser extends AbstractTask {
         Publication pub = null;
         int retStart = 0;
         int totalPubs = pubList.size();
-        int retMax = totalPubs > 400 ? 400 : totalPubs;
+        int retMax = totalPubs;
         StringBuilder pmids = new StringBuilder();
         for (int i = retStart; i < retMax; i++) {
             pub = pubList.get(i);
             pmids.append(pub.getPMID());
-            //pmids.append("[UID]");
             if (i < (retMax - 1)) {
                 pmids.append(",");
             }

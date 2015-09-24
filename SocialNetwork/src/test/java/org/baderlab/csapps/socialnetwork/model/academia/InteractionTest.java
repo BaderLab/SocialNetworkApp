@@ -51,7 +51,9 @@ import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
+import org.baderlab.csapps.socialnetwork.tasks.CreatePublicationNetworkFromPublications;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
 import org.junit.Before;
@@ -78,11 +80,14 @@ public class InteractionTest {
         String path = this.getClass().getResource("times_cited_multiple_pub.xlsx").getFile();
         path = URLDecoder.decode(path,"UTF-8");
         SocialNetwork socialNetwork = new SocialNetwork("test", Category.INCITES);
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File timesCitedFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(timesCitedFile, socialNetwork);
         incitesParser.run(taskMonitor);
-        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
-        Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);       	
+  
+        Map<Collaboration, ArrayList<AbstractEdge>> map = appManager.getMap();
         boolean status = true;
         Iterator<Map.Entry<Collaboration, ArrayList<AbstractEdge>>> it = map.entrySet().iterator();
         Map.Entry<Collaboration, ArrayList<AbstractEdge>> pair = null;
@@ -109,11 +114,14 @@ public class InteractionTest {
         String path = this.getClass().getResource("times_cited_single_pub.xlsx").getFile();
         path = URLDecoder.decode(path,"UTF-8");
         SocialNetwork socialNetwork = new SocialNetwork("test", Category.INCITES);
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File timesCitedFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(timesCitedFile, socialNetwork);
         incitesParser.run(taskMonitor);
-        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, -1);
-        Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);       	
+  
+        Map<Collaboration, ArrayList<AbstractEdge>> map = appManager.getMap();
         Collaboration cons = (Collaboration) map.keySet().toArray()[0];
         Author authorA = (Author) cons.getNode1();
         Author authorB = (Author) cons.getNode2();

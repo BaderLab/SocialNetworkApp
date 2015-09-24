@@ -59,8 +59,8 @@ public class ParsePubMedXMLTaskFactory extends AbstractTaskFactory {
     	pubmedxmlIterator.append(parsecitations);
     	
     	//createNetwork
-    	CheckParametersTask createNetwork = new CheckParametersTask(appManager,socialNetwork);
-    	pubmedxmlIterator.append(createNetwork);
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,networkName);
+        pubmedxmlIterator.append(createnetwork); 
     	
     	pubmedxmlIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
 

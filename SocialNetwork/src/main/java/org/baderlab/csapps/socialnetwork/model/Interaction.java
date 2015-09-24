@@ -73,23 +73,7 @@ public class Interaction {
      */
     private ArrayList<Publication> excludedPublications = null;
 
-    /**
-     * Create a new {@link Interaction}
-     *
-     * @param List<AbstractEdge> edgeList
-     * @param int type
-     * @param int maxAuthorThreshold
-     */
-    public Interaction(List<? extends AbstractEdge> edgeList, int type, int maxAuthorThreshold) {
-        this.setMaxThreshold(maxAuthorThreshold);
-        switch (type) {
-            case Category.PUBMED:
-            case Category.ACADEMIA:
-                this.setAbstractMap(this.loadAcademiaMap(edgeList));
-                break;
-        }
-    }
-    
+
     public Interaction(Map<Collaboration, ArrayList<AbstractEdge>> academiamap, int type) {
     	switch (type) {
         	case Category.PUBMED:
@@ -178,91 +162,7 @@ public class Interaction {
         return abstractMap;
     }
 
-    /**
-     * Create new Academia hash-map
-     *
-     * @param ArrayList abstractEdgeList
-     * @param int maxAuthor
-     * @return Map academiaMap
-     */
-    private Map<Collaboration, ArrayList<AbstractEdge>> loadAcademiaMap(List<? extends AbstractEdge> results) {
-        // Create new academia map
-        Map<Collaboration, ArrayList<AbstractEdge>> academiaMap = new HashMap<Collaboration, ArrayList<AbstractEdge>>();
-        // Create new author map
-        // Key: author's facsimile
-        // Value: actual author
-        Map<Author, Author> authorMap = new HashMap<Author, Author>();
-        int h = 0, i = 0, j = 0;
-        Collaboration collaboration = null;
-        Author author1 = null, author2 = null;
-        Copublication copublications = null;
-        Publication publication = null;
-        List<Author> listOfNodes = null;
-        HashSet<Publication> pubSet = new HashSet<Publication>();
-        // Iterate through each publication
-        while (h <= results.size() - 1) {
-            publication = (Publication) results.get(h);
-            if (pubSet.contains(publication)) {
-                h++;
-                continue;
-            }
-            // Include publication only if the # of authors does not exceed the
-            // threshold
-            if ((this.maxThreshold < 0) || (publication.getNodes().size() <= this.maxThreshold)) {
-                i = 0;
-                j = 0;
-                collaboration = null;
-                author1 = null;
-                author2 = null;
-                copublications = null;
-                listOfNodes = null;
-                listOfNodes = (List<Author>) publication.getNodes();
-                while (i < listOfNodes.size()) {
-                    // Add author#1 to map if he / she is not present
-                    author1 = listOfNodes.get(i);
-                    if (authorMap.get(author1) == null) {
-                        authorMap.put(author1, author1);
-                    }
-                    // Add current publication to author's total list
-                    // of publications
-                    // NOTE: Author's time cited value will be updated
-                    // automatically
-                    authorMap.get(author1).addPublication(publication);
-                    j = i + 1;
-                    while (j < listOfNodes.size()) {
-                        // Add author#2 to map if he / she is not present
-                        author2 = listOfNodes.get(j);
-                        if (authorMap.get(author2) == null) {
-                            authorMap.put(author2, author2);
-                        }
-                        // Create collaboration out of both authors
-                        collaboration = new Collaboration(authorMap.get(author1), authorMap.get(author2));
-                        // Check for collaboration's existence before it's
-                        // entered
-                        // into map
-                        if (!academiaMap.containsKey(collaboration)) {
-                            copublications = new Copublication(collaboration, publication);
-                            ArrayList<AbstractEdge> edgeList = new ArrayList<AbstractEdge>();
-                            edgeList.add(copublications);
-                            academiaMap.put(collaboration, edgeList);
-                        } else {
-                            ArrayList<AbstractEdge> array = academiaMap.get(collaboration);
-                            copublications = (Copublication) array.get(0);
-                            copublications.addPublication(publication);
-                        }
-                        j++;
-                    }
-                    i++;
-                }
-            } else {
-                this.getExcludedPublications().add(publication);
-            }
-            pubSet.add(publication);
-            h++;
-        }
-        return academiaMap;
-    }
-
+    
     /**
      * Set abstract map. Keys are all distinct collaborations found in map.
      * Values are the various interactions that each individual collaboration

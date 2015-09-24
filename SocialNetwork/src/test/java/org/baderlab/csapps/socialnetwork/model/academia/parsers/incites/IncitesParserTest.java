@@ -44,14 +44,18 @@ import java.io.File;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
+import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
 import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
+import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
+import org.baderlab.csapps.socialnetwork.tasks.CreatePublicationNetworkFromPublications;
 import org.cytoscape.work.TaskMonitor;
 import org.junit.After;
 import org.junit.Before;
@@ -180,11 +184,15 @@ public class IncitesParserTest {
         String path = getClass().getResource("incites_times_cited.xlsx").getFile();
         path = URLDecoder.decode(path,"UTF-8");
         SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File xlsxFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
         incitesParser.run(taskMonitor);
-        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
-        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);       	
+  
+        Map<Collaboration, ArrayList<AbstractEdge>> map = appManager.getMap();
+        Set<Collaboration> collaboratorSet = map.keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
         collaboratorSet.toArray(collabArray);
         Author author = CytoscapeUtilities.getAuthor("A Person", collabArray); 
@@ -203,11 +211,15 @@ public class IncitesParserTest {
         String path = getClass().getResource("incites_institution_ranking.xlsx").getFile();
         path = URLDecoder.decode(path,"UTF-8");
         SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File xlsxFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
         incitesParser.run(taskMonitor);
-        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
-        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);       	
+  
+        Map<Collaboration, ArrayList<AbstractEdge>> map = appManager.getMap();
+        Set<Collaboration> collaboratorSet = map.keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
         collaboratorSet.toArray(collabArray);
         Author author = CytoscapeUtilities.getAuthor("Some Person", collabArray); 
@@ -232,11 +244,15 @@ public class IncitesParserTest {
         String path = getClass().getResource("expected_citations.xlsx").getFile();
         path = URLDecoder.decode(path,"UTF-8");
         SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
+        SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File xlsxFile = new File(path);
         IncitesParser incitesParser = new IncitesParser(xlsxFile, socialNetwork);
         incitesParser.run(taskMonitor);
-        Interaction interaction = new Interaction(incitesParser.getPubList(), Category.ACADEMIA, 500);
-        Set<Collaboration> collaboratorSet = interaction.getAbstractMap().keySet();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,"test");
+        createnetwork.run(taskMonitor);       	
+  
+        Map<Collaboration, ArrayList<AbstractEdge>> map = appManager.getMap();
+        Set<Collaboration> collaboratorSet = map.keySet();
         Collaboration[] collabArray = new Collaboration[collaboratorSet.size()];
         collaboratorSet.toArray(collabArray);
         // Retrieve authors

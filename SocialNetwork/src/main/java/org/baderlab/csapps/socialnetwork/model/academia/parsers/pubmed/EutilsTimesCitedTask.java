@@ -102,10 +102,10 @@ public class EutilsTimesCitedTask extends AbstractTask {
             
             int totalPubs = pubList.size();
             
-    		String queryKey = this.socialNetwork.getEutilsSearchResults().getQueryKey();
-    		String webEnv = this.socialNetwork.getEutilsSearchResults().getWebEnv();
-    		int retStart = this.socialNetwork.getEutilsSearchResults().getRetStart();
-    		int retMax = this.socialNetwork.getEutilsSearchResults().getRetMax();
+    		String queryKey = this.socialNetwork.getEutilsResults().getQueryKey();
+    		String webEnv = this.socialNetwork.getEutilsResults().getWebEnv();
+    		int retStart = this.socialNetwork.getEutilsResults().getRetStart();
+    		int retMax = this.socialNetwork.getEutilsResults().getRetMax();
     		
     		while (retStart < totalPubs) {
     			// Use newly discovered queryKey and webEnv to build a tag

@@ -46,10 +46,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.xmlbeans.impl.common.Levenshtein;
 import org.baderlab.csapps.socialnetwork.model.AbstractNode;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.ParseScopus;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.incites.IncitesParser;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
 import org.cytoscape.model.CyNode;
@@ -158,7 +160,7 @@ public class Author extends AbstractNode {
         switch (origin) {
             case Category.SCOPUS:
                 // Initialize attribute map for Scopus author
-                this.setNodeAttrMap(Scopus.constructScopusAttrMap());
+                this.setNodeAttrMap(ParseScopus.constructScopusAttrMap());
                 String[] scopusNames = rawAuthorText.split("\\s|,");
                 if (scopusNames.length == 1) {
                     this.setLastName(scopusNames[0]);

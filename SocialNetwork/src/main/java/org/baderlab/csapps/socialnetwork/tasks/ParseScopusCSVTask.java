@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
@@ -13,7 +14,7 @@ import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Publication;
-import org.baderlab.csapps.socialnetwork.model.academia.Scopus;
+import org.baderlab.csapps.socialnetwork.model.academia.parsers.ParseScopus;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
@@ -49,37 +50,16 @@ public class ParseScopusCSVTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         taskMonitor.setTitle("Loading Scopus Network ...");
+        TaskIterator taskIterator = new TaskIterator();
         String networkName = this.appManager.getNetworkName();
         SocialNetwork socialNetwork = new SocialNetwork(networkName, Category.SCOPUS);
-        Scopus scopus = new Scopus(this.appManager.getNetworkFile(), taskMonitor);
-        ArrayList<Publication> pubList = scopus.getPubList();
-        socialNetwork.setPublications(scopus.getPubList());
-        if (pubList == null) {
-            this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            return;
-        }
+        ParseScopus parseScopus = new ParseScopus(this.appManager.getNetworkFile(), socialNetwork, appManager);
+        taskIterator.append(parseScopus);
+        
         // Create interaction
-        Interaction interaction = new Interaction(pubList, Category.ACADEMIA, this.appManager.getMaxAuthorThreshold());
-        if (interaction.getExcludedPublications().size() == pubList.size()) {
-            this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            String message = "Network couldn't be loaded. Try adjusting max author threshold.";
-            logger.log(Level.SEVERE, message);
-            CytoscapeUtilities.notifyUser(message);
-            return;
-        }
-        socialNetwork.setExcludedPubs(interaction.getExcludedPublications());
-        // Create map
-        Map<Collaboration, ArrayList<AbstractEdge>> map = interaction.getAbstractMap();
-        if (map.size() == 0) {
-            this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            String message = "Network couldn't be loaded. File is corrupt.";
-            logger.log(Level.SEVERE, message);
-            CytoscapeUtilities.notifyUser(message);
-            return;
-        }
-        this.appManager.setMap(map);
-        this.appManager.getSocialNetworkMap().put(networkName, socialNetwork);
-        TaskIterator taskIterator = new TaskIterator();
+        CreatePublicationNetworkFromPublications createnetwork = new CreatePublicationNetworkFromPublications(appManager,socialNetwork,networkName);
+        taskIterator.append(createnetwork);       	
+        
         taskIterator.append(this.appManager.getNetworkTaskFactoryRef().createTaskIterator());
         insertTasksAfterCurrentTask(taskIterator);
     }
