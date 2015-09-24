@@ -89,6 +89,15 @@ public class Interaction {
                 break;
         }
     }
+    
+    public Interaction(Map<Collaboration, ArrayList<AbstractEdge>> academiamap, int type) {
+    	switch (type) {
+        	case Category.PUBMED:
+        	case Category.ACADEMIA:
+        		this.setAbstractMap(academiamap);
+        		break;
+    	}
+    }
 
     /**
      * Get abstract map. Keys are all distinct collaborations found in map.
