@@ -81,7 +81,7 @@ public class SearchTest {
     public void testPubmedSearch() throws Exception {
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         SocialNetwork socialNetwork = new SocialNetwork("test",Category.PUBMED);
-        appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
+        //appManager.setUserPanelRef(new UserPanel(appManager, this.fileUtil, this.cySwingAppRef));
         Query query = new Query("pawson t");
         EutilsSearchParser eUtilsSearchParser = new EutilsSearchParser(query,socialNetwork);
         eUtilsSearchParser.run(taskMonitor);
