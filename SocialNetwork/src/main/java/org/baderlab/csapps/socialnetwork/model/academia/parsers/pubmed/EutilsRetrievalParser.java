@@ -122,7 +122,7 @@ public class EutilsRetrievalParser extends AbstractTask{
 	                // Use newly discovered queryKey and webEnv to build a tag
 	                Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
 	                // Load all publications at once
-	                String url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+	                String url = String.format("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
 	                saxParser.parse(url, parser);
 	                retStart += retMax;
 	                taskMonitor.setProgress((int) (((double) retStart/totalPubs) * 100));

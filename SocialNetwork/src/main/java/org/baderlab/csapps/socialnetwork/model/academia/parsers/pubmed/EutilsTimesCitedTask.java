@@ -111,7 +111,7 @@ public class EutilsTimesCitedTask extends AbstractTask {
     			// Use newly discovered queryKey and webEnv to build a tag
     			Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
     			// Load all publications at once
-    			url = String.format("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+    			url = String.format("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
     			saxParser.parse(url, parser);
     			retStart += retMax;
     			 // Calculate Percentage.  This must be a value between 0..100.
