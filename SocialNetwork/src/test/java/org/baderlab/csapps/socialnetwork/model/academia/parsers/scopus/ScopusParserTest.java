@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.Collaboration;
-import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.Author;
@@ -48,9 +46,9 @@ public class ScopusParserTest {
     @Test
     public void testTimesCited() throws Exception{
         boolean status = false;
-        String path = getClass().getResource("scopus_times_cited.csv").getFile();
+        String path = getClass().getResource("scopus.csv").getFile();
         path = URLDecoder.decode(path,"UTF-8");
-        SocialNetwork socialNetwork = new SocialNetwork("test",Category.INCITES);
+        SocialNetwork socialNetwork = new SocialNetwork("test",Category.SCOPUS);
         SocialNetworkAppManager appManager = new SocialNetworkAppManager();
         File csvFile = new File(path);
         ParseScopus scopus = new ParseScopus(csvFile, socialNetwork, appManager);
@@ -66,7 +64,7 @@ public class ScopusParserTest {
         collaboratorSet.toArray(collabArray);
         Author author = CytoscapeUtilities.getAuthor("A Person", collabArray); 
         if (author != null) {
-            status = author.getTimesCited() == 992;
+            status = author.getTimesCited() == 5981;
         }
         assertTrue(status);
     }
