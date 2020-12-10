@@ -233,13 +233,42 @@ public class ParseScopus extends AbstractTask {
             setProgressMonitor("Parsing Scopus CSV ...", totalSteps);
             in = new BufferedReader(new FileReader(csv));
             // Get # of columns
-		String currentLine;
+            String currentLine;
             if ((currentLine = in.readLine())==null) {
+            	in.close();
             	return;
             }
             String columnTitlesRawText = currentLine;
             String[] columnTitlesArray = columnTitlesRawText.split(",");
             int numColumns = columnTitlesArray.length;
+            
+            //Remove hard coded columns and try and discover which
+            //Column the data is in.
+            int titleColumn = -1,  yearColumn = -1, 
+            		timesCitedColumn = -1, subjectColumn = -1, affiliationsColumn = -1;
+            
+            //For some reason it is not matching the Authors column names
+        	//eventhough it is clearly Authors in the file
+        	//default the authors to the first column if not found.
+            int authorColumn = 0;
+            //get the ids for each column from the header. 
+            for(int i=0;i<columnTitlesArray.length;i++) {
+
+            	if(columnTitlesArray[i].equalsIgnoreCase("Title"))
+            		titleColumn = i;
+            	if(columnTitlesArray[i].equalsIgnoreCase("Year"))
+            		yearColumn = i;
+            	if(columnTitlesArray[i].equalsIgnoreCase("Cited By"))
+            		timesCitedColumn = i;
+            	if(columnTitlesArray[i].equalsIgnoreCase("Source title"))
+            		subjectColumn = i;
+            	if(columnTitlesArray[i].equalsIgnoreCase("Affiliations"))
+            		affiliationsColumn = i;
+            	if(columnTitlesArray[i].trim().equalsIgnoreCase("Authors"))
+            		authorColumn = i;
+            }
+            
+            
             // Skip column headers
             String line = null, authors = null, year = null;
             String[] columns = null;
@@ -252,14 +281,14 @@ public class ParseScopus extends AbstractTask {
                 
                 // Only split by commas not contained in quotes.
                 columns = splitQuoted("\"", ",", line, numColumns);
-		//only parse line if it has the same number of columns as the title line
-	        authors = (columns[0]!=null)?columns[0].replace("\"", ""):"";
-        	coauthorList = this.parseAuthors(authors);
-                title = (columns[1]!=null)?columns[1].replace("\"", ""):"";
-                year = (columns[2]!=null)?columns[2].replace("\"", ""):"";
+                //only parse line if it has the same number of columns as the title line
+                authors = (columns[authorColumn]!=null)?columns[authorColumn].replace("\"", ""):"";
+                coauthorList = this.parseAuthors(authors);
+                title = (columns[titleColumn]!=null)?columns[titleColumn].replace("\"", ""):"";
+                year = (columns[yearColumn]!=null)?columns[yearColumn].replace("\"", ""):"";
                 // Add affiliations only if the Scopus document has the 'Authors with Affiliations' column
-                if (numColumns > 14) {
-                	affiliations = (columns[14]!=null)?columns[14].replace("\"", ""):"";
+                if (affiliationsColumn != -1) {
+                	affiliations = (columns[affiliationsColumn]!=null)?columns[affiliationsColumn].replace("\"", ""):"";
                 	matchAuthors(coauthorList, affiliations);                	
                 }
                 if (!this.matchYear(year)) {
@@ -270,8 +299,8 @@ public class ParseScopus extends AbstractTask {
                 	
                 }
                 else{
-                	subjectArea = (columns[3]!=null)?columns[3].replace("\"", ""):"";
-                	numericalData = (columns[10] != null) ? columns[10].replace("\"", "") : columns[10];
+                	subjectArea = (columns[subjectColumn]!=null)?columns[subjectColumn].replace("\"", ""):"";
+                	numericalData = (columns[timesCitedColumn] != null) ? columns[timesCitedColumn].replace("\"", "") : columns[timesCitedColumn];
                 	if (numericalData == null || numericalData.equalsIgnoreCase("")) {
                     		timesCited = "0";
                 	} else {
