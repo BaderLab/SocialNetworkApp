@@ -82,7 +82,9 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
         // Create network out of InCites data
         switch(this.appManager.getAnalysis_type()) {
             case SocialNetworkAppManager.ANALYSISTYPE_INCITES:
-                // Load data from text file
+            	String message1 = "Incites interface has changed significantly since the release of this app.  Use at your discretion.";
+            	CytoscapeUtilities.notifyUser(message1);
+            	// Load data from text file
                 if (!extension.equalsIgnoreCase("xlsx")) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     String message = "Invalid file. InCites data files either have to be excel spreadsheets or text files.";
@@ -93,6 +95,8 @@ public class ParseSocialNetworkFileTask extends AbstractTask {
                 this.visualizeIncitesXLSX();
                 break;
             case SocialNetworkAppManager.ANALYSISTYPE_PUBMED:
+            	String message2 = "Pubmed interface no longer allows direct download of XML files but we can only read Pubmed XML data.";
+            	CytoscapeUtilities.notifyUser(message2);
                 if (!extension.equalsIgnoreCase("xml")) {
                     this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     String message = "Invalid file. PubMed data files have to be in xml format.";
