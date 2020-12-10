@@ -37,7 +37,6 @@
 
 package org.baderlab.csapps.socialnetwork.model.academia.parsers.incites;
 
-import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +48,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -69,7 +72,6 @@ import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * For parsing Incites' xlsx spreadsheets
@@ -297,9 +299,13 @@ public class IncitesParser extends AbstractTask {
      * @param int sheet
      * @return XMLReader parser
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
-    private XMLReader fetchSheetParser(SharedStringsTable sst, int sheet) throws SAXException {
-        XMLReader parser = XMLReaderFactory.createXMLReader();
+    private XMLReader fetchSheetParser(SharedStringsTable sst, int sheet) throws SAXException, ParserConfigurationException {
+
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        SAXParser saxparser = parserFactory.newSAXParser();
+        XMLReader parser = saxparser.getXMLReader();
         switch (sheet) {
         // Sheet#1: ??
             case 1:
@@ -463,8 +469,9 @@ public class IncitesParser extends AbstractTask {
      *
      * @param OPCPackage pkg
      * @param int numSheets
+     * @throws ParserConfigurationException 
      */
-    private void parseFacultyXLSX(OPCPackage pkg, int numSheets) {
+    private void parseFacultyXLSX(OPCPackage pkg, int numSheets) throws ParserConfigurationException {
         if (numSheets == 1) {
             return; // Exit. No faculty sheet exists.
         }
@@ -501,8 +508,9 @@ public class IncitesParser extends AbstractTask {
      *
      * @param OPCPackage pkg
      * @param int numSheets
+     * @throws ParserConfigurationException 
      */
-    private void parsePubsXLSX(OPCPackage pkg, int numSheets) {
+    private void parsePubsXLSX(OPCPackage pkg, int numSheets) throws ParserConfigurationException {
         try {
             XSSFReader r = new XSSFReader(pkg);
             SharedStringsTable sst = r.getSharedStringsTable();

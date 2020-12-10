@@ -50,10 +50,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -434,6 +432,7 @@ public class AcademiaPanel {
                     }            
                     AcademiaPanel.this.buildPubMedQueryTextField.setText(query.toString());
                     AcademiaPanel.this.searchBox.setText(query.toString());
+                    scan.close();
                   // ------------------------------------------------------------------------------------------------------------
                 } catch (FileNotFoundException e1) {
                     logger.log(Level.SEVERE, e1.getMessage());

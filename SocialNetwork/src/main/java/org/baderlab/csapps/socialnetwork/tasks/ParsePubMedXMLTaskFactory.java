@@ -1,18 +1,8 @@
 package org.baderlab.csapps.socialnetwork.tasks;
 
-import java.awt.Cursor;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
-import org.baderlab.csapps.socialnetwork.model.AbstractEdge;
 import org.baderlab.csapps.socialnetwork.model.Category;
-import org.baderlab.csapps.socialnetwork.model.Collaboration;
-import org.baderlab.csapps.socialnetwork.model.Interaction;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
-import org.baderlab.csapps.socialnetwork.model.academia.Query;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsSearchParser;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.EutilsTimesCitedTask;
 import org.baderlab.csapps.socialnetwork.model.academia.parsers.pubmed.PubMedXmlParserTask;
