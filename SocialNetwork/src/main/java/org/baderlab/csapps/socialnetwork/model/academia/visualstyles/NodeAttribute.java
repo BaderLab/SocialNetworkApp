@@ -1,10 +1,5 @@
 package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
-/**
- * 
- * @author Victor Kofia
- */
-// TODO: Write enum description
 public enum NodeAttribute {
     
     DEPARTMENT("Department"),
@@ -30,23 +25,14 @@ public enum NodeAttribute {
      */
     YEARS_ACTIVE("Years Active");
     
-    private String attrName = null;
+    private String attrName;
     
-    /**
-     * Create a new {@link NodeAttribute} enum
-     * 
-     * @param String attrName
-     */
     NodeAttribute(String attrName) {
         this.attrName = attrName;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Enum#toString()
-     */
     @Override
     public String toString() {
         return this.attrName;
     }
-    
 }

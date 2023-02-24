@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.baderlab.csapps.socialnetwork.actions.AddInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ChangeAuthorInstitutionAction;
 import org.baderlab.csapps.socialnetwork.actions.ExportNthDegreeNeighborsAction;
@@ -102,7 +103,8 @@ public class CyActivator extends AbstractCyActivator {
         super();
     }
 
-    public void start(BundleContext bc) {
+    @Override
+	public void start(BundleContext bc) {
                 
         /* Configuration properties */
         PropsReader propsReader = new PropsReader("socialnetwork", "socialnetwork.props");
@@ -221,7 +223,7 @@ public class CyActivator extends AbstractCyActivator {
         SocialNetworkDestroyedListener networkDestroyedListener = new SocialNetworkDestroyedListener(cyNetworkManagerServiceRef, appManager);
         registerService(bc, networkDestroyedListener, NetworkAboutToBeDestroyedListener.class, new Properties());
 
-        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, cyNetworkManagerServiceRef, vmmServiceRef,
+        SocialNetworkAddedListener networkAddedListener = new SocialNetworkAddedListener(appManager, vmmServiceRef,
                 visualStyleFactoryServiceRef, passthroughMappingFactoryServiceRef, continuousMappingFactoryServiceRef, discreteMappingFactoryServiceRef,
                 cyServiceRegistrarRef, cySwingApplicationServiceRef, taskManager, hideAuthorsTaskFactoryRef, cyApplicationManagerServiceRef,
                 showAllNodesTaskFactoryRef, createChartTaskFactory);

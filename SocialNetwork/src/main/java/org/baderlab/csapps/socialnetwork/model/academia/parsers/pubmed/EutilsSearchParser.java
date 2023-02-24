@@ -31,14 +31,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * ??
- * 
- * @author Victor Kofia
- */
-// TODO: Write class description
 public class EutilsSearchParser extends AbstractTask {
-
    
     /**
      * querytranslation. just to see what ncbi translates a query into
@@ -64,64 +57,54 @@ public class EutilsSearchParser extends AbstractTask {
     private Query query = null;
     private SocialNetwork socialNetwork = null;
     
-    private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
+	private static final Logger logger = Logger.getLogger(EutilsSearchParser.class.getName());
 
-    /**
-     * Create a new eUtils search parser
-     * 
-     * @param Query query
-     * @throws IOException 
+	public EutilsSearchParser(Query query, SocialNetwork socialNetwork) {
+		this.queryKey = new StringBuilder();
+		this.totalPubs = new StringBuilder();
+		this.webEnv = new StringBuilder();
+		this.retStart = new StringBuilder();
+		this.retMax = new StringBuilder();
+		this.queryTranslation = new StringBuilder();
 
-     */
-    public EutilsSearchParser(Query query,SocialNetwork socialNetwork) {
-        this.queryKey = new StringBuilder();
-        this.totalPubs = new StringBuilder();
-        this.webEnv = new StringBuilder();
-        this.retStart = new StringBuilder();
-        this.retMax = new StringBuilder();
-        this.queryTranslation = new StringBuilder();
-        
-        this.query = query;
-        this.socialNetwork = socialNetwork;
-       
-    }
+		this.query = query;
+		this.socialNetwork = socialNetwork;
+	}
 
-    /**
-     * Use the pmids of the specified publications to construct a query (for
-     * eUtils). The various pmids will be combined with an OR operator.
-     * 
-     * @param ArrayList pubList
-     * @return String eUtilsPMIDs
-     */
-    private String getEutilsPMIDs(ArrayList<Publication> pubList) {
-        Publication pub = null;
-        int retStart = 0;
-        int totalPubs = pubList.size();
-        int retMax = totalPubs;
-        StringBuilder pmids = new StringBuilder();
-        for (int i = retStart; i < retMax; i++) {
-            pub = pubList.get(i);
-            pmids.append(pub.getPMID());
-            if (i < (retMax - 1)) {
-                pmids.append(",");
-            }
-        }
-        return pmids.toString();
-    }
-    
-    @Override
-	public void run(TaskMonitor taskMonitor) throws Exception {
+	/**
+	 * Use the pmids of the specified publications to construct a query (for
+	 * eUtils). The various pmids will be combined with an OR operator.
+	 */
+	private String getEutilsPMIDs(ArrayList<Publication> pubList) {
+		Publication pub = null;
+		int retStart = 0;
+		int totalPubs = pubList.size();
+		int retMax = totalPubs;
+		StringBuilder pmids = new StringBuilder();
+		for (int i = retStart; i < retMax; i++) {
+			pub = pubList.get(i);
+			pmids.append(pub.getPMID());
+			if (i < (retMax - 1)) {
+				pmids.append(",");
+			}
+		}
+		return pmids.toString();
+	}
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = null;
-        taskMonitor.setStatusMessage("Searching PubMed ...");   
-        
-        
-        //if query is null then we should try to build the query from the publications object
-        if(query == null)
-        	query = new Query(getEutilsPMIDs(socialNetwork.getPublications()));
-        
-        taskMonitor.setProgress(0);
+	@Override
+	public void run(TaskMonitor tm) throws Exception {
+		tm.setTitle("Social Network - Search PubMed");
+
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpResponse response = null;
+		tm.setStatusMessage("Searching PubMed...");
+
+		// if query is null then we should try to build the query from the publications
+		// object
+		if (query == null)
+			query = new Query(getEutilsPMIDs(socialNetwork.getPublications()));
+
+		tm.setProgress(0);
 
         try {
             // Create new SAXParser
@@ -159,8 +142,8 @@ public class EutilsSearchParser extends AbstractTask {
             logger.log(Level.SEVERE, "Exception occurred", e);
             CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your " + "internet connection.");
         }
-		
 	}
+	
     private class SearchParser extends DefaultHandler{
     
     	 /**

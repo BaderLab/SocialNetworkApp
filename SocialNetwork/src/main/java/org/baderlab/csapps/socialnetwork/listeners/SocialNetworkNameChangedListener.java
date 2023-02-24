@@ -80,7 +80,7 @@ public class SocialNetworkNameChangedListener implements RowsSetListener {
                     this.appManager.getSocialNetworkMap().remove(pair.getKey());
                     this.appManager.getSocialNetworkMap().put(updatedName, network);
                     // Update network summary panel
-                    DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
+                    DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTable().getModel();
                     int rowIndex = getRow(model, oldName);
                     if (rowIndex > -1) {
                         model.setValueAt(updatedName, rowIndex, 0);

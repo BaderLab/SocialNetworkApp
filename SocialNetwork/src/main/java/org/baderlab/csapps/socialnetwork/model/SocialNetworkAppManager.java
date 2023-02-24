@@ -47,8 +47,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import javax.swing.Action;
 import javax.swing.JTextField;
+
 import org.baderlab.csapps.socialnetwork.actions.ShowUserPanelAction;
 import org.baderlab.csapps.socialnetwork.panels.InfoPanel;
 import org.baderlab.csapps.socialnetwork.panels.UserPanel;
@@ -58,7 +60,6 @@ import org.baderlab.csapps.socialnetwork.tasks.DestroyNetworkTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ExportNthDegreeNeighborsTask;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTask;
 import org.baderlab.csapps.socialnetwork.tasks.ParseSocialNetworkFileTaskFactory;
-import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.SearchPubMedTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -77,11 +78,11 @@ import org.cytoscape.work.TaskManager;
  */
 public class SocialNetworkAppManager {
     
-    private static JTextField startDateTextFieldRef = null;
-    private static JTextField endDateTextFieldRef = null;
+    private static JTextField startDateTextFieldRef;
+    private static JTextField endDateTextFieldRef;
     private static int selectedYear = -1;
-    private static SocialNetwork selectedSocialNetwork = null;
-    private static InfoPanel infoPanelRef = null;
+    private static SocialNetwork selectedSocialNetwork;
+    private static InfoPanel infoPanelRef;
    
     
     public static InfoPanel getInfoPanel() {
@@ -154,63 +155,63 @@ public class SocialNetworkAppManager {
     /**
      * A reference to the <i>ApplyVisualStyle</i> task factory
      */
-    private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef = null;
+    private static ApplyVisualStyleTaskFactory applyVisualStyleTaskFactoryRef;
     /**
      * Currently selected social network
      */
-    private SocialNetwork currentlySelectedSocialNetwork = null;
+    private SocialNetwork currentlySelectedSocialNetwork;
     /**
      * A reference to the cytoscape application manager. Necessary for changing
      * network views.
      */
-    private CyApplicationManager cyAppManagerServiceRef = null;
+    private CyApplicationManager cyAppManagerServiceRef;
     /**
      * A reference to the cytoscape service registrar. Necessary for
      * unregistering services.
      */
-    private CyServiceRegistrar cyServiceRegistrarRef = null;
+    private CyServiceRegistrar cyServiceRegistrarRef;
     /**
      * A reference to the task factory for <i>DestroyNetworkTask</i>
      */
-    private DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef = null;
+    private DestroyNetworkTaskFactory destroyNetworkTaskFactoryRef;
     /**
      * A map containing the nodes and edges that will eventually be used to form
      * a network
      */
-    private Map<Collaboration, ArrayList<AbstractEdge>> map = null;
+    private Map<Collaboration, ArrayList<AbstractEdge>> map;
     /**
      * Name of network
      */
-    private String networkName = null;
+    private String networkName;
     /**
      * A reference to the task factory for <i>CreateNetworkTask</i>
      */
-    private CreateNetworkTaskFactory networkTaskFactoryRef = null;
+    private CreateNetworkTaskFactory networkTaskFactoryRef;
     /**
      * A network that's just about to be destroyed
      */
-    private CyNetwork networkToBeDestroyed = null;
+    private CyNetwork networkToBeDestroyed;
     /**
      * Social network map. <br>
      * Key: network name <br>
      * Value: social network
      */
-    private Map<String, SocialNetwork> socialNetworkMap = null;
+    private Map<String, SocialNetwork> socialNetworkMap;
     /**
      * A reference to the cytoscape task manager. As the name suggests the task
      * manager is used for executing tasks.
      */
-    private TaskManager<?, ?> taskManagerServiceRef = null;
+    private TaskManager<?, ?> taskManagerServiceRef;
     /**
      * A reference to user panel action. Controls panel actions (viewing,
      * closing ... etc)
      */
-    private ShowUserPanelAction userPanelAction = null;
+    private ShowUserPanelAction userPanelAction;
     /**
      * A reference to the app's main user panel. User will interact with app
      * primarily through this panel.
      */
-    private UserPanel userPanelRef = null;
+    private UserPanel userPanelRef;
     /**
      * Currently selected visual style ID
      */
@@ -218,14 +219,14 @@ public class SocialNetworkAppManager {
     /**
      * A data file that's been exported by the user manually.
      */
-    private File networkFile = null; // TODO:
+    private File networkFile; // TODO:
     private int maxAuthorThreshold = -1; // TODO:
 
     private int networkFileType = -1;
     /**
      * Set of all visual styles currently supported by app
      */
-    private HashSet<String> visualStyleSet = null;
+    private HashSet<String> visualStyleSet;
     public static final int ANALYSISTYPE_INCITES = (84 << 24) + (18 << 16) + (180 << 8) + 87;
     public static final int ANALYSISTYPE_SCOPUS = (198 << 24) + (185 << 16) + (19 << 8) + 57;
 
@@ -235,7 +236,7 @@ public class SocialNetworkAppManager {
     
     private static final Logger logger = Logger.getLogger(SocialNetworkAppManager.class.getName());
     
-    private CySwingApplication cySwingApp = null;
+    private CySwingApplication cySwingApp;
     
     /**
      * Create a new Social Network App manager
@@ -325,7 +326,7 @@ public class SocialNetworkAppManager {
     /**
      * The task factory for {@link ParseSocialNetworkFileTask}
      */
-    private ParseSocialNetworkFileTaskFactory parseSocialNetworkFileTaskFactoryRef = null;
+    private ParseSocialNetworkFileTaskFactory parseSocialNetworkFileTaskFactoryRef;
     
     /**
      * Set the task factory for {@link ParseSocialNetworkFileTask}
@@ -348,7 +349,7 @@ public class SocialNetworkAppManager {
     /**
      * Search term that the user has inputed into the search box
      */
-    private String searchTerm = null;
+    private String searchTerm;
     
     /**
      * Set search term. Will later be retrieved by {@link SearchPubMedTaskFactory}
@@ -787,7 +788,7 @@ public class SocialNetworkAppManager {
     /**
      * A reference to the task factory for <i>SearchPubMedTask</i>
      */
-    private SearchPubMedTaskFactory searchPubMedTaskFactoryRef = null;
+    private SearchPubMedTaskFactory searchPubMedTaskFactoryRef;
     
     /**
      * Get the task factory for <i>SearchPubMedTask</i>
@@ -827,7 +828,7 @@ public class SocialNetworkAppManager {
         return this.neighborListDegree;
     }
     
-    private CyNetwork neighborListNetwork = null;
+    private CyNetwork neighborListNetwork;
     
     /**
      * Set neighbor list network. Will be retrieved later by {@link ExportNthDegreeNeighborsTask}.
@@ -846,7 +847,7 @@ public class SocialNetworkAppManager {
         return this.neighborListNetwork;
     }
     
-    private File neighborListFolder = null;
+    private File neighborListFolder;
     
     /**
      * Set neighbor list folder. Will be retrieved later by {@link ExportNthDegreeNeighborsTask}.
@@ -866,7 +867,7 @@ public class SocialNetworkAppManager {
         return this.neighborListFolder;
     }
     
-    private String neighborListAttribute = null;
+    private String neighborListAttribute;
     
     /**
      * Set neighbor list attribute. Will be retrieved later by {@link ExportNthDegreeNeighborsTask}.

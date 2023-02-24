@@ -102,7 +102,7 @@ public class SocialNetworkDestroyedListener implements NetworkAboutToBeDestroyed
             }
             map.remove(name);
             // Remove network from table
-            DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTableRef().getModel();
+            DefaultTableModel model = (DefaultTableModel) this.userPanel.getNetworkTable().getModel();
             int row = getRow(model, name);
             if (row > -1) {
                 model.removeRow(getRow(model, name));

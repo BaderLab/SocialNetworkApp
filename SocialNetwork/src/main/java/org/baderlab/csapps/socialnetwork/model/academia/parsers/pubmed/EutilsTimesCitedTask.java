@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
@@ -21,109 +20,83 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * ??
- * 
- * @author Victor Kofia
- */
-// TODO: Write class description
 public class EutilsTimesCitedTask extends AbstractTask {
 
     private static final Logger logger = Logger.getLogger(EutilsTimesCitedParser.class.getName());
 
-    
-
     /**
      * A list containing all the results that search session has yielded
      */
-    private ArrayList<Publication> pubList = new ArrayList<Publication>();
+    private ArrayList<Publication> pubList = new ArrayList<>();
     /**
      * A publication's unique identifier
      */
-    private StringBuilder pmid = null;
+    private StringBuilder pmid;
     /**
      * A publication's total number of citations
      */
-    private StringBuilder timesCited = null;
+    private StringBuilder timesCited;
     /**
      * Number of pmids that the SAX parser was unable to resolve. Used for testing purposes.
      */
     private int numSaxConflicts = 0;
     // TODO: Write description
-    private HashMap<String, Publication> pubMap = null;
-    
-    private SocialNetwork socialNetwork = null;
-    
-    /**
-     * Create PubMap
-     * 
-     * @param ArrayList pubList
-     */
-    private void createPubMap(ArrayList<Publication> pubList) {
-        this.pubMap = new HashMap<String, Publication>();
-        Iterator<Publication> it = pubList.iterator();
-        Publication pub = null;
-        while(it.hasNext()) {
-            pub = it.next();
-            this.pubMap.put(pub.getPMID(), pub);
-        }
-    }
+	private HashMap<String, Publication> pubMap;
 
-    /**
-     * Create a new eUtils times cited parser
-     * 
-     * @param ArrayList pubList
-     * @param int startIndex
-     * @param String queryKey
-     * @param String webEnv
-     * @param int retStart
-     * @param int retMax
-     * @param int totalPubs
-     */
-    public EutilsTimesCitedTask(SocialNetwork socialNetwork) {
-        	this.socialNetwork = socialNetwork;
-            this.pmid = new StringBuilder();
-            this.timesCited = new StringBuilder();
-            
-            
-    }
+	private SocialNetwork socialNetwork;
 
-    
-    @Override
-	public void run(TaskMonitor taskMonitor) throws Exception {
-    	try {
-    		EutilsTimesCitedParser parser = new EutilsTimesCitedParser();
-    		SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-    		String url = null;
-    		
-    		
-    		this.createPubMap(this.socialNetwork.getPublications());
-            this.pubList = this.socialNetwork.getPublications();
-            
-            int totalPubs = pubList.size();
-            
-    		String queryKey = this.socialNetwork.getEutilsResults().getQueryKey();
-    		String webEnv = this.socialNetwork.getEutilsResults().getWebEnv();
-    		int retStart = this.socialNetwork.getEutilsResults().getRetStart();
-    		int retMax = this.socialNetwork.getEutilsResults().getRetMax();
-    		
-    		while (retStart < totalPubs) {
-    			// Use newly discovered queryKey and webEnv to build a tag
-    			Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
-    			// Load all publications at once
-    			url = String.format("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
-    			saxParser.parse(url, parser);
-    			retStart += retMax;
-    			 // Calculate Percentage.  This must be a value between 0..100.
-                int percentComplete = (int) (((double) retStart / totalPubs) * 100);
-                if (taskMonitor != null) {
-                        taskMonitor.setProgress(percentComplete);
-                        
-                    }
-    			
-	        }    		
+	private void createPubMap(ArrayList<Publication> pubList) {
+		this.pubMap = new HashMap<String, Publication>();
+		Iterator<Publication> it = pubList.iterator();
+		Publication pub = null;
+
+		while (it.hasNext()) {
+			pub = it.next();
+			this.pubMap.put(pub.getPMID(), pub);
+		}
+	}
+
+	public EutilsTimesCitedTask(SocialNetwork socialNetwork) {
+		this.socialNetwork = socialNetwork;
+		this.pmid = new StringBuilder();
+		this.timesCited = new StringBuilder();
+	}
+
+	@Override
+	public void run(TaskMonitor tm) throws Exception {
+		tm.setTitle("Social Network - Times Cited");
+		
+		try {
+			var parser = new EutilsTimesCitedParser();
+			var saxParser = SAXParserFactory.newInstance().newSAXParser();
+			String url = null;
+
+			this.createPubMap(this.socialNetwork.getPublications());
+			this.pubList = this.socialNetwork.getPublications();
+
+			int totalPubs = pubList.size();
+
+			String queryKey = this.socialNetwork.getEutilsResults().getQueryKey();
+			String webEnv = this.socialNetwork.getEutilsResults().getWebEnv();
+			int retStart = this.socialNetwork.getEutilsResults().getRetStart();
+			int retMax = this.socialNetwork.getEutilsResults().getRetMax();
+
+			while (retStart < totalPubs) {
+				// Use newly discovered queryKey and webEnv to build a tag
+				Tag tag = new Tag(queryKey, webEnv, retStart, retMax);
+				// Load all publications at once
+				url = String.format("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed%s", tag);
+				saxParser.parse(url, parser);
+				retStart += retMax;
+				
+				// Calculate Percentage. This must be a value between 0..100.
+				int percentComplete = (int) (((double) retStart / totalPubs) * 100);
+				if (tm != null) {
+					tm.setProgress(percentComplete);
+				}
+			}
+
     		this.socialNetwork.setPublications(parser.getPubList());
-    		
 	    } catch (ParserConfigurationException e) {
 	        logger.log(Level.SEVERE, "Exception occurred", e);
 	        CytoscapeUtilities.notifyUser("Encountered temporary server issues. Please try again some other time.");
@@ -134,7 +107,6 @@ public class EutilsTimesCitedTask extends AbstractTask {
 	        logger.log(Level.SEVERE, "Exception occurred", e);
 	        CytoscapeUtilities.notifyUser("Unable to connect to PubMed. Please check your internet connection.");
 	    }
-		
 	}
     
     private  class EutilsTimesCitedParser extends DefaultHandler{
@@ -145,9 +117,6 @@ public class EutilsTimesCitedTask extends AbstractTask {
         boolean isTimesCited = false;
         boolean isPMID = false;
     	
-    	/* (non-Javadoc)
-	     * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-	     */
 	    @Override
 	    public void characters(char ch[], int start, int length) throws SAXException {
 	        if (this.isPMID) {
@@ -159,11 +128,7 @@ public class EutilsTimesCitedTask extends AbstractTask {
 	    }
 	
 	    /**
-	     * Returns true iff attributes contains the specified text
-	     *
-	     * @param Attribute attributes
-	     * @param String text
-	     * @return Boolean bool
+	     * Returns true if attributes contains the specified text
 	     */
 	    public boolean contains(Attributes attributes, String text) {
 	        for (int i = 0; i < attributes.getLength(); i++) {
@@ -174,10 +139,6 @@ public class EutilsTimesCitedTask extends AbstractTask {
 	        return false;
 	    }
 	
-	    /* (non-Javadoc)
-	     * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
-	     * java.lang.String, java.lang.String)
-	     */
 	    @Override
 	    public void endElement(String uri, String localName, String qName) throws SAXException {
 	        if (qName.equalsIgnoreCase("Id")) {
@@ -198,17 +159,11 @@ public class EutilsTimesCitedTask extends AbstractTask {
 	
 	    /**
 	     * Get the publication list
-	     * 
-	     * @return ArrayList pubList
 	     */
 	    public ArrayList<Publication> getPubList() {
 	        return pubList;
 	    }
 	
-	    /* (non-Javadoc)
-	     * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
-	     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	     */
 	    @Override
 	    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 	        if (contains(attributes, "PmcRefCount")) {
@@ -224,14 +179,9 @@ public class EutilsTimesCitedTask extends AbstractTask {
 	    /**
 	     * Get the number of times the SAX parser truncated
 	     * a pmid value. Used for testing.
-	     * 
-	     * @return int numSaxConflicts
 	     */
 	    public int getNumSaxConflicts() {
 	        return numSaxConflicts;
 	    }
     }
-
-
-	
 }

@@ -42,6 +42,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import org.baderlab.csapps.socialnetwork.CytoscapeUtilities;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
@@ -60,7 +61,6 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.events.NetworkAddedEvent;
 import org.cytoscape.model.events.NetworkAddedListener;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -80,39 +80,44 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     
     private static final Logger logger = Logger.getLogger(SocialNetworkAddedListener.class.getName());
     
-    private SocialNetworkAppManager appManager = null;
-    private CyNetworkManager cyNetworkManagerServiceRef = null;
-    private VisualMappingManager vmmServiceRef = null;
+    private SocialNetworkAppManager appManager;
+    private VisualMappingManager vmmServiceRef;
     private VisualStyleFactory visualStyleFactoryServiceRef;
     private VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
     private VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
     private VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-    private CyNetwork network = null;
-    private SocialNetwork socialNetwork = null;
-    private CytoPanel cytoPanelEast = null;
-    private InfoPanel infoPanel = null;
-    private CyServiceRegistrar cyServiceRegistrarRef = null;
-    private CySwingApplication cySwingApplicationServiceRef = null;
-    private TaskManager<?, ?> taskManager = null;
-    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
-    private CyApplicationManager cyApplicationManagerServiceRef = null;
-    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
-    private CreateChartTaskFactory createChartTaskFactory = null;
+    private CyNetwork network;
+    private SocialNetwork socialNetwork;
+    private CytoPanel cytoPanelEast;
+    private InfoPanel infoPanel;
+    private CyServiceRegistrar cyServiceRegistrarRef;
+    private TaskManager<?, ?> taskManager;
+    private HideAuthorsTaskFactory updateVisualStyleTaskFactory;
+    private CyApplicationManager cyApplicationManagerServiceRef;
+    private ShowAllNodesTaskFactory showAllNodesTaskFactory;
+    private CreateChartTaskFactory createChartTaskFactory;
 
     /**
      * Create a new {@link SocialNetworkAddedListener} object
      *
      * @param {@link SocialNetworkAppManager} appManager
      */
-    public SocialNetworkAddedListener(SocialNetworkAppManager appManager, CyNetworkManager cyNetworkManagerServiceRef,
-            VisualMappingManager vmmServiceRef, VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
-            VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
-            CyServiceRegistrar cyServiceRegistrarRef, CySwingApplication cySwingApplicationServiceRef, TaskManager<?, ?> taskManager,
-            HideAuthorsTaskFactory updateVisualStyleTaskFactory, CyApplicationManager cyApplicationManagerServiceRef,
-            ShowAllNodesTaskFactory showAllNodesTaskFactory, CreateChartTaskFactory createChartTaskFactory) {
-        super();
+	public SocialNetworkAddedListener(
+			SocialNetworkAppManager appManager,
+			VisualMappingManager vmmServiceRef,
+			VisualStyleFactory visualStyleFactoryServiceRef,
+			VisualMappingFunctionFactory passthroughMappingFactoryServiceRef,
+			VisualMappingFunctionFactory continuousMappingFactoryServiceRef,
+			VisualMappingFunctionFactory discreteMappingFactoryServiceRef,
+			CyServiceRegistrar cyServiceRegistrarRef,
+			CySwingApplication cySwingApplicationServiceRef,
+			TaskManager<?, ?> taskManager,
+			HideAuthorsTaskFactory updateVisualStyleTaskFactory,
+			CyApplicationManager cyApplicationManagerServiceRef,
+			ShowAllNodesTaskFactory showAllNodesTaskFactory,
+			CreateChartTaskFactory createChartTaskFactory
+	) {
         this.appManager = appManager;
-        this.cyNetworkManagerServiceRef = cyNetworkManagerServiceRef;
         this.vmmServiceRef = vmmServiceRef;
         this.visualStyleFactoryServiceRef = visualStyleFactoryServiceRef;
         this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
@@ -128,14 +133,15 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
     }
     
     private void initializeInfoPanel() {
-        this.infoPanel = new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
-                this.showAllNodesTaskFactory, this.createChartTaskFactory);        
+        this.infoPanel = new InfoPanel(taskManager, updateVisualStyleTaskFactory, socialNetwork, cyServiceRegistrarRef,
+                showAllNodesTaskFactory, createChartTaskFactory);        
     }
     
     private void handleNetwork(CyNetwork cyNetwork) {
         // Set mouse cursor to default (network's already been loaded)
         this.appManager.getUserPanelRef().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         String name = SocialNetworkAppManager.getNetworkName(cyNetwork);
+        
         // If the network being added is a social network, then
         // add it to network table
         if (this.appManager.getSocialNetworkMap().containsKey(name)) {
@@ -227,7 +233,8 @@ public class SocialNetworkAddedListener implements NetworkAddedListener {
      *
      * @param {@link NetworkAddedEvent} event
      */
-    public void handleEvent(NetworkAddedEvent event) {
+    @Override
+	public void handleEvent(NetworkAddedEvent event) {
         this.network = event.getNetwork();
         this.handleNetwork(this.network);
     }

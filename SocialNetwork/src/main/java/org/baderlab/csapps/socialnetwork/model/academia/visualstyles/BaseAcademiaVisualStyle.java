@@ -39,14 +39,13 @@ package org.baderlab.csapps.socialnetwork.model.academia.visualstyles;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle;
 import org.baderlab.csapps.socialnetwork.model.Category;
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyTable;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualStyle;
@@ -64,31 +63,35 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
  */
 public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
 
-    protected VisualMappingFunctionFactory continuousMappingFactoryServiceRef;
-    protected CyApplicationManager cyApplicationManagerServiceRef = null;
-    protected VisualMappingFunctionFactory discreteMappingFactoryServiceRef;
-    protected CyNetwork network = null;
-    protected VisualMappingFunctionFactory passthroughMappingFactoryServiceRef;
-    protected SocialNetwork socialNetwork = null;
-    protected VisualStyle visualStyle = null;
+	protected VisualStyle visualStyle;
+	
+    protected final VisualMappingFunctionFactory continuousMappingFactory;
+    protected final CyApplicationManager applicationManager;
+    protected final VisualMappingFunctionFactory discreteMappingFactory;
+    protected final CyNetwork network;
+    protected final VisualMappingFunctionFactory passthroughMappingFactory;
+    protected final SocialNetwork socialNetwork;
 
-    /**
-     * ??
-     * 
-     * @param CyNetwork network
-     */
-    public BaseAcademiaVisualStyle(CyApplicationManager cyApplicationManagerServiceRef, CyNetwork network, SocialNetwork socialNetwork, 
-            VisualStyleFactory visualStyleFactoryServiceRef, VisualMappingFunctionFactory passthroughMappingFactoryServiceRef, 
-            VisualMappingFunctionFactory continuousMappingFactoryServiceRef, VisualMappingFunctionFactory discreteMappingFactoryServiceRef, 
-            boolean isChart) {
+    public BaseAcademiaVisualStyle(
+    		CyApplicationManager applicationManager,
+    		CyNetwork network,
+    		SocialNetwork socialNetwork, 
+            VisualStyleFactory visualStyleFactory,
+            VisualMappingFunctionFactory passthroughMappingFactory, 
+            VisualMappingFunctionFactory continuousMappingFactory,
+            VisualMappingFunctionFactory discreteMappingFactory, 
+            boolean isChart
+     ) {
         this.network = network;
         this.socialNetwork = socialNetwork;
-        this.cyApplicationManagerServiceRef = cyApplicationManagerServiceRef;
-        this.passthroughMappingFactoryServiceRef = passthroughMappingFactoryServiceRef;
-        this.continuousMappingFactoryServiceRef = continuousMappingFactoryServiceRef;
-        this.discreteMappingFactoryServiceRef = discreteMappingFactoryServiceRef;
+        this.applicationManager = applicationManager;
+        this.passthroughMappingFactory = passthroughMappingFactory;
+        this.continuousMappingFactory = continuousMappingFactory;
+        this.discreteMappingFactory = discreteMappingFactory;
+        
         String networkName = null;
-        switch(this.socialNetwork.getNetworkType()) {
+        
+        switch(socialNetwork.getNetworkType()) {
             case Category.PUBMED:
                 networkName = String.format("%s_PubMed", socialNetwork.getNetworkName());
                 break;
@@ -99,19 +102,16 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
                 networkName = String.format("%s_Scopus", socialNetwork.getNetworkName());
                 break;
         }
-        if (isChart) {
+        
+        if (isChart)
             networkName = String.format("%s Chart", socialNetwork.getNetworkName());
-        }
-        this.visualStyle = visualStyleFactoryServiceRef.createVisualStyle(networkName);
-        applyVisualStyle(this.visualStyle);
+        
+        visualStyle = visualStyleFactory.createVisualStyle(networkName);
+        applyVisualStyle(visualStyle);
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.visualstyles.AbstractVisualStyle#applyEdgeStyle(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyEdgeStyle(VisualStyle visualStyle) {
-        
         // Specify EDGE_WIDTH
         applyEdgeWidth(visualStyle);
         
@@ -120,159 +120,122 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         
         // Specify EDGE_VISIBILITY
         applyEdgeVisibility(visualStyle);
-        
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeTransparency(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyEdgeTransparency(VisualStyle visualStyle) {
         // Edge table reference
-        CyTable edgeTable = this.network.getDefaultEdgeTable();
+        var edgeTable = network.getDefaultEdgeTable();
         
         // Edge width variables
         int min = 0;
         int max = 0;
         
-        edgeTable = this.network.getDefaultEdgeTable();
-        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
-        ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
+        edgeTable = network.getDefaultEdgeTable();
+        var copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
+        var copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         min = getSmallestInCutoff(copubList, 5.0);
         max = getLargestInCutoff(copubList, 100.0);   
         
-        ContinuousMapping<Integer, ?> mapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
+        var mapping = (ContinuousMapping<Integer, ?>) continuousMappingFactory.createVisualMappingFunction(
                 EdgeAttribute.COPUBLICATION_COUNT.toString(), Integer.class, BasicVisualLexicon.EDGE_TRANSPARENCY);
         // BRVs are used to set limits on edge transparency
-        // (min edge transparency = 100; max edge transparency = 300)
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(100.0, 100.0, 100.0);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(300.0, 300.0, 300.0);
+        // (min edge transparency = 100; max edge transparency = 255)
+        var bv0 = new BoundaryRangeValues(100, 100, 100);
+        var bv1 = new BoundaryRangeValues(255, 255, 255);
         // Adjust handle position
         mapping.addPoint(1, bv0);
-        mapping.addPoint(max / 2, bv1);
+        mapping.addPoint(Math.round(max / 2.0f), bv1);
         visualStyle.addVisualMappingFunction(mapping);        
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeVisibility(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyEdgeVisibility(VisualStyle visualStyle) {
         // TODO: Set default visibility
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyEdgeWidth(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyEdgeWidth(VisualStyle visualStyle) {
         // Edge table reference
-        CyTable edgeTable = this.network.getDefaultEdgeTable();
+    	var edgeTable = network.getDefaultEdgeTable();
         
         // Edge width variables
         int min = 0;
         int max = 0;
         
-        edgeTable = this.network.getDefaultEdgeTable();
-        CyColumn copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
-        ArrayList<Integer> copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
+        edgeTable = network.getDefaultEdgeTable();
+        var copubColumn = edgeTable.getColumn(EdgeAttribute.COPUBLICATION_COUNT.toString());
+        var copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         copubList = (ArrayList<Integer>) copubColumn.getValues(Integer.class);
         min = getSmallestInCutoff(copubList, 5.0);
         max = getLargestInCutoff(copubList, 100.0);   
         
         // Specify EDGE_WIDTH
-        ContinuousMapping<Integer, ?> edgeWidthContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
+        var edgeWidthContinuousMapping = (ContinuousMapping<Integer, ?>) continuousMappingFactory.createVisualMappingFunction(
                 EdgeAttribute.COPUBLICATION_COUNT.toString(), Integer.class, BasicVisualLexicon.EDGE_WIDTH);
         // BRVs are used to set limits on edge width (max edge width = 10; min edge width = 1)
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(1.0, 1.0, 1.0);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(10.0, 10.0, 10.0);
+        var bv0 = new BoundaryRangeValues(1.0, 1.0, 1.0);
+        var bv1 = new BoundaryRangeValues(10.0, 10.0, 10.0);
         // Adjust handle position
         edgeWidthContinuousMapping.addPoint(min + 1, bv0);
         edgeWidthContinuousMapping.addPoint(max, bv1);
         visualStyle.addVisualMappingFunction(edgeWidthContinuousMapping);    
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeBorderPaint(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeBorderPaint(VisualStyle visualStyle) {
         // TODO: Set default node border color
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeBorderWidth(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeBorderWidth(VisualStyle visualStyle) {
         // TODO: Set default node border width
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeFillColor(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeFillColor(VisualStyle visualStyle) {
         // TODO: Set default node fill color
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeLabel(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeLabel(VisualStyle visualStyle) {
-        PassthroughMapping<Integer, ?> labelPassthroughMapping = (PassthroughMapping<Integer, ?>) this.passthroughMappingFactoryServiceRef
+    	var labelPassthroughMapping = (PassthroughMapping<Integer, ?>) passthroughMappingFactory
                 .createVisualMappingFunction(NodeAttribute.LABEL.toString(), Integer.class, BasicVisualLexicon.NODE_LABEL);
         visualStyle.addVisualMappingFunction(labelPassthroughMapping);        
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeLabelFontFace(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeLabelFontFace(VisualStyle visualStyle) {
         // TODO: Set default node label font face
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeLabelPosition(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeLabelPosition(VisualStyle visualStyle) {
         // TODO: Set default node label position
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeShape(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeShape(VisualStyle visualStyle) {
         // TODO: Set default node shape
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeSize(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeSize(VisualStyle visualStyle) {
-        CyTable nodeTable = this.network.getDefaultNodeTable();
-        CyColumn timesCitedColumn = nodeTable.getColumn(NodeAttribute.TIMES_CITED.toString());
-        ArrayList<Integer> timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
+        var nodeTable = this.network.getDefaultNodeTable();
+        var timesCitedColumn = nodeTable.getColumn(NodeAttribute.TIMES_CITED.toString());
+        var timesCitedList = (ArrayList<Integer>) timesCitedColumn.getValues(Integer.class);
         int minNodeSize = getSmallestInCutoff(timesCitedList, 10.0);
         int maxNodeSize = getLargestInCutoff(timesCitedList, 95.0);
-        ContinuousMapping<Integer, ?> timesCitesContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactoryServiceRef.createVisualMappingFunction(
+        var timesCitesContinuousMapping = (ContinuousMapping<Integer, ?>) this.continuousMappingFactory.createVisualMappingFunction(
                 NodeAttribute.TIMES_CITED.toString(), Integer.class, BasicVisualLexicon.NODE_SIZE);
-        BoundaryRangeValues bv0 = new BoundaryRangeValues(10.0, 10.0, 10.0);
-        BoundaryRangeValues bv1 = new BoundaryRangeValues(50.0, 50.0, 50.0);
+        var bv0 = new BoundaryRangeValues(10.0, 10.0, 10.0);
+        var bv1 = new BoundaryRangeValues(50.0, 50.0, 50.0);
         timesCitesContinuousMapping.addPoint(minNodeSize, bv0);
         timesCitesContinuousMapping.addPoint(maxNodeSize, bv1);
         visualStyle.addVisualMappingFunction(timesCitesContinuousMapping);
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.visualstyles.AbstractVisualStyle#applyNodeStyle(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeStyle(VisualStyle visualStyle) {
         
@@ -302,29 +265,19 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         
         // Specify NODE_VISIBLE
         applyNodeVisibility(visualStyle);
-        
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyNodeVisibility(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyNodeVisibility(VisualStyle visualStyle) {
         // TODO: Set default visibility 
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#applyVisualStyle(org.cytoscape.view.vizmap.VisualStyle)
-     */
     @Override
     protected void applyVisualStyle(VisualStyle visualStyle) {
         applyNodeStyle(visualStyle);
         applyEdgeStyle(visualStyle);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         BaseAcademiaVisualStyle other = (BaseAcademiaVisualStyle) obj;
@@ -375,20 +328,13 @@ public class BaseAcademiaVisualStyle extends AbstractVisualStyle {
         return list.get(0);
     }
 
-    /* (non-Javadoc)
-     * @see org.baderlab.csapps.socialnetwork.model.AbstractVisualStyle#getVisualStyle()
-     */
     @Override
     public VisualStyle getVisualStyle() {
         return this.visualStyle;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return this.visualStyle.getTitle().hashCode();
     }
-
 }

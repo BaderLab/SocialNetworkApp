@@ -40,6 +40,7 @@ package org.baderlab.csapps.socialnetwork.listeners;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.baderlab.csapps.socialnetwork.model.SocialNetwork;
 import org.baderlab.csapps.socialnetwork.model.SocialNetworkAppManager;
 import org.baderlab.csapps.socialnetwork.model.academia.visualstyles.NodeAttribute;
@@ -50,12 +51,11 @@ import org.baderlab.csapps.socialnetwork.tasks.HideAuthorsTaskFactory;
 import org.baderlab.csapps.socialnetwork.tasks.ShowAllNodesTaskFactory;
 import org.cytoscape.application.events.SetSelectedNetworksEvent;
 import org.cytoscape.application.events.SetSelectedNetworksListener;
-import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.application.swing.CytoPanelState;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.service.util.CyServiceRegistrar;
-import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskManager;
 
@@ -69,91 +69,102 @@ public class SocialNetworkSelectedListener implements SetSelectedNetworksListene
     
     private static final Logger logger = Logger.getLogger(SocialNetworkSelectedListener.class.getName());
 
-    private SocialNetworkAppManager appManager = null;
-    private UserPanel userPanel = null;
-    private SocialNetwork socialNetwork = null;
-    private CytoPanel cytoPanelEast = null;
-    private TaskManager<?, ?> taskManager = null;
-    private HideAuthorsTaskFactory updateVisualStyleTaskFactory = null;
-    private CyServiceRegistrar cyServiceRegistrarRef = null;
-    private CyNetworkViewManager cyNetworkViewManagerServiceRef = null;
-    private ShowAllNodesTaskFactory showAllNodesTaskFactory = null;
-    private CreateChartTaskFactory createChartTaskFactory = null;
+    private SocialNetwork socialNetwork;
+    
+    private final UserPanel userPanel;
+    private final SocialNetworkAppManager appManager;
+    private final TaskManager<?, ?> taskManager;
+    private final HideAuthorsTaskFactory updateVisualStyleTaskFactory;
+    private final CyServiceRegistrar serviceRegistrar;
+    private final CyNetworkViewManager networkViewManager;
+    private final ShowAllNodesTaskFactory showAllNodesTaskFactory;
+    private final CreateChartTaskFactory createChartTaskFactory;
 
-    /**
-     * Creates a new {@link SocialNetworkAppManager} object
-     *
-     * @param {@link SocialNetworkAppManager} appManager
-     */
-    public SocialNetworkSelectedListener(SocialNetworkAppManager appManager, CyServiceRegistrar cyServiceRegistrarRef, 
-            TaskManager<?, ?> taskManager, HideAuthorsTaskFactory updateVisualStyleTaskFactory, 
-            CyNetworkViewManager cyNetworkViewManagerServiceRef, ShowAllNodesTaskFactory showAllNodesTaskFactory,
-            CreateChartTaskFactory createChartTaskFactory) {
-        super();
-        this.cyNetworkViewManagerServiceRef = cyNetworkViewManagerServiceRef;
+    public SocialNetworkSelectedListener(
+    		SocialNetworkAppManager appManager,
+    		CyServiceRegistrar serviceRegistrar, 
+            TaskManager<?, ?> taskManager,
+            HideAuthorsTaskFactory updateVisualStyleTaskFactory, 
+            CyNetworkViewManager networkViewManager,
+            ShowAllNodesTaskFactory showAllNodesTaskFactory,
+            CreateChartTaskFactory createChartTaskFactory
+    ) {
+        this.networkViewManager = networkViewManager;
         this.appManager = appManager;
-        this.cyServiceRegistrarRef = cyServiceRegistrarRef;
+        this.serviceRegistrar = serviceRegistrar;
         this.taskManager = taskManager;
-        this.userPanel = this.appManager.getUserPanelRef();
+        this.userPanel = appManager.getUserPanelRef();
         this.updateVisualStyleTaskFactory = updateVisualStyleTaskFactory;
         this.showAllNodesTaskFactory = showAllNodesTaskFactory;
         this.createChartTaskFactory = createChartTaskFactory;
     }
     
     private InfoPanel initializeInfoPanel() {
-        return new InfoPanel(this.taskManager, this.updateVisualStyleTaskFactory, this.socialNetwork, this.cyServiceRegistrarRef,
-                this.showAllNodesTaskFactory, this.createChartTaskFactory);        
+        return new InfoPanel(taskManager, updateVisualStyleTaskFactory, socialNetwork, serviceRegistrar,
+                showAllNodesTaskFactory, createChartTaskFactory);        
     }
 
     /**
      * Updates the user interface
-     *
-     * @param {@link SetSelectedNetworksEvent} event
      */
-    public void handleEvent(SetSelectedNetworksEvent event) {
+    @Override
+	public void handleEvent(SetSelectedNetworksEvent event) {
         String name = null;
-        for (CyNetwork network : event.getNetworks()) {
+        
+        for (var network : event.getNetworks()) {
             name = SocialNetworkAppManager.getNetworkName(network);
-            // Update UI iff a social network has been selected
-            if (this.appManager.getSocialNetworkMap().containsKey(name)) {
-                this.socialNetwork = this.appManager.getSocialNetworkMap().get(name);
-                this.userPanel.updateNetworkSummaryPanel(socialNetwork);
-                this.userPanel.addNetworkVisualStyle(socialNetwork);
-                this.appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
+            
+            // Update UI if a social network has been selected
+            if (appManager.getSocialNetworkMap().containsKey(name)) {
+                socialNetwork = appManager.getSocialNetworkMap().get(name);
+                userPanel.updateNetworkSummaryPanel(socialNetwork);
+                userPanel.addNetworkVisualStyle(socialNetwork);
+                appManager.setCurrentlySelectedSocialNetwork(socialNetwork);
+                
                 if (network.getDefaultNodeTable().getColumn(NodeAttribute.PUBS_PER_YEAR.toString()) != null) {
-                    
-                    CyNetworkView networkView = this.cyNetworkViewManagerServiceRef.getNetworkViews(network).iterator().next();
-                    this.socialNetwork.setNetworkView(networkView);
-                                        
-                    InfoPanel infoPanel = SocialNetworkAppManager.getInfoPanel();
+                    var networkViews = networkViewManager.getNetworkViews(network);
+					
+                    if (!networkViews.isEmpty()) {
+	                    var view = networkViews.iterator().next();
+	                    socialNetwork.setNetworkView(view);
+                    }
+	                                        
+                    var infoPanel = SocialNetworkAppManager.getInfoPanel();
                     
                     if (infoPanel == null) {
                         infoPanel = initializeInfoPanel();                
-                        this.cyServiceRegistrarRef.registerService(infoPanel, CytoPanelComponent.class, new Properties());
+                        serviceRegistrar.registerService(infoPanel, CytoPanelComponent.class, new Properties());
                         SocialNetworkAppManager.setInfoPanel(infoPanel);
                     } else {
-                        infoPanel.update(this.socialNetwork);;
+                        infoPanel.update(socialNetwork);;
                     }
                     
+                    var cytoPanelEast = serviceRegistrar.getService(CySwingApplication.class).getCytoPanel(CytoPanelName.EAST);
+	                    
                     // If the state of the cytoPanelEast is HIDE, show it
-                    if (this.cytoPanelEast.getState() == CytoPanelState.HIDE) {
-                        this.cytoPanelEast.setState(CytoPanelState.DOCK);
-                    }
+                    if (cytoPanelEast.getState() == CytoPanelState.HIDE)
+                        cytoPanelEast.setState(CytoPanelState.DOCK);
+                    
                     // Select my panel
-                    int index = this.cytoPanelEast.indexOfComponent(infoPanel);
-                    if (index == -1) {
+                    int index = cytoPanelEast.indexOfComponent(infoPanel);
+                    
+                    if (index == -1)
                         return;
-                    }
-                    this.cytoPanelEast.setSelectedIndex(index);         
+                    
+                    cytoPanelEast.setSelectedIndex(index);
                 }
+                
                 return;
             } else {
-                logger.log(Level.WARNING, String.format("Display Options panel disabled because %s does not contain the pubs per year attribute.",
-                        this.socialNetwork.getNetworkName()));
+            	if (socialNetwork != null)
+					logger.log(Level.WARNING, String.format(
+							"Display Options panel disabled because %s does not contain the pubs per year attribute.",
+							socialNetwork.getNetworkName()));
             }
         }
-        this.appManager.setCurrentlySelectedSocialNetwork(null);
-        this.userPanel.addNetworkVisualStyle(null);
-        this.userPanel.updateNetworkSummaryPanel(null);
+            
+        appManager.setCurrentlySelectedSocialNetwork(null);
+        userPanel.addNetworkVisualStyle(null);
+        userPanel.updateNetworkSummaryPanel(null);
     }
 }

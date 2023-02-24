@@ -93,7 +93,7 @@ public class AcademiaPanel {
      * Reference to academia info panel. Shows information specific to academic
      * copublication networks.
      */
-    private JPanel academiaInfoPanelRef = null;
+    private JPanel academiaInfoPanelRef;
     /**
      * A reference to the faculty text field. Used to verify correct faculty
      * input.
@@ -108,35 +108,35 @@ public class AcademiaPanel {
      * A reference to the max author threshold text field. Used to set the max #
      * of authors in a publication that the app will build a network out of.
      */
-    private JTextField thresholdTextFieldRef = null;
+    private JTextField thresholdTextFieldRef;
 
     // TODO: Write description for these instance variables
-    private JRadioButton incitesRadioButtonRef = null;
-    private JRadioButton pubmedRadioButtonRef = null;
-    private JRadioButton scopusRadioButtonRef = null;
-    private JRadioButton thresholdRadioButtonRef = null;
-    private JTextField startDateTextFieldRef = null;
-    private JTextField endDateTextFieldRef = null;
+    private JRadioButton incitesRadioButtonRef;
+    private JRadioButton pubmedRadioButtonRef;
+    private JRadioButton scopusRadioButtonRef;
+    private JRadioButton thresholdRadioButtonRef;
+    private JTextField startDateTextFieldRef;
+    private JTextField endDateTextFieldRef;
     /**
      * Reference to the search box. Necessary for extracting queries.
      */
-    private JTextField searchBox = null;
+    private JTextField searchBox;
 
     /**
      * A reference to a data file. Used to verify correct file path.
      */
-    private File selectedFileRef = null;
+    private File selectedFileRef;
 
     /**
      * A reference to the app Manager
      */
-    private SocialNetworkAppManager appManager = null;
-    private FileUtil fileUtil = null;
-    private JLabel pubMedSearchLabel = null;
-    protected CySwingApplication cySwingAppRef = null;
-    private JPanel bottomPanel = null;
-    private JPanel buildPubMedQueryPanel = null;
-    private JTextField buildPubMedQueryTextField = null;
+    private SocialNetworkAppManager appManager;
+    private FileUtil fileUtil;
+    private JLabel pubMedSearchLabel;
+    protected CySwingApplication cySwingAppRef;
+    private JPanel bottomPanel;
+    private JPanel buildPubMedQueryPanel;
+    private JTextField buildPubMedQueryTextField;
     
     private static final Logger logger = Logger.getLogger(ParseScopus.class.getName());
 
@@ -154,8 +154,8 @@ public class AcademiaPanel {
         this.cySwingAppRef = cySwingAppRef;
     }
     
-    private JRadioButton selectPubMedSearchRadioButton = null;
-    private JRadioButton selectFileInputRadioButton = null;
+    private JRadioButton selectPubMedSearchRadioButton;
+    private JRadioButton selectFileInputRadioButton;
     
     private JLabel createPubMedSearchLabel() {
     	final JLabel pubMedSearchLabel = new JLabel("PubMed Search");
@@ -206,7 +206,8 @@ public class AcademiaPanel {
         this.selectPubMedSearchRadioButton = new JRadioButton("", true);
         this.selectPubMedSearchRadioButton.setFocusable(true);
         this.selectPubMedSearchRadioButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 JRadioButton selectPubMedSearchRadioButton = (JRadioButton) e.getSource();
                 if (selectPubMedSearchRadioButton.isSelected()) {
                     AcademiaPanel.this.searchBox.setEnabled(true);
@@ -220,7 +221,8 @@ public class AcademiaPanel {
         this.selectFileInputRadioButton = new JRadioButton("File Input", false);
         this.selectFileInputRadioButton.setFocusable(false);
         this.selectFileInputRadioButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 JRadioButton selectFileInputRadioButton = (JRadioButton) e.getSource();
                 if (selectFileInputRadioButton.isSelected()) {
                     AcademiaPanel.this.searchBox.setEnabled(false);
@@ -306,7 +308,8 @@ public class AcademiaPanel {
         // Tapping enter results in the automatic generation of a network
         searchBox.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent event) {
+            @Override
+			public void actionPerformed(ActionEvent event) {
                 if (AcademiaPanel.this.selectPubMedSearchRadioButton.isSelected()) {
                     if (AcademiaPanel.this.searchBox.getText().trim().isEmpty()) {
                         CytoscapeUtilities.notifyUser("Please enter a search term into the search box");
@@ -392,7 +395,8 @@ public class AcademiaPanel {
         this.buildPubMedQueryTextField = new JTextField();
         JButton buildPubMedQueryButton = new JButton("...");
         buildPubMedQueryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 FileChooserFilter filter1 = new FileChooserFilter("text file", "txt");
                 FileChooserFilter filter2 = new FileChooserFilter("text file", "TXT");
                 HashSet<FileChooserFilter> filters = new HashSet<FileChooserFilter>();
@@ -560,7 +564,8 @@ public class AcademiaPanel {
         // to select a new data file.
         loadButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent event) {
+            @Override
+			public void actionPerformed(ActionEvent event) {
 
                 // Use Cytoscape File util package for the file chooser instead
                 // of Java's so
@@ -627,7 +632,8 @@ public class AcademiaPanel {
         createNetworkButton.setToolTipText("Create network");
         createNetworkButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent event) {
+            @Override
+			public void actionPerformed(ActionEvent event) {
                 
                 if (AcademiaPanel.this.selectPubMedSearchRadioButton.isSelected()) {
                     if (AcademiaPanel.this.searchBox.getText().trim().isEmpty()) {
@@ -714,7 +720,8 @@ public class AcademiaPanel {
                 + "Publications that exceed the threshold will be excluded.");
         this.thresholdRadioButtonRef.addItemListener(new ItemListener() {
 
-            public void itemStateChanged(ItemEvent e) {
+            @Override
+			public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // TODO:
                 } else if (e.getStateChange() == ItemEvent.DESELECTED) {
